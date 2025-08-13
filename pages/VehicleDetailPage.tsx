@@ -104,7 +104,7 @@ const VehicleDetailPage: React.FC = () => {
             </div>
 
             <a
-              href={`https://wa.me/1234567890?text=Olá,%20tenho%20interesse%20no%20${encodeURIComponent(vehicle.name)}`}
+              href={`https://wa.me/5524999037716?text=Olá,%20tenho%20interesse%20no%20${encodeURIComponent(vehicle.name)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-center bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 transition-colors duration-300"

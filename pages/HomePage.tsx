@@ -10,10 +10,10 @@ const HomePage: React.FC = () => {
     const { vehicles } = useVehicleData();
 
     const services = [
-      { icon: <FaCar size={40} color="#E30613" />, title: 'Venda', description: 'Os melhores veículos novos e seminovos do mercado.' },
-      { icon: <FaHandshake size={40} color="#E30613" />, title: 'Compra', description: 'Compramos seu carro com avaliação justa e rápida.' },
-      { icon: <FaTags size={40} color="#E30613" />, title: 'Troca', description: 'Use seu carro atual como entrada para um novo.' },
-      { icon: <FaMoneyBillWave size={40} color="#E30613" />, title: 'Financiamento', description: 'As melhores taxas para você realizar seu sonho.' },
+      { icon: <FaCar size={40} className="text-main-red" />, title: 'Venda', description: 'Os melhores veículos novos e seminovos do mercado.' },
+      { icon: <FaHandshake size={40} className="text-main-red" />, title: 'Compra', description: 'Compramos seu carro com avaliação justa e rápida.' },
+      { icon: <FaTags size={40} className="text-main-red" />, title: 'Troca', description: 'Use seu carro atual como entrada para um novo.' },
+      { icon: <FaMoneyBillWave size={40} className="text-main-red" />, title: 'Financiamento', description: 'As melhores taxas para você realizar seu sonho.' },
     ];
     
     const testimonials = [
@@ -25,7 +25,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="relative h-[70vh] bg-cover bg-center text-white flex items-center justify-center" style={{ backgroundImage: "url('https://cdn.prod.website-files.com/63bdbbd2c764e88f730a8673/65b159b6107d11732115486f_melhores%20carros%20para%20fam%C3%ADlia%20(2).webp')" }}>
+      <section className="relative h-[70vh] bg-cover bg-center text-white flex items-center justify-center" style={{ backgroundImage: "url('https://picsum.photos/seed/hero/1920/1080')" }}>
         <div className="absolute inset-0 bg-black/60"></div>
         <motion.div 
             className="relative z-10 text-center p-4"
@@ -104,61 +104,54 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-16" style={{backgroundColor: '#2427C3'}}>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-center text-white mb-12">O Que Nossos Clientes Dizem</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {testimonials.map((testimonial, index) => (
-                       <motion.div 
-                        key={index} 
-                        className="bg-white p-6 rounded-lg shadow-lg"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true, amount: 0.5 }}
-                        transition={{ duration: 0.5, delay: index * 0.15 }}
-                       >
-                           <p className="text-gray-600 italic mb-4">"{testimonial.text}"</p>
-                           <div className="flex items-center">
-                               <img src={testimonial.avatar} alt={testimonial.name} className="w-12 h-12 rounded-full mr-4" />
-                               <div>
-                                   <p className="font-bold text-gray-800">{testimonial.name}</p>
-                               </div>
-                           </div>
-                       </motion.div>
-                  ))}
-              </div>
-          </div>
-      </section>
-      
-      {/* Contact and Location */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Entre em Contato</h2>
-            <form className="space-y-4">
-              <input type="text" placeholder="Seu Nome" className="w-full p-3 border border-gray-300 rounded-lg"/>
-              <input type="email" placeholder="Seu Email" className="w-full p-3 border border-gray-300 rounded-lg"/>
-              <textarea placeholder="Sua Mensagem" rows={4} className="w-full p-3 border border-gray-300 rounded-lg"></textarea>
-              <button type="submit" className="w-full bg-main-red text-white font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors">Enviar Mensagem</button>
-            </form>
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Nossa Localização</h2>
-            <div className="h-96 rounded-lg overflow-hidden shadow-xl">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.197576594255!2d-46.65653638487473!3d-23.56133936754323!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0x266854b778b32b2f!2sAv.%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%20Brazil!5e0!3m2!1sen!2sus!4v1618855675841!5m2!1sen!2sus"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen={false}
-                loading="lazy"
-                title="Google Maps Location"
-              ></iframe>
-            </div>
+      {/* Testimonials Section */}
+       <section className="py-16 bg-comp-light-gray">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">O que Nossos Clientes Dizem</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div 
+                key={testimonial.name} 
+                className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5, delay: index * 0.15 }}
+              >
+                  <img src={testimonial.avatar} alt={testimonial.name} className="w-20 h-20 rounded-full mb-4 border-4 border-main-red"/>
+                  <p className="text-gray-600 italic mb-4">"{testimonial.text}"</p>
+                  <h4 className="font-bold text-gray-800">{testimonial.name}</h4>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
+      
+      {/* Location Section */}
+      <section className="py-16 bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Nossa Localização</h2>
+              <p className="text-center text-gray-600 mb-10">Venha nos visitar e tomar um café!</p>
+              <motion.div 
+                  className="w-full h-96 rounded-lg overflow-hidden shadow-2xl"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.7 }}
+              >
+                   <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3688.381313621415!2d-44.45339242566738!3d-22.41443832049811!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9d0b005e8a75a7%3A0x64426549a1d4b684!2sAv.%20Bras%C3%ADlia%2C%2035%20-%20Vila%20Julieta%2C%20Resende%20-%20RJ%2C%2027521-060!5e0!3m2!1sen!2sbr!4v1721329388338!5m2!1sen!2sbr"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen={false}
+                      loading="lazy"
+                      title="Google Maps Location"
+                  ></iframe>
+              </motion.div>
+          </div>
+      </section>
+
     </div>
   );
 };

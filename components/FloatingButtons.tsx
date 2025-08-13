@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 
 const FloatingButtons: React.FC = () => {
   const buttons = [
-    { icon: <FaWhatsapp size={24} />, href: 'https://wa.me/1234567890', color: 'bg-green-500', label: 'WhatsApp' },
-    { icon: <FaInstagram size={24} />, href: 'https://instagram.com', color: 'bg-pink-500', label: 'Instagram' },
+    { icon: <FaWhatsapp size={24} />, href: 'https://wa.me/5524999037716', color: 'bg-green-500', label: 'WhatsApp' },
+    { icon: <FaInstagram size={24} />, href: 'https://www.instagram.com/_jaautomoveis/', color: 'bg-pink-500', label: 'Instagram' },
   ];
 
   return (

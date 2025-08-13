@@ -52,13 +52,13 @@ const ContactPage: React.FC = () => {
                     >
                          <h2 className="text-2xl font-bold text-gray-800 mb-6">Nossas Informações</h2>
                          <div className="space-y-4 text-gray-600">
-                            <p className="flex items-center"><FiMapPin className="mr-3 text-main-red" size={20} /> Rua do Carro, 123, São Paulo, SP, 01310-200</p>
-                            <p className="flex items-center"><FiPhone className="mr-3 text-main-red" size={20} /> (11) 99999-9999</p>
+                            <p className="flex items-center"><FiMapPin className="mr-3 text-main-red" size={20} /> Av. Brasília, n°35 - Vila Julieta, Resende - RJ, 27521-060</p>
+                            <p className="flex items-center"><FiPhone className="mr-3 text-main-red" size={20} /> (24) 99903-7716</p>
                             <p className="flex items-center"><FiMail className="mr-3 text-main-red" size={20} /> contato@jaautomoveis.com</p>
                          </div>
                          <div className="mt-8 h-80 rounded-lg overflow-hidden shadow-xl">
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.197576594255!2d-46.65653638487473!3d-23.56133936754323!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0x266854b778b32b2f!2sAv.%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%20Brazil!5e0!3m2!1sen!2sus!4v1618855675841!5m2!1sen!2sus"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3688.381313621415!2d-44.45339242566738!3d-22.41443832049811!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9d0b005e8a75a7%3A0x64426549a1d4b684!2sAv.%20Bras%C3%ADlia%2C%2035%20-%20Vila%20Julieta%2C%20Resende%20-%20RJ%2C%2027521-060!5e0!3m2!1sen!2sbr!4v1721329388338!5m2!1sen!2sbr"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}

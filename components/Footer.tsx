@@ -12,8 +12,8 @@ const Footer: React.FC = () => {
 
   const socialLinks = [
     { icon: <FaFacebook size={24} />, href: 'https://facebook.com' },
-    { icon: <FaInstagram size={24} />, href: 'https://instagram.com' },
-    { icon: <FaWhatsapp size={24} />, href: 'https://wa.me/1234567890' },
+    { icon: <FaInstagram size={24} />, href: 'https://www.instagram.com/_jaautomoveis/' },
+    { icon: <FaWhatsapp size={24} />, href: 'https://wa.me/5524999037716' },
   ];
 
   return (
@@ -36,9 +36,9 @@ const Footer: React.FC = () => {
           </div>
           <div>
             <h4 className="font-bold text-lg mb-4">Contato</h4>
-            <p className="text-gray-400">Rua do Carro, 123, São Paulo, SP</p>
+            <p className="text-gray-400">Av. Brasília, n°35 - Vila Julieta, Resende - RJ, 27521-060</p>
             <p className="text-gray-400">contato@jaautomoveis.com</p>
-            <p className="text-gray-400">(11) 99999-9999</p>
+            <p className="text-gray-400">(24) 99903-7716</p>
           </div>
           <div>
             <h4 className="font-bold text-lg mb-4">Siga-nos</h4>
