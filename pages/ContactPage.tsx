@@ -58,7 +58,7 @@ const ContactPage: React.FC = () => {
                          </div>
                          <div className="mt-8 h-80 rounded-lg overflow-hidden shadow-xl">
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3688.381313621415!2d-44.45339242566738!3d-22.41443832049811!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9d0b005e8a75a7%3A0x64426549a1d4b684!2sAv.%20Bras%C3%ADlia%2C%2035%20-%20Vila%20Julieta%2C%20Resende%20-%20RJ%2C%2027521-060!5e0!3m2!1sen!2sbr!4v1721329388338!5m2!1sen!2sbr"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.0969984913757!2d-44.46753692566539!3d-22.47133702206713!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9e7f64ea81fb05%3A0xda764a546db009b0!2sJA%20Autom%C3%B3veis!5e0!3m2!1sen!2sbr!4v1722368940567!5m2!1sen!2sbr"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}

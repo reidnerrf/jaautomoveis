@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useVehicleData } from '../hooks/useVehicleData.tsx';
 import VehicleCarousel from '../components/VehicleCarousel.tsx';
+import PriceComparison from '../components/PriceComparison.tsx';
 import { FaWhatsapp } from 'react-icons/fa';
 import { FiChevronLeft, FiChevronRight, FiTag, FiCalendar, FiTrello, FiSettings, FiDroplet, FiGitCommit, FiFolder, FiX } from 'react-icons/fi';
 import { motion } from 'framer-motion';
@@ -123,7 +124,7 @@ const VehicleDetailPage: React.FC = () => {
             </div>
 
             <a
-              href={`https://wa.me/5524999037716?text=Olá,%20tenho%20interesse%20no%20${encodeURIComponent(vehicle.name)}`}
+              href={`https://wa.me/5524999037716?text=${encodeURIComponent(`Olá, tenho interesse no ${vehicle.name} ${vehicle.year} ${vehicle.color}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-center bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 transition-colors duration-300"
@@ -134,17 +135,27 @@ const VehicleDetailPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Additional Info & Optionals */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-comp-light-gray p-6 rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Informações Adicionais</h2>
-                <p className="text-gray-600 leading-relaxed">{vehicle.additionalInfo}</p>
-            </div>
-             <div className="bg-comp-light-gray p-6 rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Opcionais</h2>
-                <ul className="grid grid-cols-2 gap-2 text-gray-600">
-                    {vehicle.optionals.map(opt => <li key={opt} className="flex items-center"><FiChevronRight className="text-main-red mr-2"/>{opt}</li>)}
-                </ul>
+        {/* Details Section */}
+        <div className="mt-12">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Additional Info */}
+                <div className="bg-comp-light-gray p-6 rounded-lg shadow-lg">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Informações Adicionais</h2>
+                    <p className="text-gray-600 leading-relaxed">{vehicle.additionalInfo}</p>
+                </div>
+                
+                {/* Optionals */}
+                <div className="bg-comp-light-gray p-6 rounded-lg shadow-lg">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Opcionais</h2>
+                    <ul className="space-y-2 text-gray-600">
+                        {vehicle.optionals.map(opt => <li key={opt} className="flex items-center"><FiChevronRight className="text-main-red mr-2"/>{opt}</li>)}
+                    </ul>
+                </div>
+                
+                {/* Price Comparison */}
+                <div className="bg-comp-light-gray p-6 rounded-lg shadow-lg">
+                    <PriceComparison vehicle={vehicle} />
+                </div>
             </div>
         </div>
 

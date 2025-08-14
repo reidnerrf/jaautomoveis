@@ -14,3 +14,12 @@ export interface Vehicle {
   optionals: string[];
   images: string[];
 }
+
+export interface GoogleReview {
+  id: string;
+  reviewerName: string;
+  comment: string;
+  avatarUrl: string;
+  rating: number;
+  timeAgo: string;
+}
