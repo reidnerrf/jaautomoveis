@@ -48,7 +48,7 @@ const AboutPage: React.FC = () => {
                 </div>
 
                 <div className="mt-20">
-                    <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Nossa Missão & Visão</h2>
+                    <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Nossa Missão e Visão</h2>
                     <p className="text-center text-gray-600 max-w-4xl mx-auto leading-relaxed">
                         Nossa missão é ser referência no mercado automotivo, reconhecida pela qualidade de nossos veículos e pela excelência no atendimento, criando relacionamentos duradouros com nossos clientes. Vislumbramos um futuro onde a compra de um carro seja uma experiência fácil, segura e emocionante para todos.
                     </p>
