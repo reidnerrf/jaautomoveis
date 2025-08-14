@@ -133,13 +133,20 @@ const ConsortiumPage: React.FC = () => {
                                 </div>
                             </div>
                             
-                            <div className="bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 rounded-lg mb-8 flex items-center gap-4" role="alert">
-                                 <img 
-                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIavnQKOtP3yeN9k5Qh6x-j4grMU0OsBZNhQ&s" 
-                                    alt="Logo Rodobens Consórcio" 
-                                    className="h-16 w-auto flex-shrink-0"
-                                />
-                                <p><span className="font-bold">Representante Autorizado Rodobens:</span> Sou representante autorizado Rodobens, uma das maiores e mais respeitadas administradoras de consórcio do Brasil, com mais de 60 anos de credibilidade e segurança.</p>
+                            <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-left" role="alert">
+                                <div className="bg-white p-4 rounded-lg shadow-sm flex-shrink-0 w-full md:w-auto">
+                                    <img 
+                                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIavnQKOtP3yeN9k5Qh6x-j4grMU0OsBZNhQ&s" 
+                                        alt="Rodobens Logo" 
+                                        className="h-9 mx-auto md:mx-0 mt-1" 
+                                    />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-comp-dark-blue">Parceria de Confiança com a Rodobens</h3>
+                                    <p className="mt-2 text-gray-700">
+                                        Somos um representante autorizado Rodobens, uma das maiores e mais respeitadas administradoras de consórcio do Brasil. Conte com mais de 60 anos de credibilidade e segurança para planejar a sua conquista.
+                                    </p>
+                                </div>
                             </div>
                             
                             <div className="text-center border-t border-gray-200 pt-8 mt-8">
