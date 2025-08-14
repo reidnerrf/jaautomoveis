@@ -1,5 +1,5 @@
 
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import path from 'path';
@@ -36,7 +36,7 @@ app.use('/api/upload', uploadRoutes);
 // 2. On-the-fly TSX/TS Transpilation
 // This middleware intercepts requests for .tsx/.ts files, transpiles them to
 // browser-compatible JavaScript, and serves them with the correct MIME type.
-app.use(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use(async (req: Request, res: Response, next: NextFunction) => {
   if (req.path.endsWith('.tsx') || req.path.endsWith('.ts')) {
     try {
       const filePath = path.join(root, req.path);
@@ -66,19 +66,23 @@ app.use(async (req: express.Request, res: express.Response, next: express.NextFu
   }
 });
 
-// 3. Static File Server
-// Serve uploaded images first
+// 3. Serve Static Assets
+// Serve the 'uploads' directory statically.
 app.use('/uploads', express.static(path.join(root, 'uploads')));
-// Then serve other static files like css, or the root index.html.
+
+// Serve other static assets from the root. This allows requests for /assets/* to work.
+// It will also serve index.html for the root path '/'.
 app.use(express.static(root));
 
-// 4. SPA Fallback
-// For any other GET request that hasn't been handled yet, serve the main
-// index.html file. This is crucial for client-side routing to work on refresh.
-app.get('*', (req: express.Request, res: express.Response) => {
-  res.sendFile(path.join(root, 'index.html'));
+// 4. Fallback for Single-Page Application (SPA)
+// For any route that is not an API call or a static file, serve index.html.
+// This allows the client-side router to handle navigation.
+app.get('*', (req: Request, res: Response) => {
+    res.sendFile(path.resolve(root, 'index.html'));
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Start Server
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => {
+  console.log(`Server is running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+});

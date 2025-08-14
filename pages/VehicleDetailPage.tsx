@@ -79,7 +79,7 @@ const VehicleDetailPage: React.FC = () => {
                     whileHover={{ scale: 1.02 }}
                     src={vehicle.images[currentImageIndex]}
                     alt={`${vehicle.name} - ${currentImageIndex + 1}`}
-                    className="w-full rounded-lg shadow-xl object-cover h-96 cursor-pointer hover:opacity-95 transition-opacity"
+                    className="w-full rounded-lg shadow-xl object-cover h-[26rem] cursor-pointer hover:opacity-95 transition-opacity"
                     onClick={openLightbox}
                 />
                 {vehicle.images.length > 1 && (
@@ -107,27 +107,19 @@ const VehicleDetailPage: React.FC = () => {
           </div>
 
           {/* Vehicle Info */}
-          <div className="lg:col-span-2 bg-comp-light-gray p-6 rounded-lg shadow-lg">
+          <div className="lg:col-span-2 bg-comp-light-gray p-6 rounded-lg shadow-lg flex flex-col">
             <h1 className="text-3xl font-bold text-gray-900">{vehicle.name}</h1>
             <p className="text-2xl font-semibold text-main-red mt-2 mb-6">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(vehicle.price)}</p>
             
-            <div className="grid grid-cols-2 gap-4 mb-6">
-                {details.map(detail => (
-                     <div key={detail.label} className="flex items-center space-x-2">
-                        {detail.icon}
-                        <div>
-                            <p className="text-sm text-gray-500">{detail.label}</p>
-                            <p className="font-semibold text-gray-800">{detail.value}</p>
-                        </div>
-                    </div>
-                ))}
+            <div className="mb-6">
+              <PriceComparison vehicle={vehicle} />
             </div>
 
             <a
               href={`https://wa.me/5524999037716?text=${encodeURIComponent(`Olá, tenho interesse no ${vehicle.name} ${vehicle.year} ${vehicle.color}`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 transition-colors duration-300"
+              className="w-full flex items-center justify-center bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 transition-colors duration-300 mt-auto"
             >
               <FaWhatsapp size={22} className="mr-2" />
               Contatar no WhatsApp
@@ -137,25 +129,38 @@ const VehicleDetailPage: React.FC = () => {
 
         {/* Details Section */}
         <div className="mt-12">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Additional Info */}
-                <div className="bg-comp-light-gray p-6 rounded-lg shadow-lg">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Informações Adicionais</h2>
-                    <p className="text-gray-600 leading-relaxed">{vehicle.additionalInfo}</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div className="space-y-8">
+                  <div className="bg-comp-light-gray p-6 rounded-lg shadow-lg">
+                      <h2 className="text-2xl font-bold text-gray-800 mb-4">Características</h2>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {details.map(detail => (
+                              <div key={detail.label} className="flex items-center space-x-2">
+                                  {detail.icon}
+                                  <div>
+                                      <p className="text-sm text-gray-500">{detail.label}</p>
+                                      <p className="font-semibold text-gray-800">{detail.value}</p>
+                                  </div>
+                              </div>
+                          ))}
+                      </div>
+                  </div>
+                  {vehicle.optionals && vehicle.optionals.length > 0 && vehicle.optionals[0] !== '' && (
+                    <div className="bg-comp-light-gray p-6 rounded-lg shadow-lg">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">Opcionais</h2>
+                        <ul className="space-y-2 text-gray-600 grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                            {vehicle.optionals.map(opt => <li key={opt} className="flex items-center"><FiChevronRight className="text-main-red mr-2"/>{opt}</li>)}
+                        </ul>
+                    </div>
+                  )}
                 </div>
                 
-                {/* Optionals */}
-                <div className="bg-comp-light-gray p-6 rounded-lg shadow-lg">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Opcionais</h2>
-                    <ul className="space-y-2 text-gray-600">
-                        {vehicle.optionals.map(opt => <li key={opt} className="flex items-center"><FiChevronRight className="text-main-red mr-2"/>{opt}</li>)}
-                    </ul>
-                </div>
-                
-                {/* Price Comparison */}
-                <div className="bg-comp-light-gray p-6 rounded-lg shadow-lg">
-                    <PriceComparison vehicle={vehicle} />
-                </div>
+                {vehicle.additionalInfo && (
+                  <div className="bg-comp-light-gray p-6 rounded-lg shadow-lg">
+                      <h2 className="text-2xl font-bold text-gray-800 mb-4">Informações Adicionais</h2>
+                      <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{vehicle.additionalInfo}</p>
+                  </div>
+                )}
             </div>
         </div>
 
