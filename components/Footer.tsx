@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
   ];
 
   const socialLinks = [
-    { icon: <FaFacebook size={24} />, href: 'https://www.facebook.com/jaautomoveisrj/' },
+    { icon: <FaFacebook size={24} />, href: 'https://facebook.com' },
     { icon: <FaInstagram size={24} />, href: 'https://www.instagram.com/_jaautomoveis/' },
     { icon: <FaWhatsapp size={24} />, href: 'https://wa.me/5524999037716' },
   ];
@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
             <Link to="/" className="block mb-4">
               <img src="/assets/logo.png" alt="JA Automóveis Logo" className="h-10 w-auto" />
             </Link>
-            <p className="text-gray-400">Seu próximo carro está aqui. Qualidade e confiança desde 2005.</p>
+            <p className="text-gray-400">Seu próximo carro está aqui. Qualidade e confiança você encontra aqui.</p>
           </div>
           <div>
             <h4 className="font-bold text-lg mb-4">Links Rápidos</h4>
@@ -56,7 +56,11 @@ const Footer: React.FC = () => {
         </div>
         <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-500">
           <p>&copy; {new Date().getFullYear()} JA Automóveis. Todos os direitos reservados.</p>
-          <p className="text-sm">Política de Privacidade | Termos de Serviço | <Link to="/admin/login" className="hover:text-white transition-colors">Admin</Link></p>
+          <p className="text-sm">
+            <Link to="/admin/login" className="hover:text-white transition-colors">Admin</Link> |{' '}
+            <Link to="/privacy-policy" className="hover:text-white transition-colors">Política de Privacidade</Link> |{' '}
+            <Link to="/terms-of-service" className="hover:text-white transition-colors">Termos de Serviço</Link>
+          </p>
         </div>
       </div>
     </footer>

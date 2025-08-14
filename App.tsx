@@ -11,6 +11,8 @@ import FinancingPage from './pages/FinancingPage.tsx';
 import ConsortiumPage from './pages/ConsortiumPage.tsx';
 import AboutPage from './pages/AboutPage.tsx';
 import ContactPage from './pages/ContactPage.tsx';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx';
+import TermsOfServicePage from './pages/TermsOfServicePage.tsx';
 import AdminLoginPage from './pages/AdminLoginPage.tsx';
 import AdminDashboardPage from './pages/AdminDashboardPage.tsx';
 import AdminVehicleListPage from './pages/AdminVehicleListPage.tsx';
@@ -33,6 +35,8 @@ const App: React.FC = () => {
               <Route path="consortium" element={<ConsortiumPage />} />
               <Route path="about" element={<AboutPage />} />
               <Route path="contact" element={<ContactPage />} />
+              <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="terms-of-service" element={<TermsOfServicePage />} />
             </Route>
 
             {/* Admin routes */}
