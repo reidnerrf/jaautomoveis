@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
   ];
 
   const socialLinks = [
-    { icon: <FaFacebook size={24} />, href: 'https://facebook.com' },
+    { icon: <FaFacebook size={24} />, href: 'https://www.facebook.com/jaautomoveisrj/' },
     { icon: <FaInstagram size={24} />, href: 'https://www.instagram.com/_jaautomoveis/' },
     { icon: <FaWhatsapp size={24} />, href: 'https://wa.me/5524999037716' },
   ];
