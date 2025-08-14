@@ -31,7 +31,7 @@ const AdminLoginPage: React.FC = () => {
         className="w-full max-w-md bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-700"
        >
         <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white"><span className="text-main-red">JA</span> Automóveis</h1>
+            <img src="/assets/logo.png" alt="JA Automóveis Logo" className="h-12 w-auto mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-300">Painel Administrativo</h2>
         </div>
         

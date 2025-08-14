@@ -35,8 +35,7 @@ const Header: React.FC = () => {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-main-red">JA</span>
-            <span className="text-2xl font-bold text-gray-800">Automóveis</span>
+            <img src="/assets/logo.png" alt="JA Automóveis Logo" className="h-20 w-auto" />
           </Link>
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (

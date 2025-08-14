@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa';
@@ -21,7 +22,9 @@ const Footer: React.FC = () => {
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <h3 className="text-xl font-bold mb-4"><span className="text-main-red">JA</span> Automóveis</h3>
+            <Link to="/" className="block mb-4">
+              <img src="/assets/logo.png" alt="JA Automóveis Logo" className="h-10 w-auto" />
+            </Link>
             <p className="text-gray-400">Seu próximo carro está aqui. Qualidade e confiança desde 2005.</p>
           </div>
           <div>

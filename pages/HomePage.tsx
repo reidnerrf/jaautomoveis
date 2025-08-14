@@ -25,7 +25,18 @@ const HomePage: React.FC = () => {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="relative h-[70vh] bg-cover bg-center text-white flex items-center justify-center" style={{ backgroundImage: "url('https://picsum.photos/seed/hero/1920/1080')" }}>
+      <section className="relative h-[75vh] text-white flex items-center justify-center overflow-hidden">
+        <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute z-0 w-auto min-w-full min-h-full max-w-none"
+            style={{ objectFit: 'cover'}}
+          >
+            <source src="/assets/homevideo.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
         <div className="absolute inset-0 bg-black/60"></div>
         <motion.div 
             className="relative z-10 text-center p-4"
@@ -52,7 +63,18 @@ const HomePage: React.FC = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Estoque em Destaque</h2>
           <p className="text-center text-gray-600 mb-10">Confira nossas novidades e ofertas especiais.</p>
-          <VehicleCarousel vehicles={vehicles.slice(0, 8)} />
+          <VehicleCarousel vehicles={vehicles.slice(0, 5)} />
+          <div className="text-center mt-12">
+            <Link to="/inventory">
+              <motion.button 
+                  className="bg-secondary-blue text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-comp-dark-blue transition-colors duration-300"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+              >
+                Veja nosso estoque completo
+              </motion.button>
+            </Link>
+          </div>
         </div>
       </section>
 

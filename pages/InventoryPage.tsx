@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useVehicleData } from '../hooks/useVehicleData.tsx';
 import VehicleCard from '../components/VehicleCard.tsx';
@@ -10,12 +9,13 @@ const InventoryPage: React.FC = () => {
   const [makeFilter, setMakeFilter] = useState('');
   const [yearFilter, setYearFilter] = useState('');
   const [priceFilter, setPriceFilter] = useState('');
+  const [sortBy, setSortBy] = useState('recent');
 
   const uniqueMakes = useMemo(() => [...new Set(vehicles.map(v => v.make))], [vehicles]);
   const uniqueYears = useMemo(() => [...new Set(vehicles.map(v => v.year))].sort((a, b) => b - a), [vehicles]);
 
-  const filteredVehicles = useMemo(() => {
-    return vehicles.filter(vehicle => {
+  const filteredAndSortedVehicles = useMemo(() => {
+    let tempVehicles = vehicles.filter(vehicle => {
       const passesMake = !makeFilter || vehicle.make === makeFilter;
       const passesYear = !yearFilter || vehicle.year === parseInt(yearFilter, 10);
       const passesPrice = !priceFilter || (
@@ -25,12 +25,27 @@ const InventoryPage: React.FC = () => {
       );
       return passesMake && passesYear && passesPrice;
     });
-  }, [vehicles, makeFilter, yearFilter, priceFilter]);
+
+    // Apply sorting
+    if (sortBy === 'price-asc') {
+      tempVehicles.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-desc') {
+      tempVehicles.sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'km-asc') {
+      tempVehicles.sort((a, b) => a.km - b.km);
+    } else if (sortBy === 'km-desc') {
+      tempVehicles.sort((a, b) => b.km - a.km);
+    }
+    // 'recent' is the default sort from the API, so no extra client-side sort is needed.
+
+    return tempVehicles;
+  }, [vehicles, makeFilter, yearFilter, priceFilter, sortBy]);
 
   const resetFilters = () => {
     setMakeFilter('');
     setYearFilter('');
     setPriceFilter('');
+    setSortBy('recent');
   };
 
   return (
@@ -46,28 +61,38 @@ const InventoryPage: React.FC = () => {
         </motion.div>
 
         {/* Filters */}
-        <div className="bg-comp-light-gray p-6 rounded-xl shadow-md mb-12 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-          <div className="md:col-span-1">
+        <div className="bg-comp-light-gray p-6 rounded-xl shadow-md mb-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+          <div>
             <label className="block text-sm font-medium text-gray-700">Marca</label>
             <select onChange={(e) => setMakeFilter(e.target.value)} value={makeFilter} className="mt-1 block w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-secondary-blue focus:border-secondary-blue">
               <option value="">Todas</option>
               {uniqueMakes.map(make => <option key={make} value={make}>{make}</option>)}
             </select>
           </div>
-          <div className="md:col-span-1">
+          <div>
             <label className="block text-sm font-medium text-gray-700">Ano</label>
             <select onChange={(e) => setYearFilter(e.target.value)} value={yearFilter} className="mt-1 block w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-secondary-blue focus:border-secondary-blue">
               <option value="">Todos</option>
               {uniqueYears.map(year => <option key={year} value={year}>{year}</option>)}
             </select>
           </div>
-          <div className="md:col-span-1">
+          <div>
             <label className="block text-sm font-medium text-gray-700">Preço</label>
             <select onChange={(e) => setPriceFilter(e.target.value)} value={priceFilter} className="mt-1 block w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-secondary-blue focus:border-secondary-blue">
               <option value="">Qualquer</option>
               <option value="50000">Abaixo de R$50.000</option>
               <option value="50000-100000">R$50.000 - R$100.000</option>
               <option value="100000">Acima de R$100.000</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Ordenar por</label>
+            <select onChange={(e) => setSortBy(e.target.value)} value={sortBy} className="mt-1 block w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-secondary-blue focus:border-secondary-blue">
+                <option value="recent">Mais Recentes</option>
+                <option value="price-asc">Menor Preço</option>
+                <option value="price-desc">Maior Preço</option>
+                <option value="km-asc">Menor KM</option>
+                <option value="km-desc">Maior KM</option>
             </select>
           </div>
           <button 
@@ -94,8 +119,8 @@ const InventoryPage: React.FC = () => {
               }
             }}
           >
-            {filteredVehicles.length > 0 ? (
-              filteredVehicles.map(vehicle => (
+            {filteredAndSortedVehicles.length > 0 ? (
+              filteredAndSortedVehicles.map(vehicle => (
                 <motion.div key={vehicle.id} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                   <VehicleCard vehicle={vehicle} />
                 </motion.div>

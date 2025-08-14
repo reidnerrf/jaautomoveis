@@ -4,7 +4,8 @@ import { useParams, Link } from 'react-router-dom';
 import { useVehicleData } from '../hooks/useVehicleData.tsx';
 import VehicleCarousel from '../components/VehicleCarousel.tsx';
 import { FaWhatsapp } from 'react-icons/fa';
-import { FiChevronLeft, FiChevronRight, FiTag, FiCalendar, FiTrello, FiSettings, FiDroplet, FiGitCommit, FiFolder } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiTag, FiCalendar, FiTrello, FiSettings, FiDroplet, FiGitCommit, FiFolder, FiX } from 'react-icons/fi';
+import { motion } from 'framer-motion';
 import { Vehicle } from '../types.ts';
 
 const VehicleDetailPage: React.FC = () => {
@@ -12,8 +13,10 @@ const VehicleDetailPage: React.FC = () => {
   const { getVehicleById, vehicles: allVehicles, loading } = useVehicleData();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (id) {
       const fetchVehicle = async () => {
         const fetchedVehicle = await getVehicleById(id);
@@ -24,6 +27,16 @@ const VehicleDetailPage: React.FC = () => {
       fetchVehicle();
     }
   }, [id, getVehicleById]);
+  
+  const openLightbox = () => {
+    if (vehicle && vehicle.images.length > 0) {
+      setIsLightboxOpen(true);
+    }
+  };
+
+  const closeLightbox = () => {
+    setIsLightboxOpen(false);
+  };
   
   if (loading && !vehicle) {
      return <div className="text-center py-16">Carregando...</div>;
@@ -58,10 +71,16 @@ const VehicleDetailPage: React.FC = () => {
     <div className="bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* Image Carousel */}
+          {/* Image Gallery */}
           <div className="lg:col-span-3">
              <div className="relative">
-                <img src={vehicle.images[currentImageIndex]} alt={`${vehicle.name} - ${currentImageIndex + 1}`} className="w-full rounded-lg shadow-xl object-cover h-96" />
+                <motion.img
+                    whileHover={{ scale: 1.02 }}
+                    src={vehicle.images[currentImageIndex]}
+                    alt={`${vehicle.name} - ${currentImageIndex + 1}`}
+                    className="w-full rounded-lg shadow-xl object-cover h-96 cursor-pointer hover:opacity-95 transition-opacity"
+                    onClick={openLightbox}
+                />
                 {vehicle.images.length > 1 && (
                     <>
                     <button onClick={prevImage} className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-colors">
@@ -73,13 +92,13 @@ const VehicleDetailPage: React.FC = () => {
                     </>
                 )}
             </div>
-            <div className="flex space-x-2 mt-4 overflow-x-auto">
+            <div className="flex space-x-2 mt-4 overflow-x-auto pb-2">
                 {vehicle.images.map((img, index) => (
                     <img
                         key={index}
                         src={img}
                         alt={`${vehicle.name} thumbnail ${index + 1}`}
-                        className={`w-24 h-20 object-cover rounded-md cursor-pointer border-2 ${index === currentImageIndex ? 'border-main-red' : 'border-transparent'}`}
+                        className={`w-24 h-20 object-cover rounded-md cursor-pointer border-2 flex-shrink-0 ${index === currentImageIndex ? 'border-main-red' : 'border-transparent'}`}
                         onClick={() => setCurrentImageIndex(index)}
                     />
                 ))}
@@ -135,6 +154,57 @@ const VehicleDetailPage: React.FC = () => {
           <VehicleCarousel vehicles={otherVehicles} />
         </div>
       </div>
+      
+      {/* Lightbox Modal */}
+      {isLightboxOpen && (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+            onClick={closeLightbox}
+        >
+            <button
+                onClick={closeLightbox}
+                className="absolute top-4 right-4 text-white hover:text-main-red transition-colors z-[60]"
+                aria-label="Fechar imagem"
+            >
+                <FiX size={40} />
+            </button>
+
+            <div className="relative w-full h-full flex items-center justify-center" onClick={e => e.stopPropagation()}>
+                {vehicle.images.length > 1 && (
+                    <button
+                        onClick={prevImage}
+                        className="absolute left-2 md:left-10 top-1/2 transform -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition-colors z-[60]"
+                        aria-label="Imagem anterior"
+                    >
+                        <FiChevronLeft size={32} />
+                    </button>
+                )}
+
+                <motion.img
+                    key={currentImageIndex}
+                    initial={{ opacity: 0.5, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.2 }}
+                    src={vehicle.images[currentImageIndex]}
+                    alt={`${vehicle.name} - ${currentImageIndex + 1}`}
+                    className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+                />
+
+                {vehicle.images.length > 1 && (
+                    <button
+                        onClick={nextImage}
+                        className="absolute right-2 md:right-10 top-1/2 transform -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition-colors z-[60]"
+                        aria-label="Próxima imagem"
+                    >
+                        <FiChevronRight size={32} />
+                    </button>
+                )}
+            </div>
+        </motion.div>
+      )}
     </div>
   );
 };
