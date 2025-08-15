@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
@@ -23,6 +22,7 @@ const SEED_VEHICLES: Omit<VehicleType, 'id'>[] = [
     additionalInfo: 'Veículo impecável, único dono, revisões em dia.',
     optionals: ['Ar Condicionado', 'Direção Hidráulica', 'Vidros Elétricos', 'Sistema Multimídia'],
     images: ['https://picsum.photos/seed/car1/800/600', 'https://picsum.photos/seed/car1-2/800/600', 'https://picsum.photos/seed/car1-3/800/600'],
+    views: 150,
   },
   {
     name: 'Hyundai HB20',
@@ -38,6 +38,7 @@ const SEED_VEHICLES: Omit<VehicleType, 'id'>[] = [
     additionalInfo: 'Ótimo estado, muito econômico.',
     optionals: ['Ar Condicionado', 'Direção Hidráulica', 'Alarme'],
     images: ['https://picsum.photos/seed/car2/800/600', 'https://picsum.photos/seed/car2-2/800/600'],
+    views: 250,
   },
   {
     name: 'Chevrolet Onix',
@@ -53,6 +54,7 @@ const SEED_VEHICLES: Omit<VehicleType, 'id'>[] = [
     additionalInfo: 'Modelo completo com motor turbo.',
     optionals: ['Ar Condicionado', 'Direção Hidráulica', 'Vidros Elétricos', 'Rodas de Liga Leve', 'OnStar'],
     images: ['https://picsum.photos/seed/car3/800/600', 'https://picsum.photos/seed/car3-2/800/600', 'https://picsum.photos/seed/car3-3/800/600'],
+    views: 220,
   },
    {
     name: 'Toyota Corolla',
@@ -68,6 +70,7 @@ const SEED_VEHICLES: Omit<VehicleType, 'id'>[] = [
     additionalInfo: 'Versão híbrida topo de linha, extremamente bem cuidado.',
     optionals: ['Bancos de Couro', 'Teto Solar', 'Piloto Automático Adaptativo', 'Assistente de Faixa'],
     images: ['https://picsum.photos/seed/car4/800/600', 'https://picsum.photos/seed/car4-2/800/600', 'https://picsum.photos/seed/car4-3/800/600'],
+    views: 350,
   },
    {
     name: 'Jeep Renegade',
@@ -83,6 +86,7 @@ const SEED_VEHICLES: Omit<VehicleType, 'id'>[] = [
     additionalInfo: 'Versão 4x4 Diesel, pronto para qualquer aventura.',
     optionals: ['Tração 4x4', 'Controle de Descida', 'Rack de Teto', 'Sistema Multimídia'],
     images: ['https://picsum.photos/seed/car5/800/600', 'https://picsum.photos/seed/car5-2/800/600'],
+    views: 400,
   },
    {
     name: 'Volkswagen Nivus',
@@ -98,6 +102,7 @@ const SEED_VEHICLES: Omit<VehicleType, 'id'>[] = [
     additionalInfo: 'Como novo, baixa quilometragem. Versão Highline.',
     optionals: ['Painel Digital', 'Piloto Automático Adaptativo', 'Faróis Full LED', 'VW Play'],
     images: ['https://picsum.photos/seed/car6/800/600', 'https://picsum.photos/seed/car6-2/800/600', 'https://picsum.photos/seed/car6-3/800/600'],
+    views: 180,
   }
 ];
 

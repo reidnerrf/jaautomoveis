@@ -1,234 +1,354 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useVehicleData } from "../hooks/useVehicleData.tsx";
+import VehicleCarousel from "../components/VehicleCarousel.tsx";
+import GoogleReviewsCarousel from "../components/GoogleReviewsCarousel.tsx";
+import GoogleReviewSummary from "../components/GoogleReviewSummary.tsx";
+import {
+  FaCar,
+  FaMoneyBillWave,
+  FaHandshake,
+  FaTags,
+  FaWhatsapp,
+} from "react-icons/fa";
+import TopButton from "../components/TopButton.tsx";
+import { GoogleReview } from "../types.ts";
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useVehicleData } from '../hooks/useVehicleData.tsx';
-import VehicleCarousel from '../components/VehicleCarousel.tsx';
-import GoogleReviewsCarousel from '../components/GoogleReviewsCarousel.tsx';
-import GoogleReviewSummary from '../components/GoogleReviewSummary.tsx';
-import { FaCar, FaMoneyBillWave, FaHandshake, FaTags } from 'react-icons/fa';
-import { GoogleReview } from '../types.ts';
-
-// Mock data for Google Reviews, updated with more realistic avatars.
+// Mock Google Reviews
 const googleReviews: GoogleReview[] = [
-    {
-        id: 'gr1',
-        reviewerName: 'Leonardo Brun',
-        comment: 'Muito bom.',
-        avatarUrl: 'https://lh3.googleusercontent.com/a-/ALV-UjVgFyCp7VifEFdD58IDmL6AEwGPhit7yro9so_tf10z9Z1Q_XnG=w45-h45-p-rp-mo-br100',
-        rating: 5,
-        timeAgo: '3 meses atrás',
-    },
-    {
-        id: 'gr2',
-        reviewerName: 'Lael Teixeira',
-        comment: 'Vendedor Victor é um destaque a parte muito educado e fiel nas vendas sempre arruma um desconto para carro avista',
-        avatarUrl: 'https://lh3.googleusercontent.com/a-/ALV-UjV1jmP4px3ZYNejnbp08ISsfFkdjLuMQLyKN7no7vGIW2JZy6s=w45-h45-p-rp-mo-ba4-br100',
-        rating: 5,
-        timeAgo: 'um ano atrás',
-    },
-    {
-        id: 'gr3',
-        reviewerName: 'Eliel Rocha',
-        comment: 'Recomendo !!! Excelente atendimento',
-        avatarUrl: 'https://lh3.googleusercontent.com/a-/ALV-UjUUMPXBjfFNzqCWPOFU9-UkvrnW5nVwsHHkWfDl-AMfBPTWAR374Q=w45-h45-p-rp-mo-ba3-br100',
-        rating: 5,
-        timeAgo: '3 anos atrás',
-    },
-    {
-        id: 'gr4',
-        reviewerName: 'Daniel Francisco',
-        comment: 'Gostei bom atendimento',
-        avatarUrl: 'https://lh3.googleusercontent.com/a/ACg8ocKrjVlDRdK82wzZOblEh0QlZC_LdIh450-0PTFhKt7yKH_pBw=w45-h45-p-rp-mo-br100',
-        rating: 5,
-        timeAgo: '4 anos atrás',
-    },
-    {
-        id: 'gr5',
-        reviewerName: 'Rosemere Marciano',
-        comment: 'Loja muito boa com ótimos preços e qualidade no atendimento.. recomendo.',
-        avatarUrl: 'https://lh3.googleusercontent.com/a-/ALV-UjXe5kWvbPzd50VSrtTQLES5iPnCT128S0kmYdb6ONgzcSCqrSyOyQ=w45-h45-p-rp-mo-br100',
-        rating: 5,
-        timeAgo: '5 anos atrás',
-    },
+  {
+    id: "gr1",
+    reviewerName: "Leonardo Brun",
+    comment: "Muito bom.",
+    avatarUrl:
+      "https://lh3.googleusercontent.com/a-/ALV-UjVgFyCp7VifEFdD58IDmL6AEwGPhit7yro9so_tf10z9Z1Q_XnG=w45-h45-p-rp-mo-br100",
+    rating: 5,
+    timeAgo: "3 meses atrás",
+  },
+  {
+    id: "gr2",
+    reviewerName: "Lael Teixeira",
+    comment:
+      "Vendedor Victor é um destaque a parte muito educado e fiel nas vendas sempre arruma um desconto para carro avista",
+    avatarUrl:
+      "https://lh3.googleusercontent.com/a-/ALV-UjV1jmP4px3ZYNejnbp08ISsfFkdjLuMQLyKN7no7vGIW2JZy6s=w45-h45-p-rp-mo-ba4-br100",
+    rating: 5,
+    timeAgo: "um ano atrás",
+  },
+  {
+    id: "gr3",
+    reviewerName: "Eliel Rocha",
+    comment: "Recomendo !!! Excelente atendimento",
+    avatarUrl:
+      "https://lh3.googleusercontent.com/a-/ALV-UjUUMPXBjfFNzqCWPOFU9-UkvrnW5nVwsHHkWfDl-AMfBPTWAR374Q=w45-h45-p-rp-mo-ba3-br100",
+    rating: 5,
+    timeAgo: "3 anos atrás",
+  },
+  {
+    id: "gr4",
+    reviewerName: "Daniel Francisco",
+    comment: "Gostei bom atendimento",
+    avatarUrl:
+      "https://lh3.googleusercontent.com/a/ACg8ocKrjVlDRdK82wzZOblEh0QlZC_LdIh450-0PTFhKt7yKH_pBw=w45-h45-p-rp-mo-br100",
+    rating: 5,
+    timeAgo: "4 anos atrás",
+  },
+  {
+    id: "gr5",
+    reviewerName: "Rosemere Marciano",
+    comment:
+      "Loja muito boa com ótimos preços e qualidade no atendimento.. recomendo.",
+    avatarUrl:
+      "https://lh3.googleusercontent.com/a-/ALV-UjXe5kWvbPzd50VSrtTQLES5iPnCT128S0kmYdb6ONgzcSCqrSyOyQ=w45-h45-p-rp-mo-br100",
+    rating: 5,
+    timeAgo: "5 anos atrás",
+  },
 ];
 
-
 const HomePage: React.FC = () => {
-    const { vehicles } = useVehicleData();
+  const { vehicles } = useVehicleData();
 
-    const services = [
-      { icon: <FaCar size={40} className="text-main-red" />, title: 'Venda', description: 'Os melhores veículos novos e seminovos do mercado.' },
-      { icon: <FaHandshake size={40} className="text-main-red" />, title: 'Compra', description: 'Compramos seu carro com avaliação justa e rápida.' },
-      { icon: <FaTags size={40} className="text-main-red" />, title: 'Troca', description: 'Use seu carro atual como entrada para um novo.' },
-      { icon: <FaMoneyBillWave size={40} className="text-main-red" />, title: 'Financiamento', description: 'As melhores taxas para você realizar seu sonho.' },
-    ];
+  const services = [
+    {
+      icon: <FaCar size={28} />,
+      title: "Venda",
+      description: "Os melhores veículos novos e seminovos do mercado.",
+    },
+    {
+      icon: <FaHandshake size={28} />,
+      title: "Compra",
+      description: "Compramos seu carro com avaliação justa e rápida.",
+    },
+    {
+      icon: <FaTags size={28} />,
+      title: "Troca",
+      description: "Use seu carro atual como entrada para um novo.",
+    },
+    {
+      icon: <FaMoneyBillWave size={28} />,
+      title: "Financiamento",
+      description: "As melhores taxas para você realizar seu sonho.",
+    },
+  ];
 
   return (
     <div className="w-full">
-      {/* Hero Section */}
-      <section className="relative h-[70vh] text-white flex items-center justify-center overflow-hidden">
+      {/* HERO */}
+      <section className="relative h-[80vh] text-white flex items-center justify-center overflow-hidden">
         <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute z-0 w-auto min-w-full min-h-full max-w-none"
-            style={{ objectFit: 'cover'}}
-          >
-            <source src="/assets/homevideo.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-        </video>
-        <div className="absolute inset-0 bg-black/60"></div>
-        <motion.div 
-            className="relative z-10 text-center p-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover"
         >
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">O Carro dos Seus Sonhos Espera por Você</h1>
-          <p className="mt-4 text-lg md:text-xl max-w-2xl mx-auto">Qualidade, confiança e os melhores negócios você encontra aqui na JA Automóveis.</p>
-          <Link to="/inventory">
-            <motion.button 
-                className="mt-8 bg-main-red text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-red-700 transition-colors duration-300"
+          <source src="/assets/homevideo.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 backdrop-blur-sm"></div>
+
+        <motion.div
+          className="relative z-10 text-center px-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 tracking-tight">
+            Seu Próximo Carro Está Aqui na{" "}
+            <span className="text-red-500">JA Automóveis</span>
+          </h1>
+          <p className="text-lg sm:text-xl text-gray-200 max-w-2xl mx-auto mb-8">
+            Ofertas exclusivas, financiamento facilitado e garantia de
+            procedência.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/inventory">
+              <motion.button
+                className="px-8 py-3 bg-red-600 hover:bg-red-700 rounded-full text-white font-semibold shadow-lg"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+              >
+                Ver Estoque
+              </motion.button>
+            </Link>
+            <a
+              href="https://api.whatsapp.com/send?phone=5524999037716&text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Ver Estoque
-            </motion.button>
-          </Link>
+              <motion.button
+                className="px-8 py-3 bg-green-600 hover:bg-green-700 rounded-full text-white font-semibold shadow-lg flex items-center gap-2"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <FaWhatsapp /> Fale no WhatsApp
+              </motion.button>
+            </a>
+          </div>
         </motion.div>
       </section>
 
-      {/* Featured Inventory */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Estoque em Destaque</h2>
-          <p className="text-center text-gray-600 mb-10">Confira nossas novidades e ofertas especiais.</p>
-          <VehicleCarousel vehicles={vehicles.slice(0, 5)} />
-          <div className="text-center mt-12">
+      {/* DESTAQUES */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <motion.h2
+            className="text-3xl font-bold text-center text-gray-800 mb-2"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            Destaques da Semana
+          </motion.h2>
+          <div className="h-1 w-20 bg-red-500 mx-auto rounded mb-8"></div>
+          {vehicles.length > 0 ? (
+            <VehicleCarousel vehicles={vehicles.slice(0, 5)} />
+          ) : (
+            <p className="text-center text-gray-500">Carregando veículos...</p>
+          )}
+          <div className="text-center mt-10">
             <Link to="/inventory">
-              <motion.button 
-                  className="bg-secondary-blue text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-comp-dark-blue transition-colors duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+              <motion.button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Veja nosso estoque completo
+                Ver Estoque Completo
               </motion.button>
             </Link>
-            <p className="mt-4 text-gray-600">
-              Acesse também nossas lojas em{' '}
-              <a 
-                href="https://www.olx.com.br/perfil/jaautomoveis35-55485ae0" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-main-red font-semibold hover:underline"
+          </div>
+          <div className="mt-4 text-center">
+            <p className="text-gray-600">
+              Acesse também nossas lojas em{" "}
+              <a
+                href="https://www.olx.com.br/perfil/jaautomoveis35-55485ae0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-main-red font-semibold hover:underline transition-colors duration-200"
               >
                 OLX
-              </a>{' '}
-              e{' '}
-              <a 
-                href="https://www.icarros.com.br/ache/estoque.jsp?id=2183242" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-main-red font-semibold hover:underline"
+              </a>{" "}
+              e{" "}
+              <a
+                href="https://www.icarros.com.br/ache/estoque.jsp?id=2183242"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-main-red font-semibold hover:underline transition-colors duration-200"
               >
                 iCarros
-              </a>.
+              </a>
+              .
             </p>
           </div>
         </div>
       </section>
 
-      {/* About Us Snippet */}
-      <section className="py-16 bg-comp-light-gray">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
-              <motion.div
-                  initial={{ opacity: 0, x: -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ duration: 0.7 }}
-              >
-                  <img src="https://picsum.photos/seed/dealership/800/600" alt="JA Automóveis Dealership" className="rounded-lg shadow-xl" />
-              </motion.div>
-              <motion.div
-                  initial={{ opacity: 0, x: 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ duration: 0.7 }}
-              >
-                  <h2 className="text-3xl font-bold text-gray-800 mb-4">Sobre a <span className="text-main-red">JA Automóveis</span></h2>
-                  <p className="text-gray-600 mb-4">A JA Automóveis é uma agência especializada na venda e troca de veículos novos, seminovos e usados, oferecendo variedade, qualidade e procedência garantida. Também trabalhamos com consórcios, proporcionando opções econômicas e planejadas para adquirir seu carro..</p>
-                  <p className="text-gray-600 mb-6">Nossos valores são a integridade, o foco no cliente e a paixão por carros. Somos dedicados a ajudar você a encontrar o veículo perfeito que atenda às suas necessidades e desejos.</p>
-                  <Link to="/about" className="text-main-red font-semibold hover:underline">Saiba mais sobre nossa história &rarr;</Link>
-              </motion.div>
-          </div>
-      </section>
-
-      {/* Services Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Nossos Serviços</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {services.map((service, index) => (
-                    <motion.div
-                        key={service.title}
-                        className="text-center p-6 bg-comp-light-gray rounded-lg shadow-md"
-                        initial={{ opacity: 0, y: 50 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.5 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                    >
-                        <div className="flex justify-center mb-4">{service.icon}</div>
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">{service.title}</h3>
-                        <p className="text-gray-600">{service.description}</p>
-                    </motion.div>
-                ))}
-            </div>
+      {/* SOBRE */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-8 max-w-6xl grid md:grid-cols-2 gap-12 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            <img
+              src="/assets/homepageabout.webp"
+              alt="JA Automóveis"
+              className="shadow-xl rounded-2xl hover:scale-105 transition duration-500 object-cover max-h-[450px] w-full"
+            />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+            className="pr-6"
+          >
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              Sobre a <span className="text-red-500">JA Automóveis</span>
+            </h2>
+            <p className="text-gray-600 mb-4">
+              Somos uma agência de veículos que oferece uma ampla gama de
+              serviços automotivos. Com a venda e troca de veículos novos,
+              seminovos e usados, além da venda de consórcios, nós nos
+              destacamos por proporcionar aos clientes a comodidade de encontrar
+              tudo em um só lugar.
+            </p>
+            <p className="text-gray-600 mb-6">
+              Com um atendimento de qualidade, transparência e veículos
+              devidamente inspecionados, a JA Automóveis busca oferecer a você
+              uma experiência satisfatória na busca pelo carro ideal.
+            </p>
+            <Link
+              to="/about"
+              className="text-red-500 font-semibold hover:underline"
+            >
+              Saiba mais &rarr;
+            </Link>
+          </motion.div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-       <section className="py-12 bg-comp-light-gray">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">O que Nossos Clientes Dizem</h2>
-          <p className="text-center text-gray-600 mb-6">Avaliações reais de clientes satisfeitos no Google.</p>
-          <div className="flex flex-col items-center gap-8">
-            <GoogleReviewsCarousel reviews={googleReviews} />
-            <GoogleReviewSummary 
-              rating={4.6} 
-              reviewCount={28} 
-              reviewsPageUrl="https://www.google.com/maps/place/JA+Autom%C3%B3veis/@-22.471337,-44.4675369,17z/data=!4m8!3m7!1s0x9e7f64ea81fb05:0xda764a546db009b0!8m2!3d-22.471342!4d-44.464962!9m1!1b1!16s%2Fg%2F11h_4scynm?entry=ttu"
+      {/* SERVIÇOS */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">
+            Nossos Serviços
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {services.map((service) => (
+              <motion.div
+                key={service.title}
+                className="text-center p-6 bg-gray-50 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="flex justify-center mb-4">
+                  <div className="p-4 rounded-full bg-gradient-to-tr from-red-500 to-red-400 text-white shadow-lg">
+                    {service.icon}
+                  </div>
+                </div>
+                <h3 className="text-lg font-bold mb-2">{service.title}</h3>
+                <p className="text-gray-600">{service.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* DEPOIMENTOS */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-2 text-gray-800">
+            O que dizem nossos clientes
+          </h2>
+          <p className="text-center text-gray-600 mb-6">
+            Avaliações reais do Google
+          </p>
+          <GoogleReviewsCarousel reviews={googleReviews} />
+          <div className="mt-8">
+            <GoogleReviewSummary
+              rating={4.6}
+              reviewCount={28}
+              reviewsPageUrl="https://www.google.com/maps/place/JA+Autom%C3%B3veis"
             />
           </div>
         </div>
       </section>
-      
-      {/* Location Section */}
-      <section className="py-16 bg-white">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Nossa Localização</h2>
-              <p className="text-center text-gray-600 mb-10">Venha nos visitar e tomar um café!</p>
-              <motion.div 
-                  className="w-full h-96 rounded-lg overflow-hidden shadow-2xl"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ duration: 0.7 }}
-              >
-                   <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.0969984913757!2d-44.46753692566539!3d-22.47133702206713!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9e7f64ea81fb05%3A0xda764a546db009b0!2sJA%20Autom%C3%B3veis!5e0!3m2!1sen!2sbr!4v1722368940567!5m2!1sen!2sbr"
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen={false}
-                      loading="lazy"
-                      title="Google Maps Location"
-                  ></iframe>
-              </motion.div>
-          </div>
+
+      {/* LOCALIZAÇÃO */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-4 text-gray-800">
+            Venha nos visitar
+          </h2>
+          <p className="text-center text-gray-600 mb-10">
+            Estamos prontos para te receber
+          </p>
+          <motion.div
+            className="w-full h-96 rounded-2xl overflow-hidden shadow-2xl"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7 }}
+          >
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.0969984913757!2d-44.46753692566539!3d-22.47133702206713!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9e7f64ea81fb05%3A0xda764a546db009b0!2sJA%20Autom%C3%B3veis!5e0!3m2!1sen!2sbr!4v1722368940567!5m2!1sen!2sbr"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              loading="lazy"
+              title="Localização JA Automóveis"
+            ></iframe>
+          </motion.div>
+        </div>
       </section>
 
+      {/* CONTATO */}
+      <section className="py-20 bg-gradient-to-r from-red-600 to-red-500 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">Entre em Contato</h2>
+          <p className="mb-6">
+            Estamos aqui para ajudar você a encontrar o carro perfeito!
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-6">
+            <a
+              href="https://api.whatsapp.com/send?phone=5524999037716"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-green-600 hover:bg-green-700 py-3 px-6 rounded-full font-bold flex items-center gap-2"
+            >
+              <FaWhatsapp /> WhatsApp
+            </a>
+            <Link
+              to="/contact"
+              className="bg-white text-red-600 hover:bg-gray-100 py-3 px-6 rounded-full font-bold"
+            >
+              Formulário de Contato
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <TopButton />
     </div>
   );
 };

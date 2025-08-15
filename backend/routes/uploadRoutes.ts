@@ -1,5 +1,4 @@
-
-import express, { Request, Response } from 'express';
+import express from 'express';
 import path from 'path';
 import multer from 'multer';
 import sharp from 'sharp';
@@ -10,28 +9,27 @@ const router = express.Router();
 // Use memory storage to process images with Sharp before saving to disk
 const storage = multer.memoryStorage();
 
-// Filter to allow only common image file types
-const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-    const filetypes = /jpe?g|png|webp/i;
-    const mimetype = filetypes.test(file.mimetype);
-    const extname = filetypes.test(path.extname(file.originalname));
-
-    if (mimetype && extname) {
-        return cb(null, true);
-    }
-    cb(new Error(`Error: Apenas são permitidos arquivos de imagem (jpeg, png, webp)!`));
-};
-
 const upload = multer({ 
     storage, 
-    fileFilter,
+    // Inlining the fileFilter allows TypeScript to correctly infer parameter types
+    // from Multer's options, avoiding type conflicts.
+    fileFilter: (req, file, cb) => {
+        const filetypes = /jpe?g|png|webp/i;
+        const mimetype = filetypes.test(file.mimetype);
+        const extname = filetypes.test(path.extname(file.originalname));
+
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+        cb(new Error(`Error: Apenas são permitidos arquivos de imagem (jpeg, png, webp)!`));
+    },
     limits: { fileSize: 10 * 1024 * 1024 } // 10MB file size limit
 });
 
 // @desc    Upload images, process them, and return their paths
 // @route   POST /api/upload
 // @access  Private/Admin
-router.post('/', protect, upload.array('images', 10), async (req: Request, res: Response) => {
+router.post('/', protect, upload.array('images', 10), async (req: express.Request, res: express.Response) => {
     if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
         return res.status(400).json({ message: 'Nenhuma imagem foi enviada' });
     }

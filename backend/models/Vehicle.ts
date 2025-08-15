@@ -16,6 +16,7 @@ const vehicleSchema = new mongoose.Schema<Omit<IVehicle, 'id'>>({
   additionalInfo: { type: String, default: '' },
   optionals: [{ type: String }],
   images: [{ type: String }],
+  views: { type: Number, default: 0 },
 }, { 
   id: false, // Disable the default virtual id
   timestamps: true,

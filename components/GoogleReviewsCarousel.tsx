@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { GoogleReview } from '../types.ts';
 import { FaStar, FaGoogle } from 'react-icons/fa';
@@ -16,53 +15,79 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
   }, [reviews.length]);
 
   useEffect(() => {
-    const slideInterval = setInterval(nextReview, 5000); // Change review every 5 seconds
+    const slideInterval = setInterval(nextReview, 6000);
     return () => clearInterval(slideInterval);
   }, [nextReview]);
 
-  if (!reviews || reviews.length === 0) {
-    return null;
-  }
-  
+  if (!reviews || reviews.length === 0) return null;
+
   const currentReview = reviews[currentIndex];
 
   return (
-    <div className="w-full max-w-3xl text-center">
+    <div className="w-full max-w-3xl mx-auto text-center">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.5 }}
-          className="relative bg-white p-8 rounded-lg shadow-lg flex flex-col items-center justify-center"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="relative bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center"
         >
-          <FaGoogle className="absolute top-4 right-4 text-gray-300" size={24} />
-          <img 
-            src={currentReview.avatarUrl} 
-            alt={currentReview.reviewerName} 
-            className="w-24 h-24 rounded-full mb-4 border-4 border-yellow-400"
-          />
-          <div className="flex text-yellow-400 mb-4">
-            {[...Array(5)].map((_, i) => <FaStar key={i} />)}
+          {/* Logo Google */}
+          <div className="absolute top-4 right-4 text-gray-300">
+            <FaGoogle size={26} />
           </div>
-          <p className="text-gray-600 italic text-lg mb-6">"{currentReview.comment}"</p>
-          <div className="text-center">
-             <h4 className="font-bold text-gray-800 text-xl">{currentReview.reviewerName}</h4>
-             <p className="text-sm text-gray-400 mt-1">{currentReview.timeAgo}</p>
+
+          {/* Avatar */}
+          <motion.img
+            src={currentReview.avatarUrl}
+            alt={currentReview.reviewerName}
+            className="w-24 h-24 rounded-full mb-4 border-4 border-yellow-400 shadow-md"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+          />
+
+          {/* Estrelas */}
+          <div className="flex text-yellow-400 mb-4">
+            {[...Array(5)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <FaStar />
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Comentário */}
+          <p className="text-gray-700 italic text-lg mb-6 leading-relaxed">
+            "{currentReview.comment}"
+          </p>
+
+          {/* Nome e tempo */}
+          <div>
+            <h4 className="font-semibold text-gray-900 text-xl">
+              {currentReview.reviewerName}
+            </h4>
+            <p className="text-sm text-gray-500 mt-1">{currentReview.timeAgo}</p>
           </div>
         </motion.div>
       </AnimatePresence>
-      
+
+      {/* Indicadores */}
       <div className="flex justify-center mt-6 space-x-2">
         {reviews.map((_, index) => (
-          <button
+          <motion.button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-3 h-3 rounded-full transition-colors ${
-              currentIndex === index ? 'bg-main-red' : 'bg-gray-300 hover:bg-gray-400'
+            className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+              currentIndex === index ? 'bg-red-500 scale-110' : 'bg-gray-300 hover:bg-gray-400'
             }`}
-            aria-label={`Go to review ${index + 1}`}
+            aria-label={`Ir para avaliação ${index + 1}`}
+            whileHover={{ scale: 1.2 }}
           />
         ))}
       </div>

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface AuthContextType {
@@ -22,7 +21,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     setLoading(false);
   }, []);
-  
+
   const isAuthenticated = !!token;
 
   const login = async (username: string, password: string): Promise<boolean> => {
@@ -30,26 +29,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        sessionStorage.setItem('authToken', data.token);
-        setToken(data.token);
-        setLoading(false);
-        return true;
-      } else {
-        setLoading(false);
-        return false;
+      const data = await response.json();
+
+      if (!response.ok) {
+        return false; // erro de login
       }
+
+      sessionStorage.setItem('authToken', data.token);
+      setToken(data.token);
+      return true; // sucesso
     } catch (error) {
-      console.error('Login failed:', error);
-      setLoading(false);
+      console.error('Erro no login:', error);
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,7 +64,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;

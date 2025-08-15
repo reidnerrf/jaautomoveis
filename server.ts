@@ -1,4 +1,3 @@
-
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -9,6 +8,7 @@ import connectDB from './backend/config/db';
 import vehicleRoutes from './backend/routes/vehicleRoutes';
 import authRoutes from './backend/routes/authRoutes';
 import uploadRoutes from './backend/routes/uploadRoutes';
+import analyticsRoutes from './backend/routes/analyticsRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -17,7 +17,18 @@ dotenv.config();
 connectDB();
 
 const app = express();
-const root = path.resolve();
+
+// Robustly determine the project root directory. This is crucial because when
+// running the compiled server.js from the 'dist' folder, __dirname will be
+// inside 'dist', but our static assets and TSX files are in the parent folder.
+let root: string;
+if (__dirname.includes('dist')) {
+  // Production environment: running from 'dist', so we go one level up.
+  root = path.resolve(__dirname, '..');
+} else {
+  // Development environment: server.ts is at the root.
+  root = path.resolve();
+}
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(root, 'uploads');
@@ -32,6 +43,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // 2. On-the-fly TSX/TS Transpilation
 // This middleware intercepts requests for .tsx/.ts files, transpiles them to

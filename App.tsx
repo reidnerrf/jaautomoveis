@@ -11,12 +11,15 @@ import FinancingPage from './pages/FinancingPage.tsx';
 import ConsortiumPage from './pages/ConsortiumPage.tsx';
 import AboutPage from './pages/AboutPage.tsx';
 import ContactPage from './pages/ContactPage.tsx';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx';
+import TermsOfServicePage from './pages/TermsOfServicePage.tsx';
 import AdminLoginPage from './pages/AdminLoginPage.tsx';
 import AdminDashboardPage from './pages/AdminDashboardPage.tsx';
 import AdminVehicleListPage from './pages/AdminVehicleListPage.tsx';
 import AdminVehicleFormPage from './pages/AdminVehicleFormPage.tsx';
 import MainLayout from './components/MainLayout.tsx';
 import PrivateRoute from './components/PrivateRoute.tsx';
+import AdminLayout from './components/AdminLayout.tsx';
 
 const App: React.FC = () => {
   return (
@@ -33,15 +36,19 @@ const App: React.FC = () => {
               <Route path="consortium" element={<ConsortiumPage />} />
               <Route path="about" element={<AboutPage />} />
               <Route path="contact" element={<ContactPage />} />
+              <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="terms-of-service" element={<TermsOfServicePage />} />
             </Route>
 
             {/* Admin routes */}
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route element={<PrivateRoute />}>
-              <Route path="/admin" element={<AdminDashboardPage />} />
-              <Route path="/admin/vehicles" element={<AdminVehicleListPage />} />
-              <Route path="/admin/vehicles/new" element={<AdminVehicleFormPage />} />
-              <Route path="/admin/vehicles/edit/:id" element={<AdminVehicleFormPage />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboardPage />} />
+                <Route path="vehicles" element={<AdminVehicleListPage />} />
+                <Route path="vehicles/new" element={<AdminVehicleFormPage />} />
+                <Route path="vehicles/edit/:id" element={<AdminVehicleFormPage />} />
+              </Route>
             </Route>
           </Routes>
         </HashRouter>

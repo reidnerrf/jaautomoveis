@@ -1,6 +1,6 @@
-
-import { Request, Response } from 'express';
+import express from 'express';
 import Vehicle from '../models/Vehicle';
+import ViewLog from '../models/ViewLog';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -28,7 +28,7 @@ const deleteImageFiles = async (imagePaths: string[]) => {
 // @desc    Fetch all vehicles
 // @route   GET /api/vehicles
 // @access  Public
-export const getVehicles = async (req: Request, res: Response) => {
+export const getVehicles = async (req: express.Request, res: express.Response) => {
   try {
     const vehicles = await Vehicle.find({}).sort({ createdAt: -1 });
     res.json(vehicles);
@@ -40,7 +40,7 @@ export const getVehicles = async (req: Request, res: Response) => {
 // @desc    Fetch single vehicle
 // @route   GET /api/vehicles/:id
 // @access  Public
-export const getVehicleById = async (req: Request, res: Response) => {
+export const getVehicleById = async (req: express.Request, res: express.Response) => {
   try {
     const vehicle = await Vehicle.findById(req.params.id);
     if (vehicle) {
@@ -56,7 +56,7 @@ export const getVehicleById = async (req: Request, res: Response) => {
 // @desc    Create a vehicle
 // @route   POST /api/vehicles
 // @access  Private/Admin
-export const createVehicle = async (req: Request, res: Response) => {
+export const createVehicle = async (req: express.Request, res: express.Response) => {
   try {
     const vehicle = new Vehicle(req.body);
     const createdVehicle = await vehicle.save();
@@ -69,7 +69,7 @@ export const createVehicle = async (req: Request, res: Response) => {
 // @desc    Update a vehicle
 // @route   PUT /api/vehicles/:id
 // @access  Private/Admin
-export const updateVehicle = async (req: Request, res: Response) => {
+export const updateVehicle = async (req: express.Request, res: express.Response) => {
   try {
     const vehicle = await Vehicle.findById(req.params.id);
 
@@ -94,7 +94,7 @@ export const updateVehicle = async (req: Request, res: Response) => {
 // @desc    Delete a vehicle
 // @route   DELETE /api/vehicles/:id
 // @access  Private/Admin
-export const deleteVehicle = async (req: Request, res: Response) => {
+export const deleteVehicle = async (req: express.Request, res: express.Response) => {
   try {
     const vehicle = await Vehicle.findById(req.params.id);
 
@@ -108,6 +108,33 @@ export const deleteVehicle = async (req: Request, res: Response) => {
       res.status(404).json({ message: 'Vehicle not found' });
     }
   } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Increment vehicle view count and log the view
+// @route   POST /api/vehicles/:id/view
+// @access  Public
+export const incrementVehicleView = async (req: express.Request, res: express.Response) => {
+  try {
+    const vehicle = await Vehicle.findById(req.params.id);
+    if (vehicle) {
+      // Increment total views on the vehicle document
+      vehicle.views = (vehicle.views || 0) + 1;
+      
+      // Concurrently save the vehicle update and create a new timestamped view log
+      await Promise.all([
+        vehicle.save(),
+        ViewLog.create({ vehicle: vehicle._id })
+      ]);
+
+      res.status(200).json({ message: 'View count updated', views: vehicle.views });
+    } else {
+      res.status(404).json({ message: 'Vehicle not found' });
+    }
+  } catch (error) {
+    // This action is not critical, so we can fail silently on the server
+    // to avoid unnecessary error noise if something goes wrong.
     res.status(500).json({ message: 'Server Error' });
   }
 };

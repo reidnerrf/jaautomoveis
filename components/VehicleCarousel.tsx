@@ -1,70 +1,96 @@
-
 import React, { useState, useEffect } from 'react';
 import { Vehicle } from '../types.ts';
 import VehicleCard from './VehicleCard.tsx';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface VehicleCarouselProps {
   vehicles: Vehicle[];
 }
 
 const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-    const getVisibleSlides = () => {
-        if (window.innerWidth >= 1280) return 4;
-        if (window.innerWidth >= 1024) return 3;
-        if (window.innerWidth >= 768) return 2;
-        return 1;
-    };
-    
-    const [visibleSlides, setVisibleSlides] = useState(getVisibleSlides());
+  const getVisibleSlides = () => {
+    if (window.innerWidth >= 1280) return 4;
+    if (window.innerWidth >= 1024) return 3;
+    if (window.innerWidth >= 768) return 2;
+    return 1;
+  };
 
-    useEffect(() => {
-        const handleResize = () => setVisibleSlides(getVisibleSlides());
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+  const [visibleSlides, setVisibleSlides] = useState(getVisibleSlides());
 
-    const prevSlide = () => {
-        setCurrentIndex(prev => (prev === 0 ? Math.max(0, vehicles.length - visibleSlides) : prev - 1));
-    };
+  useEffect(() => {
+    const handleResize = () => setVisibleSlides(getVisibleSlides());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-    const nextSlide = () => {
-        setCurrentIndex(prev => (prev >= vehicles.length - visibleSlides ? 0 : prev + 1));
-    };
+  const prevSlide = () => {
+    setCurrentIndex(prev => (prev === 0 ? Math.max(0, vehicles.length - visibleSlides) : prev - 1));
+  };
 
-    if (!vehicles.length) {
-        return <div className="text-center p-8">Nenhum veículo para exibir.</div>;
-    }
+  const nextSlide = () => {
+    setCurrentIndex(prev => (prev >= vehicles.length - visibleSlides ? 0 : prev + 1));
+  };
 
-    return (
-        <div className="relative w-full">
-            <div className="overflow-hidden">
-                <div
-                    className="flex transition-transform duration-500 ease-in-out"
-                    style={{ transform: `translateX(-${currentIndex * (100 / visibleSlides)}%)` }}
-                >
-                    {vehicles.map(vehicle => (
-                        <div key={vehicle.id} className="p-2" style={{ flex: `0 0 ${100 / visibleSlides}%` }}>
-                           <VehicleCard vehicle={vehicle} />
-                        </div>
-                    ))}
-                </div>
+  if (!vehicles.length) {
+    return <div className="text-center p-8">Nenhum veículo para exibir.</div>;
+  }
+
+  return (
+    <div className="relative w-full">
+      {/* Lista de veículos */}
+      <div className="overflow-hidden">
+        <motion.div
+          className="flex"
+          animate={{ x: `-${currentIndex * (100 / visibleSlides)}%` }}
+          transition={{ type: "spring", stiffness: 80, damping: 20 }}
+        >
+          {vehicles.map(vehicle => (
+            <div key={vehicle.id} className="p-2" style={{ flex: `0 0 ${100 / visibleSlides}%` }}>
+              <VehicleCard vehicle={vehicle} />
             </div>
+          ))}
+        </motion.div>
+      </div>
 
-            {vehicles.length > visibleSlides && (
-                <>
-                    <button onClick={prevSlide} className="absolute top-1/2 left-0 md:-left-4 transform -translate-y-1/2 bg-white/50 hover:bg-white rounded-full p-2 shadow-md z-10">
-                        <FiChevronLeft size={28} className="text-gray-800"/>
-                    </button>
-                    <button onClick={nextSlide} className="absolute top-1/2 right-0 md:-right-4 transform -translate-y-1/2 bg-white/50 hover:bg-white rounded-full p-2 shadow-md z-10">
-                        <FiChevronRight size={28} className="text-gray-800"/>
-                    </button>
-                </>
-            )}
-        </div>
-    );
+      {/* Botões de navegação */}
+      {vehicles.length > visibleSlides && (
+        <>
+          <button
+            onClick={prevSlide}
+            className="absolute top-1/2 left-2 md:-left-4 transform -translate-y-1/2 
+                       bg-white/30 backdrop-blur-md hover:bg-white/50 
+                       rounded-full p-2 shadow-lg transition-all duration-300"
+          >
+            <FiChevronLeft size={28} className="text-gray-800" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute top-1/2 right-2 md:-right-4 transform -translate-y-1/2 
+                       bg-white/30 backdrop-blur-md hover:bg-white/50 
+                       rounded-full p-2 shadow-lg transition-all duration-300"
+          >
+            <FiChevronRight size={28} className="text-gray-800" />
+          </button>
+        </>
+      )}
+
+      {/* Indicadores */}
+      <div className="flex justify-center mt-4 space-x-2">
+        {Array.from({ length: vehicles.length - visibleSlides + 1 }, (_, i) => (
+          <motion.div
+            key={i}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              i === currentIndex ? 'bg-main-red scale-110' : 'bg-gray-300'
+            }`}
+            animate={{ scale: i === currentIndex ? 1.2 : 1 }}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default VehicleCarousel;

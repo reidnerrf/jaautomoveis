@@ -13,6 +13,8 @@ export interface Vehicle {
   additionalInfo: string;
   optionals: string[];
   images: string[];
+  views: number;
+  createdAt?: string;
 }
 
 export interface GoogleReview {

@@ -1,6 +1,5 @@
-
+import express from 'express';
 import jwt from 'jsonwebtoken';
-import { Request, Response } from 'express';
 import User from '../models/User';
 
 const generateToken = (id: string) => {
@@ -9,7 +8,7 @@ const generateToken = (id: string) => {
   });
 };
 
-export const loginUser = async (req: Request, res: Response) => {
+export const loginUser = async (req: express.Request, res: express.Response) => {
   const { username, password } = req.body;
   console.log(`[AUTH] Login attempt for user: "${username}"`);
 
