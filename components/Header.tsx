@@ -22,17 +22,19 @@ const Header: React.FC = () => {
     : baseNavLinks;
 
   const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `relative block py-2 px-3 rounded-md transition-all duration-300 
-    ${isActive ? 'text-main-red font-semibold' : 'text-gray-700 hover:text-main-red'}
-    after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px]
-    after:bg-main-red after:w-0 hover:after:w-full after:transition-all after:duration-300`;
+    `relative block py-3 px-4 rounded-lg transition-all duration-300 font-medium
+    ${isActive 
+      ? 'text-white bg-main-red shadow-lg' 
+      : 'text-gray-700 hover:text-main-red hover:bg-gray-50'
+    }
+    focus:outline-none focus:ring-2 focus:ring-main-red focus:ring-offset-2`;
 
   return (
-    <header className="bg-white/70 backdrop-blur-md shadow-md sticky top-0 z-50">
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-gray-100">
+      <nav className="container mx-auto px-4 sm:px-6 lg:px-8" role="navigation" aria-label="Navegação principal">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center group">
+          <Link to="/" className="flex items-center group" aria-label="Ir para página inicial">
             <motion.img
               src="/assets/logo.png"
               alt="JA Automóveis Logo"
@@ -42,13 +44,14 @@ const Header: React.FC = () => {
           </Link>
 
           {/* Menu Desktop */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-2">
             {navLinks.map((link) => (
               <NavLink
                 key={link.name}
                 to={link.path}
                 end={link.path === '/'}
                 className={getNavLinkClass}
+                aria-current={link.path === '/' ? 'page' : undefined}
               >
                 {link.name}
               </NavLink>
@@ -59,7 +62,10 @@ const Header: React.FC = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-main-red focus:outline-none"
+              className="text-gray-700 hover:text-main-red focus:outline-none focus:ring-2 focus:ring-main-red focus:ring-offset-2 p-2 rounded-lg"
+              aria-label={isOpen ? 'Fechar menu' : 'Abrir menu'}
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
             >
               {isOpen ? <FiX size={26} /> : <FiMenu size={26} />}
             </button>
@@ -71,12 +77,14 @@ const Header: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0, y: -15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            className="md:hidden bg-white shadow-lg border-t border-gray-200"
+            className="md:hidden bg-white shadow-xl border-t border-gray-200"
+            role="menu"
           >
-            <div className="px-4 pt-4 pb-6 space-y-3">
+            <div className="px-4 pt-4 pb-6 space-y-2">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.name}
@@ -84,6 +92,7 @@ const Header: React.FC = () => {
                   end={link.path === '/'}
                   className={getNavLinkClass}
                   onClick={() => setIsOpen(false)}
+                  role="menuitem"
                 >
                   {link.name}
                 </NavLink>
