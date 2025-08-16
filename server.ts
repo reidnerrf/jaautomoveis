@@ -24,6 +24,9 @@ import { body, validationResult } from 'express-validator';
 // Load environment variables
 dotenv.config();
 
+// Define PORT variable
+const PORT = process.env.PORT || 5000;
+
 // Connect to MongoDB
 connectDB();
 
