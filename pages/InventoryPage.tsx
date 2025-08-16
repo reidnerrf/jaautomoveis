@@ -5,7 +5,6 @@ import VehicleCard from '../components/VehicleCard.tsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiFilter, FiX, FiSearch, FiGrid, FiList, FiChevronDown, FiMapPin, FiClock, FiTag, FiTrendingUp } from 'react-icons/fi';
 import { FaCarSide, FaGasPump, FaCog, FaCalendarAlt } from 'react-icons/fa';
-import TopButton from '../components/TopButton.tsx';
 
 const InventoryPage: React.FC = () => {
   const { vehicles, loading } = useVehicleData();
@@ -135,7 +134,7 @@ const InventoryPage: React.FC = () => {
           className="mb-8 flex flex-col lg:flex-row gap-4 items-center justify-between"
         >
           {/* Search Bar */}
-                     <div className="relative flex-1 max-w-md">
+           <div className="relative flex-1 max-w-md">
              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
              <input
                type="text"
@@ -302,8 +301,8 @@ const InventoryPage: React.FC = () => {
                       className="w-full p-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-4 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all duration-300"
                     >
                       <option value="">Todas</option>
-                      {uniqueTransmissions.map(transmission => (
-                        <option key={transmission} value={transmission}>{transmission}</option>
+                      {uniqueTransmissions.map(tr => (
+                        <option key={tr} value={tr}>{tr}</option>
                       ))}
                     </select>
                   </div>

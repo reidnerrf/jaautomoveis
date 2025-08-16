@@ -1,18 +1,17 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FiFileText, FiLink, FiShield, FiAlertTriangle, FiCheckCircle } from "react-icons/fi";
-import TopButton from "../components/TopButton.tsx";
 
 const TermsOfServicePage: React.FC = () => {
-  const sectionClasses = "bg-gray-50 rounded-2xl shadow-sm p-6 mb-6 border border-gray-100";
-  const headingClasses = "flex items-center gap-2 text-2xl font-semibold text-gray-800 mb-4";
-  const textClasses = "text-gray-700 leading-relaxed";
+  const sectionClasses = "bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-sm p-6 mb-6 border border-gray-100 dark:border-gray-700";
+  const headingClasses = "flex items-center gap-2 text-2xl font-semibold text-gray-800 dark:text-white mb-4";
+  const textClasses = "text-gray-700 dark:text-gray-300 leading-relaxed";
 
   return (
-    <div className="bg-white py-16">
+    <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-10 border-b-4 border-blue-500 pb-4">
+          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-10 border-b-4 border-blue-500 pb-4">
             Termos de Serviço
           </h1>
 
@@ -34,7 +33,7 @@ const TermsOfServicePage: React.FC = () => {
             <p className={textClasses}>
               É concedida permissão para baixar temporariamente uma cópia dos materiais (informações ou software) no site JA Automóveis...
             </p>
-            <ul className="list-disc pl-6 space-y-2 text-gray-700 mt-3">
+            <ul className="list-disc pl-6 space-y-2 text-gray-700 dark:text-gray-300 mt-3">
               <li>Modificar ou copiar os materiais</li>
               <li>Usar para fins comerciais sem permissão</li>
               <li>Engenharia reversa do software</li>
@@ -85,18 +84,17 @@ const TermsOfServicePage: React.FC = () => {
 
           {/* Final */}
           <div className={sectionClasses}>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Modificações</h3>
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Modificações</h3>
             <p className={textClasses}>
               O JA Automóveis pode revisar estes termos de serviço a qualquer momento, sem aviso prévio...
             </p>
-            <h3 className="text-xl font-bold text-gray-800 mt-6 mb-2">Lei aplicável</h3>
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white mt-6 mb-2">Lei aplicável</h3>
             <p className={textClasses}>
               Estes termos e condições são regidos pelas leis aplicáveis...
             </p>
           </div>
         </motion.div>
       </div>
-      <TopButton />
     </div>
   );
 };

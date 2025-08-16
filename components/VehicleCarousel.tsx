@@ -37,7 +37,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
   // Memoize the carousel items to prevent unnecessary re-renders
   const carouselItems = useMemo(() => 
     vehicles.map(vehicle => (
-      <div key={vehicle.id} className="p-2" style={{ flex: `0 0 ${100 / visibleSlides}%` }}>
+      <div key={vehicle.id} className="p-2 box-border" style={{ flex: `0 0 ${100 / visibleSlides}%` }}>
         <VehicleCard vehicle={vehicle} />
       </div>
     )), [vehicles, visibleSlides]

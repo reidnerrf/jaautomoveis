@@ -1,23 +1,22 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FiLock, FiInfo, FiShield, FiChevronRight } from "react-icons/fi";
-import TopButton from "../components/TopButton.tsx";
 
 const PrivacyPolicyPage: React.FC = () => {
-  const textStyles = "mb-4 text-gray-700 leading-relaxed";
+  const textStyles = "mb-4 text-gray-700 dark:text-gray-300 leading-relaxed";
   const headingStyles =
-    "flex items-center gap-2 text-2xl font-bold text-blue-800 mt-10 mb-4 border-l-4 border-blue-500 pl-3";
+    "flex items-center gap-2 text-2xl font-bold text-blue-800 dark:text-blue-300 mt-10 mb-4 border-l-4 border-blue-500 pl-3";
 
   return (
-    <div className="bg-gradient-to-b from-white via-gray-50 to-white py-16">
+    <div className="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100"
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-gray-700"
         >
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-8 pb-4 flex items-center gap-3 border-b border-gray-200">
+          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-8 pb-4 flex items-center gap-3 border-b border-gray-200 dark:border-gray-700">
             <FiLock className="text-blue-600" /> Política de Privacidade
           </h1>
 
@@ -78,7 +77,7 @@ const PrivacyPolicyPage: React.FC = () => {
           <h2 className={headingStyles}>
             <FiShield /> Compromisso do Usuário
           </h2>
-          <ul className="list-none space-y-3 text-gray-700">
+          <ul className="list-none space-y-3 text-gray-700 dark:text-gray-300">
             <li className="flex items-center gap-2">
               <FiChevronRight className="text-blue-500" /> Não realizar
               atividades ilegais ou contrárias à boa fé e à ordem pública.
@@ -103,13 +102,11 @@ const PrivacyPolicyPage: React.FC = () => {
             experiência no site.
           </p>
 
-          <p className="text-sm text-gray-500 mt-8">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-8">
             Esta política é efetiva a partir de 14 de agosto de 2025.
           </p>
         </motion.div>
       </div>
-
-      <TopButton />
     </div>
   );
 };

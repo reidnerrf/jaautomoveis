@@ -1,11 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiMapPin, FiPhone, FiMail } from 'react-icons/fi';
-import TopButton from '../components/TopButton.tsx';
 
 const ContactPage: React.FC = () => {
     return (
-        <div className="bg-gradient-to-b from-gray-100 to-white py-16">
+        <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 
                 {/* Título e subtítulo */}
@@ -15,16 +14,16 @@ const ContactPage: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="text-center"
                 >
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white">
                         Fale Conosco
                     </h1>
-                    <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+                    <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                         Estamos prontos para te atender. Envie-nos uma mensagem ou faça-nos uma visita.
                     </p>
                 </motion.div>
 
                 {/* Conteúdo */}
-                <div className="mt-16 bg-white p-8 rounded-2xl shadow-xl grid md:grid-cols-2 gap-12">
+                <div className="mt-16 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl grid md:grid-cols-2 gap-12">
                     
                     {/* Formulário */}
                     <motion.div
@@ -33,7 +32,7 @@ const ContactPage: React.FC = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 0.7 }}
                     >
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
                             Envie uma Mensagem
                         </h2>
                         <form className="space-y-5">
@@ -42,21 +41,21 @@ const ContactPage: React.FC = () => {
                                 { id: "email", label: "Email", type: "email" }
                             ].map(({ id, label, type }) => (
                                 <div key={id}>
-                                    <label htmlFor={id} className="font-medium text-gray-700">{label}</label>
+                                    <label htmlFor={id} className="font-medium text-gray-700 dark:text-gray-300">{label}</label>
                                     <input
                                         type={type}
                                         id={id}
-                                        className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-main-red shadow-sm transition-all duration-300"
+                                        className="w-full mt-1 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-main-red shadow-sm transition-all duration-300 dark:bg-gray-700 dark:text-white"
                                     />
                                 </div>
                             ))}
 
                             <div>
-                                <label htmlFor="message" className="font-medium text-gray-700">Mensagem</label>
+                                <label htmlFor="message" className="font-medium text-gray-700 dark:text-gray-300">Mensagem</label>
                                 <textarea
                                     id="message"
                                     rows={5}
-                                    className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-main-red shadow-sm transition-all duration-300"
+                                    className="w-full mt-1 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-main-red shadow-sm transition-all duration-300 dark:bg-gray-700 dark:text-white"
                                 ></textarea>
                             </div>
                             
@@ -78,8 +77,8 @@ const ContactPage: React.FC = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 0.7 }}
                     >
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6">Nossas Informações</h2>
-                        <div className="space-y-4 text-gray-600">
+                        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Nossas Informações</h2>
+                        <div className="space-y-4 text-gray-600 dark:text-gray-300">
                             {[
                                 { icon: FiMapPin, text: "Av. Brasília, n°35 - Vila Julieta, Resende - RJ, 27521-060" },
                                 { icon: FiPhone, text: "(24) 99903-7716" },
@@ -91,9 +90,9 @@ const ContactPage: React.FC = () => {
                                 </p>
                             ))}
                         </div>
-                        <div className="mt-8 h-80 rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                        <div className="mt-8 h-80 rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.0969984913757!2d-44.46753692566539!3d-22.47133702206713!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9e7f64ea81fb05%3A0xda764a546db009b0!2sJA%20Autom%C3%B3veis!5e0!3m2!1sen!2sbr!4v1722368940567!5m2!1sen!2sbr"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.0969984913757!2d-44.46753692566539!3d-22.47133702206713!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9e7f64ea81fb05%3A0xda764a546db009b0!2sJA%20Autom%C3%B5veis!5e0!3m2!1sen!2sbr!4v1722368940567!5m2!1sen!2sbr"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}
@@ -105,7 +104,6 @@ const ContactPage: React.FC = () => {
                     </motion.div>
                 </div>
             </div>
-            <TopButton />
         </div>
     );
 };
