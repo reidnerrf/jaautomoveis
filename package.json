@@ -25,6 +25,7 @@
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
     "@types/geoip-lite": "^1.4.4",
+    "@types/hpp": "^0.2.6",
     "@types/react-helmet": "^6.1.11",
     "@types/react-router-dom": "^5.3.3",
     "@types/ua-parser-js": "^0.7.39",

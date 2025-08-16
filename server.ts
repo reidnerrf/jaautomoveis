@@ -25,7 +25,7 @@ import { body, validationResult } from 'express-validator';
 dotenv.config();
 
 // Define PORT variable
-const PORT = process.env.PORT || 5000;
+const PORT = parseInt(process.env.PORT || '5000', 10);
 
 // Connect to MongoDB
 connectDB();
@@ -186,7 +186,8 @@ io.on('connection', (socket) => {
 
   socket.on('page-view', async (data) => {
     const { page, userAgent } = data;
-    const parser = new UAParser(userAgent);
+    const parser = new UAParser();
+    const result = parser.setUA(Array.isArray(userAgent) ? userAgent[0] : userAgent).getResult();
     const clientIP = socket.handshake.headers['x-forwarded-for'] || (socket.handshake.address as string);
     const geo = geoip.lookup(clientIP);
 
@@ -198,7 +199,7 @@ io.on('connection', (socket) => {
     activeUsers.set(socket.id, {
       page,
       joinTime: Date.now(),
-      device: parser.getResult()
+      device: result.device
     });
 
     io.emit('page-viewers', {
@@ -213,12 +214,12 @@ io.on('connection', (socket) => {
         category: 'navigation',
         action: 'view',
         page,
-        userAgent,
+        userAgent: Array.isArray(userAgent) ? userAgent[0] : userAgent,
         device: {
-          type: parser.getDevice().type || 'desktop',
-          browser: parser.getBrowser().name || 'unknown',
-          os: parser.getOS().name || 'unknown',
-          isMobile: parser.getDevice().type === 'mobile'
+          type: result.device.type || 'desktop',
+          browser: result.browser.name || 'unknown',
+          os: result.os.name || 'unknown',
+          isMobile: result.device.type === 'mobile'
         },
         location: {
           country: geo?.country || 'unknown',
@@ -237,7 +238,8 @@ io.on('connection', (socket) => {
     const { action, category, label, page } = data;
     const userAgent = socket.handshake.headers['user-agent'];
     const clientIP = socket.handshake.headers['x-forwarded-for'] || (socket.handshake.address as string);
-    const parser = new UAParser(userAgent);
+    const parser = new UAParser();
+    const result = parser.setUA(Array.isArray(userAgent) ? userAgent[0] : userAgent).getResult();
     const geo = geoip.lookup(clientIP);
 
     try {
@@ -248,12 +250,12 @@ io.on('connection', (socket) => {
         action,
         label,
         page,
-        userAgent: userAgent || 'unknown',
+        userAgent: Array.isArray(userAgent) ? userAgent[0] : userAgent,
         device: {
-          type: parser.getDevice().type || 'desktop',
-          browser: parser.getBrowser().name || 'unknown',
-          os: parser.getOS().name || 'unknown',
-          isMobile: parser.getDevice().type === 'mobile'
+          type: result.device.type || 'desktop',
+          browser: result.browser.name || 'unknown',
+          os: result.os.name || 'unknown',
+          isMobile: result.device.type === 'mobile'
         },
         location: {
           country: geo?.country || 'unknown',
