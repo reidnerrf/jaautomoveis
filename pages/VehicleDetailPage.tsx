@@ -276,15 +276,7 @@ const VehicleDetailPage: React.FC = () => {
       <RealTimeViewers page={`/vehicle/${id}`} vehicleId={id} />
       <TopButton />
 
-      {/* Botão fixo WhatsApp no mobile */}
-      <a
-        href={`https://wa.me/5524999037716?text=${encodeURIComponent(`Olá, tenho interesse no ${vehicle.name} ${vehicle.year} ${vehicle.color}`)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-4 right-4 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg lg:hidden transition"
-      >
-        <FaWhatsapp size={28} />
-      </a>
+      {/* Floating WhatsApp removed: using global FloatingSocialButtons */}
     </div>
   );
 };

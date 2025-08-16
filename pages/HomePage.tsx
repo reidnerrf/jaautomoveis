@@ -163,13 +163,13 @@ const HomePage: React.FC = () => {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="mb-8"
           >
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tight">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-7xl font-black mb-6 tracking-tight">
               <span className="block text-white drop-shadow-2xl">Seu Próximo</span>
               <span className="block bg-gradient-to-r from-red-400 via-red-500 to-rose-500 bg-clip-text text-transparent">
                 Carro Está Aqui
               </span>
             </h1>
-            <p className="text-xl sm:text-2xl md:text-3xl text-gray-200/90 font-light max-w-4xl mx-auto leading-relaxed">
+                         <p className="text-lg sm:text-xl md:text-2xl text-gray-200/90 font-light max-w-4xl mx-auto leading-relaxed">
               Na <span className="font-bold text-red-400">JA Automóveis</span>, ofertas exclusivas, 
               financiamento facilitado e garantia total de procedência.
             </p>
@@ -241,16 +241,7 @@ const HomePage: React.FC = () => {
           </motion.div>
         </motion.div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-        >
-          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/70 rounded-full mt-2"></div>
-          </div>
-        </motion.div>
+        {/* Scroll indicator removed to avoid cursor/mouse distraction */}
       </section>
 
       {/* DESTAQUES */}

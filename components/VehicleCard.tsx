@@ -1,23 +1,11 @@
-import React, { memo } from 'react';
+import React, { memo, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { FiEye, FiHeart, FiCalendar, FiSettings, FiDollarSign, FiStar } from 'react-icons/fi';
 import { BsFuelPump, BsSpeedometer2 } from 'react-icons/bs';
 import OptimizedImage from './OptimizedImage';
 import { FaWhatsapp } from 'react-icons/fa';
-import { Link } from 'react-router-dom'; // Assuming react-router-dom is used
-
-// Placeholder for RealTimeViewers component
-const RealTimeViewers = ({ vehicleId }: { vehicleId: string }) => (
-  <div className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold py-3 px-4 rounded-xl flex items-center justify-center transform scale-100 transition-all duration-300 shadow-md">
-    <FiEye className="w-4 h-4 mr-2" />
-    <span>15</span>
-  </div>
-);
-
-// Placeholder for trackEvent function
-const trackEvent = (event: string, data: any) => {
-  console.log(`Tracking event: ${event}`, data);
-};
+import { Link, useNavigate } from 'react-router-dom'; // Assuming react-router-dom is used
+import RealTimeViewers from './RealTimeViewers.tsx';
 
 // Placeholder for Vehicle type
 interface Vehicle {
@@ -45,7 +33,7 @@ interface VehicleCardProps {
   viewMode?: 'grid' | 'list';
 }
 
-const VehicleCard: React.FC<VehicleCardProps> = memo(({
+const VehicleCard: React.FC<VehicleCardProps> = memo(({ 
   vehicle,
   onView,
   onFavorite,
@@ -53,6 +41,10 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
   index = 0,
   viewMode = 'grid'
 }) => {
+  const navigate = useNavigate();
+  const [localFavorite, setLocalFavorite] = useState<boolean>(isFavorite);
+  const favorite = useMemo(() => localFavorite || isFavorite, [localFavorite, isFavorite]);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -66,14 +58,17 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
 
   const handleCardClick = () => {
     if (onView) {
-      onView(vehicle._id);
+      onView(vehicle.id);
     }
+    navigate(`/vehicle/${vehicle.id}`);
   };
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (onFavorite) {
-      onFavorite(vehicle._id);
+      onFavorite(vehicle.id);
+    } else {
+      setLocalFavorite(prev => !prev);
     }
   };
 
@@ -109,12 +104,12 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
              <button
               onClick={handleFavoriteClick}
               className={`absolute top-3 right-14 z-10 p-2 rounded-full transition-all duration-300 ${
-                isFavorite
+                favorite
                   ? 'bg-red-500 text-white shadow-lg'
                   : 'bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white'
               } backdrop-blur-sm`}
             >
-              <FiHeart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+              <FiHeart className={`w-4 h-4 ${favorite ? 'fill-current' : ''}`} />
             </button>
           </div>
 
@@ -171,11 +166,10 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-                  onClick={() => trackEvent('whatsapp_click', { vehicle_id: vehicle.id, vehicle_name: `${vehicle.make} ${vehicle.model}` })}
                 >
                   <FaWhatsapp className="w-5 h-5" />
                 </a>
-                <RealTimeViewers vehicleId={vehicle.id} />
+                <RealTimeViewers page={`/vehicle/${vehicle.id}`} vehicleId={vehicle.id} />
               </div>
             </div>
           </div>
@@ -204,12 +198,12 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
       <button
         onClick={handleFavoriteClick}
         className={`absolute top-4 right-4 z-10 p-2 rounded-full transition-all duration-300 ${
-          isFavorite
+          favorite
             ? 'bg-red-500 text-white shadow-lg'
             : 'bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white'
         } backdrop-blur-sm`}
       >
-        <FiHeart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+        <FiHeart className={`w-4 h-4 ${favorite ? 'fill-current' : ''}`} />
       </button>
 
       {/* Image Container */}
@@ -265,16 +259,14 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
               {formatPrice(vehicle.price)}
             </span>
           </div>
-          <button
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-300 text-sm font-medium"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCardClick();
-            }}
+          <Link
+            to={`/vehicle/${vehicle.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="ml-3 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-300 text-sm font-medium"
           >
             <FiEye className="w-4 h-4" />
             Ver Detalhes
-          </button>
+          </Link>
         </div>
       </div>
     </motion.div>
