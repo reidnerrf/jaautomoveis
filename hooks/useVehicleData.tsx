@@ -20,6 +20,15 @@ const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
 const vehicleCache = new Map<string, { vehicle: Vehicle; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
+/**
+ * Provides vehicle data and related operations within a context.
+ * @example
+ * <VehicleContextProvider>{children}</VehicleContextProvider>
+ * // Access the context using useContext(VehicleContext)
+ * @param {Object} props - The props object containing children components.
+ * @param {React.ReactNode} props.children - The child components that will have access to the vehicle data context.
+ * @returns {JSX.Element} The context provider component that supplies vehicle data and functions to manipulate it.
+ */
 export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
