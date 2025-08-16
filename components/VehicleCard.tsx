@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Vehicle } from '../types.ts';
 import { motion } from 'framer-motion';
+import OptimizedImage from './OptimizedImage.tsx';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
 }
 
-const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }) => {
+const VehicleCard: React.FC<VehicleCardProps> = React.memo(({ vehicle }) => {
+  // Memoize price formatting to avoid recalculation on every render
+  const formattedPrice = useMemo(() => 
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(vehicle.price),
+    [vehicle.price]
+  );
+
+  // Memoize formatted kilometers
+  const formattedKm = useMemo(() => 
+    vehicle.km.toLocaleString('pt-BR'),
+    [vehicle.km]
+  );
+
   return (
     <motion.div
       className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col group transition-all duration-300"
@@ -19,14 +32,14 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }) => {
     >
       {/* Imagem */}
       <div className="relative overflow-hidden">
-        <img
+        <OptimizedImage
           src={vehicle.images[0]}
           alt={vehicle.name}
           className="w-full h-56 object-cover transform transition-transform duration-500 group-hover:scale-105"
         />
         {/* Preço */}
         <div className="absolute top-3 right-3 bg-gradient-to-r from-main-red to-red-500 text-white py-1 px-4 rounded-full font-bold shadow-lg text-sm">
-          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(vehicle.price)}
+          {formattedPrice}
         </div>
       </div>
 
@@ -42,7 +55,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }) => {
         {/* Detalhes */}
         <div className="mt-3 flex justify-between text-xs text-gray-500 border-t border-gray-100 pt-2">
           <span>{vehicle.year}</span>
-          <span>{vehicle.km.toLocaleString('pt-BR')} km</span>
+          <span>{formattedKm} km</span>
         </div>
 
         {/* Botão */}
@@ -57,6 +70,8 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }) => {
       </div>
     </motion.div>
   );
-};
+});
+
+VehicleCard.displayName = 'VehicleCard';
 
 export default VehicleCard;
