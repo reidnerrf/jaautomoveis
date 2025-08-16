@@ -1,0 +1,49 @@
+rror:   Failed to scan for dependencies from entries:
+[0]   /home/runner/workspace/index.html
+[0] 
+[0]   ✘ [ERROR] Expected ")" but found "{"
+[0] 
+[0]     pages/AdminDashboardPage.tsx:573:4:
+[0]       573 │     {/* Live Activity Feed */}
+[0]           │     ^
+[0]           ╵     )
+[0] 
+[0] 
+[0]     at failureErrorWithLog (/home/runner/workspace/node_modules/esbuild/lib/main.js:1467:15)
+[0]     at /home/runner/workspace/node_modules/esbuild/lib/main.js:926:25
+[0]     at runOnEndCallbacks (/home/runner/workspace/node_modules/esbuild/lib/main.js:1307:45)
+[0]     at buildResponseToResult (/home/runner/workspace/node_modules/esbuild/lib/main.js:924:7)
+[0]     at /home/runner/workspace/node_modules/esbuild/lib/main.js:936:9
+[0]     at new Promise (<anonymous>)
+[0]     at requestCallbacks.on-end (/home/runner/workspace/node_modules/esbuild/lib/main.js:935:54)
+[0]     at handleRequest (/home/runner/workspace/node_modules/esbuild/lib/main.js:628:17)
+[0]     at handleIncomingPacket (/home/runner/workspace/node_modules/esbuild/lib/main.js:653:7)
+[0]     at Socket.readFromStdout (/home/runner/workspace/node_modules/esbuild/lib/main.js:581:7)
+[1] /home/runner/workspace/node_modules/ts-node/src/index.ts:859
+[1]     return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+[1]            ^
+[1] TSError: ⨯ Unable to compile TypeScript:
+[1] server.ts(189,24): error TS2351: This expression is not constructable.
+[1]   Type 'typeof UAParser' has no construct signatures.
+[1] server.ts(192,30): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string | number'.
+[1]   Type 'string[]' is not assignable to type 'string | number'.
+[1] server.ts(241,24): error TS2351: This expression is not constructable.
+[1]   Type 'typeof UAParser' has no construct signatures.
+[1] server.ts(243,30): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string | number'.
+[1]   Type 'string[]' is not assignable to type 'string | number'.
+[1] 
+[1]     at createTSError (/home/runner/workspace/node_modules/ts-node/src/index.ts:859:12)
+[1]     at reportTSError (/home/runner/workspace/node_modules/ts-node/src/index.ts:863:19)
+[1]     at getOutput (/home/runner/workspace/node_modules/ts-node/src/index.ts:1077:36)
+[1]     at Object.compile (/home/runner/workspace/node_modules/ts-node/src/index.ts:1433:41)
+[1]     at Module.m._compile (/home/runner/workspace/node_modules/ts-node/src/index.ts:1617:30)
+[1]     at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)
+[1]     at Object.require.extensions.<computed> [as .ts] (/home/runner/workspace/node_modules/ts-node/src/index.ts:1621:12)
+[1]     at Module.load (node:internal/modules/cjs/loader:1203:32)
+[1]     at Function.Module._load (node:internal/modules/cjs/loader:1019:12)
+[1]     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12) {
+[1]   diagnosticCodes: [ 2351, 2345, 2351, 2345 ]
+[1] }
+[1] [nodemon] app crashed - waiting for file changes before starting...
+^C[1] npm run dev:server exited with code SIGINT
+[0] npm run dev:client exited with code SIGINT
