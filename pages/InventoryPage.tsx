@@ -97,20 +97,20 @@ const InventoryPage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12 relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-12 text-white shadow-2xl"
+          className="text-center mb-12 relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 via-gray-800 to-black p-12 text-white shadow-2xl"
         >
-          <div className="absolute inset-0 bg-black/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-transparent to-blue-500/10"></div>
           <div className="relative z-10">
             <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight">
               Encontre o Carro dos Seus
-              <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-red-400 to-rose-400 bg-clip-text text-transparent">
                 Sonhos
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-blue-100 max-w-4xl mx-auto mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mb-8 leading-relaxed">
               {filteredAndSortedVehicles.length} veículos selecionados com qualidade garantida e preços imperdíveis
             </p>
-            <div className="flex flex-wrap justify-center items-center gap-6 text-blue-100">
+            <div className="flex flex-wrap justify-center items-center gap-6 text-gray-200">
               <div className="flex items-center gap-2">
                 <FiTag className="text-yellow-300" />
                 <span>Melhores Preços</span>
@@ -135,16 +135,16 @@ const InventoryPage: React.FC = () => {
           className="mb-8 flex flex-col lg:flex-row gap-4 items-center justify-between"
         >
           {/* Search Bar */}
-          <div className="relative flex-1 max-w-md">
-            <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
-            <input
-              type="text"
-              placeholder="Buscar por marca, modelo ou nome..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 text-lg rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-300 shadow-lg"
-            />
-          </div>
+                     <div className="relative flex-1 max-w-md">
+             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
+             <input
+               type="text"
+               placeholder="Buscar por marca, modelo ou nome..."
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="w-full pl-12 pr-4 py-4 text-lg rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-300 shadow-lg"
+             />
+           </div>
 
           <div className="flex items-center gap-4">
             {/* Filter Toggle */}

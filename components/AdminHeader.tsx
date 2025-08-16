@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { FiMenu, FiCalendar } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
+import { FiMenu, FiCalendar, FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../hooks/useAuth.tsx';
 
 interface AdminHeaderProps {
@@ -9,7 +9,8 @@ interface AdminHeaderProps {
 }
 
 const AdminHeader: React.FC<AdminHeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
-  useAuth();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const today = new Date().toLocaleDateString('pt-BR', {
     weekday: 'long',
@@ -17,6 +18,11 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ sidebarOpen, setSidebarOpen }
     month: 'long',
     year: 'numeric',
   });
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/admin/login');
+  };
 
   return (
     <header className="sticky top-0 z-40 flex w-full bg-white shadow-sm border-b border-gray-200">
@@ -59,6 +65,10 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ sidebarOpen, setSidebarOpen }
 
         {/* Perfil do usuário */}
         <div className="flex items-center gap-3">
+          <button onClick={handleLogout} className="flex items-center gap-2 px-3 py-2 rounded-md border border-gray-200 hover:bg-gray-100 transition">
+            <FiLogOut />
+            <span className="hidden sm:inline">Sair</span>
+          </button>
           <div className="hidden lg:block text-right">
             <span className="block text-sm font-semibold text-gray-800">
               Admin
