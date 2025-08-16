@@ -12,7 +12,6 @@ import {
   FaTags,
   FaWhatsapp,
 } from "react-icons/fa";
-import TopButton from "../components/TopButton.tsx";
 import { GoogleReview } from "../types.ts";
 
 // Mock Google Reviews
@@ -95,7 +94,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="w-full">
       {/* HERO */}
-      <section className="relative h-[80vh] text-white flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[80vh] md:min-h-[88vh] text-white flex items-center justify-center overflow-hidden">
         <video
           autoPlay
           loop
@@ -105,26 +104,26 @@ const HomePage: React.FC = () => {
         >
           <source src="/assets/homevideo.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80 backdrop-blur-sm"></div>
 
         <motion.div
-          className="relative z-10 text-center px-4"
+          className="relative z-10 text-center px-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 tracking-tight">
-            Seu Próximo Carro Está Aqui na{" "}
-            <span className="text-red-500">JA Automóveis</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-4 tracking-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+            Seu Próximo Carro Está Aqui na {" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-rose-400">JA Automóveis</span>
           </h1>
-          <p className="text-lg sm:text-xl text-gray-200 max-w-2xl mx-auto mb-8">
+          <p className="text-lg sm:text-xl text-gray-200/90 max-w-3xl mx-auto mb-8">
             Ofertas exclusivas, financiamento facilitado e garantia de
             procedência.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/inventory">
               <motion.button
-                className="px-8 py-3 bg-red-600 hover:bg-red-700 rounded-full text-white font-semibold shadow-lg"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-red-600 hover:bg-red-700 rounded-full text-white font-semibold shadow-lg ring-1 ring-white/10"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -137,7 +136,7 @@ const HomePage: React.FC = () => {
               rel="noopener noreferrer"
             >
               <motion.button
-                className="px-8 py-3 bg-green-600 hover:bg-green-700 rounded-full text-white font-semibold shadow-lg flex items-center gap-2"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-green-600 hover:bg-green-700 rounded-full text-white font-semibold shadow-lg ring-1 ring-white/10"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -178,7 +177,7 @@ const HomePage: React.FC = () => {
           </div>
           <div className="mt-4 text-center">
             <p className="text-gray-600">
-              Acesse também nossas lojas em{" "}
+              Acesse também nossas lojas em {" "}
               <a
                 href="https://www.olx.com.br/perfil/jaautomoveis35-55485ae0"
                 target="_blank"
@@ -187,7 +186,7 @@ const HomePage: React.FC = () => {
               >
                 OLX
               </a>{" "}
-              e{" "}
+              e {" "}
               <a
                 href="https://www.icarros.com.br/ache/estoque.jsp?id=2183242"
                 target="_blank"
@@ -348,7 +347,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <TopButton />
+      {/* Removed TopButton for cleaner UI */}
     </div>
   );
 };

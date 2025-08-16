@@ -28,7 +28,7 @@ const Header: React.FC = () => {
     after:bg-main-red after:w-0 hover:after:w-full after:transition-all after:duration-300`;
 
   return (
-    <header className="bg-white/70 backdrop-blur-md shadow-md sticky top-0 z-50">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/60 shadow-sm">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
