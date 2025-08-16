@@ -1,0 +1,31 @@
+[1] /home/runner/workspace/node_modules/ts-node/src/index.ts:859
+[1]     return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+[1]            ^
+[1] TSError: ⨯ Unable to compile TypeScript:
+[1] server.ts(10,17): error TS7016: Could not find a declaration file for module 'hpp'. '/home/runner/workspace/node_modules/hpp/lib/index.js' implicitly has an 'any' type.
+[1]   Try `npm i --save-dev @types/hpp` if it exists or add a new declaration (.d.ts) file containing `declare module 'hpp';`
+[1] server.ts(189,24): error TS2351: This expression is not constructable.
+[1]   Type 'typeof UAParser' has no construct signatures.
+[1] server.ts(191,30): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string | number'.
+[1]   Type 'string[]' is not assignable to type 'string | number'.
+[1] server.ts(240,24): error TS2351: This expression is not constructable.
+[1]   Type 'typeof UAParser' has no construct signatures.
+[1] server.ts(241,30): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string | number'.
+[1]   Type 'string[]' is not assignable to type 'string | number'.
+[1] server.ts(303,21): error TS2769: No overload matches this call.
+[1]   The last overload gave the following error.
+[1]     Argument of type 'string' is not assignable to parameter of type 'number'.
+[1] 
+[1]     at createTSError (/home/runner/workspace/node_modules/ts-node/src/index.ts:859:12)
+[1]     at reportTSError (/home/runner/workspace/node_modules/ts-node/src/index.ts:863:19)
+[1]     at getOutput (/home/runner/workspace/node_modules/ts-node/src/index.ts:1077:36)
+[1]     at Object.compile (/home/runner/workspace/node_modules/ts-node/src/index.ts:1433:41)
+[1]     at Module.m._compile (/home/runner/workspace/node_modules/ts-node/src/index.ts:1617:30)
+[1]     at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)
+[1]     at Object.require.extensions.<computed> [as .ts] (/home/runner/workspace/node_modules/ts-node/src/index.ts:1621:12)
+[1]     at Module.load (node:internal/modules/cjs/loader:1203:32)
+[1]     at Function.Module._load (node:internal/modules/cjs/loader:1019:12)
+[1]     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12) {
+[1]   diagnosticCodes: [ 7016, 2351, 2345, 2351, 2345, 2769 ]
+[1] }
+[1] [nodemon] app crashed - waiting for file changes before starti
