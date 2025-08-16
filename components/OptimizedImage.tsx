@@ -15,55 +15,74 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
   alt,
   className = '',
-  placeholder = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OWE5YiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxvYWRpbmcuLi48L3RleHQ+PC9zdmc+',
-  onLoad,
-  onError,
-  width,
-  height
+  placeholder = '/api/placeholder/400/300',
+  ...props
 }) => {
-  const [imageSrc, setImageSrc] = useState(placeholder);
+  const [imageSrc, setImageSrc] = useState<string>(placeholder);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const imgRef = useRef<HTMLImageElement>(null);
+  const maxRetries = 3;
 
-  const handleLoad = useCallback(() => {
-    setIsLoading(false);
-    setImageSrc(src);
-    onLoad?.();
-  }, [src, onLoad]);
+  // Generate WebP and fallback sources
+  const getImageSources = (originalSrc: string) => {
+    const webpSrc = originalSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+    return { webpSrc, originalSrc };
+  };
 
-  const handleError = useCallback(() => {
-    setIsLoading(false);
-    setHasError(true);
-    setImageSrc(placeholder);
-    onError?.();
-  }, [placeholder, onError]);
+  const loadImage = useCallback((imageSrc: string) => {
+    const { webpSrc, originalSrc } = getImageSources(imageSrc);
+
+    // Try WebP first, fallback to original
+    const img = new Image();
+
+    img.onload = () => {
+      setImageSrc(webpSrc);
+      setIsLoading(false);
+      setHasError(false);
+    };
+
+    img.onerror = () => {
+      // Fallback to original format
+      const fallbackImg = new Image();
+      fallbackImg.onload = () => {
+        setImageSrc(originalSrc);
+        setIsLoading(false);
+        setHasError(false);
+      };
+
+      fallbackImg.onerror = () => {
+        if (retryCount < maxRetries) {
+          setTimeout(() => {
+            setRetryCount(prev => prev + 1);
+            loadImage(imageSrc);
+          }, 1000 * Math.pow(2, retryCount)); // Exponential backoff
+        } else {
+          setHasError(true);
+          setIsLoading(false);
+        }
+      };
+
+      fallbackImg.src = originalSrc;
+    };
+
+    img.src = webpSrc;
+  }, [retryCount, maxRetries]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && imageSrc === placeholder) {
-            const img = new Image();
-            img.onload = () => {
-              setImageSrc(src);
-              setIsLoading(false);
-              onLoad?.();
-            };
-            img.onerror = () => {
-              setHasError(true);
-              setIsLoading(false);
-              setImageSrc(placeholder);
-              onError?.();
-            };
-            img.src = src;
+          if (entry.isIntersecting) {
+            loadImage(src);
             observer.unobserve(entry.target);
           }
         });
       },
-      {
-        rootMargin: '50px',
-        threshold: 0.01,
+      { 
+        threshold: 0.1,
+        rootMargin: '50px 0px' // Load 50px before entering viewport
       }
     );
 
@@ -71,26 +90,47 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       observer.observe(imgRef.current);
     }
 
-    return () => {
-      if (imgRef.current) {
-        observer.unobserve(imgRef.current);
-      }
-    };
-  }, [src, placeholder, imageSrc, onLoad, onError]);
+    return () => observer.disconnect();
+  }, [src, loadImage]);
+
+  if (hasError) {
+    return (
+      <div className={`bg-gray-200 flex items-center justify-center ${className}`}>
+        <div className="text-center p-4">
+          <span className="text-gray-500 text-sm block mb-2">Imagem não disponível</span>
+          <button 
+            onClick={() => {
+              setHasError(false);
+              setRetryCount(0);
+              setIsLoading(true);
+              loadImage(src);
+            }}
+            className="text-blue-500 text-xs hover:underline"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <img
-      ref={imgRef}
-      src={imageSrc}
-      alt={alt}
-      className={`${className} ${isLoading ? 'animate-pulse' : ''} ${hasError ? 'opacity-50' : ''}`}
-      onLoad={handleLoad}
-      onError={handleError}
-      loading="lazy"
-      decoding="async"
-      width={width}
-      height={height}
-    />
+    <div className={`relative ${className}`}>
+      <img
+        ref={imgRef}
+        src={imageSrc}
+        alt={alt}
+        className={`transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}
+        loading="lazy"
+        decoding="async"
+        {...props}
+      />
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+      )}
+    </div>
   );
 };
 

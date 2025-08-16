@@ -1,0 +1,24 @@
+
+{
+  "name": "JA Automóveis",
+  "short_name": "JA Auto",
+  "description": "Loja de automóveis com financiamento e consórcio",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/assets/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["business", "automotive"],
+  "lang": "pt-BR"
+}
