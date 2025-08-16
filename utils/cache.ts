@@ -118,7 +118,7 @@ class CacheManager {
   }
 }
 
-export const apiCache = new Cache();
+export const apiCache = new CacheManager();
 
 export const createCacheKey = (...parts: (string | number)[]): string => {
   return parts.join(':');

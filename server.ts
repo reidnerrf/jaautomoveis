@@ -73,7 +73,7 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://cdn.tailwindcss.com", "'sha256-dMbGrQLBAQ3ONffPJzMmBJLw0pWCQwlWqajAXOAvv9k='"],
       connectSrc: ["'self'", "ws:", "wss:"],
     },
   },
