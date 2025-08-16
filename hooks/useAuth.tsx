@@ -10,6 +10,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+/**
+ * Provides authentication state management for components.
+ * @example
+ * AuthProvider({children})
+ * Returns a React component that provides authentication context.
+ * @param {Object} children - React component(s) to be rendered.
+ * @returns {JSX.Element} React Provider component for authentication context.
+ */
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -24,6 +32,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const isAuthenticated = !!token;
 
+  /**
+  * Attempts to log in a user with the provided username and password.
+  * @example
+  * sync('sampleUser', 'samplePass')
+  * true
+  * @param {string} username - The username of the user attempting to log in.
+  * @param {string} password - The password of the user attempting to log in.
+  * @returns {Promise<boolean>} A promise that resolves to true if login is successful, otherwise false.
+  **/
   const login = async (username: string, password: string): Promise<boolean> => {
     setLoading(true);
     try {
