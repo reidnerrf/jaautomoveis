@@ -83,7 +83,7 @@ if (!isProduction) {
         const filePath = path.join(root, req.path);
         // Check if file exists before attempting to read
         await fs.access(filePath);
-        
+
         const source = await fs.readFile(filePath, 'utf-8');
         const { code } = await esbuild.transform(source, {
           loader: 'tsx',
@@ -127,11 +127,18 @@ if (isProduction) {
   }));
 }
 
-// Serve other static assets from the root
+// Serve other static assets from the root with caching
 app.use(express.static(root, {
   maxAge: isProduction ? '1h' : 0,
   etag: true,
   lastModified: true,
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache');
+    } else if (path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$/)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year
+    }
+  }
 }));
 
 // 4. Fallback for Single-Page Application (SPA)

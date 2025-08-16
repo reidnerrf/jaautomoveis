@@ -1,7 +1,7 @@
-
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useMemo } from 'react';
 import { Vehicle } from '../types.ts';
 import { useAuth } from './useAuth.tsx';
+import { apiCache, createCacheKey } from '../utils/cache';
 
 interface VehicleContextType {
   vehicles: Vehicle[];
@@ -28,9 +28,17 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
   const { token } = useAuth();
 
   const fetchVehicles = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
+      setLoading(true);
+      const cacheKey = createCacheKey('vehicles');
+      const cachedData = apiCache.get<Vehicle[]>(cacheKey);
+
+      if (cachedData) {
+        setVehicles(cachedData);
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch('/api/vehicles', {
         headers: {
           'Cache-Control': 'max-age=300', // 5 minutes cache
@@ -39,8 +47,9 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       if (!response.ok) throw new Error('Failed to fetch vehicles');
       const data: Vehicle[] = await response.json();
       setVehicles(data);
-      
+
       // Update cache with fetched vehicles
+      apiCache.set(cacheKey, data, 5 * 60 * 1000); // Cache for 5 minutes
       data.forEach(vehicle => {
         vehicleCache.set(vehicle.id, {
           vehicle,
@@ -78,13 +87,13 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
       if (!response.ok) throw new Error('Failed to fetch vehicle');
       const data: Vehicle = await response.json();
-      
+
       // Update cache
       vehicleCache.set(id, {
         vehicle: data,
         timestamp: Date.now()
       });
-      
+
       return data;
     } catch (err: any) {
       setError(err.message);
@@ -105,7 +114,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
         body: JSON.stringify(vehicle),
       });
       if (!response.ok) throw new Error('Failed to add vehicle');
-      
+
       // Optimistic update
       const newVehicle = await response.json();
       setVehicles(prev => [...prev, newVehicle]);
@@ -130,7 +139,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
         body: JSON.stringify(updatedVehicle),
       });
       if (!response.ok) throw new Error('Failed to update vehicle');
-      
+
       // Optimistic update
       setVehicles(prev => prev.map(v => v.id === updatedVehicle.id ? updatedVehicle : v));
       vehicleCache.set(updatedVehicle.id, {
@@ -150,7 +159,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error('Failed to delete vehicle');
-      
+
       // Optimistic update
       setVehicles(prev => prev.filter(v => v.id !== id));
       vehicleCache.delete(id);

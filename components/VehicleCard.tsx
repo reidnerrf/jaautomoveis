@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Vehicle } from '../types.ts';
+import { Vehicle } from '../types';
 import { motion } from 'framer-motion';
 import OptimizedImage from './OptimizedImage.tsx';
 
@@ -8,7 +8,7 @@ interface VehicleCardProps {
   vehicle: Vehicle;
 }
 
-const VehicleCard: React.FC<VehicleCardProps> = React.memo(({ vehicle }) => {
+const VehicleCard: React.FC<VehicleCardProps> = memo(({ vehicle }) => {
   // Memoize price formatting to avoid recalculation on every render
   const formattedPrice = useMemo(() => 
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(vehicle.price),
