@@ -1,9 +1,22 @@
 import React from 'react';
 import { FaWhatsapp, FaInstagram } from 'react-icons/fa';
+import { FiArrowUp } from 'react-icons/fi';
+import RealTimeViewers from './RealTimeViewers.tsx';
 
-const FloatingSocialButtons: React.FC = () => {
+interface FloatingSocialButtonsProps {
+  page?: string;
+}
+
+const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) => {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3">
+    <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3 items-end">
+      {/* Viewers info above WhatsApp */}
+      {page && <RealTimeViewers page={page} variant="inline" />}
+
       <a
         href="https://api.whatsapp.com/send?phone=5524999037716&text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es"
         target="_blank"
@@ -20,6 +33,15 @@ const FloatingSocialButtons: React.FC = () => {
       >
         <FaInstagram size={22} />
       </a>
+
+      {/* Back to top below Instagram */}
+      <button
+        onClick={scrollToTop}
+        className="w-12 h-12 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-lg transition-colors"
+        aria-label="Voltar ao topo"
+      >
+        <FiArrowUp size={22} />
+      </button>
     </div>
   );
 };

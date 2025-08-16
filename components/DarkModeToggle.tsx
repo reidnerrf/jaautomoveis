@@ -10,12 +10,14 @@ const DarkModeToggle: React.FC = () => {
   return (
     <motion.button
       onClick={toggleDarkMode}
-      className="relative p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors duration-200"
+      className="relative p-2 rounded-full bg-gray-200/90 dark:bg-gray-800/90 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors duration-200"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
+      aria-label="Alternar modo escuro"
+      title={isDarkMode ? 'Modo claro' : 'Modo escuro'}
     >
       <motion.div
         key={isDarkMode ? 'dark' : 'light'}

@@ -5,7 +5,6 @@ import { BsFuelPump, BsSpeedometer2 } from 'react-icons/bs';
 import OptimizedImage from './OptimizedImage';
 import { FaWhatsapp } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom'; // Assuming react-router-dom is used
-import RealTimeViewers from './RealTimeViewers.tsx';
 
 // Placeholder for Vehicle type
 interface Vehicle {
@@ -169,7 +168,6 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
                 >
                   <FaWhatsapp className="w-5 h-5" />
                 </a>
-                <RealTimeViewers page={`/vehicle/${vehicle.id}`} vehicleId={vehicle.id} />
               </div>
             </div>
           </div>

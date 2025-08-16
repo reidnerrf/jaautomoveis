@@ -122,6 +122,18 @@ export const getDashboardStats = async (req: express.Request, res: express.Respo
       { $sort: { count: -1 } }
     ]);
 
+    // Likes breakdown
+    const likedVehiclesAgg = await Analytics.aggregate([
+      { $match: { action: 'like_vehicle' } },
+      { $group: { _id: '$label' } },
+      { $count: 'count' }
+    ]);
+
+    const totalLikesAgg = await Analytics.aggregate([
+      { $match: { action: 'like_vehicle' } },
+      { $count: 'count' }
+    ]);
+
     res.json({
       totalViews,
       todayViews,
@@ -129,7 +141,9 @@ export const getDashboardStats = async (req: express.Request, res: express.Respo
       instagramClicks,
       deviceStats,
       locationStats,
-      browserStats
+      browserStats,
+      likedVehicles: likedVehiclesAgg[0]?.count || 0,
+      totalLikes: totalLikesAgg[0]?.count || 0
     });
   } catch (error) {
     console.error('Dashboard stats error:', error);

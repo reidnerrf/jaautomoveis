@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
-import TopButton from '../components/TopButton.tsx';
 
 const ConsortiumPage: React.FC = () => {
   const [creditAmount, setCreditAmount] = useState(80000);
@@ -37,7 +36,7 @@ const ConsortiumPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-50 py-16">
+    <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
 
@@ -47,15 +46,15 @@ const ConsortiumPage: React.FC = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="bg-white p-8 rounded-2xl shadow-lg sticky top-24"
+              className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg sticky top-24"
             >
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">📊 Simulação de Consórcio</h1>
-              <p className="text-gray-500 mb-6">Planeje sua compra sem juros bancários.</p>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">📊 Simulação de Consórcio</h1>
+              <p className="text-gray-500 dark:text-gray-300 mb-6">Planeje sua compra sem juros bancários.</p>
 
               <form onSubmit={handleSimulate} className="space-y-6">
                 {/* Valor de crédito */}
                 <div>
-                  <label className="block font-medium text-gray-700 mb-1">
+                  <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Valor do Crédito: <span className="font-bold">{formatCurrency(creditAmount)}</span>
                   </label>
                   <input
@@ -71,7 +70,7 @@ const ConsortiumPage: React.FC = () => {
 
                 {/* Prazo */}
                 <div>
-                  <label className="block font-medium text-gray-700 mb-1">
+                  <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Prazo (meses): <span className="font-bold">{term}</span>
                   </label>
                   <input
@@ -87,7 +86,7 @@ const ConsortiumPage: React.FC = () => {
 
                 {/* Taxa de administração */}
                 <div>
-                  <label className="block font-medium text-gray-700 mb-1">
+                  <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Taxa de Administração (%): <span className="font-bold">{adminFee.toFixed(2)}%</span>
                   </label>
                   <input
@@ -103,7 +102,7 @@ const ConsortiumPage: React.FC = () => {
 
                 {/* Fundo de reserva */}
                 <div>
-                  <label className="block font-medium text-gray-700 mb-1">
+                  <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Fundo de Reserva (%): <span className="font-bold">{reserveFund.toFixed(2)}%</span>
                   </label>
                   <input
@@ -119,7 +118,7 @@ const ConsortiumPage: React.FC = () => {
 
                 {/* Seguro */}
                 <div>
-                  <label className="block font-medium text-gray-700 mb-1">
+                  <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Seguro Anual (%): <span className="font-bold">{insurance.toFixed(2)}%</span>
                   </label>
                   <input
@@ -145,13 +144,13 @@ const ConsortiumPage: React.FC = () => {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-8 bg-blue-50 p-6 rounded-lg border border-blue-200 text-center"
+                  className="mt-8 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-700 text-center"
                 >
-                  <h2 className="text-xl font-bold text-blue-900 mb-3">Resultado da Simulação</h2>
-                  <p className="text-gray-700">💳 Parcelas de:</p>
-                  <p className="text-3xl font-extrabold text-blue-800">{formatCurrency(simulation.installment)}</p>
-                  <p className="text-sm text-gray-500 mt-2">Total a pagar: {formatCurrency(simulation.total)}</p>
-                  <p className="text-sm text-gray-500">Custo adicional: {formatCurrency(simulation.extra)}</p>
+                  <h2 className="text-xl font-bold text-blue-900 dark:text-blue-300 mb-3">Resultado da Simulação</h2>
+                  <p className="text-gray-700 dark:text-gray-300">💳 Parcelas de:</p>
+                  <p className="text-3xl font-extrabold text-blue-800 dark:text-blue-400">{formatCurrency(simulation.installment)}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Total a pagar: {formatCurrency(simulation.total)}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Custo adicional: {formatCurrency(simulation.extra)}</p>
                   <p className="text-xs text-gray-400 mt-3">*Valores aproximados. Sujeitos à formação de grupo.</p>
                 </motion.div>
               )}
@@ -164,22 +163,22 @@ const ConsortiumPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="bg-white p-8 rounded-2xl shadow-lg"
+              className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
             >
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
                 Consórcio – Conquiste seu sonho sem pagar juros 🚀
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 O consórcio é a forma planejada de adquirir bens de alto valor, sem juros bancários e com taxas reduzidas.
               </p>
-              <p className="text-gray-600 mb-8">
+              <p className="text-gray-600 dark:text-gray-300 mb-8">
                 Na JA Automóveis, você participa de um grupo, contribui mensalmente e pode ser contemplado por sorteio ou lance, recebendo sua carta de crédito para comprar à vista.
               </p>
 
               <div className="grid md:grid-cols-2 gap-6 mb-8">
                 <div>
                   <h3 className="text-xl font-bold mb-3">Vantagens do consórcio</h3>
-                  <ul className="space-y-2 text-gray-600">
+                  <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                     <li>✔ Sem juros, só taxa de administração</li>
                     <li>✔ Flexibilidade de prazo e valor</li>
                     <li>✔ Poder de compra à vista</li>
@@ -188,7 +187,7 @@ const ConsortiumPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold mb-3">Por que fazer conosco</h3>
-                  <ul className="space-y-2 text-gray-600">
+                  <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                     <li>➡ Atendimento personalizado</li>
                     <li>➡ Simulação sob medida</li>
                     <li>➡ Orientação para contemplação</li>
@@ -197,15 +196,15 @@ const ConsortiumPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-8 flex items-start gap-4">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-lg mb-8 flex items-start gap-4">
                 <img
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIavnQKOtP3yeN9k5Qh6x-j4grMU0OsBZNhQ&s"
                   alt="Rodobens Logo"
                   className="h-10 mt-1"
                 />
                 <div>
-                  <h3 className="text-lg font-bold text-blue-900">Parceria com a Rodobens</h3>
-                  <p className="text-gray-700 text-sm">
+                  <h3 className="text-lg font-bold text-blue-900 dark:text-blue-300">Parceria com a Rodobens</h3>
+                  <p className="text-gray-700 dark:text-gray-300 text-sm">
                     Representante autorizado Rodobens, garantindo credibilidade e segurança para sua compra.
                   </p>
                 </div>
@@ -227,7 +226,6 @@ const ConsortiumPage: React.FC = () => {
 
         </div>
       </div>
-      <TopButton />
     </div>
   );
 };

@@ -7,9 +7,10 @@ import { io, Socket } from 'socket.io-client';
 interface RealTimeViewersProps {
   page: string;
   vehicleId?: string;
+  variant?: 'fixed' | 'inline';
 }
 
-const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId }) => {
+const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, variant = 'fixed' }) => {
   const [viewers, setViewers] = useState(0);
   const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -51,6 +52,21 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId }) =>
   (window as any).trackRealTimeAction = trackAction;
 
   if (viewers <= 1) return null;
+
+  if (variant === 'inline') {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="self-end bg-red-500 text-white px-3 py-1 rounded-full shadow-lg text-xs"
+      >
+        <div className="flex items-center gap-1">
+          <FiUsers size={14} />
+          <span>{viewers} visualizando agora</span>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
