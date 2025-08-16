@@ -138,3 +138,42 @@ export const incrementVehicleView = async (req: express.Request, res: express.Re
     res.status(500).json({ message: 'Server Error' });
   }
 };
+
+// @desc    Get most viewed vehicles
+// @route   GET /api/vehicles/most-viewed
+// @access  Public
+export const getMostViewedVehicles = async (req: express.Request, res: express.Response) => {
+  try {
+    const limit = Math.max(1, Math.min(50, parseInt(String(req.query.limit || '10'), 10)));
+    const periodDays = Math.max(0, parseInt(String(req.query.periodDays || '30'), 10));
+
+    // If periodDays > 0, compute trending by time window using ViewLog aggregation
+    if (periodDays > 0) {
+      const since = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
+
+      const results = await ViewLog.aggregate([
+        { $match: { createdAt: { $gte: since } } },
+        { $group: { _id: '$vehicle', views: { $sum: 1 } } },
+        { $sort: { views: -1 } },
+        { $limit: limit }
+      ]);
+
+      const vehicleIds = results.map(r => r._id);
+
+      if (vehicleIds.length > 0) {
+        const vehicles = await Vehicle.find({ _id: { $in: vehicleIds } });
+        // Reorder vehicles to match aggregation order
+        const ordered = vehicleIds
+          .map(id => vehicles.find(v => String(v._id) === String(id)))
+          .filter(Boolean);
+        return res.json(ordered);
+      }
+      // Fallback to total views if no logs
+    }
+
+    const fallbackVehicles = await Vehicle.find({}).sort({ views: -1 }).limit(limit);
+    res.json(fallbackVehicles);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
