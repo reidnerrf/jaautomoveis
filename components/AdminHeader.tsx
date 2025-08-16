@@ -35,7 +35,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ sidebarOpen, setSidebarOpen }
             <FiMenu size={22} />
           </button>
           <Link to="/admin" className="block">
-            <img src="/assets/logo.png" alt="Logo" className="h-10 w-auto" />
+            <img src="/assets/logo.png" alt="Logo" className="h-10 w-auto" loading="eager" decoding="async" width={120} height={40} />
           </Link>
         </div>
 

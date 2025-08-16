@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
           {/* Logo + Descrição */}
           <div>
             <Link to="/" className="block mb-4">
-              <img src="/assets/logo.png" alt="JA Automóveis Logo" className="h-12 w-auto" />
+              <img src="/assets/logo.png" alt="JA Automóveis Logo" className="h-12 w-auto" loading="lazy" decoding="async" width={120} height={48} />
             </Link>
             <p className="text-gray-400 leading-relaxed">
               Seu próximo carro está aqui. Qualidade e confiança em cada negociação.

@@ -35,6 +35,10 @@ const AdminLoginPage: React.FC = () => {
             src="/assets/logo.png"
             alt="JA Automóveis Logo"
             className="h-14 w-auto mx-auto mb-3 drop-shadow-lg"
+            loading="eager"
+            decoding="async"
+            width={120}
+            height={48}
           />
           <h2 className="text-2xl font-bold text-white tracking-wide">
             Painel Administrativo

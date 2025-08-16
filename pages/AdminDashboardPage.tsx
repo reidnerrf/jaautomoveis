@@ -121,9 +121,9 @@ const AdminDashboardPage: React.FC = () => {
                 className="flex items-center justify-between rounded-md p-2 hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center">
-                  <div className="mr-4 h-12 w-12 flex-shrink-0">
-                    <img src={vehicle.images[0]} alt={vehicle.name} className="h-full w-full rounded-md object-cover" />
-                  </div>
+                                      <div className="mr-4 h-12 w-12 flex-shrink-0">
+                      <img src={vehicle.images[0]} alt={vehicle.name} className="h-full w-full rounded-md object-cover" loading="lazy" decoding="async" />
+                    </div>
                   <div>
                     <h4 className="font-medium text-gray-800">{vehicle.name}</h4>
                     <p className="text-sm text-gray-500">{vehicle.make}</p>

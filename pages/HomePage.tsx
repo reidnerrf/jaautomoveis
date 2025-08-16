@@ -101,6 +101,7 @@ const HomePage: React.FC = () => {
           loop
           muted
           playsInline
+          preload="metadata"
           className="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover"
         >
           <source src="/assets/homevideo.mp4" type="video/mp4" />
@@ -213,6 +214,8 @@ const HomePage: React.FC = () => {
             <img
               src="/assets/homepageabout.webp"
               alt="JA Automóveis"
+              loading="lazy"
+              decoding="async"
               className="shadow-xl rounded-2xl hover:scale-105 transition duration-500 object-cover max-h-[450px] w-full"
             />
           </motion.div>

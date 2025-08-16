@@ -22,6 +22,8 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }) => {
         <img
           src={vehicle.images[0]}
           alt={vehicle.name}
+          loading="lazy"
+          decoding="async"
           className="w-full h-56 object-cover transform transition-transform duration-500 group-hover:scale-105"
         />
         {/* Preço */}

@@ -91,6 +91,8 @@ const VehicleDetailPage: React.FC = () => {
                 whileHover={{ scale: 1.02 }}
                 src={vehicle.images[currentImageIndex]}
                 alt={`${vehicle.name} - ${currentImageIndex + 1}`}
+                loading="eager"
+                decoding="async"
                 className="w-full h-[26rem] object-cover cursor-pointer transition-all"
                 onClick={() => setIsLightboxOpen(true)}
               />
@@ -111,6 +113,8 @@ const VehicleDetailPage: React.FC = () => {
                   key={index}
                   src={img}
                   alt={`${vehicle.name} thumbnail ${index + 1}`}
+                  loading="lazy"
+                  decoding="async"
                   className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${index === currentImageIndex ? 'border-main-red' : 'border-transparent'} transition`}
                   onClick={() => setCurrentImageIndex(index)}
                 />

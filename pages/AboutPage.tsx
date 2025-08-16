@@ -52,6 +52,8 @@ const AboutPage: React.FC = () => {
                         <img 
                             src="/assets/sobrenos.jpg" 
                             alt="Equipe JA Automóveis" 
+                            loading="lazy"
+                            decoding="async"
                             className="rounded-2xl shadow-xl border border-gray-200"
                         />
                     </motion.div>

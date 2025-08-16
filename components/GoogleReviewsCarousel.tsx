@@ -43,6 +43,8 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
           <motion.img
             src={currentReview.avatarUrl}
             alt={currentReview.reviewerName}
+            loading="lazy"
+            decoding="async"
             className="w-24 h-24 rounded-full mb-4 border-4 border-yellow-400 shadow-md"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}

@@ -9,6 +9,7 @@ import vehicleRoutes from './backend/routes/vehicleRoutes';
 import authRoutes from './backend/routes/authRoutes';
 import uploadRoutes from './backend/routes/uploadRoutes';
 import analyticsRoutes from './backend/routes/analyticsRoutes';
+import compression from 'compression';
 
 // Load environment variables
 dotenv.config();
@@ -37,6 +38,7 @@ fs.access(uploadsDir).catch(() => fs.mkdir(uploadsDir));
 // Core Middleware
 app.use(cors());
 app.use(express.json());
+app.use(compression());
 
 // 1. API Routes
 // Handle all API calls before any file serving.
@@ -83,8 +85,15 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
 app.use('/uploads', express.static(path.join(root, 'uploads')));
 
 // Serve other static assets from the root. This allows requests for /assets/* to work.
-// It will also serve index.html for the root path '/'.
-app.use(express.static(root));
+// It will also serve index.html for the root path '/'. Use strong caching for assets.
+app.use(express.static(root, {
+  maxAge: '30d',
+  setHeaders: (res, filePath) => {
+    if (/(?:\.js|\.css|\.png|\.jpg|\.jpeg|\.webp|\.svg|\.ico|\.mp4)$/.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
+    }
+  }
+}));
 
 // 4. Fallback for Single-Page Application (SPA)
 // For any route that is not an API call or a static file, serve index.html.

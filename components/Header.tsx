@@ -37,6 +37,11 @@ const Header: React.FC = () => {
               src="/assets/logo.png"
               alt="JA Automóveis Logo"
               className="h-16 w-auto transition-transform group-hover:scale-105"
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+              width={128}
+              height={48}
               whileHover={{ rotate: -2, scale: 1.05 }}
             />
           </Link>
