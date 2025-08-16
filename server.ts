@@ -5,6 +5,9 @@ import path from 'path';
 import fs from 'fs/promises';
 import compression from 'compression';
 import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
+import hpp from 'hpp';
 import * as esbuild from 'esbuild';
 import connectDB from './backend/config/db';
 import vehicleRoutes from './backend/routes/vehicleRoutes';
@@ -37,25 +40,61 @@ if (__dirname.includes('dist')) {
 const uploadsDir = path.join(root, 'uploads');
 fs.access(uploadsDir).catch(() => fs.mkdir(uploadsDir));
 
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 requests per windowMs for auth routes
+  message: 'Too many authentication attempts, please try again later.',
+  skipSuccessfulRequests: true,
+});
+
 // Security and Performance Middleware
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      scriptSrc: ["'self'"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
       connectSrc: ["'self'"],
-      fontSrc: ["'self'", "https:", "data:"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
       frameSrc: ["'none'"],
+      upgradeInsecureRequests: [],
     },
+  },
+  crossOriginEmbedderPolicy: false,
+}));
+
+// Data sanitization against NoSQL injection
+app.use(mongoSanitize());
+
+// Prevent HTTP Parameter Pollution
+app.use(hpp());
+
+// Compression middleware with better options
+app.use(compression({
+  level: 6,
+  threshold: 1024,
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
   },
 }));
 
-// Compression middleware
-app.use(compression());
+// Apply rate limiting
+app.use(limiter);
 
 // CORS configuration
 app.use(cors({
@@ -69,7 +108,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // 1. API Routes
 // Handle all API calls before any file serving.
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/analytics', analyticsRoutes);
