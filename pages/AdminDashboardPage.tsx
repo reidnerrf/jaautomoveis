@@ -83,7 +83,10 @@ const AdminDashboardPage: React.FC = () => {
 
         if (realtimeRes.ok) {
           const realtimeDataRes = await realtimeRes.json();
-          setRealtimeData(realtimeDataRes);
+          const mapped = Array.isArray(realtimeDataRes)
+            ? realtimeDataRes.map((d: any) => ({ hour: d._id?.hour ?? 0, views: d.pageViews ?? 0 }))
+            : [];
+          setRealtimeData(mapped);
         }
       } catch (error) {
         console.error("Erro ao buscar dados:", error);

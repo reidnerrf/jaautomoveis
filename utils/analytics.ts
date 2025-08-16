@@ -1,165 +1,92 @@
 import React from 'react';
 import { io, Socket } from 'socket.io-client';
 
-interface AnalyticsEvent {
+interface AnalyticsEventPayload {
   event: string;
   category: string;
   action: string;
   label?: string;
   value?: number;
+  page: string;
 }
 
 class AnalyticsService {
-  private userId: string | null = null;
-  private sessionId: string;
   private socket: Socket | null = null;
 
   constructor() {
-    this.sessionId = this.generateSessionId();
     this.connectSocket();
     this.trackPageView();
+    (window as any).trackBusinessEvent = this.trackBusinessEvent.bind(this);
   }
 
   private connectSocket() {
-    this.socket = io(window.location.origin); // Connect to the same origin
+    this.socket = io(process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
     this.socket.on('connect', () => {
-      console.log('Analytics socket connected:', this.socket?.id);
+      // console.log('Analytics socket connected:', this.socket?.id);
     });
     this.socket.on('disconnect', () => {
-      console.log('Analytics socket disconnected');
+      // console.log('Analytics socket disconnected');
     });
-  }
-
-  private generateSessionId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
 
   // Track page views
   trackPageView(page?: string) {
     const currentPage = page || window.location.pathname;
-    this.trackEvent({
-      event: 'page_view',
-      category: 'navigation',
-      action: 'view',
-      label: currentPage
+    this.emitPageView(currentPage);
+  }
+
+  private emitPageView(page: string) {
+    if (!this.socket) return;
+    this.socket.emit('page-view', {
+      page,
+      userAgent: navigator.userAgent
     });
   }
 
   // Track user interactions
-  trackUserAction(action: string, category: string, label?: string, value?: number) {
-    this.trackEvent({
+  trackUserAction(action: string, category: string, label?: string, page?: string) {
+    const payload: AnalyticsEventPayload = {
       event: 'user_action',
       category,
       action,
       label,
-      value
-    });
+      page: page || window.location.pathname,
+    };
+    this.emitUserAction(payload);
   }
 
   // Track business events
-  trackBusinessEvent(eventType: 'vehicle_view' | 'financing_simulation' | 'contact_form' | 'phone_call' | 'whatsapp_click' | 'instagram_click', data: any) {
-    this.trackEvent({
+  trackBusinessEvent(eventType: 'vehicle_view' | 'financing_simulation' | 'contact_form' | 'phone_call' | 'whatsapp_click' | 'instagram_click', data: any, page?: string) {
+    const payload: AnalyticsEventPayload = {
       event: eventType,
       category: 'business',
       action: eventType,
-      label: JSON.stringify(data)
-    });
-  }
-
-  // Track errors
-  trackError(error: Error, context?: string) {
-    this.trackEvent({
-      event: 'error',
-      category: 'error',
-      action: error.name,
-      label: `${context || 'unknown'}: ${error.message}`
-    });
-  }
-
-  // Track performance metrics
-  trackPerformance(metric: string, value: number, context?: string) {
-    this.trackEvent({
-      event: 'performance',
-      category: 'performance',
-      action: metric,
-      label: context,
-      value: Math.round(value)
-    });
-  }
-
-  private async trackEvent(event: AnalyticsEvent) {
-    const payload = {
-      ...event,
-      sessionId: this.sessionId,
-      userId: this.userId,
-      timestamp: Date.now(),
-      userAgent: navigator.userAgent,
-      url: window.location.href,
-      deviceType: this.getDeviceType(),
-      location: await this.getLocation()
+      label: JSON.stringify(data),
+      page: page || window.location.pathname,
     };
-
-    if (this.socket) {
-      this.socket.emit('analytics_event', payload);
-    } else {
-      // Fallback to fetch if socket is not available (e.g., during initial load before connection)
-      try {
-        await fetch('/api/analytics/track', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      } catch (error) {
-        console.warn('Analytics tracking failed:', error);
-      }
-    }
+    this.emitUserAction(payload);
   }
 
-  private getDeviceType(): string {
-    const ua = navigator.userAgent;
-    if (/android/i.test(ua)) return 'Android';
-    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return 'iOS';
-    if (/tablet|ipad/i.test(ua)) return 'Tablet';
-    if (/linux/i.test(ua)) return 'Linux';
-    if (/win/i.test(ua)) return 'Windows';
-    if (/mac/i.test(ua)) return 'MacOS';
-    return 'Unknown';
-  }
-
-  private async getLocation(): Promise<string> {
-    try {
-      const response = await fetch('https://ipapi.co/json/');
-      const data = await response.json();
-      return `${data.city}, ${data.region_name}, ${data.country_name}`;
-    } catch (error) {
-      console.warn('Location tracking failed:', error);
-      return 'Unknown Location';
-    }
-  }
-
-  setUserId(id: string) {
-    this.userId = id;
-  }
-
-  // Method to disconnect socket when no longer needed, e.g., on component unmount in a global context
-  disconnect() {
-    if (this.socket) {
-      this.socket.disconnect();
-      this.socket = null;
-    }
+  private emitUserAction(payload: AnalyticsEventPayload) {
+    if (!this.socket) return;
+    this.socket.emit('user-action', {
+      action: payload.action,
+      category: payload.category,
+      label: payload.label,
+      page: payload.page,
+    });
   }
 }
 
 export const analytics = new AnalyticsService();
 
-// React hook for component analytics
 export const useAnalytics = (componentName: string) => {
   React.useEffect(() => {
     const startTime = Date.now();
-
     return () => {
       const renderTime = Date.now() - startTime;
-      analytics.trackPerformance('component_render', renderTime, componentName);
+      // Use user-action for perf metric
+      analytics.trackUserAction('component_render', 'performance', `${componentName}:${renderTime}ms`);
     };
   }, [componentName]);
 

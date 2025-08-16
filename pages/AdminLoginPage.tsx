@@ -14,11 +14,20 @@ const AdminLoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    const success = await login(username, password);
-    if (success === true) {
-      navigate('/admin');
-    } else {
-      setError('Usuário ou senha inválidos. Por favor, tente novamente.');
+
+    try {
+      const success = await login(username, password);
+      if (success === true) {
+        navigate('/admin');
+      } else {
+        setError('Usuário ou senha inválidos. Por favor, tente novamente.');
+      }
+    } catch (err: any) {
+      if (err?.status === 423) {
+        setError('Já existe uma sessão ativa. Encerre a sessão anterior para entrar.');
+      } else {
+        setError('Falha no login.');
+      }
     }
   };
 

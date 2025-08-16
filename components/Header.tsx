@@ -43,7 +43,7 @@ const Header: React.FC = () => {
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
         isScrolled
           ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg dark:shadow-gray-800/20'
-          : 'bg-transparent'
+          : 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md dark:shadow-gray-800/10'
       }`}
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
