@@ -101,9 +101,11 @@ const HomePage: React.FC = () => {
           loop
           muted
           playsInline
+          poster="/assets/homepageabout.webp"
           className="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover"
         >
           <source src="/assets/homevideo.mp4" type="video/mp4" />
+          Seu navegador não suporta vídeo HTML5.
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 backdrop-blur-sm"></div>
 

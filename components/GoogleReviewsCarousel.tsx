@@ -24,7 +24,7 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
   const currentReview = reviews[currentIndex];
 
   return (
-    <div className="w-full max-w-3xl mx-auto text-center">
+    <div className="w-full max-w-3xl mx-auto text-center" role="region" aria-roledescription="carrossel" aria-label="Avaliações de clientes">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
@@ -35,21 +35,21 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
           className="relative bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center"
         >
           {/* Logo Google */}
-          <div className="absolute top-4 right-4 text-gray-300">
+          <div className="absolute top-4 right-4 text-gray-300" aria-hidden="true">
             <FaGoogle size={26} />
           </div>
 
           {/* Avatar */}
           <motion.img
             src={currentReview.avatarUrl}
-            alt={currentReview.reviewerName}
+            alt={`Avatar de ${currentReview.reviewerName}`}
             className="w-24 h-24 rounded-full mb-4 border-4 border-yellow-400 shadow-md"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
           />
 
           {/* Estrelas */}
-          <div className="flex text-yellow-400 mb-4">
+          <div className="flex text-yellow-400 mb-4" aria-label={`Nota ${5} de 5`}>
             {[...Array(5)].map((_, i) => (
               <motion.div
                 key={i}
@@ -78,7 +78,7 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
       </AnimatePresence>
 
       {/* Indicadores */}
-      <div className="flex justify-center mt-6 space-x-2">
+      <div className="flex justify-center mt-6 space-x-2" role="tablist" aria-label="Indicadores de avaliações">
         {reviews.map((_, index) => (
           <motion.button
             key={index}
@@ -87,6 +87,7 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
               currentIndex === index ? 'bg-red-500 scale-110' : 'bg-gray-300 hover:bg-gray-400'
             }`}
             aria-label={`Ir para avaliação ${index + 1}`}
+            aria-current={currentIndex === index}
             whileHover={{ scale: 1.2 }}
           />
         ))}

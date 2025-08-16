@@ -35,6 +35,7 @@ const FloatingButtons: React.FC = () => {
             flex items-center justify-center 
             shadow-lg hover:shadow-xl
             transition-all duration-300
+            focus:outline-none focus-visible:ring-4 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black/20
           `}
           whileHover={{ scale: 1.15 }}
           whileTap={{ scale: 0.95 }}

@@ -11,9 +11,9 @@ const Footer: React.FC = () => {
   ];
 
   const socialLinks = [
-    { icon: <FaFacebook size={22} />, href: 'https://facebook.com', color: 'hover:text-blue-500' },
-    { icon: <FaInstagram size={22} />, href: 'https://www.instagram.com/_jaautomoveis/', color: 'hover:text-pink-500' },
-    { icon: <FaWhatsapp size={22} />, href: 'https://wa.me/5524999037716', color: 'hover:text-green-500' },
+    { icon: <FaFacebook size={22} />, href: 'https://facebook.com', color: 'hover:text-blue-500', label: 'Facebook' },
+    { icon: <FaInstagram size={22} />, href: 'https://www.instagram.com/_jaautomoveis/', color: 'hover:text-pink-500', label: 'Instagram' },
+    { icon: <FaWhatsapp size={22} />, href: 'https://wa.me/5524999037716', color: 'hover:text-green-500', label: 'Whatsapp' },
   ];
 
   return (
@@ -67,6 +67,7 @@ const Footer: React.FC = () => {
                   href={social.href} 
                   target="_blank" 
                   rel="noopener noreferrer" 
+                  aria-label={social.label}
                   className={`text-gray-400 transition-transform transform hover:scale-125 ${social.color}`}
                 >
                   {social.icon}

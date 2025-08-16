@@ -21,7 +21,8 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }) => {
       <div className="relative overflow-hidden">
         <img
           src={vehicle.images[0]}
-          alt={vehicle.name}
+          alt={`${vehicle.name} - ${vehicle.make} ${vehicle.model}`}
+          loading="lazy"
           className="w-full h-56 object-cover transform transition-transform duration-500 group-hover:scale-105"
         />
         {/* Preço */}

@@ -39,7 +39,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles }) => {
   }
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" role="region" aria-roledescription="carrossel" aria-label="Veículos em destaque">
       {/* Lista de veículos */}
       <div className="overflow-hidden">
         <motion.div
@@ -63,6 +63,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles }) => {
             className="absolute top-1/2 left-2 md:-left-4 transform -translate-y-1/2 
                        bg-white/30 backdrop-blur-md hover:bg-white/50 
                        rounded-full p-2 shadow-lg transition-all duration-300"
+            aria-label="Anterior"
           >
             <FiChevronLeft size={28} className="text-gray-800" />
           </button>
@@ -71,6 +72,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles }) => {
             className="absolute top-1/2 right-2 md:-right-4 transform -translate-y-1/2 
                        bg-white/30 backdrop-blur-md hover:bg-white/50 
                        rounded-full p-2 shadow-lg transition-all duration-300"
+            aria-label="Próximo"
           >
             <FiChevronRight size={28} className="text-gray-800" />
           </button>
@@ -78,15 +80,19 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = ({ vehicles }) => {
       )}
 
       {/* Indicadores */}
-      <div className="flex justify-center mt-4 space-x-2">
+      <div className="flex justify-center mt-4 space-x-2" role="tablist" aria-label="Indicadores do carrossel">
         {Array.from({ length: vehicles.length - visibleSlides + 1 }, (_, i) => (
-          <motion.div
+          <button
             key={i}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
               i === currentIndex ? 'bg-main-red scale-110' : 'bg-gray-300'
             }`}
-            animate={{ scale: i === currentIndex ? 1.2 : 1 }}
-          />
+            aria-label={`Slide ${i + 1}`}
+            aria-current={i === currentIndex}
+            onClick={() => setCurrentIndex(i)}
+          >
+            <span className="sr-only">{`Ir para o slide ${i + 1}`}</span>
+          </button>
         ))}
       </div>
     </div>

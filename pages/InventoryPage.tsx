@@ -62,7 +62,7 @@ const InventoryPage: React.FC = () => {
         </motion.div>
 
         {/* Filters */}
-        <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-md mb-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+        <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-md mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
           <div>
             <label className="block text-sm font-medium text-gray-700">Marca</label>
             <select
@@ -122,6 +122,11 @@ const InventoryPage: React.FC = () => {
           >
             <FiX /> Limpar
           </button>
+        </div>
+
+        {/* Summary */}
+        <div className="mb-12 text-sm text-gray-600" aria-live="polite">
+          {loading ? 'Carregando resultados...' : `${filteredAndSortedVehicles.length} veículo(s) encontrado(s).`}
         </div>
 
         {/* Vehicle Grid */}

@@ -38,14 +38,16 @@ const ContactPage: React.FC = () => {
                         </h2>
                         <form className="space-y-5">
                             {[
-                                { id: "name", label: "Nome", type: "text" },
-                                { id: "email", label: "Email", type: "email" }
-                            ].map(({ id, label, type }) => (
+                                { id: "name", label: "Nome", type: "text", autoComplete: "name" },
+                                { id: "email", label: "Email", type: "email", autoComplete: "email" }
+                            ].map(({ id, label, type, autoComplete }) => (
                                 <div key={id}>
                                     <label htmlFor={id} className="font-medium text-gray-700">{label}</label>
                                     <input
                                         type={type}
                                         id={id}
+                                        autoComplete={autoComplete}
+                                        required
                                         className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-main-red shadow-sm transition-all duration-300"
                                     />
                                 </div>
@@ -56,6 +58,7 @@ const ContactPage: React.FC = () => {
                                 <textarea
                                     id="message"
                                     rows={5}
+                                    required
                                     className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-main-red shadow-sm transition-all duration-300"
                                 ></textarea>
                             </div>
@@ -99,7 +102,8 @@ const ContactPage: React.FC = () => {
                                 style={{ border: 0 }}
                                 allowFullScreen={false}
                                 loading="lazy"
-                                title="Google Maps Location"
+                                title="Localização JA Automóveis no Google Maps"
+                                aria-label="Mapa do Google mostrando a localização da JA Automóveis"
                             ></iframe>
                         </div>
                     </motion.div>

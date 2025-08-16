@@ -96,10 +96,10 @@ const VehicleDetailPage: React.FC = () => {
               />
               {vehicle.images.length > 1 && (
                 <>
-                  <button onClick={prevImage} className="absolute top-1/2 left-3 transform -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition">
+                  <button onClick={prevImage} className="absolute top-1/2 left-3 transform -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition" aria-label="Imagem anterior">
                     <FiChevronLeft size={24} />
                   </button>
-                  <button onClick={nextImage} className="absolute top-1/2 right-3 transform -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition">
+                  <button onClick={nextImage} className="absolute top-1/2 right-3 transform -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition" aria-label="Próxima imagem">
                     <FiChevronRight size={24} />
                   </button>
                 </>
@@ -111,6 +111,7 @@ const VehicleDetailPage: React.FC = () => {
                   key={index}
                   src={img}
                   alt={`${vehicle.name} thumbnail ${index + 1}`}
+                  loading="lazy"
                   className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${index === currentImageIndex ? 'border-main-red' : 'border-transparent'} transition`}
                   onClick={() => setCurrentImageIndex(index)}
                 />
@@ -160,6 +161,7 @@ const VehicleDetailPage: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform hover:scale-105 transition-all mt-auto"
+              aria-label="Conversar no WhatsApp"
             >
               <FaWhatsapp size={24} className="mr-2" />
               Falar com um Consultor Agora
@@ -209,6 +211,9 @@ const VehicleDetailPage: React.FC = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
             onClick={() => setIsLightboxOpen(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Galeria de imagens de ${vehicle.name}`}
           >
             <div
               className="relative w-full h-full flex items-center justify-center"
@@ -218,6 +223,7 @@ const VehicleDetailPage: React.FC = () => {
               <button
                 onClick={() => setIsLightboxOpen(false)}
                 className="absolute top-4 right-4 text-white hover:text-main-red transition z-50"
+                aria-label="Fechar galeria"
               >
                 <FiX size={40} />
               </button>
@@ -227,6 +233,7 @@ const VehicleDetailPage: React.FC = () => {
                 <button
                   onClick={prevImage}
                   className="absolute left-2 md:left-10 top-1/2 transform -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition z-50"
+                  aria-label="Imagem anterior"
                 >
                   <FiChevronLeft size={32} />
                 </button>
@@ -248,6 +255,7 @@ const VehicleDetailPage: React.FC = () => {
                 <button
                   onClick={nextImage}
                   className="absolute right-2 md:right-10 top-1/2 transform -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition z-50"
+                  aria-label="Próxima imagem"
                 >
                   <FiChevronRight size={32} />
                 </button>
@@ -266,6 +274,7 @@ const VehicleDetailPage: React.FC = () => {
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-4 right-4 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg lg:hidden transition"
+        aria-label="Abrir conversa no WhatsApp"
       >
         <FaWhatsapp size={28} />
       </a>

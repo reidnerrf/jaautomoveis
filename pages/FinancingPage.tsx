@@ -109,6 +109,7 @@ const FinancingPage: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-8 bg-blue-50 p-6 rounded-lg border border-blue-200 text-center"
+                  aria-live="polite"
                 >
                   <h2 className="text-xl font-bold text-blue-900 mb-3">Resultado da Simulação</h2>
                   <p className="text-gray-700">💳 {installments} parcelas de</p>
@@ -169,6 +170,7 @@ const FinancingPage: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center bg-green-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600 shadow-md"
+                  aria-label="Iniciar conversa no WhatsApp para simular financiamento"
                 >
                   <FaWhatsapp className="mr-3" size={24} /> WhatsApp: (24) 99903-7716
                 </a>
