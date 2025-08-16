@@ -5,30 +5,216 @@
     <link rel="icon" type="image/png" href="/favicon-32x32.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JA Automóveis</title>
+    
+    <!-- Google Fonts - Fontes modernas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
+            fontFamily: {
+              'sans': ['Inter', 'system-ui', 'sans-serif'],
+              'display': ['Poppins', 'system-ui', 'sans-serif'],
+            },
             colors: {
-              'main-red': '#D2282F',
-              'secondary-blue': '#62A9F8',
-              'comp-light-gray': '#F0E9E8',
-              'comp-dark-blue': '#2427C3',
-              'comp-muted-pink': '#AC8590',
-              'comp-salmon': '#D26762',
-              // New Admin Colors
-              'box-dark': '#24303F',
-              'main-dark': '#1A222C',
-              'stroke': '#E2E8F0',
-              'body-color': '#637381',
-              'primary': '#3C50E0',
-              'secondary': '#80CAEE',
+              // Paleta moderna e sofisticada
+              'primary': {
+                50: '#fef2f2',
+                100: '#fee2e2',
+                200: '#fecaca',
+                300: '#fca5a5',
+                400: '#f87171',
+                500: '#ef4444',
+                600: '#dc2626',
+                700: '#b91c1c',
+                800: '#991b1b',
+                900: '#7f1d1d',
+              },
+              'secondary': {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                200: '#bae6fd',
+                300: '#7dd3fc',
+                400: '#38bdf8',
+                500: '#0ea5e9',
+                600: '#0284c7',
+                700: '#0369a1',
+                800: '#075985',
+                900: '#0c4a6e',
+              },
+              'accent': {
+                50: '#fdf4ff',
+                100: '#fae8ff',
+                200: '#f5d0fe',
+                300: '#f0abfc',
+                400: '#e879f9',
+                500: '#d946ef',
+                600: '#c026d3',
+                700: '#a21caf',
+                800: '#86198f',
+                900: '#701a75',
+              },
+              'neutral': {
+                50: '#fafafa',
+                100: '#f5f5f5',
+                200: '#e5e5e5',
+                300: '#d4d4d4',
+                400: '#a3a3a3',
+                500: '#737373',
+                600: '#525252',
+                700: '#404040',
+                800: '#262626',
+                900: '#171717',
+              },
+              // Cores de marca atualizadas
+              'brand': {
+                'red': '#dc2626',
+                'blue': '#0ea5e9',
+                'green': '#10b981',
+                'yellow': '#f59e0b',
+              },
+              // Cores de fundo modernas
+              'surface': {
+                'primary': '#ffffff',
+                'secondary': '#f8fafc',
+                'tertiary': '#f1f5f9',
+                'dark': '#0f172a',
+              }
+            },
+            backgroundImage: {
+              'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+              'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+              'gradient-mesh': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              'gradient-sunset': 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+              'gradient-ocean': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            },
+            boxShadow: {
+              'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+              'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+              'large': '0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 2px 10px -2px rgba(0, 0, 0, 0.05)',
+              'glow': '0 0 20px rgba(220, 38, 38, 0.3)',
+              'glow-blue': '0 0 20px rgba(14, 165, 233, 0.3)',
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-in-out',
+              'slide-up': 'slideUp 0.6s ease-out',
+              'slide-down': 'slideDown 0.6s ease-out',
+              'scale-in': 'scaleIn 0.3s ease-out',
+              'bounce-soft': 'bounceSoft 2s infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              slideDown: {
+                '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              scaleIn: {
+                '0%': { transform: 'scale(0.9)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' },
+              },
+              bounceSoft: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-5px)' },
+              },
+            },
+            backdropBlur: {
+              'xs': '2px',
             }
           }
         }
       }
     </script>
+    
+    <!-- CSS Customizado -->
+    <style>
+      /* Estilos globais modernos */
+      * {
+        scroll-behavior: smooth;
+      }
+      
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      /* Glassmorphism effect */
+      .glass {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      
+      .glass-dark {
+        background: rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      /* Gradientes modernos */
+      .gradient-text {
+        background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      
+      /* Animações suaves */
+      .hover-lift {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Scrollbar personalizada */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      
+      /* Loading states */
+      .loading-shimmer {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+      }
+      
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+      }
+    </style>
   <script type="importmap">
 {
   "imports": {
@@ -56,7 +242,7 @@
 }
 </script>
 </head>
-  <body>
+  <body class="bg-surface-secondary">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

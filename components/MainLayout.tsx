@@ -7,7 +7,7 @@ import { Outlet } from 'react-router-dom';
 
 const MainLayout: React.FC = () => {
   return (
-    <div className="bg-comp-light-gray min-h-screen flex flex-col">
+    <div className="bg-surface-secondary min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">
         <Outlet />

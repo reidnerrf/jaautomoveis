@@ -22,47 +22,90 @@ const Header: React.FC = () => {
     : baseNavLinks;
 
   const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `relative block py-2 px-3 rounded-md transition-all duration-300 
-    ${isActive ? 'text-main-red font-semibold' : 'text-gray-700 hover:text-main-red'}
-    after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px]
-    after:bg-main-red after:w-0 hover:after:w-full after:transition-all after:duration-300`;
+    `relative block py-3 px-4 rounded-xl transition-all duration-300 font-medium
+    ${isActive 
+      ? 'text-primary-600 bg-primary-50 shadow-soft' 
+      : 'text-neutral-600 hover:text-primary-600 hover:bg-primary-50/50'
+    }
+    after:content-[''] after:absolute after:left-1/2 after:bottom-0 after:h-0.5
+    after:bg-gradient-to-r after:from-primary-500 after:to-primary-600 
+    after:w-0 hover:after:w-full after:transition-all after:duration-300 after:-translate-x-1/2`;
 
   return (
-    <header className="bg-white/70 backdrop-blur-md shadow-md sticky top-0 z-50">
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50">
+      {/* Background com glassmorphism */}
+      <div className="absolute inset-0 bg-white/80 backdrop-blur-md border-b border-neutral-200/50"></div>
+      
+      <nav className="relative container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center group">
-            <motion.img
-              src="/assets/logo.png"
-              alt="JA Automóveis Logo"
-              className="h-16 w-auto transition-transform group-hover:scale-105"
-              whileHover={{ rotate: -2, scale: 1.05 }}
-            />
+          <Link to="/" className="flex items-center group relative z-10">
+            <motion.div
+              className="relative"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <img
+                src="/assets/logo.png"
+                alt="JA Automóveis Logo"
+                className="h-14 w-auto transition-all duration-300 group-hover:drop-shadow-lg"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </motion.div>
           </Link>
 
           {/* Menu Desktop */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <NavLink
+          <div className="hidden lg:flex items-center space-x-2">
+            {navLinks.map((link, index) => (
+              <motion.div
                 key={link.name}
-                to={link.path}
-                end={link.path === '/'}
-                className={getNavLinkClass}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
               >
-                {link.name}
-              </NavLink>
+                <NavLink
+                  to={link.path}
+                  end={link.path === '/'}
+                  className={getNavLinkClass}
+                >
+                  {link.name}
+                </NavLink>
+              </motion.div>
             ))}
           </div>
 
           {/* Botão Mobile */}
-          <div className="md:hidden">
-            <button
+          <div className="lg:hidden relative z-10">
+            <motion.button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-main-red focus:outline-none"
+              className="p-2 rounded-xl bg-white/50 backdrop-blur-sm border border-neutral-200/50 shadow-soft hover:shadow-medium transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {isOpen ? <FiX size={26} /> : <FiMenu size={26} />}
-            </button>
+              <AnimatePresence mode="wait">
+                {isOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <FiX size={24} className="text-neutral-700" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <FiMenu size={24} className="text-neutral-700" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
           </div>
         </div>
       </nav>
@@ -70,26 +113,53 @@ const Header: React.FC = () => {
       {/* Menu Mobile */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            className="md:hidden bg-white shadow-lg border-t border-gray-200"
-          >
-            <div className="px-4 pt-4 pb-6 space-y-3">
-              {navLinks.map((link) => (
-                <NavLink
-                  key={link.name}
-                  to={link.path}
-                  end={link.path === '/'}
-                  className={getNavLinkClass}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.name}
-                </NavLink>
-              ))}
-            </div>
-          </motion.div>
+          <>
+            {/* Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm lg:hidden z-40"
+              onClick={() => setIsOpen(false)}
+            />
+            
+            {/* Menu */}
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="absolute top-full left-0 right-0 lg:hidden z-50"
+            >
+              <div className="bg-white/95 backdrop-blur-md border-b border-neutral-200/50 shadow-large">
+                <div className="px-4 py-6 space-y-2">
+                  {navLinks.map((link, index) => (
+                    <motion.div
+                      key={link.name}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1, duration: 0.3 }}
+                    >
+                      <NavLink
+                        to={link.path}
+                        end={link.path === '/'}
+                        className={({ isActive }) =>
+                          `block py-3 px-4 rounded-xl transition-all duration-300 font-medium
+                          ${isActive 
+                            ? 'text-primary-600 bg-primary-50 shadow-soft' 
+                            : 'text-neutral-600 hover:text-primary-600 hover:bg-primary-50/50'
+                          }`
+                        }
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {link.name}
+                      </NavLink>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>
