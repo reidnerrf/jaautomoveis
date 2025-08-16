@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useVehicleData } from "../hooks/useVehicleData.tsx";
 import VehicleCarousel from "../components/VehicleCarousel.tsx";
+import { useTopVehicles } from "../hooks/useTopVehicles.tsx";
 import GoogleReviewsCarousel from "../components/GoogleReviewsCarousel.tsx";
 import GoogleReviewSummary from "../components/GoogleReviewSummary.tsx";
 import {
@@ -26,6 +27,7 @@ import { useTheme } from "../contexts/ThemeContext.tsx";
 
 const HomePage: React.FC = () => {
   const { vehicles } = useVehicleData();
+  const { vehicles: mostViewedVehicles, loading: loadingMostViewed } = useTopVehicles({ limit: 8, periodDays: 30 });
   const { trackAction } = useAnalytics('HomePage');
   const { isDarkMode } = useTheme();
   const { scrollY } = useScroll();
@@ -136,16 +138,30 @@ const HomePage: React.FC = () => {
     <div className="w-full bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <motion.video
-          style={{ y }}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0"
-        >
-          <source src="/assets/homevideo.mp4" type="video/mp4" />
-        </motion.video>
+        {/* Background media: video on desktop, image on mobile for performance */}
+        <div className="absolute inset-0 z-0">
+          <div className="hidden sm:block h-full w-full">
+            <motion.video
+              style={{ y }}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source src="/assets/homevideo.mp4" type="video/mp4" />
+            </motion.video>
+          </div>
+          <div className="block sm:hidden h-full w-full">
+            <img
+              src="/assets/homepageabout.webp"
+              alt="JA Automóveis"
+              className="absolute inset-0 w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+        </div>
         
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 z-10"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-red-900/30 to-transparent z-10"></div>
@@ -180,32 +196,32 @@ const HomePage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            <Link to="/inventory">
+            <Link to="/inventory" className="w-full sm:w-auto">
               <motion.button
-                className="group relative overflow-hidden px-10 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-lg rounded-full shadow-2xl border-2 border-red-500/30 transition-all duration-300"
+                className="group relative overflow-hidden px-10 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-lg rounded-full shadow-2xl border-2 border-red-500/30 transition-all duration-300 w-full sm:w-auto min-h-[56px]"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span className="relative z-10 flex items-center gap-3">
+                <span className="relative z-10 flex items-center gap-3 justify-center">
                   <FaCar />
                   Ver Estoque Completo
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-rose-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </motion.button>
             </Link>
-            
             <a
               href="https://api.whatsapp.com/send?phone=5524999037716&text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => handleSocialClick('whatsapp')}
+              className="w-full sm:w-auto"
             >
               <motion.button
-                className="group relative overflow-hidden px-10 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white font-bold text-lg rounded-full shadow-2xl border-2 border-green-500/30 transition-all duration-300"
+                className="group relative overflow-hidden px-10 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white font-bold text-lg rounded-full shadow-2xl border-2 border-green-500/30 transition-all duration-300 w-full sm:w-auto min-h-[56px]"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span className="relative z-10 flex items-center gap-3">
+                <span className="relative z-10 flex items-center gap-3 justify-center">
                   <FaWhatsapp />
                   Fale no WhatsApp
                 </span>
@@ -310,6 +326,39 @@ const HomePage: React.FC = () => {
               </p>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* MAIS VISITADOS */}
+      <section className="py-24 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="container mx-auto px-4">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-5xl font-black text-gray-900 dark:text-white mb-4">
+              Veículos <span className="text-red-500">Mais Visitados</span>
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-red-500 to-rose-500 mx-auto rounded-full mb-6"></div>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Confira os modelos mais populares nas últimas semanas
+            </p>
+          </motion.div>
+
+          {loadingMostViewed ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
+            </div>
+          ) : mostViewedVehicles && mostViewedVehicles.length > 0 ? (
+            <VehicleCarousel vehicles={mostViewedVehicles} />
+          ) : (
+            <div className="text-center text-gray-600 dark:text-gray-300 py-12">
+              Ainda não há dados suficientes para exibir os mais visitados. Confira nossos destaques acima!
+            </div>
+          )}
         </div>
       </section>
 

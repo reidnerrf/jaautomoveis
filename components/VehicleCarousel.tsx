@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Vehicle } from '../types.ts';
 import VehicleCard from './VehicleCard.tsx';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -10,8 +10,13 @@ interface VehicleCarouselProps {
 
 const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchDeltaXRef = useRef<number>(0);
+  const autoPlayRef = useRef<number | null>(null);
 
   const getVisibleSlides = useCallback(() => {
+    if (typeof window === 'undefined') return 1;
     if (window.innerWidth >= 1280) return 4;
     if (window.innerWidth >= 1024) return 3;
     if (window.innerWidth >= 768) return 2;
@@ -22,7 +27,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
 
   useEffect(() => {
     const handleResize = () => setVisibleSlides(getVisibleSlides());
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true } as any);
     return () => window.removeEventListener('resize', handleResize);
   }, [getVisibleSlides]);
 
@@ -33,6 +38,52 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
   const nextSlide = useCallback(() => {
     setCurrentIndex(prev => (prev >= vehicles.length - visibleSlides ? 0 : prev + 1));
   }, [vehicles.length, visibleSlides]);
+
+  // Auto-play suave em telas menores
+  useEffect(() => {
+    if (vehicles.length <= visibleSlides) return;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    if (!isMobile) return;
+    autoPlayRef.current = window.setInterval(() => {
+      nextSlide();
+    }, 5000);
+    return () => {
+      if (autoPlayRef.current) window.clearInterval(autoPlayRef.current);
+    };
+  }, [vehicles.length, visibleSlides, nextSlide]);
+
+  // Suporte a arraste por toque
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartXRef.current = e.touches[0].clientX;
+      touchDeltaXRef.current = 0;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (touchStartXRef.current == null) return;
+      touchDeltaXRef.current = e.touches[0].clientX - touchStartXRef.current;
+    };
+    const onTouchEnd = () => {
+      const delta = touchDeltaXRef.current;
+      if (Math.abs(delta) > 40) {
+        if (delta < 0) nextSlide(); else prevSlide();
+      }
+      touchStartXRef.current = null;
+      touchDeltaXRef.current = 0;
+    };
+
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchmove', onTouchMove, { passive: true });
+    el.addEventListener('touchend', onTouchEnd);
+
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
+      el.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [nextSlide, prevSlide]);
 
   // Memoize the carousel items to prevent unnecessary re-renders
   const carouselItems = useMemo(() => 
@@ -46,11 +97,13 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
   // Memoize indicators
   const indicators = useMemo(() => 
     Array.from({ length: Math.max(0, vehicles.length - visibleSlides + 1) }, (_, i) => (
-      <motion.div
+      <motion.button
         key={i}
+        onClick={() => setCurrentIndex(i)}
         className={`w-3 h-3 rounded-full transition-all duration-300 ${
           i === currentIndex ? 'bg-main-red scale-110' : 'bg-gray-300'
         }`}
+        aria-label={`Ir para slide ${i + 1}`}
         animate={{ scale: i === currentIndex ? 1.2 : 1 }}
       />
     )), [vehicles.length, visibleSlides, currentIndex]
@@ -61,7 +114,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
   }
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" ref={containerRef}>
       {/* Lista de veículos */}
       <div className="overflow-hidden">
         <motion.div
