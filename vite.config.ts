@@ -51,7 +51,7 @@ export default defineConfig(({ mode }) => {
         hmr: {
           port: 3000,
         },
-        allowedHosts: 'all',
+        allowedHosts: true,
       },
     };
 });

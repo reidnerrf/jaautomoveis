@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useVehicleData } from '../hooks/useVehicleData.tsx';
 import { useAuth } from '../hooks/useAuth.tsx';
-import { FiEdit, FiTrash2, FiPlus, FiSearch, FiRefreshCw, FiEye, FiDownload, FiFilter, FiGrid, FiList, FiBarChart3, FiTrendingUp, FiDollarSign } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiPlus, FiSearch, FiRefreshCw, FiEye, FiDownload, FiFilter, FiGrid, FiList, FiBarChart2, FiTrendingUp, FiDollarSign } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCarSide, FaCalendarAlt } from 'react-icons/fa';
 
@@ -285,7 +285,7 @@ const AdminVehicleListPage: React.FC = () => {
                                     }).format(vehicleStats.averageKm)}
                                 </p>
                             </div>
-                            <FiBarChart3 className="text-4xl text-indigo-200" />
+                            <FiBarChart2 className="text-4xl text-indigo-200" />
                         </div>
                     </motion.div>
 

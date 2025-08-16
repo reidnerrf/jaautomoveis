@@ -1,10 +1,9 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FiEye, FiHeart, FiCalendar, FiSettings, FiDollarSign, FiStar } from 'react-icons/fi';
-import { BsFuelPump } from 'react-icons/bs';
-import { AiOutlineSpeedometer } from 'react-icons/ai';
+import { BsFuelPump, BsSpeedometer2 } from 'react-icons/bs';
 import OptimizedImage from './OptimizedImage';
-import { FaGasPump, FaCog, FaWhatsapp } from 'react-icons/fa';
+import { FaWhatsapp } from 'react-icons/fa';
 import { Link } from 'react-router-dom'; // Assuming react-router-dom is used
 
 // Placeholder for RealTimeViewers component
@@ -78,12 +77,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
     }
   };
 
-  // Function to format currency, assumed to be available globally or imported
-  const formatCurrency = (amount: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(amount);
-
-  // Function to format number, assumed to be available globally or imported
-  const formatNumber = (num: number) => new Intl.NumberFormat('pt-BR').format(num);
-
+  // removed unused helpers
 
   if (viewMode === 'list') {
     return (
@@ -104,7 +98,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
                 Disponível
               </span>
             </div>
-            {vehicle.featured && (
+            {Boolean(vehicle.featured) && (
               <div className="absolute top-3 right-3 z-10">
                 <span className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
                   <FiStar className="fill-current w-3 h-3" />
@@ -150,7 +144,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
                 <span>{vehicle.year}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <AiOutlineSpeedometer className="w-4 h-4 text-green-500" />
+                <BsSpeedometer2 className="w-4 h-4 text-green-500" />
                 <span>{formatMileage(vehicle.km)} km</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
@@ -200,7 +194,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
       whileHover={{ y: -5 }}
     >
       {/* Featured Badge */}
-      {vehicle.featured && (
+      {Boolean(vehicle.featured) && (
         <div className="absolute top-4 left-4 z-10 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
           ⭐ Destaque
         </div>
@@ -222,7 +216,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
       <div className="relative h-48 overflow-hidden">
         <OptimizedImage
           src={vehicle.images?.[0] || '/assets/placeholder-car.jpg'}
-          alt={`${vehicle.brand} ${vehicle.model}`}
+          alt={`${vehicle.make} ${vehicle.model}`}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -233,7 +227,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
         {/* Title */}
         <div className="mb-3">
           <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
-            {vehicle.brand} {vehicle.model}
+            {vehicle.make} {vehicle.model}
           </h3>
           <p className="text-sm text-gray-500 mt-1">
             {vehicle.description && vehicle.description.length > 60
@@ -250,12 +244,12 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
             <span>{vehicle.year}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <AiOutlineSpeedometer className="w-4 h-4 text-green-500" />
-            <span>{formatMileage(vehicle.mileage)} km</span>
+            <BsSpeedometer2 className="w-4 h-4 text-green-500" />
+            <span>{formatMileage(vehicle.km)} km</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <BsFuelPump className="w-4 h-4 text-orange-500" />
-            <span>{vehicle.fuelType}</span>
+            <span>{vehicle.fuel}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <FiSettings className="w-4 h-4 text-purple-500" />

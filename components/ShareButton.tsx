@@ -23,7 +23,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = '' }) =>
   
   const shareUrl = window.location.href;
   const title = `Confira este ${vehicle.name} na JA Automóveis!`;
-  const description = `${vehicle.make} ${vehicle.name} ${vehicle.year} - R$ ${vehicle.price.toLocaleString('pt-BR')}`;
+  // removed unused description variable
 
   const copyToClipboard = async () => {
     try {

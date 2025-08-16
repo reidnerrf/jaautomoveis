@@ -43,7 +43,7 @@ const AdminDashboardPage: React.FC = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io(process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000');
+    const newSocket = io(process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
     setSocket(newSocket);
 
     // Listen for real-time actions
@@ -568,48 +568,48 @@ const AdminDashboardPage: React.FC = () => {
           </div>
         </div>
       </motion.div>
-    </div>
 
-    {/* Live Activity Feed */}
-    <motion.div
-      className="mt-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1.1 }}
-    >
-      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-        Atividade em Tempo Real
-      </h3>
-      <div className="space-y-3 max-h-96 overflow-y-auto">
-        {liveActions.length > 0 ? (
-          liveActions.map((action, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
-            >
-              <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-              <div className="flex-1">
-                <p className="text-sm text-gray-800 dark:text-gray-200">
-                  {action.action === 'page_view' && `Usuário de ${action.location} visualizou ${action.page}`}
-                  {action.action === 'vehicle_view' && `Usuário interessado no veículo ${action.vehicleName}`}
-                  {action.action === 'whatsapp_click' && `Contato via WhatsApp para ${action.vehicleName}`}
-                  {action.action === 'instagram_click' && `Visitou nosso Instagram`}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {new Date(action.timestamp).toLocaleTimeString('pt-BR')} • {action.device} • {action.location}
-                </p>
-              </div>
-            </motion.div>
-          ))
-        ) : (
-          <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-            Aguardando atividade em tempo real...
-          </p>
-        )}
-      </div>
+      {/* Live Activity Feed */}
+      <motion.div
+        className="mt-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.1 }}
+      >
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+          <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+          Atividade em Tempo Real
+        </h3>
+        <div className="space-y-3 max-h-96 overflow-y-auto">
+          {liveActions.length > 0 ? (
+            liveActions.map((action, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-800 dark:text-gray-200">
+                    {action.action === 'page_view' && `Usuário de ${action.location} visualizou ${action.page}`}
+                    {action.action === 'vehicle_view' && `Usuário interessado no veículo ${action.vehicleName}`}
+                    {action.action === 'whatsapp_click' && `Contato via WhatsApp para ${action.vehicleName}`}
+                    {action.action === 'instagram_click' && `Visitou nosso Instagram`}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {new Date(action.timestamp).toLocaleTimeString('pt-BR')} • {action.device} • {action.location}
+                  </p>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+              Aguardando atividade em tempo real...
+            </p>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 };

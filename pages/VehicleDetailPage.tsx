@@ -4,11 +4,10 @@ import { useVehicleData } from '../hooks/useVehicleData.tsx';
 import VehicleCarousel from '../components/VehicleCarousel.tsx';
 import PriceComparison from '../components/PriceComparison.tsx';
 import { FaWhatsapp } from 'react-icons/fa';
-import { FiChevronLeft, FiChevronRight, FiChevronUp, FiTag, FiCalendar, FiTrello, FiSettings, FiDroplet, FiGitCommit, FiFolder, FiX, FiAward, FiShield, FiEye } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiArrowLeft, FiTag, FiCalendar, FiTrello, FiSettings, FiDroplet, FiGitCommit, FiFolder, FiX, FiAward, FiShield, FiEye } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Vehicle } from '../types.ts';
 import TopButton from '../components/TopButton.tsx';
-import { FiArrowLeft } from 'react-icons/fi'; // adicionar import
 import ShareButton from '../components/ShareButton.tsx';
 import RealTimeViewers from '../components/RealTimeViewers.tsx';
 

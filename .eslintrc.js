@@ -6,7 +6,7 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    '@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
   ],
@@ -35,6 +35,7 @@ module.exports = {
     'react/no-array-index-key': 'error',
     'react/no-unstable-nested-components': 'error',
     'react/prefer-stateless-function': 'error',
+    'react/prop-types': 'off',
     
     // React Hooks rules
     'react-hooks/rules-of-hooks': 'error',
@@ -45,7 +46,6 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/prefer-const': 'error',
     
     // General rules
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',

@@ -49,6 +49,8 @@ class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
+      const showDevError = process.env.NODE_ENV === 'development' && this.state.error;
+
       return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
           <motion.div
@@ -82,7 +84,7 @@ class ErrorBoundary extends Component<Props, State> {
             </motion.div>
 
             {/* Error Details (Development Only) */}
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {showDevError && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
