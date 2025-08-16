@@ -8,7 +8,7 @@ channel = "stable-25_05"
 run = ["sh", "-c", "npm run dev"]
 
 [workflows]
-runButton = "Development Server"
+runButton = "Development Server with Analytics"
 
 [[workflows.workflow]]
 name = "Development Server"
@@ -25,6 +25,19 @@ args = "npm run dev"
 
 [[workflows.workflow]]
 name = "Development Server"
+author = 46501542
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+
+[[workflows.workflow]]
+name = "Development Server with Analytics"
 author = 46501542
 mode = "sequential"
 

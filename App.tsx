@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { VehicleProvider } from './hooks/useVehicleData.tsx';
 import { AuthProvider } from './hooks/useAuth.tsx';
+import { ThemeProvider } from './contexts/ThemeContext.tsx';
 import ErrorBoundary from './components/ErrorBoundary'; // Assuming ErrorBoundary is in this path
 
 // Lazy load all pages for better performance
@@ -32,8 +33,9 @@ const LoadingSpinner = () => (
 const App: React.FC = () => {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <VehicleProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <VehicleProvider>
           <HashRouter>
             <Suspense fallback={<LoadingSpinner />}>
               <Routes>
@@ -64,7 +66,8 @@ const App: React.FC = () => {
             </Suspense>
           </HashRouter>
         </VehicleProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 };

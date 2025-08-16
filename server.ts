@@ -9,11 +9,17 @@ import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 import * as esbuild from 'esbuild';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import UAParser from 'ua-parser-js';
+import geoip from 'geoip-lite';
 import connectDB from './backend/config/db';
 import vehicleRoutes from './backend/routes/vehicleRoutes';
 import authRoutes from './backend/routes/authRoutes';
 import uploadRoutes from './backend/routes/uploadRoutes';
 import analyticsRoutes from './backend/routes/analyticsRoutes';
+import Analytics from './backend/models/Analytics';
+import { body, validationResult } from 'express-validator';
 
 // Load environment variables
 dotenv.config();
@@ -22,22 +28,18 @@ dotenv.config();
 connectDB();
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.NODE_ENV === 'production' ? false : ["http://localhost:5173", "http://127.0.0.1:5173"],
+    methods: ["GET", "POST"]
+  }
+});
+
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Robustly determine the project root directory. This is crucial because when
-// running the compiled server.js from the 'dist' folder, __dirname will be
-// inside 'dist', but our static assets and TSX files are in the parent folder.
-let root: string;
-if (__dirname.includes('dist')) {
-  // Production environment: running from 'dist', so we go one level up.
-  root = path.resolve(__dirname, '..');
-} else {
-  // Development environment: server.ts is at the root.
-  root = path.resolve();
-}
-
 // Create uploads directory if it doesn't exist
-const uploadsDir = path.join(root, 'uploads');
+const uploadsDir = path.join(__dirname, 'uploads');
 fs.access(uploadsDir).catch(() => fs.mkdir(uploadsDir));
 
 // Rate limiting
@@ -56,20 +58,16 @@ const authLimiter = rateLimit({
   skipSuccessfulRequests: true,
 });
 
-// Security and Performance Middleware
+// Security Middleware
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:"],
       scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https:", "blob:"],
-      connectSrc: ["'self'"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
-      objectSrc: ["'none'"],
-      mediaSrc: ["'self'"],
-      frameSrc: ["'none'"],
-      upgradeInsecureRequests: [],
+      connectSrc: ["'self'", "ws:", "wss:"],
     },
   },
   crossOriginEmbedderPolicy: false,
@@ -107,20 +105,17 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // 1. API Routes
-// Handle all API calls before any file serving.
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 // 2. Development-only TSX/TS Transpilation
-// Only transpile in development mode
 if (!isProduction) {
   app.use(async (req: Request, res: Response, next: NextFunction) => {
     if (req.path.endsWith('.tsx') || req.path.endsWith('.ts')) {
       try {
-        const filePath = path.join(root, req.path);
-        // Check if file exists before attempting to read
+        const filePath = path.join(__dirname, req.path);
         await fs.access(filePath);
 
         const source = await fs.readFile(filePath, 'utf-8');
@@ -133,32 +128,27 @@ if (!isProduction) {
         res.setHeader('Cache-Control', 'no-cache');
         res.send(code);
       } catch (error) {
-        // If file doesn't exist, pass to the next middleware (which will likely be the fallback).
         if ((error as { code: string }).code === 'ENOENT') {
           return next();
         }
-        // For any other error during transpilation, log it and send a server error.
         console.error(`[ESBuild Middleware] Error processing ${req.path}:`, error);
         res.status(500).send('Internal Server Error');
       }
     } else {
-      // If it's not a .tsx or .ts file, move on.
       next();
     }
   });
 }
 
 // 3. Serve Static Assets with Caching
-// Serve the 'uploads' directory statically with caching
-app.use('/uploads', express.static(path.join(root, 'uploads'), {
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   maxAge: isProduction ? '1d' : 0,
   etag: true,
   lastModified: true,
 }));
 
-// Serve built assets with aggressive caching in production
 if (isProduction) {
-  app.use('/assets', express.static(path.join(root, 'dist/assets'), {
+  app.use('/assets', express.static(path.join(__dirname, 'dist/assets'), {
     maxAge: '1y',
     etag: true,
     lastModified: true,
@@ -166,8 +156,7 @@ if (isProduction) {
   }));
 }
 
-// Serve other static assets from the root with caching
-app.use(express.static(root, {
+app.use(express.static(__dirname, {
   maxAge: isProduction ? '1h' : 0,
   etag: true,
   lastModified: true,
@@ -181,9 +170,124 @@ app.use(express.static(root, {
 }));
 
 // 4. Fallback for Single-Page Application (SPA)
-// For any route that is not an API call or a static file, serve index.html.
 app.get('*', (req: Request, res: Response) => {
-    res.sendFile(path.resolve(root, 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'index.html'));
+});
+
+// Socket.IO real-time analytics
+const activeUsers = new Map();
+const pageViews = new Map();
+
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  socket.on('page-view', async (data) => {
+    const { page, userAgent } = data;
+    const parser = new UAParser(userAgent);
+    const clientIP = socket.handshake.headers['x-forwarded-for'] || (socket.handshake.address as string);
+    const geo = geoip.lookup(clientIP);
+
+    if (!pageViews.has(page)) {
+      pageViews.set(page, new Set());
+    }
+    pageViews.get(page).add(socket.id);
+
+    activeUsers.set(socket.id, {
+      page,
+      joinTime: Date.now(),
+      device: parser.getResult()
+    });
+
+    io.emit('page-viewers', {
+      page,
+      count: pageViews.get(page).size
+    });
+
+    try {
+      const analytics = new Analytics({
+        sessionId: socket.id,
+        event: 'page_view',
+        category: 'navigation',
+        action: 'view',
+        page,
+        userAgent,
+        device: {
+          type: parser.getDevice().type || 'desktop',
+          browser: parser.getBrowser().name || 'unknown',
+          os: parser.getOS().name || 'unknown',
+          isMobile: parser.getDevice().type === 'mobile'
+        },
+        location: {
+          country: geo?.country || 'unknown',
+          region: geo?.region || 'unknown',
+          city: geo?.city || 'unknown',
+          ip: clientIP || 'unknown'
+        }
+      });
+      await analytics.save();
+    } catch (error) {
+      console.error('Analytics save error:', error);
+    }
+  });
+
+  socket.on('user-action', async (data) => {
+    const { action, category, label, page } = data;
+    const userAgent = socket.handshake.headers['user-agent'];
+    const clientIP = socket.handshake.headers['x-forwarded-for'] || (socket.handshake.address as string);
+    const parser = new UAParser(userAgent);
+    const geo = geoip.lookup(clientIP);
+
+    try {
+      const analytics = new Analytics({
+        sessionId: socket.id,
+        event: 'user_action',
+        category,
+        action,
+        label,
+        page,
+        userAgent: userAgent || 'unknown',
+        device: {
+          type: parser.getDevice().type || 'desktop',
+          browser: parser.getBrowser().name || 'unknown',
+          os: parser.getOS().name || 'unknown',
+          isMobile: parser.getDevice().type === 'mobile'
+        },
+        location: {
+          country: geo?.country || 'unknown',
+          region: geo?.region || 'unknown',
+          city: geo?.city || 'unknown',
+          ip: clientIP || 'unknown'
+        }
+      });
+      await analytics.save();
+
+      io.emit('user-action-live', {
+        action,
+        category,
+        label,
+        timestamp: Date.now(),
+        location: geo?.city || 'Unknown'
+      });
+    } catch (error) {
+      console.error('Analytics save error:', error);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    const user = activeUsers.get(socket.id);
+    if (user) {
+      const page = user.page;
+      if (pageViews.has(page)) {
+        pageViews.get(page).delete(socket.id);
+        io.emit('page-viewers', {
+          page,
+          count: pageViews.get(page).size
+        });
+      }
+      activeUsers.delete(socket.id);
+    }
+    console.log('User disconnected:', socket.id);
+  });
 });
 
 // Error handling middleware
@@ -193,7 +297,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Start Server
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server is running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });

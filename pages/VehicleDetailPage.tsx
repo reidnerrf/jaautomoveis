@@ -9,6 +9,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Vehicle } from '../types.ts';
 import TopButton from '../components/TopButton.tsx';
 import { FiArrowLeft } from 'react-icons/fi'; // adicionar import
+import ShareButton from '../components/ShareButton.tsx';
+import RealTimeViewers from '../components/RealTimeViewers.tsx';
 
 
 const VehicleDetailPage: React.FC = () => {
@@ -83,7 +85,7 @@ const VehicleDetailPage: React.FC = () => {
   </Link>
 </div>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          
+
           {/* Galeria de imagens */}
           <div className="lg:col-span-3">
             <div className="relative rounded-2xl overflow-hidden shadow-xl">
@@ -155,15 +157,30 @@ const VehicleDetailPage: React.FC = () => {
             </div>
 
             {/* Botão WhatsApp */}
-            <a
-              href={`https://wa.me/5524999037716?text=${encodeURIComponent(`Olá, tenho interesse no ${vehicle.name} ${vehicle.year} ${vehicle.color}`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform hover:scale-105 transition-all mt-auto"
-            >
-              <FaWhatsapp size={24} className="mr-2" />
-              Falar com um Consultor Agora
-            </a>
+            <div className="flex flex-col sm:flex-row gap-4">
+                <a
+                  href={`https://api.whatsapp.com/send?phone=5524999037716&text=Tenho interesse no ${vehicle.name} ${vehicle.year}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1"
+                  onClick={() => {
+                    if ((window as any).trackRealTimeAction) {
+                      (window as any).trackRealTimeAction('whatsapp_click', 'contact', vehicle.name);
+                    }
+                  }}
+                >
+                  <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                    <FaWhatsapp size={20} />
+                    Tenho Interesse
+                  </button>
+                </a>
+                <Link to="/financing" className="flex-1">
+                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                    Simular Financiamento
+                  </button>
+                </Link>
+                <ShareButton vehicle={vehicle} />
+              </div>
           </div>
         </div>
 
@@ -257,7 +274,7 @@ const VehicleDetailPage: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Botão voltar ao topo */}
+      <RealTimeViewers page={`/vehicle/${id}`} vehicleId={id} />
       <TopButton />
 
       {/* Botão fixo WhatsApp no mobile */}
