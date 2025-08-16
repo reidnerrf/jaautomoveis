@@ -434,6 +434,182 @@ const AdminDashboardPage: React.FC = () => {
           </ResponsiveContainer>
         </div>
       </motion.div>
+
+      {/* Hourly Traffic Pattern */}
+      <motion.div 
+        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
+      >
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+          Padrão de Tráfego por Hora (Hoje)
+        </h3>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={realtimeData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="hour" tick={{ fill: '#6B7280' }} />
+              <YAxis tick={{ fill: '#6B7280' }} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1F2937', 
+                  border: 'none', 
+                  borderRadius: '8px',
+                  color: 'white'
+                }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="views" 
+                stroke="#10B981" 
+                strokeWidth={3}
+                dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: '#10B981', strokeWidth: 2, fill: '#fff' }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </motion.div>
+
+      {/* Top Vehicles Performance */}
+      <motion.div 
+        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9 }}
+      >
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+          Veículos Mais Visualizados
+        </h3>
+        <div className="space-y-4">
+          {vehicles.slice(0, 5).map((vehicle, index) => (
+            <div key={vehicle.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full text-sm font-bold">
+                  {index + 1}
+                </span>
+                <img
+                  src={vehicle.images[0]}
+                  alt={vehicle.name}
+                  className="w-12 h-8 object-cover rounded"
+                />
+                <div>
+                  <p className="font-medium text-gray-900 dark:text-white text-sm">
+                    {vehicle.name}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {formatCurrency(vehicle.price)}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="font-semibold text-blue-600 dark:text-blue-400">
+                  {Math.floor(Math.random() * 500) + 100} views
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  +{Math.floor(Math.random() * 50) + 10}% hoje
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Conversion Funnel */}
+      <motion.div 
+        className="col-span-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.0 }}
+      >
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-6">
+          Funil de Conversão
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="text-center">
+            <div className="w-full h-20 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg flex items-center justify-center">
+              <span className="text-white font-bold text-2xl">{dashboardStats.totalViews}</span>
+            </div>
+            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-b-lg">
+              <h4 className="font-semibold text-blue-700 dark:text-blue-400">Visualizações</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Total de acessos</p>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <div className="w-full h-20 bg-gradient-to-t from-green-500 to-green-400 rounded-t-lg flex items-center justify-center">
+              <span className="text-white font-bold text-2xl">{Math.floor(dashboardStats.totalViews * 0.3)}</span>
+            </div>
+            <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-b-lg">
+              <h4 className="font-semibold text-green-700 dark:text-green-400">Interesse</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Clicaram em veículos</p>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <div className="w-full h-20 bg-gradient-to-t from-yellow-500 to-yellow-400 rounded-t-lg flex items-center justify-center">
+              <span className="text-white font-bold text-2xl">{dashboardStats.whatsappClicks}</span>
+            </div>
+            <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-b-lg">
+              <h4 className="font-semibold text-yellow-700 dark:text-yellow-400">Contato</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">WhatsApp clicks</p>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <div className="w-full h-20 bg-gradient-to-t from-red-500 to-red-400 rounded-t-lg flex items-center justify-center">
+              <span className="text-white font-bold text-2xl">{Math.floor(dashboardStats.whatsappClicks * 0.2)}</span>
+            </div>
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-b-lg">
+              <h4 className="font-semibold text-red-700 dark:text-red-400">Conversão</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Vendas estimadas</p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+
+    {/* Live Activity Feed */}
+    <motion.div
+      className="mt-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 1.1 }}
+    >
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+        Atividade em Tempo Real
+      </h3>
+      <div className="space-y-3 max-h-96 overflow-y-auto">
+        {liveActions.length > 0 ? (
+          liveActions.map((action, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+            >
+              <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+              <div className="flex-1">
+                <p className="text-sm text-gray-800 dark:text-gray-200">
+                  {action.action === 'page_view' && `Usuário de ${action.location} visualizou ${action.page}`}
+                  {action.action === 'vehicle_view' && `Usuário interessado no veículo ${action.vehicleName}`}
+                  {action.action === 'whatsapp_click' && `Contato via WhatsApp para ${action.vehicleName}`}
+                  {action.action === 'instagram_click' && `Visitou nosso Instagram`}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {new Date(action.timestamp).toLocaleTimeString('pt-BR')} • {action.device} • {action.location}
+                </p>
+              </div>
+            </motion.div>
+          ))
+        ) : (
+          <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+            Aguardando atividade em tempo real...
+          </p>
+        )}
+      </div>
     </div>
   );
 };

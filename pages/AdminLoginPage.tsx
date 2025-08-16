@@ -101,10 +101,16 @@ const AdminLoginPage: React.FC = () => {
           </motion.button>
         </form>
 
-        <div className="text-center mt-6">
+        <div className="text-center mt-6 space-y-3">
+          <Link
+            to="/admin/forgot-password"
+            className="block text-sm text-blue-400 hover:text-blue-300 transition-colors"
+          >
+            Esqueceu sua senha?
+          </Link>
           <Link
             to="/"
-            className="text-sm text-gray-400 hover:text-white transition-colors"
+            className="block text-sm text-gray-400 hover:text-white transition-colors"
           >
             &larr; Voltar para o site
           </Link>

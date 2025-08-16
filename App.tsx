@@ -19,6 +19,8 @@ const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage.tsx'));
 const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage.tsx'));
 const AdminVehicleListPage = lazy(() => import('./pages/AdminVehicleListPage.tsx'));
 const AdminVehicleFormPage = lazy(() => import('./pages/AdminVehicleFormPage.tsx'));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage.tsx'));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage.tsx'));
 const MainLayout = lazy(() => import('./components/MainLayout.tsx'));
 const PrivateRoute = lazy(() => import('./components/PrivateRoute.tsx'));
 const AdminLayout = lazy(() => import('./components/AdminLayout.tsx'));
@@ -54,6 +56,8 @@ const App: React.FC = () => {
 
                 {/* Admin routes */}
                 <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/admin/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/admin/reset-password/:token" element={<ResetPasswordPage />} />
                 <Route element={<PrivateRoute />}>
                   <Route path="/admin" element={<AdminLayout />}>
                     <Route index element={<AdminDashboardPage />} />

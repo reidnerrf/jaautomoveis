@@ -14,9 +14,20 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  email: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
   password: {
     type: String,
     required: true,
+  },
+  resetPasswordToken: {
+    type: String,
+  },
+  resetPasswordExpiry: {
+    type: Date,
   },
 }, {
   timestamps: true,
