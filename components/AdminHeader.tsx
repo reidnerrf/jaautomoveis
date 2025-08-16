@@ -9,7 +9,7 @@ interface AdminHeaderProps {
 }
 
 const AdminHeader: React.FC<AdminHeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
-  const { logout } = useAuth();
+  useAuth();
 
   const today = new Date().toLocaleDateString('pt-BR', {
     weekday: 'long',

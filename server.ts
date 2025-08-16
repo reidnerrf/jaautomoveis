@@ -19,7 +19,6 @@ import authRoutes from './backend/routes/authRoutes';
 import uploadRoutes from './backend/routes/uploadRoutes';
 import analyticsRoutes from './backend/routes/analyticsRoutes';
 import Analytics from './backend/models/Analytics';
-import { body, validationResult } from 'express-validator';
 
 // Load environment variables
 dotenv.config();
@@ -34,7 +33,12 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' ? false : ["http://localhost:5173", "http://127.0.0.1:5173"],
+    origin: process.env.NODE_ENV === 'production' ? false : [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'http://localhost:5173',
+      'http://127.0.0.1:5173'
+    ],
     methods: ["GET", "POST"]
   }
 });
@@ -151,7 +155,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
 }));
 
 if (isProduction) {
-  app.use('/assets', express.static(path.join(__dirname, 'dist/assets'), {
+  app.use('/assets', express.static(path.join(__dirname, 'assets'), {
     maxAge: '1y',
     etag: true,
     lastModified: true,
@@ -181,15 +185,30 @@ app.get('*', (req: Request, res: Response) => {
 const activeUsers = new Map();
 const pageViews = new Map();
 
+// Helper to parse user-agent across different ua-parser-js export styles
+const getUAResult = (uaInput: unknown) => {
+  const uaString = Array.isArray(uaInput) ? uaInput[0] : (uaInput as string | undefined) || '';
+  try {
+    const ParserAny: any = UAParser as unknown as any;
+    const instance = typeof ParserAny === 'function' ? ParserAny(uaString) : new ParserAny(uaString);
+    if (instance && typeof instance.getResult === 'function') {
+      return instance.getResult();
+    }
+  } catch {
+    // ignore and fall through to empty result
+  }
+  return { device: {}, browser: {}, os: {} } as any;
+};
+
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
   socket.on('page-view', async (data) => {
     const { page, userAgent } = data;
-    const parser = new UAParser();
-    const result = parser.setUA(Array.isArray(userAgent) ? userAgent[0] : userAgent).getResult();
-    const clientIP = socket.handshake.headers['x-forwarded-for'] || (socket.handshake.address as string);
-    const geo = geoip.lookup(clientIP);
+    const result = getUAResult(userAgent);
+    const forwardedFor = socket.handshake.headers['x-forwarded-for'];
+    const clientIPStr = (Array.isArray(forwardedFor) ? forwardedFor[0] : (forwardedFor as string)) || (socket.handshake.address as string);
+    const geo = geoip.lookup(clientIPStr);
 
     if (!pageViews.has(page)) {
       pageViews.set(page, new Set());
@@ -225,7 +244,7 @@ io.on('connection', (socket) => {
           country: geo?.country || 'unknown',
           region: geo?.region || 'unknown',
           city: geo?.city || 'unknown',
-          ip: clientIP || 'unknown'
+          ip: clientIPStr || 'unknown'
         }
       });
       await analytics.save();
@@ -237,10 +256,10 @@ io.on('connection', (socket) => {
   socket.on('user-action', async (data) => {
     const { action, category, label, page } = data;
     const userAgent = socket.handshake.headers['user-agent'];
-    const clientIP = socket.handshake.headers['x-forwarded-for'] || (socket.handshake.address as string);
-    const parser = new UAParser();
-    const result = parser.setUA(Array.isArray(userAgent) ? userAgent[0] : userAgent).getResult();
-    const geo = geoip.lookup(clientIP);
+    const forwardedFor = socket.handshake.headers['x-forwarded-for'];
+    const clientIPStr = (Array.isArray(forwardedFor) ? forwardedFor[0] : (forwardedFor as string)) || (socket.handshake.address as string);
+    const result = getUAResult(userAgent);
+    const geo = geoip.lookup(clientIPStr);
 
     try {
       const analytics = new Analytics({
@@ -261,7 +280,7 @@ io.on('connection', (socket) => {
           country: geo?.country || 'unknown',
           region: geo?.region || 'unknown',
           city: geo?.city || 'unknown',
-          ip: clientIP || 'unknown'
+          ip: clientIPStr || 'unknown'
         }
       });
       await analytics.save();

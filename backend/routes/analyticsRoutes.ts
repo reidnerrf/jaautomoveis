@@ -1,11 +1,11 @@
 import express from 'express';
 import { getMonthlyViews, getDashboardStats, getRealtimeStats } from '../controllers/analyticsController.js';
-import { authenticateToken } from '../middleware/authMiddleware.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/monthly-views', authenticateToken, getMonthlyViews);
-router.get('/dashboard-stats', authenticateToken, getDashboardStats);
-router.get('/realtime-stats', authenticateToken, getRealtimeStats);
+router.get('/monthly-views', protect, getMonthlyViews);
+router.get('/dashboard-stats', protect, getDashboardStats);
+router.get('/realtime-stats', protect, getRealtimeStats);
 
 export default router;

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Vehicle } from '../types.ts';
 import VehicleCard from './VehicleCard.tsx';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface VehicleCarouselProps {
   vehicles: Vehicle[];

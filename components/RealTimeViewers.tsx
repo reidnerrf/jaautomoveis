@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FiEye, FiUsers } from 'react-icons/fi';
+import { FiUsers } from 'react-icons/fi';
 import { io, Socket } from 'socket.io-client';
 
 interface RealTimeViewersProps {
@@ -14,7 +14,7 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId }) =>
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io(process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000');
+    const newSocket = io(process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
     setSocket(newSocket);
 
     // Emit page view

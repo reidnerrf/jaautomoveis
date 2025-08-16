@@ -24,7 +24,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     <Helmet>
       <title>{title}</title>
       <meta name="description" content={description} />
-      {keywords && <meta name="keywords" content={keywords} />}
+      {Boolean(keywords) && <meta name="keywords" content={keywords} />}
       
       {/* Open Graph */}
       <meta property="og:title" content={title} />

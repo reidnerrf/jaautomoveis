@@ -1,7 +1,6 @@
 
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import rateLimit from 'express-rate-limit';
 
 // Enhanced JWT validation with more security checks
 export const protect = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -9,7 +8,8 @@ export const protect = async (req: express.Request, res: express.Response, next:
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
-      token = req.headers.authorization.split(' ')[1];
+      const [scheme, value] = req.headers.authorization.split(' ');
+      token = value;
       
       // Verify token exists and is not empty
       if (!token || token === 'null' || token === 'undefined') {
