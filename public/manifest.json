@@ -1,26 +1,83 @@
 
 {
-  "name": "JA Automóveis",
-  "short_name": "JA Auto",
-  "description": "Loja de automóveis com financiamento e consórcio",
+  "name": "JA Automóveis - Seu Próximo Carro Está Aqui",
+  "short_name": "JA Automóveis",
+  "description": "Encontre seu próximo carro com as melhores ofertas e financiamento facilitado na JA Automóveis",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "theme_color": "#dc2626",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "pt-BR",
+  "categories": ["automotive", "shopping", "business"],
   "icons": [
-    {
-      "src": "/assets/favicon-32x32.png",
-      "sizes": "32x32",
-      "type": "image/png",
-      "purpose": "any"
-    },
     {
       "src": "/assets/logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
     }
   ],
-  "categories": ["business", "automotive"],
-  "lang": "pt-BR"
+  "shortcuts": [
+    {
+      "name": "Ver Estoque",
+      "short_name": "Estoque",
+      "description": "Visualizar todos os veículos disponíveis",
+      "url": "/inventory",
+      "icons": [
+        {
+          "src": "/assets/logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Contato",
+      "short_name": "Contato",
+      "description": "Entre em contato conosco",
+      "url": "/contact",
+      "icons": [
+        {
+          "src": "/assets/logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/screenshot-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Página inicial da JA Automóveis"
+    },
+    {
+      "src": "/assets/screenshot-inventory.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Estoque de veículos"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }

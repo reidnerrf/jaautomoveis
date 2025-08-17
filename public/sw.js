@@ -164,27 +164,101 @@ async function doBackgroundSync() {
   console.log('Background sync executed');
 }
 
-// Push notifications (futuro)
+// Push notifications
 self.addEventListener('push', (event) => {
-  const options = {
-    body: event.data ? event.data.text() : 'Nova atualização disponível!',
+  let notificationData = {
+    title: 'JA Automóveis',
+    body: 'Nova atualização disponível!',
     icon: '/assets/logo.png',
     badge: '/assets/favicon-32x32.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
-      primaryKey: 1
+      primaryKey: 1,
+      url: '/'
     },
     actions: [
       {
         action: 'explore',
         title: 'Ver mais',
         icon: '/assets/favicon-32x32.png'
+      },
+      {
+        action: 'close',
+        title: 'Fechar',
+        icon: '/assets/favicon-32x32.png'
       }
     ]
   };
 
+  // Se há dados específicos na notificação
+  if (event.data) {
+    try {
+      const data = event.data.json();
+      notificationData = { ...notificationData, ...data };
+    } catch (e) {
+      notificationData.body = event.data.text();
+    }
+  }
+
   event.waitUntil(
-    self.registration.showNotification('JA Automóveis', options)
+    self.registration.showNotification(notificationData.title, notificationData)
   );
 });
+
+// Interceptar cliques nas notificações
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'explore') {
+    event.waitUntil(
+      clients.openWindow(event.notification.data.url || '/')
+    );
+  } else if (event.action === 'close') {
+    // Apenas fechar a notificação
+    return;
+  } else {
+    // Clique na notificação principal
+    event.waitUntil(
+      clients.matchAll({ type: 'window' }).then((clientList) => {
+        // Se já há uma janela aberta, focar nela
+        for (const client of clientList) {
+          if (client.url.includes(event.notification.data.url || '/') && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        // Se não há janela aberta, abrir uma nova
+        if (clients.openWindow) {
+          return clients.openWindow(event.notification.data.url || '/');
+        }
+      })
+    );
+  }
+});
+
+// Interceptar fechamento de notificações
+self.addEventListener('notificationclose', (event) => {
+  console.log('Notification closed:', event.notification.tag);
+});
+
+// Periodic background sync (para atualizações automáticas)
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'content-sync') {
+    event.waitUntil(syncContent());
+  }
+});
+
+async function syncContent() {
+  try {
+    // Sincronizar dados em background
+    const response = await fetch('/api/vehicles?limit=10');
+    if (response.ok) {
+      const data = await response.json();
+      // Armazenar dados para uso offline
+      const cache = await caches.open(DYNAMIC_CACHE);
+      await cache.put('/api/vehicles/recent', new Response(JSON.stringify(data)));
+    }
+  } catch (error) {
+    console.log('Background sync failed:', error);
+  }
+}
