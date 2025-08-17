@@ -11,53 +11,14 @@
     <title>JA Automóveis</title>
     <link rel="manifest" href="/public/manifest.json" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              'main-red': '#D2282F',
-              'secondary-blue': '#62A9F8',
-              'comp-light-gray': '#F0E9E8',
-              'comp-dark-blue': '#2427C3',
-              'comp-muted-pink': '#AC8590',
-              'comp-salmon': '#D26762',
-              // New Admin Colors
-              'box-dark': '#24303F',
-              'main-dark': '#1A222C',
-              'stroke': '#E2E8F0',
-              'body-color': '#637381',
-              'primary': '#3C50E0',
-              'secondary': '#80CAEE',
-            },
-            fontFamily: {
-              sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
-            },
-            container: {
-              center: true,
-              padding: {
-                DEFAULT: '1rem',
-                sm: '2rem'
-              }
-            }
-          }
-        }
-      }
-    </script>
+    <script src="/public/tw-config.js"></script>
     <!-- Preload critical resources -->
     <link rel="dns-prefetch" href="//lh3.googleusercontent.com">
     <link rel="preconnect" href="//lh3.googleusercontent.com">
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/public/sw.js').catch(() => {});
-        });
-      }
-    </script>
+    <script src="/public/sw-register.js"></script>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>

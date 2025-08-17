@@ -84,7 +84,7 @@
     "nodemon": "^3.1.2",
     "terser": "^5.43.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5",
+    "typescript": "^5.9.2",
     "vite": "^6.3.5",
     "vite-bundle-analyzer": "^0.7.0"
   },

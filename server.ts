@@ -45,7 +45,7 @@ const io = new Server(server, {
 });
 
 // trust proxy for correct client IP and ws upgrades via reverse proxy
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -54,6 +54,7 @@ const scriptSrcDirectives = [
   "https://cdn.tailwindcss.com",
   "'sha256-yMpSFLHnSZit6gvx0eHX89rw90Bv+QXITwFYyPzBrjc='",
   "'sha256-NltRhJacRNw4BdgPSP+P8/KP9MS0BrJzNEpd27YU/YY='",
+  "'strict-dynamic'",
 
 ];
 if (!isProduction) {
@@ -71,6 +72,8 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  // Safety: use Express-calculated req.ip which respects trust proxy = 1
+  keyGenerator: (req) => (req.ip || (Array.isArray(req.headers['x-forwarded-for']) ? req.headers['x-forwarded-for'][0] : (req.headers['x-forwarded-for'] as string)) || req.socket.remoteAddress || 'unknown'),
 });
 
 const authLimiter = rateLimit({
@@ -78,6 +81,7 @@ const authLimiter = rateLimit({
   max: 5, // limit each IP to 5 requests per windowMs for auth routes
   message: 'Too many authentication attempts, please try again later.',
   skipSuccessfulRequests: true,
+  keyGenerator: (req) => (req.ip || (Array.isArray(req.headers['x-forwarded-for']) ? req.headers['x-forwarded-for'][0] : (req.headers['x-forwarded-for'] as string)) || req.socket.remoteAddress || 'unknown'),
 });
 
 // Security Middleware
@@ -87,7 +91,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:"],
+      imgSrc: ["'self'", "data:", "https:", "https://lh3.googleusercontent.com"],
       scriptSrc: scriptSrcDirectives,
       connectSrc: ["'self'", "ws:", "wss:"],
       manifestSrc: ["'self'"]
@@ -185,6 +189,12 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
 
 if (isProduction) {
   app.use('/assets', express.static(path.join(__dirname, 'assets'), {
+    maxAge: '1y',
+    etag: true,
+    lastModified: true,
+    immutable: true,
+  }));
+  app.use('/assets', express.static(path.join(process.cwd(), 'assets'), {
     maxAge: '1y',
     etag: true,
     lastModified: true,
