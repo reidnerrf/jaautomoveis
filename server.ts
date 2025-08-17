@@ -147,6 +147,19 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/public', express.static(path.join(__dirname, 'public'), {
   maxAge: isProduction ? '1h' : 0
 }));
+// Also serve from project root in case __dirname points to dist without a copied public folder
+app.use('/public', express.static(path.join(process.cwd(), 'public'), {
+  maxAge: isProduction ? '1h' : 0
+}));
+
+// Expose PWA files at root for proper scope
+app.get('/manifest.json', (req: Request, res: Response) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'manifest.json'));
+});
+app.get('/sw.js', (req: Request, res: Response) => {
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.sendFile(path.join(process.cwd(), 'public', 'sw.js'));
+});
 
 // 2. Development-only TSX/TS Transpilation
 if (!isProduction) {
