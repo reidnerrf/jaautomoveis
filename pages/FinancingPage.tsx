@@ -6,7 +6,16 @@ const FinancingPage: React.FC = () => {
   const [amount, setAmount] = useState(50000);
   const [installments, setInstallments] = useState(48);
   const [rate, setRate] = useState(1.39); // taxa ao mês (%)
-  const [simulation, setSimulation] = useState<{ monthly: number; total: number; interest: number } | null>(null);
+  const [simulation, setSimulation] = useState<{ 
+    monthly: number; 
+    total: number; 
+    interest: number;
+    consortium?: {
+      monthly: number;
+      total: number;
+      savings: number;
+    };
+  } | null>(null);
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
@@ -20,10 +29,21 @@ const FinancingPage: React.FC = () => {
     const totalPayment = monthlyPayment * installments;
     const totalInterest = totalPayment - amount;
 
+    // Simulação de consórcio (sem juros, apenas taxa administrativa)
+    const consortiumMonthlyRate = 0.5 / 100; // 0.5% taxa administrativa
+    const consortiumMonthlyPayment = (amount * consortiumMonthlyRate) / (1 - Math.pow(1 + consortiumMonthlyRate, -installments));
+    const consortiumTotalPayment = consortiumMonthlyPayment * installments;
+    const consortiumSavings = totalPayment - consortiumTotalPayment;
+
     setSimulation({
       monthly: monthlyPayment,
       total: totalPayment,
       interest: totalInterest,
+      consortium: {
+        monthly: consortiumMonthlyPayment,
+        total: consortiumTotalPayment,
+        savings: consortiumSavings,
+      }
     });
   };
 
@@ -107,14 +127,29 @@ const FinancingPage: React.FC = () => {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-8 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-700 text-center"
+                  className="mt-8 space-y-6"
                 >
-                  <h2 className="text-xl font-bold text-blue-900 dark:text-blue-300 mb-3">Resultado da Simulação</h2>
-                  <p className="text-gray-700 dark:text-gray-300">💳 {installments} parcelas de</p>
-                  <p className="text-3xl font-extrabold text-blue-800 dark:text-blue-400">{formatCurrency(simulation.monthly)}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Total: {formatCurrency(simulation.total)}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Juros Totais: {formatCurrency(simulation.interest)}</p>
-                  <p className="text-xs text-gray-400 mt-3">*Valores aproximados, sujeitos à aprovação.</p>
+                  {/* Financiamento */}
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-700 text-center">
+                    <h2 className="text-xl font-bold text-blue-900 dark:text-blue-300 mb-3">💰 Financiamento</h2>
+                    <p className="text-gray-700 dark:text-gray-300">💳 {installments} parcelas de</p>
+                    <p className="text-3xl font-extrabold text-blue-800 dark:text-blue-400">{formatCurrency(simulation.monthly)}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Total: {formatCurrency(simulation.total)}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Juros Totais: {formatCurrency(simulation.interest)}</p>
+                  </div>
+
+                  {/* Consórcio */}
+                  {simulation.consortium && (
+                    <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg border border-green-200 dark:border-green-700 text-center">
+                      <h2 className="text-xl font-bold text-green-900 dark:text-green-300 mb-3">🏦 Consórcio</h2>
+                      <p className="text-gray-700 dark:text-gray-300">💳 {installments} parcelas de</p>
+                      <p className="text-3xl font-extrabold text-green-800 dark:text-green-400">{formatCurrency(simulation.consortium.monthly)}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Total: {formatCurrency(simulation.consortium.total)}</p>
+                      <p className="text-sm text-green-600 dark:text-green-400 font-semibold">Economia: {formatCurrency(simulation.consortium.savings)}</p>
+                    </div>
+                  )}
+
+                  <p className="text-xs text-gray-400 text-center">*Valores aproximados, sujeitos à aprovação.</p>
                 </motion.div>
               )}
             </motion.div>

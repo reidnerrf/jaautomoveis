@@ -44,6 +44,17 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
 }) => {
   const navigate = useNavigate();
   const [localFavorite, setLocalFavorite] = useState<boolean>(isFavorite);
+  
+  // Load favorite state from localStorage on mount
+  useEffect(() => {
+    try {
+      const likedVehicles = JSON.parse(localStorage.getItem('likedVehicles') || '[]');
+      setLocalFavorite(likedVehicles.includes(vehicle.id));
+    } catch (error) {
+      console.warn('Failed to load favorite state:', error);
+    }
+  }, [vehicle.id]);
+  
   const favorite = useMemo(() => localFavorite || isFavorite, [localFavorite, isFavorite]);
 
   const formatPrice = (price: number) => {
@@ -78,17 +89,22 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
     if (onFavorite) {
       onFavorite(vehicle.id);
     } else {
-      setLocalFavorite(prev => {
-        const next = !prev;
-        sendLikeAnalytics(next);
-        try {
-          const current: string[] = JSON.parse(localStorage.getItem('likedVehicles') || '[]');
-          const set = new Set<string>(current);
-          if (next) set.add(vehicle.id); else set.delete(vehicle.id);
-          localStorage.setItem('likedVehicles', JSON.stringify(Array.from(set)));
-        } catch {}
-        return next;
-      });
+      const newFavoriteState = !localFavorite;
+      setLocalFavorite(newFavoriteState);
+      sendLikeAnalytics(newFavoriteState);
+      
+      try {
+        const current: string[] = JSON.parse(localStorage.getItem('likedVehicles') || '[]');
+        const set = new Set<string>(current);
+        if (newFavoriteState) {
+          set.add(vehicle.id);
+        } else {
+          set.delete(vehicle.id);
+        }
+        localStorage.setItem('likedVehicles', JSON.stringify(Array.from(set)));
+      } catch (error) {
+        console.warn('Failed to save favorite state:', error);
+      }
     }
   };
 
@@ -147,9 +163,12 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-black text-green-600 dark:text-green-400">
-                  {formatPrice(vehicle.price)}
-                </p>
+                <div className="flex items-center justify-end gap-1">
+                  <span className="text-sm text-gray-500">R$</span>
+                  <p className="text-3xl font-black text-green-600 dark:text-green-400">
+                    {new Intl.NumberFormat('pt-BR').format(vehicle.price)}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -175,7 +194,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
             <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
               <Link
                 to={`/vehicle/${vehicle.id}`}
-                className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-center transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
+                className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg text-center transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm"
               >
                 <FiEye className="w-4 h-4" />
                 Ver Detalhes
@@ -271,19 +290,19 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
         </div>
 
         {/* Price and Action */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-          <div className="flex items-center gap-2">
-            <FiDollarSign className="w-5 h-5 text-green-600" />
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-4 border-t border-gray-100 gap-3">
+          <div className="flex items-center gap-1">
+            <span className="text-sm text-gray-500">R$</span>
             <span className="text-2xl font-bold text-green-600">
-              {formatPrice(vehicle.price)}
+              {new Intl.NumberFormat('pt-BR').format(vehicle.price)}
             </span>
           </div>
           <Link
             to={`/vehicle/${vehicle.id}`}
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-300 text-sm font-medium shrink-0 whitespace-nowrap"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors duration-300 text-xs font-medium w-full sm:w-auto justify-center"
           >
-            <FiEye className="w-4 h-4" />
+            <FiEye className="w-3 h-3" />
             Ver Detalhes
           </Link>
         </div>

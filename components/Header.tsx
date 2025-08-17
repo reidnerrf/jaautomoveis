@@ -36,10 +36,8 @@ const Header: React.FC = () => {
   const isTransparent = isHome && !isScrolled;
 
   const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `relative block py-2 px-3 rounded-md transition-all duration-300 
-    ${isActive ? 'text-main-red font-semibold' : (isTransparent ? 'text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]' : 'text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red')}
-    after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px]
-    after:bg-main-red after:w-0 hover:after:w-full after:transition-all after:duration-300`;
+    `relative block py-2 px-3 transition-all duration-300 font-medium
+    ${isActive ? 'text-main-red font-semibold' : (isTransparent ? 'text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]' : 'text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red')}`;
 
   return (
           <motion.header
@@ -62,7 +60,7 @@ const Header: React.FC = () => {
           </Link>
 
           {/* Menu Desktop */}
-          <div className={`hidden lg:flex items-center space-x-6 ${isTransparent ? 'text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]' : ''}`}>
+          <div className={`hidden lg:flex items-center space-x-8 ${isTransparent ? 'text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]' : ''}`}>
             {navLinks.map((link) => (
               <NavLink
                 key={link.name}

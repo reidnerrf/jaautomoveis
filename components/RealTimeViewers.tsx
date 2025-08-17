@@ -53,7 +53,8 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
   // Expose trackAction to parent components
   (window as any).trackRealTimeAction = trackAction;
 
-  if (viewers <= 1) return null;
+  // Always show the component, even with 1 viewer, to indicate activity
+  if (viewers < 1) return null;
 
   if (variant === 'inline') {
     return (
@@ -74,17 +75,17 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="fixed bottom-24 right-8 z-30 bg-red-500 text-white px-4 py-2 rounded-full shadow-lg"
+      className="fixed bottom-32 right-8 z-50 bg-red-500 text-white px-3 py-2 rounded-full shadow-lg"
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <motion.div
           animate={{ scale: [1, 1.2, 1] }}
           transition={{ repeat: Infinity, duration: 2 }}
         >
-          <FiUsers size={16} />
+          <FiUsers size={14} />
         </motion.div>
-        <span className="text-sm font-medium">
-          {viewers} pessoa{viewers > 1 ? 's' : ''} visualizando
+        <span className="text-xs font-medium">
+          {viewers} visualizando agora
         </span>
       </div>
     </motion.div>
