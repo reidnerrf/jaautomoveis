@@ -40,8 +40,12 @@ const io = new Server(server, {
       'http://127.0.0.1:5173'
     ],
     methods: ["GET", "POST"]
-  }
+  },
+  path: '/socket.io'
 });
+
+// trust proxy for correct client IP and ws upgrades via reverse proxy
+app.set('trust proxy', true);
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -49,6 +53,8 @@ const scriptSrcDirectives = [
   "'self'",
   "https://cdn.tailwindcss.com",
   "'sha256-yMpSFLHnSZit6gvx0eHX89rw90Bv+QXITwFYyPzBrjc='",
+  "'sha256-NltRhJacRNw4BdgPSP+P8/KP9MS0BrJzNEpd27YU/YY='",
+
 ];
 if (!isProduction) {
   scriptSrcDirectives.push('data:');
@@ -88,6 +94,14 @@ app.use(helmet({
   },
   crossOriginEmbedderPolicy: false,
 }));
+
+// health check endpoints
+app.get('/socket.io/health', (req: Request, res: Response) => {
+  res.status(200).json({ status: 'ok' });
+});
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).json({ status: 'ok' });
+});
 
 // Data sanitization against NoSQL injection
 app.use(mongoSanitize());
