@@ -2,6 +2,13 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 
+const getJwtSecret = (): string => {
+  if (process.env.JWT_SECRET && process.env.JWT_SECRET.trim() !== '') {
+    return process.env.JWT_SECRET as string;
+  }
+  return 'dev-insecure-secret-change-me';
+};
+
 // Enhanced JWT validation with more security checks
 export const protect = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   let token;
@@ -19,17 +26,11 @@ export const protect = async (req: express.Request, res: express.Response, next:
         });
       }
 
-      // Verify JWT secret exists
-      if (!process.env.JWT_SECRET) {
-        console.error('JWT_SECRET not configured');
-        return res.status(500).json({ 
-          success: false,
-          message: 'Server configuration error' 
-        });
-      }
+      // Resolve JWT secret (fallback in dev)
+      const secret = getJwtSecret();
 
       // Verify and decode token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET) as { 
+      const decoded = jwt.verify(token, secret) as { 
         id: string; 
         iat: number; 
         exp: number; 

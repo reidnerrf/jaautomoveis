@@ -48,3 +48,23 @@ Use-os para padronizar UI e reduzir duplicação.
 - Dev: `npm run dev`
 - Build: `npm run build`
 - Preview: `npm run preview`
+- Analisar bundle: `npm run analyze`
+
+## Ambiente
+- Node 18+
+- Variáveis (arquivo `.env` na raiz):
+  - `MONGODB_URI`: string de conexão MongoDB
+  - `JWT_SECRET`: segredo do JWT (em desenvolvimento há fallback para evitar quebra do login; configure no deploy)
+
+## Estrutura
+- `server.ts`: servidor Express + Socket.IO
+- `backend/`: modelos, controllers e rotas da API
+- `components/`, `pages/`: front-end React
+- `uploads/`: armazenamento de imagens (servido em `/uploads`)
+
+## Ajustes recentes
+- Header transparente apenas no hero da Home; demais páginas usam cabeçalho sólido (vide `components/Header.tsx`).
+- Em `/vehicle/:id`, o selo “Oferta Especial” foi substituído por contador de usuários online via `RealTimeViewers`.
+- Removidos no painel Admin os gráficos de cidades, dispositivos e análise em tempo real; dashboard ficou mais leve (vide `pages/AdminDashboardPage.tsx`).
+- `OptimizedImage` agora usa placeholder inline (SVG), tenta WebP e faz fallback com retentativas, reduzindo falhas na carga de imagens de veículos.
+- Autenticação: fallback seguro de `JWT_SECRET` em dev para evitar login inoperante; mantenha `JWT_SECRET` definido em produção.

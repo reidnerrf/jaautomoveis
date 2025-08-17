@@ -23,11 +23,11 @@ export const forgotPassword = async (req: express.Request, res: express.Response
     user.resetPasswordExpiry = resetTokenExpiry;
     await user.save();
 
-    // Here you would send email with reset link
-    // const resetUrl = `${req.protocol}://${req.get('host')}/admin/reset-password/${resetToken}`;
-    
+    // Here you would send email with reset link using an email service (SMTP/SendGrid/etc.)
+    // Fallback: log the URL so testers can copy it from server logs
+    const resetUrl = `${req.protocol}://${req.get('host')}/#/admin/reset-password/${resetToken}`;
     console.log(`Password reset token for ${email}: ${resetToken}`);
-    console.log(`Reset URL would be: ${req.protocol}://${req.get('host')}/admin/reset-password/${resetToken}`);
+    console.log(`Reset URL: ${resetUrl}`);
 
     res.status(200).json({ message: 'Reset email sent' });
   } catch (error) {

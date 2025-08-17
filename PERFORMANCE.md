@@ -183,6 +183,8 @@ app.use(express.static(root, {
 - ✅ Cache API responses appropriately
 - ✅ Optimize images before serving
 - ✅ Use production builds for testing
+- ✅ Prefer a stable header background on não-Home pages para reduzir repaints
+- ✅ Centralize page-view tracking to avoid redundant socket emissions
 
 ### Don'ts
 - ❌ Don't create functions inside render methods

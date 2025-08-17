@@ -120,7 +120,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
         <div className="flex flex-col md:flex-row">
           <div className="md:w-80 h-48 md:h-auto relative overflow-hidden flex-shrink-0">
             <OptimizedImage
-              src={vehicle.images?.[0] || '/assets/placeholder-car.jpg'}
+              src={vehicle.images?.[0] || ''}
               alt={vehicle.name}
               className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
             />
@@ -247,7 +247,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
       {/* Image Container */}
       <div className="relative h-48 overflow-hidden">
         <OptimizedImage
-          src={vehicle.images?.[0] || '/assets/placeholder-car.jpg'}
+          src={vehicle.images?.[0] || ''}
           alt={`${vehicle.make} ${vehicle.model}`}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />

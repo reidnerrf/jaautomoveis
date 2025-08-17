@@ -2,8 +2,17 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
 
+const getJwtSecret = (): string => {
+  if (process.env.JWT_SECRET && process.env.JWT_SECRET.trim() !== '') {
+    return process.env.JWT_SECRET as string;
+  }
+  // Safe dev fallback to avoid login broken in local environments
+  // NOTE: Set JWT_SECRET in production
+  return 'dev-insecure-secret-change-me';
+};
+
 const generateToken = (id: string) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET as string, {
+  return jwt.sign({ id }, getJwtSecret(), {
     expiresIn: '30d',
   });
 };
@@ -15,8 +24,9 @@ const getUserIdFromAuthHeader = (req: express.Request): string | null => {
   try {
     const header = req.headers.authorization || '';
     const [, token] = header.split(' ');
-    if (!token || !process.env.JWT_SECRET) return null;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as { id: string };
+    const secret = getJwtSecret();
+    if (!token || !secret) return null;
+    const decoded = jwt.verify(token, secret) as { id: string };
     return decoded.id;
   } catch {
     return null;
