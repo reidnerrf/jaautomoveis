@@ -1,23 +1,23 @@
 import express from 'express';
 import Analytics from '../models/Analytics';
+import ViewLog from '../models/ViewLog';
 
 export const getMonthlyViews = async (req: express.Request, res: express.Response) => {
   try {
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-    const monthlyViews = await Analytics.aggregate([
+    const monthlyViews = await ViewLog.aggregate([
       {
         $match: {
-          event: 'page_view',
-          timestamp: { $gte: sixMonthsAgo }
+          createdAt: { $gte: sixMonthsAgo }
         }
       },
       {
         $group: {
           _id: {
-            year: { $year: '$timestamp' },
-            month: { $month: '$timestamp' }
+            year: { $year: '$createdAt' },
+            month: { $month: '$createdAt' }
           },
           Visualizações: { $sum: 1 }
         }
@@ -61,19 +61,12 @@ export const getDashboardStats = async (req: express.Request, res: express.Respo
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
 
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+    // Total vehicle views (acessos ao veículo)
+    const totalViews = await ViewLog.countDocuments({});
 
-    const lastWeek = new Date(today);
-    lastWeek.setDate(lastWeek.getDate() - 7);
-
-    // Total page views
-    const totalViews = await Analytics.countDocuments({ event: 'page_view' });
-
-    // Today's views
-    const todayViews = await Analytics.countDocuments({
-      event: 'page_view',
-      timestamp: { $gte: today }
+    // Today's vehicle views
+    const todayViews = await ViewLog.countDocuments({
+      createdAt: { $gte: today }
     });
 
     // WhatsApp clicks
@@ -85,42 +78,6 @@ export const getDashboardStats = async (req: express.Request, res: express.Respo
     const instagramClicks = await Analytics.countDocuments({
       action: 'instagram_click'
     });
-
-    // Device breakdown
-    const deviceStats = await Analytics.aggregate([
-      { $match: { event: 'page_view' } },
-      {
-        $group: {
-          _id: '$device.type',
-          count: { $sum: 1 }
-        }
-      }
-    ]);
-
-    // Location breakdown
-    const locationStats = await Analytics.aggregate([
-      { $match: { event: 'page_view' } },
-      {
-        $group: {
-          _id: '$location.city',
-          count: { $sum: 1 }
-        }
-      },
-      { $sort: { count: -1 } },
-      { $limit: 10 }
-    ]);
-
-    // Browser breakdown
-    const browserStats = await Analytics.aggregate([
-      { $match: { event: 'page_view' } },
-      {
-        $group: {
-          _id: '$device.browser',
-          count: { $sum: 1 }
-        }
-      },
-      { $sort: { count: -1 } }
-    ]);
 
     // Likes breakdown
     const likedVehiclesAgg = await Analytics.aggregate([
@@ -139,9 +96,9 @@ export const getDashboardStats = async (req: express.Request, res: express.Respo
       todayViews,
       whatsappClicks,
       instagramClicks,
-      deviceStats,
-      locationStats,
-      browserStats,
+      deviceStats: [],
+      locationStats: [],
+      browserStats: [],
       likedVehicles: likedVehiclesAgg[0]?.count || 0,
       totalLikes: totalLikesAgg[0]?.count || 0
     });
@@ -156,30 +113,21 @@ export const getRealtimeStats = async (req: express.Request, res: express.Respon
     const last24Hours = new Date();
     last24Hours.setHours(last24Hours.getHours() - 24);
 
-    const realtimeData = await Analytics.aggregate([
-      {
-        $match: {
-          timestamp: { $gte: last24Hours }
-        }
-      },
+    const pageViewsByHour = await ViewLog.aggregate([
+      { $match: { createdAt: { $gte: last24Hours } } },
       {
         $group: {
           _id: {
-            hour: { $hour: '$timestamp' },
-            date: { $dateToString: { format: '%Y-%m-%d', date: '$timestamp' } }
+            hour: { $hour: '$createdAt' },
+            date: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }
           },
-          pageViews: {
-            $sum: { $cond: [{ $eq: ['$event', 'page_view'] }, 1, 0] }
-          },
-          actions: {
-            $sum: { $cond: [{ $eq: ['$event', 'user_action'] }, 1, 0] }
-          }
+          pageViews: { $sum: 1 }
         }
       },
       { $sort: { '_id.date': 1, '_id.hour': 1 } }
     ]);
 
-    res.json(realtimeData);
+    res.json(pageViewsByHour);
   } catch (error) {
     console.error('Realtime stats error:', error);
     res.status(500).json({ message: 'Erro ao buscar dados em tempo real' });

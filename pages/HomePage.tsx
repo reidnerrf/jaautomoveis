@@ -29,7 +29,7 @@ import { useTheme } from "../contexts/ThemeContext.tsx";
 const HomePage: React.FC = () => {
   const { vehicles } = useVehicleData();
   const { vehicles: mostViewedVehicles, loading: loadingMostViewed } = useTopVehicles({ limit: 8, periodDays: 30 });
-  const { trackAction } = useAnalytics('HomePage');
+  const { trackAction, trackBusinessEvent } = useAnalytics('HomePage');
   const { isDarkMode } = useTheme();
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 1000], [0, -100]);
@@ -133,7 +133,12 @@ const HomePage: React.FC = () => {
   ];
 
   const handleSocialClick = (platform: string) => {
+    // real-time only generic action
     trackAction(`${platform}_click`, 'social_media');
+    // persist only essential clicks
+    if (platform === 'whatsapp' || platform === 'instagram') {
+      trackBusinessEvent(`${platform}_click` as any, {});
+    }
   };
 
   return (

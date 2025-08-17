@@ -42,7 +42,7 @@ class AnalyticsService {
     });
   }
 
-  // Track page views
+  // Track page views (real-time only; server will not persist)
   trackPageView(page?: string) {
     const currentPage = page || window.location.pathname;
     this.emitPageView(currentPage);
@@ -52,11 +52,10 @@ class AnalyticsService {
     if (!this.socket) return;
     this.socket.emit('page-view', {
       page,
-      userAgent: navigator.userAgent
     });
   }
 
-  // Track user interactions
+  // Track user interactions (filtered server-side)
   trackUserAction(action: string, category: string, label?: string, page?: string) {
     const payload: AnalyticsEventPayload = {
       event: 'user_action',
@@ -68,13 +67,13 @@ class AnalyticsService {
     this.emitUserAction(payload);
   }
 
-  // Track business events
-  trackBusinessEvent(eventType: 'vehicle_view' | 'financing_simulation' | 'contact_form' | 'phone_call' | 'whatsapp_click' | 'instagram_click', data: any, page?: string) {
+  // Track business events (essential only)
+  trackBusinessEvent(eventType: 'vehicle_view' | 'financing_simulation' | 'contact_form' | 'phone_call' | 'whatsapp_click' | 'instagram_click' | 'like_vehicle', data: any, page?: string) {
     const payload: AnalyticsEventPayload = {
       event: eventType,
       category: 'business',
       action: eventType,
-      label: JSON.stringify(data),
+      label: data ? JSON.stringify(data) : undefined,
       page: page || window.location.pathname,
     };
     this.emitUserAction(payload);
@@ -98,7 +97,7 @@ export const useAnalytics = (componentName: string) => {
     const startTime = Date.now();
     return () => {
       const renderTime = Date.now() - startTime;
-      // Use user-action for perf metric
+      // Use user-action for perf metric (real-time only)
       analytics.trackUserAction('component_render', 'performance', `${componentName}:${renderTime}ms`);
     };
   }, [componentName]);

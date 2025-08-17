@@ -39,20 +39,6 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
     };
   }, [page, vehicleId]);
 
-  const trackAction = (action: string, category: string, label?: string) => {
-    if (socket) {
-      socket.emit('user-action', {
-        action,
-        category,
-        label,
-        page
-      });
-    }
-  };
-
-  // Expose trackAction to parent components
-  (window as any).trackRealTimeAction = trackAction;
-
   // Always show the component, even with 1 viewer, to indicate activity
   if (viewers < 1) return null;
 

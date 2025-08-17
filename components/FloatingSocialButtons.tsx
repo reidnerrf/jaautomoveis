@@ -25,6 +25,13 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
         target="_blank"
         rel="noopener noreferrer"
         className="w-12 h-12 rounded-full bg-green-500 hover:bg-green-600 text-white flex items-center justify-center shadow-lg transition-colors"
+        onClick={() => {
+          try {
+            if ((window as any).trackBusinessEvent) {
+              (window as any).trackBusinessEvent('whatsapp_click', {});
+            }
+          } catch {}
+        }}
       >
         <FaWhatsapp size={22} />
       </a>
@@ -33,6 +40,13 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
         target="_blank"
         rel="noopener noreferrer"
         className="w-12 h-12 rounded-full bg-pink-500 hover:bg-pink-600 text-white flex items-center justify-center shadow-lg transition-colors"
+        onClick={() => {
+          try {
+            if ((window as any).trackBusinessEvent) {
+              (window as any).trackBusinessEvent('instagram_click', {});
+            }
+          } catch {}
+        }}
       >
         <FaInstagram size={22} />
       </a>
