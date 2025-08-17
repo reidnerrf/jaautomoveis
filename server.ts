@@ -53,9 +53,7 @@ const scriptSrcDirectives = [
   "'self'",
   "https://cdn.tailwindcss.com",
   "'sha256-yMpSFLHnSZit6gvx0eHX89rw90Bv+QXITwFYyPzBrjc='",
-  "'sha256-NltRhJacRNw4BdgPSP+P8/KP9MS0BrJzNEpd27YU/YY='",
-  "'strict-dynamic'",
-
+  "'sha256-NltRhJacRNw4BdgPSP+P8/KP9MS0BrJzNEpd27YU/YY='"
 ];
 if (!isProduction) {
   scriptSrcDirectives.push('data:');
