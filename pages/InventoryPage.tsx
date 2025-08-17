@@ -88,6 +88,17 @@ const InventoryPage: React.FC = () => {
     setCurrentPage(1);
   }, [searchTerm, makeFilter, yearFilter, priceFilter, colorFilter, fuelFilter, transmissionFilter, sortBy]);
 
+  const SkeletonCard = () => (
+    <div className="card animate-pulse">
+      <div className="card-body space-y-3">
+        <div className="h-40 w-full bg-gray-200 rounded-xl" />
+        <div className="h-4 w-3/4 bg-gray-200 rounded" />
+        <div className="h-4 w-1/2 bg-gray-200 rounded" />
+        <div className="h-8 w-full bg-gray-200 rounded" />
+      </div>
+    </div>
+  );
+
   return (
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen transition-colors duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -329,7 +340,8 @@ const InventoryPage: React.FC = () => {
                   
                   <button
                     onClick={resetFilters}
-                    className="flex items-center gap-2 px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="btn-primary"
+                    aria-label="Limpar todos os filtros"
                   >
                     <FiX />
                     Limpar Todos
@@ -362,13 +374,10 @@ const InventoryPage: React.FC = () => {
 
         {/* Vehicle Grid/List */}
         {loading ? (
-          <div className="flex justify-center items-center py-24">
-            <div className="relative">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-500"></div>
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <FaCarSide className="text-blue-500 text-xl animate-pulse" />
-              </div>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
           </div>
         ) : currentVehicles.length > 0 ? (
           <motion.div
@@ -421,7 +430,7 @@ const InventoryPage: React.FC = () => {
             </p>
             <button
               onClick={resetFilters}
-              className="px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="btn-primary"
             >
               Ver Todos os Veículos
             </button>

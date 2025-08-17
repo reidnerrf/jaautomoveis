@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { useAuth } from '../hooks/useAuth.tsx';
 import DarkModeToggle from './DarkModeToggle';
+import { prefetchRoute } from '../utils/prefetch.ts';
 
 const baseNavLinks = [
   { name: 'Início', path: '/' },
@@ -26,7 +27,7 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 80);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -48,7 +49,7 @@ const Header: React.FC = () => {
         }`}
       >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className={`flex items-center justify-between ${isScrolled ? 'h-16' : 'h-20'} transition-[height] duration-300`}>
           {/* Logo */}
           <Link to="/" className="flex items-center group">
                         <motion.img
@@ -67,8 +68,12 @@ const Header: React.FC = () => {
                 to={link.path}
                 end={link.path === '/'}
                 className={getNavLinkClass}
+                onMouseEnter={() => prefetchRoute(link.path)}
               >
-                {link.name}
+                <span className="relative inline-block">
+                  {link.name}
+                  <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-current transition-all duration-300 group-hover:w-full" />
+                </span>
               </NavLink>
             ))}
             <div className="hidden lg:flex items-center space-x-6">
@@ -108,6 +113,7 @@ const Header: React.FC = () => {
                       isActive ? 'text-main-red font-semibold' : 'text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red'
                     }`
                   }
+                  onMouseEnter={() => prefetchRoute(link.path)}
                   onClick={() => setIsOpen(false)}
                 >
                   {link.name}
