@@ -8,6 +8,21 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    // Footer social hover colors
+    'hover:text-blue-500',
+    'hover:text-pink-500',
+    'hover:text-green-500',
+    // LoadingSpinner dynamic sizes
+    'h-8','w-8','h-16','w-16','h-24','w-24',
+    // State-based classes toggled via JS
+    'rotate-180', 'border-main-red', 'border-transparent',
+    // Generic gradients used dynamically in HomePage services
+    'from-blue-500','to-blue-600',
+    'from-green-500','to-green-600',
+    'from-purple-500','to-purple-600',
+    'from-orange-500','to-orange-600',
+  ],
   darkMode: 'class',
   theme: {
     extend: {
