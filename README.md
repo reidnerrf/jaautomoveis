@@ -1,131 +1,50 @@
-# 🚗 JA Automóveis
+# JA Automóveis – Guia rápido de estilos e performance
 
-Aplicação **fullstack** para gerenciamento e exibição de veículos, com painel administrativo, integração com banco de dados MongoDB e frontend em React + TypeScript (Vite).
+## Tailwind CSS
+- Estilos compilados localmente via PostCSS/Vite.
+- Arquivo de entrada: `styles.css` (com `@tailwind base/components/utilities`).
+- Tokens do tema: `tailwind.config.js` em `theme.extend`.
 
----
+### Cores e fontes
+Adicione novas cores em `tailwind.config.js`:
 
-## 📦 Tecnologias
-
-### **Frontend**
-- React + TypeScript
-- Vite
-- TailwindCSS
-- React Router
-- Framer Motion
-
-### **Backend**
-- Node.js + Express
-- MongoDB + Mongoose
-- JWT para autenticação
-- Dotenv para variáveis de ambiente
-- CORS
-
----
-
-## 📂 Estrutura do projeto
-
-```
-ja-automoveis/
-├── backend/           # Código do servidor (API)
-├── components/        # Componentes React
-├── hooks/             # Hooks personalizados (ex: useVehicleData, useAuth)
-├── pages/             # Páginas do frontend
-├── api/               # Tipos e serviços de API
-├── index.html         # Entrada do app (Vite)
-├── server.ts          # Servidor Express
-├── vite.config.ts     # Configuração do Vite
-├── tsconfig.json      # Configuração TypeScript
-└── package.json
+```js
+// tailwind.config.js (trecho)
+extend: {
+  colors: {
+    brand: {
+      50: '#f5f8ff',
+      500: '#3258f0',
+      700: '#2543bb'
+    }
+  },
+  fontFamily: {
+    sans: ['Inter','ui-sans-serif','system-ui','sans-serif']
+  }
+}
 ```
 
----
+Depois, rode `npm run build:client` ou `npm run dev` para ver as classes.
 
-## ⚙️ Configuração do Ambiente
+### Safelist
+Algumas classes são geradas dinamicamente (ex.: tamanhos e gradientes). Mantemos um `safelist` no `tailwind.config.js`. Se você criar classes dynamic (via template string), garanta que elas estejam no `safelist` ou refatore para classes fixas.
 
-1. **Clone o repositório**
-```bash
-git clone https://github.com/seuusuario/jaautomoveis.git
-cd jaautomoveis
-```
+## Componentes utilitários
+- Em `styles.css` adicionamos utilitários:
+  - `.btn-primary`, `.btn-secondary`
+  - `.card`, `.card-body`
+Use-os para padronizar UI e reduzir duplicação.
 
-2. **Instale as dependências**
-```bash
-npm install
-```
+## Performance
+- Prefetch de rotas ao hover (ver `utils/prefetch.ts` e uso no `components/Header.tsx`).
+- Imagens: `components/OptimizedImage.tsx` com `loading`, `decoding=async`, `sizes` e `width/height` para estabilidade de layout.
+- Skeleton loaders implementados no `InventoryPage`.
 
-3. **Configure as variáveis de ambiente**
-Crie um arquivo `.env.local` na raiz:
-```env
-MONGO_URI=mongodb://localhost:27017/JaAutomoveis
-JWT_SECRET=sua_chave_secreta
-PORT=3000
-```
+## Acessibilidade
+- Garanta `alt` nas imagens e `aria-label` em botões icônicos.
+- Contraste mínimo e foco visível já estão contemplados nos utilitários de botão.
 
-4. **Inicie o MongoDB**
-```bash
-mongod
-```
-
----
-
-## 🚀 Desenvolvimento
-
-Para rodar **frontend** e **backend** em modo desenvolvimento:
-
-```bash
-# Iniciar frontend
-npm run dev
-
-# Em outro terminal, iniciar backend
-npx ts-node server.ts
-```
-
----
-
-## 📦 Build e Produção
-
-1. **Build do frontend**
-```bash
-npm run build
-```
-
-2. **Iniciar servidor Express servindo o build**
-```bash
-npm run start
-```
-
-> O backend serve os arquivos estáticos da pasta `dist/` e expõe as rotas da API.
-
----
-
-## 📌 Rotas Principais
-
-### **Frontend**
-- `/` – Página inicial
-- `/inventory` – Estoque de veículos
-- `/vehicle/:id` – Detalhes de um veículo
-- `/about` – Sobre
-- `/contact` – Contato
-- `/admin/login` – Login do admin
-- `/admin/dashboard` – Painel administrativo
-
-### **Backend (API)**
-- `GET /api/vehicles` – Lista veículos
-- `GET /api/vehicles/:id` – Busca veículo por ID
-- `POST /api/vehicles` – Adiciona veículo (auth necessária)
-- `PUT /api/vehicles/:id` – Atualiza veículo (auth necessária)
-- `DELETE /api/vehicles/:id` – Remove veículo (auth necessária)
-
----
-
-## 🛠 Scripts Disponíveis
-
-- `npm run dev` – Inicia Vite em modo desenvolvimento
-- `npm run build` – Compila frontend para produção
-- `npm run start` – Inicia backend servindo build do frontend
-- `npm run seed` – Popula o banco com dados de exemplo
-
----
-
-## 📄 Licença
-Este projeto é licenciado sob a [MIT License](LICENSE).
+## Scripts
+- Dev: `npm run dev`
+- Build: `npm run build`
+- Preview: `npm run preview`
