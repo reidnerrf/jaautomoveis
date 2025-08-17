@@ -8,6 +8,7 @@ import { FiChevronLeft, FiChevronRight, FiArrowLeft, FiTag, FiCalendar, FiTrello
 import { motion, AnimatePresence } from 'framer-motion';
 import { Vehicle } from '../types.ts';
 import ShareButton from '../components/ShareButton.tsx';
+import RealTimeViewers from '../components/RealTimeViewers.tsx';
 
 
 const VehicleDetailPage: React.FC = () => {
@@ -36,6 +37,18 @@ const VehicleDetailPage: React.FC = () => {
       fetchVehicle();
     }
   }, [id, getVehicleById]);
+
+  // Load favorite state from localStorage
+  useEffect(() => {
+    if (vehicle) {
+      try {
+        const likedVehicles = JSON.parse(localStorage.getItem('likedVehicles') || '[]');
+        setIsFavorite(likedVehicles.includes(vehicle.id));
+      } catch (error) {
+        console.warn('Failed to load favorite state:', error);
+      }
+    }
+  }, [vehicle]);
 
   if (loading && !vehicle) {
     return <div className="text-center py-16">Carregando...</div>;
@@ -74,23 +87,28 @@ const VehicleDetailPage: React.FC = () => {
   const otherVehicles = allVehicles.filter(v => v.id !== id).slice(0, 5);
 
   const toggleFavorite = () => {
-    setIsFavorite(prev => !prev);
+    const newFavoriteState = !isFavorite;
+    setIsFavorite(newFavoriteState);
+    
     if ((window as any).trackRealTimeAction) {
       (window as any).trackRealTimeAction('like_vehicle', 'engagement', vehicle.name);
     }
     if ((window as any).trackBusinessEvent) {
       (window as any).trackBusinessEvent('like_vehicle', { vehicleId: vehicle.id, name: vehicle.name });
     }
+    
     try {
       const liked = JSON.parse(localStorage.getItem('likedVehicles') || '[]');
       const set = new Set<string>(liked);
-      if (isFavorite) {
-        set.delete(vehicle.id);
-      } else {
+      if (newFavoriteState) {
         set.add(vehicle.id);
+      } else {
+        set.delete(vehicle.id);
       }
       localStorage.setItem('likedVehicles', JSON.stringify(Array.from(set)));
-    } catch {}
+    } catch (error) {
+      console.warn('Failed to save favorite state:', error);
+    }
   };
 
   return (
@@ -158,9 +176,12 @@ const VehicleDetailPage: React.FC = () => {
               Oferta Especial 🚗
             </span>
             <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">{vehicle.name}</h1>
-            <p className="text-4xl font-bold text-main-red mt-2 mb-6 drop-shadow-sm">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(vehicle.price)}
-            </p>
+            <div className="flex items-center gap-1 mt-2 mb-6">
+              <span className="text-sm text-gray-500">R$</span>
+              <p className="text-4xl font-bold text-main-red drop-shadow-sm">
+                {new Intl.NumberFormat('pt-BR').format(vehicle.price)}
+              </p>
+            </div>
 
             {/* Selos de confiança */}
             <div className="flex space-x-4 mb-6">
@@ -244,6 +265,9 @@ const VehicleDetailPage: React.FC = () => {
           <VehicleCarousel vehicles={otherVehicles} />
         </div>
       </div>
+
+      {/* Floating Real-time Viewers Button */}
+      <RealTimeViewers page={`vehicle-${id}`} vehicleId={id} variant="fixed" />
 
       {/* Lightbox */}
       <AnimatePresence>

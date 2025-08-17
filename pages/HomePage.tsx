@@ -137,7 +137,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-white dark:bg-gray-900 transition-colors duration-300">
+    <div className="w-full bg-white dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden">
       {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background media: video on desktop, image on mobile for performance */}
@@ -263,7 +263,7 @@ const HomePage: React.FC = () => {
 
       {/* DESTAQUES */}
       <section className="py-24 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16 max-w-5xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
@@ -333,7 +333,7 @@ const HomePage: React.FC = () => {
 
       {/* MAIS VISITADOS */}
       <section className="py-24 bg-white dark:bg-gray-900 transition-colors duration-300">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16 max-w-5xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
@@ -366,7 +366,7 @@ const HomePage: React.FC = () => {
 
       {/* SOBRE */}
       <section className="py-24 bg-white dark:bg-gray-900 transition-colors duration-300">
-        <div className="container mx-auto px-8 max-w-7xl">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -455,7 +455,7 @@ const HomePage: React.FC = () => {
 
       {/* SERVIÇOS */}
       <section className="py-24 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 transition-colors duration-300">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
@@ -510,7 +510,7 @@ const HomePage: React.FC = () => {
 
       {/* DEPOIMENTOS */}
       <section className="py-24 bg-white dark:bg-gray-900 transition-colors duration-300">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
@@ -550,7 +550,7 @@ const HomePage: React.FC = () => {
 
       {/* LOCALIZAÇÃO */}
       <section className="py-24 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
@@ -645,7 +645,7 @@ const HomePage: React.FC = () => {
       {/* CONTATO */}
       <section className="py-24 bg-gradient-to-r from-red-600 via-red-500 to-rose-500 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-black/20"></div>
-        <div className="container mx-auto px-4 text-center relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
