@@ -3,9 +3,7 @@ const CACHE_NAME = 'ja-automoveis-v1';
 const urlsToCache = [
   '/',
   '/assets/logo.png',
-  '/assets/favicon-32x32.png',
-  '/static/js/bundle.js',
-  '/static/css/main.css'
+  '/assets/favicon-32x32.png'
 ];
 
 self.addEventListener('install', (event) => {
