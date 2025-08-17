@@ -45,6 +45,15 @@ const io = new Server(server, {
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+const scriptSrcDirectives = [
+  "'self'",
+  "https://cdn.tailwindcss.com",
+  "'sha256-yMpSFLHnSZit6gvx0eHX89rw90Bv+QXITwFYyPzBrjc='",
+];
+if (!isProduction) {
+  scriptSrcDirectives.push('data:');
+}
+
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
 fs.access(uploadsDir).catch(() => fs.mkdir(uploadsDir));
@@ -73,7 +82,7 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:"],
-      scriptSrc: ["'self'", "https://cdn.tailwindcss.com", "'sha256-dMbGrQLBAQ3ONffPJzMmBJLw0pWCQwlWqajAXOAvv9k='"],
+      scriptSrc: scriptSrcDirectives,
       connectSrc: ["'self'", "ws:", "wss:"],
     },
   },
