@@ -14,10 +14,14 @@ class AnalyticsService {
   private socket: Socket | null = null;
 
   constructor() {
+  try {
     this.connectSocket();
     this.trackPageView();
     (window as any).trackBusinessEvent = this.trackBusinessEvent.bind(this);
+  } catch (e) {
+    console.error("Analytics init error", e);
   }
+}
 
   private connectSocket() {
     const isProd = process.env.NODE_ENV === 'production';
