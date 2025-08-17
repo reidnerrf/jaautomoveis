@@ -416,7 +416,7 @@ const AdminDashboardPage: React.FC = () => {
                       {action.action.replace('_', ' ')}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {(action.location && action.location !== 'Unknown') ? action.location : 'Desconhecido'} • {new Date(action.timestamp).toLocaleTimeString('pt-BR')}
+                      {new Date(action.timestamp).toLocaleTimeString('pt-BR')}
                     </p>
                   </div>
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -656,13 +656,13 @@ const AdminDashboardPage: React.FC = () => {
                 <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                 <div className="flex-1">
                   <p className="text-sm text-gray-800 dark:text-gray-200">
-                    {action.action === 'page_view' && `Usuário de ${(action.location && action.location !== 'Unknown') ? action.location : 'Desconhecido'} visualizou ${action.page}`}
-                    {action.action === 'vehicle_view' && `Usuário interessado no veículo ${action.vehicleName}`}
-                    {action.action === 'whatsapp_click' && `Contato via WhatsApp para ${action.vehicleName || ''}`}
+                    {action.action === 'vehicle_view' && `Usuário visualizou um veículo`}
+                    {action.action === 'whatsapp_click' && `Contato via WhatsApp`}
                     {action.action === 'instagram_click' && `Visitou nosso Instagram`}
+                    {action.action === 'like_vehicle' && `Curtiu um veículo`}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {new Date(action.timestamp).toLocaleTimeString('pt-BR')} • {action.device || ''} • {(action.location && action.location !== 'Unknown') ? action.location : 'Desconhecido'}
+                    {new Date(action.timestamp).toLocaleTimeString('pt-BR')}
                   </p>
                 </div>
               </motion.div>

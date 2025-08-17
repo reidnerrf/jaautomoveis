@@ -25,10 +25,13 @@ const VehicleDetailPage: React.FC = () => {
       const fetchVehicle = async () => {
         const fetchedVehicle = await getVehicleById(id);
         if (fetchedVehicle) {
-          setVehicle(fetchedVehicle);
+                     setVehicle(fetchedVehicle);
           // Increment view count, fire and forget
           try {
             await fetch(`/api/vehicles/${id}/view`, { method: 'POST' });
+            if ((window as any).trackBusinessEvent) {
+              (window as any).trackBusinessEvent('vehicle_view', { vehicleId: fetchedVehicle.id, name: fetchedVehicle.name });
+            }
           } catch (error) {
             console.warn('Failed to increment view count.', error);
           }
@@ -90,9 +93,6 @@ const VehicleDetailPage: React.FC = () => {
     const newFavoriteState = !isFavorite;
     setIsFavorite(newFavoriteState);
     
-    if ((window as any).trackRealTimeAction) {
-      (window as any).trackRealTimeAction('like_vehicle', 'engagement', vehicle.name);
-    }
     if ((window as any).trackBusinessEvent) {
       (window as any).trackBusinessEvent('like_vehicle', { vehicleId: vehicle.id, name: vehicle.name });
     }
@@ -213,8 +213,8 @@ const VehicleDetailPage: React.FC = () => {
                   rel="noopener noreferrer"
                   className="flex-1"
                   onClick={() => {
-                    if ((window as any).trackRealTimeAction) {
-                      (window as any).trackRealTimeAction('whatsapp_click', 'contact', vehicle.name);
+                    if ((window as any).trackBusinessEvent) {
+                      (window as any).trackBusinessEvent('whatsapp_click', { vehicleId: vehicle.id, name: vehicle.name });
                     }
                   }}
                 >

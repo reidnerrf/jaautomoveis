@@ -90,33 +90,11 @@ class PerformanceMonitor {
     if (process.env.NODE_ENV === 'development') {
       console.log(`🚀 ${name}: ${value.toFixed(2)}ms`);
     }
-    
-    // Send to analytics in production
-    if (process.env.NODE_ENV === 'production') {
-      this.sendToAnalytics(name, value);
-    }
+    // No-op external send to reduce data volume
   }
 
   private sendToAnalytics(name: string, value: number) {
-    // Send performance metrics to your analytics service
-    try {
-      fetch('/api/analytics/performance', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          metric: name,
-          value,
-          timestamp: Date.now(),
-          userAgent: navigator.userAgent,
-        }),
-      }).catch(() => {
-        // Silently fail if analytics endpoint is not available
-      });
-    } catch (error) {
-      // Silently fail if fetch is not available
-    }
+    // Intentionally disabled to reduce data volume
   }
 
   public getMetrics(): PerformanceMetrics {

@@ -91,7 +91,8 @@ app.use(helmet({
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:", "https://lh3.googleusercontent.com"],
       scriptSrc: scriptSrcDirectives,
-      connectSrc: ["'self'", "ws:", "wss:"],
+      // Allow external connections for fonts, Tailwind CDN, and Google avatars/images
+      connectSrc: ["'self'", "ws:", "wss:", "https://fonts.googleapis.com", "https://fonts.gstatic.com", "https://cdn.tailwindcss.com", "https://lh3.googleusercontent.com"],
       manifestSrc: ["'self'"]
     },
   },
@@ -254,11 +255,7 @@ io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
   socket.on('page-view', async (data) => {
-    const { page, userAgent } = data;
-    const result = getUAResult(userAgent);
-    const forwardedFor = socket.handshake.headers['x-forwarded-for'];
-    const clientIPStr = (Array.isArray(forwardedFor) ? forwardedFor[0] : (forwardedFor as string)) || (socket.handshake.address as string);
-    const geo = geoip.lookup(clientIPStr);
+    const { page } = data;
 
     if (!pageViews.has(page)) {
       pageViews.set(page, new Set());
@@ -268,7 +265,6 @@ io.on('connection', (socket) => {
     activeUsers.set(socket.id, {
       page,
       joinTime: Date.now(),
-      device: result.device
     });
 
     io.emit('page-viewers', {
@@ -276,40 +272,30 @@ io.on('connection', (socket) => {
       count: pageViews.get(page).size
     });
 
-    try {
-      const analytics = new Analytics({
-        sessionId: socket.id,
-        event: 'page_view',
-        category: 'navigation',
-        action: 'view',
-        page,
-        userAgent: Array.isArray(userAgent) ? userAgent[0] : userAgent,
-        device: {
-          type: result.device.type || 'desktop',
-          browser: result.browser.name || 'unknown',
-          os: result.os.name || 'unknown',
-          isMobile: result.device.type === 'mobile'
-        },
-        location: {
-          country: geo?.country || 'unknown',
-          region: geo?.region || 'unknown',
-          city: geo?.city || 'unknown',
-          ip: clientIPStr || 'unknown'
-        }
-      });
-      await analytics.save();
-    } catch (error) {
-      console.error('Analytics save error:', error);
-    }
+    // Do NOT persist generic page views to the database to reduce data volume
   });
 
   socket.on('user-action', async (data) => {
     const { action, category, label, page } = data;
-    const userAgent = socket.handshake.headers['user-agent'];
-    const forwardedFor = socket.handshake.headers['x-forwarded-for'];
-    const clientIPStr = (Array.isArray(forwardedFor) ? forwardedFor[0] : (forwardedFor as string)) || (socket.handshake.address as string);
-    const result = getUAResult(userAgent);
-    const geo = geoip.lookup(clientIPStr);
+
+    // Only persist essential business events
+    const essentialActions = new Set([
+      'like_vehicle',
+      'whatsapp_click',
+      'instagram_click',
+      'vehicle_view'
+    ]);
+
+    if (!essentialActions.has(action)) {
+      // Still broadcast live for dashboard UX, but skip DB write
+      io.emit('user-action-live', {
+        action,
+        category,
+        label,
+        timestamp: Date.now(),
+      });
+      return;
+    }
 
     try {
       const analytics = new Analytics({
@@ -319,19 +305,7 @@ io.on('connection', (socket) => {
         action,
         label,
         page,
-        userAgent: Array.isArray(userAgent) ? userAgent[0] : userAgent,
-        device: {
-          type: result.device.type || 'desktop',
-          browser: result.browser.name || 'unknown',
-          os: result.os.name || 'unknown',
-          isMobile: result.device.type === 'mobile'
-        },
-        location: {
-          country: geo?.country || 'unknown',
-          region: geo?.region || 'unknown',
-          city: geo?.city || 'unknown',
-          ip: clientIPStr || 'unknown'
-        }
+        timestamp: new Date()
       });
       await analytics.save();
 
@@ -340,7 +314,6 @@ io.on('connection', (socket) => {
         category,
         label,
         timestamp: Date.now(),
-        location: geo?.city || 'Unknown'
       });
     } catch (error) {
       console.error('Analytics save error:', error);

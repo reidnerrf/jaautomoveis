@@ -1,4 +1,4 @@
-import React, { memo, useState, useMemo } from 'react';
+import React, { memo, useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiEye, FiHeart, FiCalendar, FiSettings, FiDollarSign, FiStar } from 'react-icons/fi';
 import { BsFuelPump, BsSpeedometer2 } from 'react-icons/bs';

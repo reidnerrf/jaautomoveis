@@ -10,18 +10,18 @@ export interface IAnalytics extends Document {
   label?: string;
   value?: number;
   page: string;
-  userAgent: string;
-  device: {
-    type: string;
-    browser: string;
-    os: string;
-    isMobile: boolean;
+  userAgent?: string;
+  device?: {
+    type?: string;
+    browser?: string;
+    os?: string;
+    isMobile?: boolean;
   };
-  location: {
+  location?: {
     country?: string;
     region?: string;
     city?: string;
-    ip: string;
+    ip?: string;
   };
   timestamp: Date;
 }
@@ -35,18 +35,18 @@ const AnalyticsSchema: Schema = new Schema({
   label: { type: String },
   value: { type: Number },
   page: { type: String, required: true },
-  userAgent: { type: String, required: true },
+  userAgent: { type: String },
   device: {
-    type: { type: String, required: true },
-    browser: { type: String, required: true },
-    os: { type: String, required: true },
-    isMobile: { type: Boolean, required: true }
+    type: { type: String },
+    browser: { type: String },
+    os: { type: String },
+    isMobile: { type: Boolean }
   },
   location: {
     country: { type: String },
     region: { type: String },
     city: { type: String },
-    ip: { type: String, required: true }
+    ip: { type: String }
   },
   timestamp: { type: Date, default: Date.now }
 });
@@ -56,5 +56,6 @@ AnalyticsSchema.index({ timestamp: -1 });
 AnalyticsSchema.index({ event: 1 });
 AnalyticsSchema.index({ page: 1 });
 AnalyticsSchema.index({ sessionId: 1 });
+AnalyticsSchema.index({ action: 1 });
 
 export default mongoose.model<IAnalytics>('Analytics', AnalyticsSchema);
