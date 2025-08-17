@@ -19,7 +19,8 @@ import {
   FaShieldAlt,
   FaUsers,
   FaAward,
-  FaStar
+  FaStar,
+  FaInstagram
 } from "react-icons/fa";
 import { GoogleReview } from "../types.ts";
 import { useAnalytics } from "../utils/analytics.ts";
