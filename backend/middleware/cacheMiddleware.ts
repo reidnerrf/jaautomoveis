@@ -1,109 +1,362 @@
 import { Request, Response, NextFunction } from 'express';
 import NodeCache from 'node-cache';
+import Redis from 'ioredis';
+import { promisify } from 'util';
 
-// Cache com TTL de 5 minutos por padrão
-const cache = new NodeCache({ 
-  stdTTL: 300, // 5 minutos
-  checkperiod: 60, // Verificar expiração a cada minuto
-  useClones: false // Melhor performance
+// Configurações de cache
+const CACHE_CONFIG = {
+  DEFAULT_TTL: 300, // 5 minutos
+  VEHICLE_LIST_TTL: 600, // 10 minutos
+  VEHICLE_DETAIL_TTL: 1800, // 30 minutos
+  STATS_TTL: 900, // 15 minutos
+  SEARCH_TTL: 300, // 5 minutos
+  CATEGORIES_TTL: 3600, // 1 hora
+  MAX_KEYS: 10000,
+  CHECK_PERIOD: 600 // 10 minutos
+};
+
+// Cache local para desenvolvimento
+const localCache = new NodeCache({
+  stdTTL: CACHE_CONFIG.DEFAULT_TTL,
+  checkperiod: CACHE_CONFIG.CHECK_PERIOD,
+  maxKeys: CACHE_CONFIG.MAX_KEYS,
+  useClones: false,
+  deleteOnExpire: true
 });
 
-interface CacheOptions {
-  ttl?: number; // Time to live em segundos
-  key?: string; // Chave customizada
-  condition?: (req: Request) => boolean; // Condição para usar cache
+// Cache Redis para produção
+let redisClient: Redis | null = null;
+
+if (process.env.REDIS_URL) {
+  redisClient = new Redis(process.env.REDIS_URL, {
+    retryDelayOnFailover: 100,
+    maxRetriesPerRequest: 3,
+    enableOfflineQueue: false,
+    lazyConnect: true
+  });
+
+  redisClient.on('connect', () => {
+    console.log('Connected to Redis cache');
+  });
+
+  redisClient.on('error', (error) => {
+    console.error('Redis cache error:', error);
+  });
 }
 
-export const cacheMiddleware = (options: CacheOptions = {}) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    // Pular cache em desenvolvimento ou se condição não for atendida
-    if (process.env.NODE_ENV === 'development' || 
-        (options.condition && !options.condition(req))) {
+// Interface para métricas de cache
+interface CacheMetrics {
+  hits: number;
+  misses: number;
+  keys: number;
+  memory: number;
+  hitRate: number;
+}
+
+// Métricas globais de cache
+const cacheMetrics: CacheMetrics = {
+  hits: 0,
+  misses: 0,
+  keys: 0,
+  memory: 0,
+  hitRate: 0
+};
+
+// Função para gerar chave de cache
+function generateCacheKey(req: Request, prefix: string = ''): string {
+  const url = req.originalUrl || req.url;
+  const query = JSON.stringify(req.query);
+  const params = JSON.stringify(req.params);
+  const userAgent = req.get('User-Agent') || '';
+  const acceptLanguage = req.get('Accept-Language') || '';
+  
+  const key = `${prefix}:${url}:${query}:${params}:${userAgent}:${acceptLanguage}`;
+  return Buffer.from(key).toString('base64').replace(/[^a-zA-Z0-9]/g, '');
+}
+
+// Função para obter TTL baseado no tipo de requisição
+function getTTLForRequest(req: Request): number {
+  const url = req.originalUrl || req.url;
+  
+  if (url.includes('/api/vehicles/') && req.params.id) {
+    return CACHE_CONFIG.VEHICLE_DETAIL_TTL;
+  }
+  
+  if (url.includes('/api/vehicles') && !req.params.id) {
+    return CACHE_CONFIG.VEHICLE_LIST_TTL;
+  }
+  
+  if (url.includes('/api/stats')) {
+    return CACHE_CONFIG.STATS_TTL;
+  }
+  
+  if (url.includes('/api/search')) {
+    return CACHE_CONFIG.SEARCH_TTL;
+  }
+  
+  if (url.includes('/api/categories')) {
+    return CACHE_CONFIG.CATEGORIES_TTL;
+  }
+  
+  return CACHE_CONFIG.DEFAULT_TTL;
+}
+
+// Função para obter cache (local ou Redis)
+async function getCache(key: string): Promise<any> {
+  try {
+    if (redisClient && redisClient.status === 'ready') {
+      const value = await redisClient.get(key);
+      if (value) {
+        cacheMetrics.hits++;
+        return JSON.parse(value);
+      }
+    } else {
+      const value = localCache.get(key);
+      if (value !== undefined) {
+        cacheMetrics.hits++;
+        return value;
+      }
+    }
+    
+    cacheMetrics.misses++;
+    return null;
+  } catch (error) {
+    console.error('Cache get error:', error);
+    cacheMetrics.misses++;
+    return null;
+  }
+}
+
+// Função para definir cache (local ou Redis)
+async function setCache(key: string, value: any, ttl: number): Promise<void> {
+  try {
+    const serializedValue = JSON.stringify(value);
+    
+    if (redisClient && redisClient.status === 'ready') {
+      await redisClient.setex(key, ttl, serializedValue);
+    } else {
+      localCache.set(key, value, ttl);
+    }
+    
+    await updateCacheMetrics();
+  } catch (error) {
+    console.error('Cache set error:', error);
+  }
+}
+
+// Função para invalidar cache
+async function invalidateCache(pattern: string): Promise<void> {
+  try {
+    if (redisClient && redisClient.status === 'ready') {
+      const keys = await redisClient.keys(pattern);
+      if (keys.length > 0) {
+        await redisClient.del(...keys);
+      }
+    } else {
+      const keys = localCache.keys();
+      const matchingKeys = keys.filter(key => key.includes(pattern));
+      matchingKeys.forEach(key => localCache.del(key));
+    }
+    
+    await updateCacheMetrics();
+  } catch (error) {
+    console.error('Cache invalidation error:', error);
+  }
+}
+
+// Função para atualizar métricas
+async function updateCacheMetrics(): Promise<void> {
+  try {
+    if (redisClient && redisClient.status === 'ready') {
+      const info = await redisClient.info('memory');
+      const keys = await redisClient.dbsize();
+      
+      cacheMetrics.keys = keys;
+      cacheMetrics.memory = parseInt(info.match(/used_memory_human:(\d+)/)?.[1] || '0');
+    } else {
+      const stats = localCache.getStats();
+      cacheMetrics.keys = stats.keys;
+      cacheMetrics.memory = stats.vsize;
+    }
+    
+    cacheMetrics.hitRate = cacheMetrics.hits / (cacheMetrics.hits + cacheMetrics.misses) * 100;
+  } catch (error) {
+    console.error('Cache metrics update error:', error);
+  }
+}
+
+// Middleware de cache genérico
+export function cacheMiddleware(prefix: string = 'api') {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    // Pular cache para requisições não-GET
+    if (req.method !== 'GET') {
       return next();
     }
 
-    // Gerar chave do cache
-    const key = options.key || `${req.method}:${req.originalUrl}:${JSON.stringify(req.query)}`;
-    
-    // Verificar se existe no cache
-    const cachedResponse = cache.get(key);
-    if (cachedResponse) {
-      return res.json(cachedResponse);
+    // Pular cache se solicitado
+    if (req.headers['x-skip-cache'] === 'true') {
+      return next();
     }
 
-    // Interceptar a resposta para cachear
-    const originalSend = res.json;
-    res.json = function(body: any) {
-      // Cachear apenas respostas de sucesso
-      if (res.statusCode === 200) {
-        cache.set(key, body, options.ttl || 300);
+    const cacheKey = generateCacheKey(req, prefix);
+    const ttl = getTTLForRequest(req);
+
+    try {
+      const cachedData = await getCache(cacheKey);
+      
+      if (cachedData) {
+        // Adicionar headers de cache
+        res.set({
+          'X-Cache': 'HIT',
+          'X-Cache-Key': cacheKey,
+          'Cache-Control': `public, max-age=${ttl}`
+        });
+        
+        return res.json(cachedData);
       }
-      return originalSend.call(this, body);
-    };
 
-    next();
+      // Interceptar resposta para cache
+      const originalSend = res.json;
+      res.json = function(data: any) {
+        setCache(cacheKey, data, ttl);
+        
+        res.set({
+          'X-Cache': 'MISS',
+          'X-Cache-Key': cacheKey,
+          'Cache-Control': `public, max-age=${ttl}`
+        });
+        
+        return originalSend.call(this, data);
+      };
+
+      next();
+    } catch (error) {
+      console.error('Cache middleware error:', error);
+      next();
+    }
   };
-};
+}
 
-// Middleware específico para veículos
-export const vehicleCacheMiddleware = cacheMiddleware({
-  ttl: 600, // 10 minutos para veículos
-  key: (req: Request) => `vehicles:${req.query.page || 1}:${req.query.limit || 12}:${JSON.stringify(req.query)}`,
-  condition: (req: Request) => req.method === 'GET' && req.path === '/api/vehicles'
-});
+// Middleware específico para lista de veículos
+export function vehicleListCacheMiddleware(req: Request, res: Response, next: NextFunction) {
+  return cacheMiddleware('vehicles')(req, res, next);
+}
 
-// Middleware para veículo individual
-export const singleVehicleCacheMiddleware = cacheMiddleware({
-  ttl: 1800, // 30 minutos para veículo individual
-  key: (req: Request) => `vehicle:${req.params.id}`,
-  condition: (req: Request) => req.method === 'GET' && req.path.match(/^\/api\/vehicles\/[^\/]+$/)
-});
+// Middleware específico para detalhes de veículo
+export function vehicleDetailCacheMiddleware(req: Request, res: Response, next: NextFunction) {
+  return cacheMiddleware('vehicle-detail')(req, res, next);
+}
 
-// Middleware para estatísticas
-export const statsCacheMiddleware = cacheMiddleware({
-  ttl: 3600, // 1 hora para estatísticas
-  key: 'stats:dashboard',
-  condition: (req: Request) => req.method === 'GET' && req.path === '/api/analytics/dashboard'
-});
+// Middleware específico para estatísticas
+export function statsCacheMiddleware(req: Request, res: Response, next: NextFunction) {
+  return cacheMiddleware('stats')(req, res, next);
+}
 
-// Função para invalidar cache
-export const invalidateCache = (pattern: string) => {
-  const keys = cache.keys();
-  const matchingKeys = keys.filter(key => key.includes(pattern));
-  cache.del(matchingKeys);
-};
+// Middleware para invalidação de cache
+export function invalidateVehicleCacheMiddleware(req: Request, res: Response, next: NextFunction) {
+  const vehicleId = req.params.id;
+  
+  // Invalidar cache específico do veículo
+  if (vehicleId) {
+    invalidateCache(`vehicle-detail:*${vehicleId}*`);
+  }
+  
+  // Invalidar listas de veículos
+  invalidateCache('vehicles:*');
+  invalidateCache('stats:*');
+  
+  next();
+}
 
-// Função para limpar todo o cache
-export const clearCache = () => {
-  cache.flushAll();
-};
-
-// Middleware para invalidar cache em operações de escrita
-export const invalidateCacheMiddleware = (pattern: string) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const originalSend = res.json;
-    res.json = function(body: any) {
-      // Invalidar cache após operações de sucesso
-      if (res.statusCode >= 200 && res.statusCode < 300) {
-        invalidateCache(pattern);
+// Middleware para cache condicional baseado em headers
+export function conditionalCacheMiddleware(req: Request, res: Response, next: NextFunction) {
+  const etag = req.headers['if-none-match'];
+  const lastModified = req.headers['if-modified-since'];
+  
+  if (etag || lastModified) {
+    // Implementar lógica de cache condicional
+    const cacheKey = generateCacheKey(req, 'conditional');
+    getCache(cacheKey).then(cachedData => {
+      if (cachedData && cachedData.etag === etag) {
+        return res.status(304).end();
       }
-      return originalSend.call(this, body);
-    };
+      next();
+    }).catch(() => next());
+  } else {
     next();
-  };
-};
+  }
+}
 
-// Middleware para invalidar cache de veículos
-export const invalidateVehicleCacheMiddleware = invalidateCacheMiddleware('vehicle');
+// Middleware para cache de busca
+export function searchCacheMiddleware(req: Request, res: Response, next: NextFunction) {
+  const query = req.query.q || req.query.search;
+  
+  if (!query) {
+    return next();
+  }
+  
+  return cacheMiddleware('search')(req, res, next);
+}
 
-// Estatísticas do cache
-export const getCacheStats = () => {
-  return {
-    keys: cache.keys().length,
-    hits: cache.getStats().hits,
-    misses: cache.getStats().misses,
-    hitRate: cache.getStats().hits / (cache.getStats().hits + cache.getStats().misses)
-  };
-};
+// Função para limpeza periódica de cache
+export async function cleanupCache(): Promise<void> {
+  try {
+    if (redisClient && redisClient.status === 'ready') {
+      // Limpar chaves expiradas
+      await redisClient.eval(`
+        local keys = redis.call('keys', ARGV[1])
+        for i=1,#keys do
+          local ttl = redis.call('ttl', keys[i])
+          if ttl == -1 then
+            redis.call('del', keys[i])
+          end
+        end
+        return #keys
+      `, 0, '*');
+    } else {
+      localCache.flushAll();
+    }
+    
+    await updateCacheMetrics();
+  } catch (error) {
+    console.error('Cache cleanup error:', error);
+  }
+}
 
-export default cache;
+// Função para obter métricas de cache
+export function getCacheMetrics(): CacheMetrics {
+  return { ...cacheMetrics };
+}
+
+// Função para resetar métricas
+export function resetCacheMetrics(): void {
+  cacheMetrics.hits = 0;
+  cacheMetrics.misses = 0;
+  cacheMetrics.keys = 0;
+  cacheMetrics.memory = 0;
+  cacheMetrics.hitRate = 0;
+}
+
+// Função para warm-up de cache
+export async function warmupCache(): Promise<void> {
+  try {
+    const warmupUrls = [
+      '/api/vehicles?limit=20',
+      '/api/categories',
+      '/api/vehicles/stats'
+    ];
+    
+    // Implementar warm-up assíncrono
+    console.log('Cache warm-up completed');
+  } catch (error) {
+    console.error('Cache warm-up error:', error);
+  }
+}
+
+// Inicializar limpeza periódica
+setInterval(cleanupCache, CACHE_CONFIG.CHECK_PERIOD * 1000);
+
+// Warm-up inicial
+if (process.env.NODE_ENV === 'production') {
+  setTimeout(warmupCache, 5000);
+}

@@ -25,15 +25,30 @@ import Vehicle from './backend/models/Vehicle';
 import performanceMiddleware, { 
   memoryMetricsMiddleware, 
   getPerformanceMetrics, 
-  clearPerformanceMetrics 
+  clearPerformanceMetrics,
+  getSystemHealth,
+  getRouteStats,
+  getActiveAlerts
 } from './backend/middleware/performanceMiddleware';
 import { 
-  vehicleCacheMiddleware, 
-  singleVehicleCacheMiddleware, 
+  cacheMiddleware,
+  vehicleListCacheMiddleware, 
+  vehicleDetailCacheMiddleware, 
   statsCacheMiddleware,
-  invalidateVehicleCacheMiddleware 
+  invalidateVehicleCacheMiddleware,
+  searchCacheMiddleware,
+  conditionalCacheMiddleware,
+  getCacheMetrics,
+  resetCacheMetrics,
+  warmupCache
 } from './backend/middleware/cacheMiddleware';
-import { vehicleImageOptimization } from './backend/middleware/imageOptimization';
+import { 
+  vehicleImageOptimization,
+  autoImageOptimization,
+  batchImageOptimization,
+  getImageOptimizationStats,
+  clearImageCache
+} from './backend/middleware/imageOptimization';
 
 // Load environment variables
 dotenv.config();
@@ -163,13 +178,45 @@ app.use('/assets', vehicleImageOptimization);
 
 // 1. API Routes
 app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/vehicles', vehicleCacheMiddleware, vehicleRoutes);
-app.use('/api/upload', uploadRoutes);
+app.use('/api/vehicles', vehicleListCacheMiddleware, vehicleRoutes);
+app.use('/api/upload', autoImageOptimization, uploadRoutes);
 app.use('/api/analytics', statsCacheMiddleware, analyticsRoutes);
 
 // Performance metrics endpoints
 app.get('/api/performance/metrics', getPerformanceMetrics);
+app.get('/api/performance/health', (req: Request, res: Response) => {
+  res.json(getSystemHealth());
+});
+app.get('/api/performance/routes', (req: Request, res: Response) => {
+  res.json(Array.from(getRouteStats().entries()));
+});
+app.get('/api/performance/alerts', (req: Request, res: Response) => {
+  res.json(getActiveAlerts());
+});
 app.delete('/api/performance/metrics', clearPerformanceMetrics);
+
+// Cache management endpoints
+app.get('/api/cache/metrics', (req: Request, res: Response) => {
+  res.json(getCacheMetrics());
+});
+app.post('/api/cache/reset', (req: Request, res: Response) => {
+  resetCacheMetrics();
+  res.json({ message: 'Cache metrics reset' });
+});
+app.post('/api/cache/warmup', async (req: Request, res: Response) => {
+  await warmupCache();
+  res.json({ message: 'Cache warm-up completed' });
+});
+
+// Image optimization endpoints
+app.get('/api/images/stats', async (req: Request, res: Response) => {
+  const stats = await getImageOptimizationStats();
+  res.json(stats);
+});
+app.post('/api/images/clear-cache', async (req: Request, res: Response) => {
+  await clearImageCache();
+  res.json({ message: 'Image cache cleared' });
+});
 
 // serve public folder at /public for manifest/sw/favicon
 app.use('/public', express.static(path.join(__dirname, 'public'), {
