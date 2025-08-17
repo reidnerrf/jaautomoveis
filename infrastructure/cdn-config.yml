@@ -1,0 +1,174 @@
+# CDN Configuration for JA Automóveis
+# Supports Cloudflare, AWS CloudFront, or custom CDN
+
+version: '3.8'
+
+services:
+  # CDN Configuration
+  cdn:
+    image: nginx:alpine
+    container_name: ja-automoveis-cdn
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx-cdn.conf:/etc/nginx/nginx.conf
+      - ./public:/var/www/html
+      - ./ssl:/etc/nginx/ssl
+    environment:
+      - CDN_DOMAIN=${CDN_DOMAIN:-cdn.jaautomoveis.com.br}
+      - ORIGIN_DOMAIN=${ORIGIN_DOMAIN:-api.jaautomoveis.com.br}
+    networks:
+      - cdn-network
+
+  # Redis for CDN caching
+  redis-cdn:
+    image: redis:alpine
+    container_name: ja-automoveis-redis-cdn
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-cdn-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - cdn-network
+
+  # Image optimization service
+  image-optimizer:
+    image: node:18-alpine
+    container_name: ja-automoveis-image-optimizer
+    working_dir: /app
+    volumes:
+      - ./backend/middleware/imageOptimization.ts:/app/imageOptimization.ts
+      - ./uploads:/app/uploads
+      - ./public/assets:/app/assets
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis-cdn:6379
+    command: >
+      sh -c "npm install sharp && 
+             node -e '
+               const sharp = require(\"sharp\");
+               const fs = require(\"fs\");
+               const path = require(\"path\");
+               
+               // Optimize all images in uploads and assets
+               async function optimizeImages() {
+                 const directories = [\"/app/uploads\", \"/app/assets\"];
+                 
+                 for (const dir of directories) {
+                   if (fs.existsSync(dir)) {
+                     const files = fs.readdirSync(dir);
+                     
+                     for (const file of files) {
+                       if (/\.(jpg|jpeg|png)$/i.test(file)) {
+                         const filePath = path.join(dir, file);
+                         const outputPath = filePath.replace(/\.(jpg|jpeg|png)$/i, \".webp\");
+                         
+                         try {
+                           await sharp(filePath)
+                             .webp({ quality: 80 })
+                             .toFile(outputPath);
+                           
+                           console.log(`Optimized: ${file} -> ${path.basename(outputPath)}`);
+                         } catch (error) {
+                           console.error(`Error optimizing ${file}:`, error);
+                         }
+                       }
+                     }
+                   }
+                 }
+               }
+               
+               optimizeImages();
+             '"
+    networks:
+      - cdn-network
+
+networks:
+  cdn-network:
+    driver: bridge
+
+volumes:
+  redis-cdn-data:
+    driver: local
+
+# Cloudflare Configuration
+cloudflare:
+  api_token: ${CLOUDFLARE_API_TOKEN}
+  zone_id: ${CLOUDFLARE_ZONE_ID}
+  domain: ${CDN_DOMAIN:-cdn.jaautomoveis.com.br}
+  
+  # Cache rules
+  cache_rules:
+    - pattern: "*.js"
+      ttl: 31536000  # 1 year
+      headers:
+        Cache-Control: "public, max-age=31536000, immutable"
+    
+    - pattern: "*.css"
+      ttl: 31536000  # 1 year
+      headers:
+        Cache-Control: "public, max-age=31536000, immutable"
+    
+    - pattern: "*.webp"
+      ttl: 2592000   # 30 days
+      headers:
+        Cache-Control: "public, max-age=2592000"
+    
+    - pattern: "*.jpg"
+      ttl: 2592000   # 30 days
+      headers:
+        Cache-Control: "public, max-age=2592000"
+    
+    - pattern: "*.png"
+      ttl: 2592000   # 30 days
+      headers:
+        Cache-Control: "public, max-age=2592000"
+    
+    - pattern: "*.mp4"
+      ttl: 604800    # 7 days
+      headers:
+        Cache-Control: "public, max-age=604800"
+
+# AWS CloudFront Configuration (Alternative)
+aws_cloudfront:
+  distribution_id: ${CLOUDFRONT_DISTRIBUTION_ID}
+  origin_domain: ${ORIGIN_DOMAIN:-api.jaautomoveis.com.br}
+  cdn_domain: ${CDN_DOMAIN:-cdn.jaautomoveis.com.br}
+  
+  # Behaviors
+  behaviors:
+    - path_pattern: "/assets/*"
+      ttl: 31536000
+      compress: true
+      viewer_protocol_policy: "redirect-to-https"
+    
+    - path_pattern: "/uploads/*"
+      ttl: 2592000
+      compress: true
+      viewer_protocol_policy: "redirect-to-https"
+    
+    - path_pattern: "/*"
+      ttl: 3600
+      compress: true
+      viewer_protocol_policy: "redirect-to-https"
+
+# Deployment Scripts
+scripts:
+  deploy_cdn:
+    - echo "Deploying CDN configuration..."
+    - docker-compose -f cdn-config.yml up -d
+    - echo "CDN deployed successfully!"
+  
+  optimize_images:
+    - echo "Optimizing images..."
+    - docker-compose -f cdn-config.yml run --rm image-optimizer
+    - echo "Images optimized!"
+  
+  clear_cache:
+    - echo "Clearing CDN cache..."
+    - curl -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+        -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+        -H "Content-Type: application/json" \
+        -d '{"purge_everything":true}'
+    - echo "Cache cleared!"
