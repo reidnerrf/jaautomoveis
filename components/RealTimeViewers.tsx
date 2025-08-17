@@ -39,7 +39,7 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
     };
   }, [page, vehicleId]);
 
-  // Always show the component, even with 1 viewer, to indicate activity
+  // Show only when at least 1 user is online to avoid visual noise
   if (viewers < 1) return null;
 
   if (variant === 'inline') {

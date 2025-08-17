@@ -13,11 +13,13 @@ interface OptimizedImageProps {
 	onError?: () => void;
 }
 
+const DEFAULT_PLACEHOLDER = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="%23e5e7eb"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%239ca3af" font-size="20">Carregando imagem...</text></svg>';
+
 const OptimizedImage: React.FC<OptimizedImageProps> = ({
 	src,
 	alt,
 	className = '',
-	placeholder = '/api/placeholder/400/300',
+	placeholder = DEFAULT_PLACEHOLDER,
 	width,
 	height,
 	sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
@@ -72,6 +74,14 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
 			fallbackImg.src = originalSrc;
 		};
+
+		// If original is already webp or data URL, use it directly
+		if (/\.webp$/i.test(imageSrc) || imageSrc.startsWith('data:')) {
+			setImageSrc(imageSrc);
+			setIsLoading(false);
+			setHasError(false);
+			return;
+		}
 
 		img.src = webpSrc;
 	}, [retryCount, maxRetries]);

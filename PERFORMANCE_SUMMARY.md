@@ -4,6 +4,12 @@
 
 This document summarizes the comprehensive performance optimizations implemented in the JA Automóveis application. The optimizations target bundle size reduction, faster load times, and improved user experience.
 
+### Changes in this iteration
+- Header rendering stabilized: transparent header only on Home hero; solid elsewhere to avoid costly repaints and ensure contrast.
+- Admin dashboard simplified: removed device, city and real-time charts, decreasing JS executed and Recharts usage on that screen.
+- Images hardened: `OptimizedImage` now uses a tiny inline SVG placeholder, attempts WebP with graceful fallback and exponential backoff, and lazy loads via IntersectionObserver.
+- Analytics/socket usage trimmed: viewers component listens only; page-view emission is centralized in `MainLayout`.
+
 ## 📊 Performance Improvements
 
 ### Bundle Size Optimization

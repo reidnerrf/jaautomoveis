@@ -25,7 +25,7 @@ const VehicleDetailPage: React.FC = () => {
       const fetchVehicle = async () => {
         const fetchedVehicle = await getVehicleById(id);
         if (fetchedVehicle) {
-                     setVehicle(fetchedVehicle);
+          setVehicle(fetchedVehicle);
           // Increment view count, fire and forget
           try {
             await fetch(`/api/vehicles/${id}/view`, { method: 'POST' });
@@ -172,9 +172,9 @@ const VehicleDetailPage: React.FC = () => {
                 <FiHeart size={18} className={isFavorite ? 'fill-current' : ''} />
               </button>
             </div>
-            <span className="inline-block bg-main-red text-white text-xs font-bold px-3 py-1 rounded-full shadow-md mb-2">
-              Oferta Especial 🚗
-            </span>
+            <div className="mb-2">
+              <RealTimeViewers page={`vehicle-${id}`} vehicleId={id} variant="inline" />
+            </div>
             <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">{vehicle.name}</h1>
             <div className="flex items-center gap-1 mt-2 mb-6">
               <span className="text-sm text-gray-500">R$</span>

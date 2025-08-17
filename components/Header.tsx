@@ -37,15 +37,20 @@ const Header: React.FC = () => {
   const isTransparent = isHome && !isScrolled;
 
   const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `relative block py-2 px-3 transition-all duration-300 font-medium
-    ${isActive ? 'text-main-red font-semibold' : (isTransparent ? 'text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]' : 'text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red')}`;
+    `relative block py-2 px-3 transition-all duration-300 font-medium ${
+      isActive
+        ? 'text-main-red font-semibold'
+        : isTransparent
+          ? 'text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]'
+          : 'text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red'
+    }`;
 
   return (
           <motion.header
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-white/85 dark:bg-gray-900/85 backdrop-blur-md shadow-lg dark:shadow-gray-800/20'
-            : 'bg-gradient-to-b from-black/30 to-transparent dark:from-black/40 backdrop-blur-sm'
+          isTransparent
+            ? 'bg-gradient-to-b from-black/30 to-transparent dark:from-black/40 backdrop-blur-sm'
+            : 'bg-white/85 dark:bg-gray-900/85 backdrop-blur-md shadow-lg dark:shadow-gray-800/20'
         }`}
       >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">

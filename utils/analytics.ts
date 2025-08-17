@@ -16,7 +16,7 @@ class AnalyticsService {
   constructor() {
   try {
     this.connectSocket();
-    this.trackPageView();
+    // Page views are emitted from MainLayout to avoid double counting here
     (window as any).trackBusinessEvent = this.trackBusinessEvent.bind(this);
   } catch (e) {
     console.error("Analytics init error", e);
