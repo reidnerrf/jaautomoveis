@@ -20,7 +20,13 @@ class AnalyticsService {
   }
 
   private connectSocket() {
-    this.socket = io(process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+    const isProd = process.env.NODE_ENV === 'production';
+    const baseUrl = isProd ? '' : 'http://localhost:5000';
+    this.socket = io(baseUrl, {
+      path: '/socket.io',
+      transports: ['websocket'],
+      withCredentials: true,
+    });
     this.socket.on('connect', () => {
       // console.log('Analytics socket connected:', this.socket?.id);
     });

@@ -45,7 +45,13 @@ const AdminDashboardPage: React.FC = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io(process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+    const isProd = process.env.NODE_ENV === 'production';
+    const baseUrl = isProd ? '' : 'http://localhost:5000';
+    const newSocket = io(baseUrl, {
+      path: '/socket.io',
+      transports: ['websocket'],
+      withCredentials: true,
+    });
     setSocket(newSocket);
 
     // Listen for real-time actions
