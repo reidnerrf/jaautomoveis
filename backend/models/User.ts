@@ -5,7 +5,7 @@ export interface IUser extends Document {
   _id: Types.ObjectId;
   username: string;
   password: string;
-  email?: string;
+  email: string;
   resetPasswordToken?: string;
   resetPasswordExpiry?: Date;
   matchPassword(enteredPassword: string): Promise<boolean>;
@@ -19,8 +19,9 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    required: true,
     unique: true,
-    sparse: true,
+    sparse: false,
   },
   password: {
     type: String,

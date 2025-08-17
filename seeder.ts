@@ -133,7 +133,7 @@ const importData = async () => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash('adminja2025', salt);
 
-        await User.create({ username: 'admin', password: hashedPassword });
+        await User.create({ username: 'admin', email: 'reidner.red@gmail.com', password: hashedPassword });
 
         console.log('Data Imported! Collections recreated and seeded successfully.');
         (process as any).exit();
