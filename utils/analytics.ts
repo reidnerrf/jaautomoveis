@@ -30,6 +30,9 @@ class AnalyticsService {
       path: '/socket.io',
       transports: ['websocket'],
       withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000
     });
     this.socket.on('connect', () => {
       // console.log('Analytics socket connected:', this.socket?.id);

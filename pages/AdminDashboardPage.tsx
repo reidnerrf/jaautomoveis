@@ -542,6 +542,44 @@ const AdminDashboardPage: React.FC = () => {
         </div>
       </motion.div>
 
+      {/* Veículos mais curtidos */}
+      <motion.div 
+        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.95 }}
+      >
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+          Veículos Mais Curtidos
+        </h3>
+        <div className="space-y-4">
+          {(() => {
+            try {
+              const liked: string[] = JSON.parse(localStorage.getItem('likedVehicles') || '[]');
+              const likedSet = new Set(liked);
+              const likedList = vehicles.filter(v => likedSet.has(v.id)).slice(0, 5);
+              if (likedList.length === 0) {
+                return <p className="text-sm text-gray-500 dark:text-gray-400">Sem dados locais de curtidas ainda. Total global: {formatNumber(dashboardStats.totalLikes || 0)}</p>;
+              }
+              return likedList.map((vehicle) => (
+                <Link key={vehicle.id} to={`/vehicle/${vehicle.id}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <img src={vehicle.images[0]} alt={vehicle.name} className="w-12 h-8 object-cover rounded"/>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">{vehicle.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{formatCurrency(vehicle.price)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-red-500"><FiHeart /> <span className="font-semibold">like</span></div>
+                </Link>
+              ));
+            } catch {
+              return <p className="text-sm text-gray-500 dark:text-gray-400">Não foi possível carregar curtidas locais.</p>;
+            }
+          })()}
+        </div>
+      </motion.div>
+
       {/* Conversion Funnel */}
       <motion.div 
         className="col-span-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"

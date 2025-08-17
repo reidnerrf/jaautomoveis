@@ -7,7 +7,7 @@ const AdminLayout: React.FC = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="bg-gray-100 text-body-color">
+        <div className="bg-gray-100 dark:bg-main-dark text-body-color">
             <div className="flex h-screen overflow-hidden">
                 <AdminSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
                 
