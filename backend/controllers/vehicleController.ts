@@ -25,14 +25,55 @@ const deleteImageFiles = async (imagePaths: string[]) => {
 };
 
 
-// @desc    Fetch all vehicles
+// @desc    Fetch all vehicles with pagination and filtering
 // @route   GET /api/vehicles
 // @access  Public
 export const getVehicles = async (req: express.Request, res: express.Response) => {
   try {
-    const vehicles = await Vehicle.find({}).sort({ createdAt: -1 });
-    res.json(vehicles);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 12;
+    const skip = (page - 1) * limit;
+    
+    // Build filter object
+    const filter: any = {};
+    
+    if (req.query.make) filter.make = { $regex: req.query.make, $options: 'i' };
+    if (req.query.model) filter.model = { $regex: req.query.model, $options: 'i' };
+    if (req.query.year) filter.year = parseInt(req.query.year as string);
+    if (req.query.minPrice) filter.price = { $gte: parseInt(req.query.minPrice as string) };
+    if (req.query.maxPrice) {
+      if (filter.price) {
+        filter.price.$lte = parseInt(req.query.maxPrice as string);
+      } else {
+        filter.price = { $lte: parseInt(req.query.maxPrice as string) };
+      }
+    }
+    if (req.query.fuel) filter.fuel = req.query.fuel;
+    if (req.query.gearbox) filter.gearbox = req.query.gearbox;
+    
+    // Get total count for pagination
+    const total = await Vehicle.countDocuments(filter);
+    
+    // Get vehicles with pagination
+    const vehicles = await Vehicle.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+    
+    res.json({
+      vehicles,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+        hasNext: page < Math.ceil(total / limit),
+        hasPrev: page > 1
+      }
+    });
   } catch (error) {
+    console.error('Error fetching vehicles:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 };

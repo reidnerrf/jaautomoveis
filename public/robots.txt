@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://jaautomoveis.com.br/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /uploads/
+Disallow: /assets/
+
+# Allow important pages
+Allow: /inventory
+Allow: /vehicle/
+Allow: /about
+Allow: /contact
+Allow: /financing
+Allow: /consortium

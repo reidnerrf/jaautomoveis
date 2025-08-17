@@ -39,8 +39,9 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
     };
   }, [page, vehicleId]);
 
-  // Show only when at least 1 user is online to avoid visual noise
-  if (viewers < 1) return null;
+  // Show "Seja o primeiro a ver" when 0 users, or actual count when > 0
+  const shouldShow = viewers >= 0;
+  if (!shouldShow) return null;
 
   if (variant === 'inline') {
     return (
@@ -51,7 +52,7 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
       >
         <div className="flex items-center gap-1">
           <FiUsers size={14} />
-          <span>{viewers} visualizando agora</span>
+          <span>{viewers === 0 ? 'Seja o primeiro a ver' : `${viewers} visualizando agora`}</span>
         </div>
       </motion.div>
     );
@@ -71,7 +72,7 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
           <FiUsers size={14} />
         </motion.div>
         <span className="text-xs font-medium">
-          {viewers} visualizando agora
+          {viewers === 0 ? 'Seja o primeiro a ver' : `${viewers} visualizando agora`}
         </span>
       </div>
     </motion.div>
