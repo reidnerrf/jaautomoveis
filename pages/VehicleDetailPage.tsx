@@ -85,7 +85,7 @@ const VehicleDetailPage: React.FC = () => {
       "mileageFromOdometer": {
         "@type": "QuantitativeValue",
         "value": vehicle.km,
-        "unitCode": "SMI" // Statute mile
+        "unitCode": "KMT" // Kilometers
       },
       "color": vehicle.color,
       "numberOfDoors": vehicle.doors,
