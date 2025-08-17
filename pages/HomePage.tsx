@@ -19,7 +19,8 @@ import {
   FaShieldAlt,
   FaUsers,
   FaAward,
-  FaStar
+  FaStar,
+  FaInstagram
 } from "react-icons/fa";
 import { GoogleReview } from "../types.ts";
 import { useAnalytics } from "../utils/analytics.ts";
@@ -85,6 +86,7 @@ const HomePage: React.FC = () => {
             timeAgo: "5 anos atrás",
           },
         ];
+
         setGoogleReviews(reviews);
       } catch (error) {
         console.error('Error fetching Google reviews:', error);
