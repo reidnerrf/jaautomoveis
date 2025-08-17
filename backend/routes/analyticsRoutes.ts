@@ -1,6 +1,6 @@
 import express from 'express';
-import { getMonthlyViews, getDashboardStats, getRealtimeStats } from '../controllers/analyticsController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { getMonthlyViews, getDashboardStats, getRealtimeStats } from '../controllers/analyticsController';
+import { protect } from '../middleware/authMiddleware';
 
 const router = express.Router();
 

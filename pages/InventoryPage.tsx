@@ -473,7 +473,6 @@ const InventoryPage: React.FC = () => {
           </motion.div>
         )}
       </div>
-      <TopButton />
     </div>
   );
 };

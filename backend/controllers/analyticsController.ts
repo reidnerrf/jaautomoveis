@@ -1,5 +1,5 @@
 import express from 'express';
-import Analytics from '../models/Analytics.js'; // Assuming Analytics model is in '../models/Analytics.js'
+import Analytics from '../models/Analytics';
 
 export const getMonthlyViews = async (req: express.Request, res: express.Response) => {
   try {

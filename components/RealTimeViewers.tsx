@@ -24,12 +24,8 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
     });
     setSocket(newSocket);
 
-    // Emit page view
-    newSocket.emit('page-view', {
-      page,
-      vehicleId,
-      userAgent: navigator.userAgent
-    });
+    // Do not emit page view here to avoid double counting.
+    // MainLayout already emits page-view via analytics service.
 
     // Listen for viewer count updates
     newSocket.on('page-viewers', (data) => {

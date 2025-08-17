@@ -12,10 +12,12 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const showRealtime = Boolean(page && /^\/vehicle\//.test(page));
+
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3 items-end">
       {/* Viewers info above WhatsApp */}
-      {page && <RealTimeViewers page={page} variant="inline" />}
+      {showRealtime && <RealTimeViewers page={page} variant="inline" />}
 
       <a
         href="https://api.whatsapp.com/send?phone=5524999037716&text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es"
