@@ -1,6 +1,6 @@
 
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -13,7 +13,17 @@ export default {
     extend: {
       colors: {
         primary: '#3C50E0',
-        'main-red': '#DC2626',
+        secondary: '#80CAEE',
+        'main-red': '#D2282F',
+        'secondary-blue': '#62A9F8',
+        'comp-light-gray': '#F0E9E8',
+        'comp-dark-blue': '#2427C3',
+        'comp-muted-pink': '#AC8590',
+        'comp-salmon': '#D26762',
+        'box-dark': '#24303F',
+        'main-dark': '#1A222C',
+        'stroke': '#E2E8F0',
+        'body-color': '#637381',
         gray: {
           50: '#F9FAFB',
           100: '#F3F4F6',
@@ -29,6 +39,13 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      container: {
+        center: true,
+        padding: {
+          DEFAULT: '1rem',
+          sm: '2rem',
+        },
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
@@ -51,4 +68,4 @@ export default {
     },
   },
   plugins: [],
-}
+};
