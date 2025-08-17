@@ -3,7 +3,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useVehicleData } from '../hooks/useVehicleData.tsx';
 import StatCard from '../components/StatCard.tsx';
-import { FiEye, FiDollarSign, FiGrid, FiTrendingUp, FiArrowRight, FiMonitor, FiSmartphone, FiTablet, FiMapPin, FiActivity } from 'react-icons/fi';
+import { FiEye, FiDollarSign, FiGrid, FiTrendingUp, FiArrowRight, FiMonitor, FiSmartphone, FiTablet, FiMapPin, FiActivity, FiHeart } from 'react-icons/fi';
 import { 
   AreaChart, 
   Area, 
@@ -36,7 +36,9 @@ const AdminDashboardPage: React.FC = () => {
     instagramClicks: 0,
     deviceStats: [],
     locationStats: [],
-    browserStats: []
+    browserStats: [],
+    likedVehicles: 0,
+    totalLikes: 0,
   });
   const [realtimeData, setRealtimeData] = useState([]);
   const [liveActions, setLiveActions] = useState([]);
@@ -141,6 +143,15 @@ const AdminDashboardPage: React.FC = () => {
     color: COLORS[index % COLORS.length]
   }));
 
+  const browserChartData = useMemo(() => {
+    return (dashboardStats.browserStats || []).slice(0, 6).map((b: any) => ({
+      ...b,
+      _id: !b._id || b._id === 'unknown' ? 'Desconhecido' : b._id
+    }));
+  }, [dashboardStats.browserStats]);
+
+  const estimatedSales = Math.max(0, Math.floor(dashboardStats.whatsappClicks * 0.2));
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -177,13 +188,13 @@ const AdminDashboardPage: React.FC = () => {
         <StatCard title="Valor Total do Estoque" value={formatCurrency(vehicleStats.totalValue)} rate="4.35%" levelUp>
           <FiDollarSign className="text-primary" size={24} />
         </StatCard>
-        <StatCard title="Total de Veículos" value={vehicleStats.totalVehicles.toString()} rate="2.59%" levelUp>
-          <FiGrid className="text-primary" size={24} />
+        <StatCard title="Vendas Estimadas" value={formatNumber(estimatedSales)} rate="+20%" levelUp>
+          <FiTrendingUp className="text-emerald-500" size={24} />
         </StatCard>
       </div>
 
-      {/* Social Media Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Social Media & Likes Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard title="Cliques no WhatsApp" value={formatNumber(dashboardStats.whatsappClicks)} rate="15.3%" levelUp>
           <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center text-white text-xs font-bold">
             W
@@ -193,6 +204,9 @@ const AdminDashboardPage: React.FC = () => {
           <div className="w-6 h-6 bg-pink-500 rounded flex items-center justify-center text-white text-xs font-bold">
             I
           </div>
+        </StatCard>
+        <StatCard title="Veículos com Like" value={formatNumber(dashboardStats.likedVehicles)} rate="3.1%" levelUp>
+          <FiHeart className="text-red-500" size={22} />
         </StatCard>
       </div>
 
@@ -353,19 +367,22 @@ const AdminDashboardPage: React.FC = () => {
             Top Cidades
           </h3>
           <div className="space-y-3">
-            {dashboardStats.locationStats.slice(0, 8).map((location, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <FiMapPin className="text-red-500 mr-2" size={16} />
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
-                    {location._id || 'Desconhecido'}
+            {dashboardStats.locationStats.slice(0, 8).map((location, index) => {
+              const cityLabel = !location._id || location._id === 'unknown' ? 'Desconhecido' : location._id;
+              return (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <FiMapPin className="text-red-500 mr-2" size={16} />
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                      {cityLabel}
+                    </span>
+                  </div>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    {location.count}
                   </span>
                 </div>
-                <span className="text-sm font-medium text-gray-900 dark:text-white">
-                  {location.count}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </motion.div>
 
@@ -393,7 +410,7 @@ const AdminDashboardPage: React.FC = () => {
                       {action.action.replace('_', ' ')}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {action.location} • {new Date(action.timestamp).toLocaleTimeString('pt-BR')}
+                      {(action.location && action.location !== 'Unknown') ? action.location : 'Desconhecido'} • {new Date(action.timestamp).toLocaleTimeString('pt-BR')}
                     </p>
                   </div>
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -420,7 +437,7 @@ const AdminDashboardPage: React.FC = () => {
         </h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={dashboardStats.browserStats.slice(0, 6)} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <BarChart data={browserChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="_id" tick={{ fill: '#6B7280' }} />
               <YAxis tick={{ fill: '#6B7280' }} />
@@ -562,7 +579,7 @@ const AdminDashboardPage: React.FC = () => {
           
           <div className="text-center">
             <div className="w-full h-20 bg-gradient-to-t from-red-500 to-red-400 rounded-t-lg flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">{Math.floor(dashboardStats.whatsappClicks * 0.2)}</span>
+              <span className="text-white font-bold text-2xl">{estimatedSales}</span>
             </div>
             <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-b-lg">
               <h4 className="font-semibold text-red-700 dark:text-red-400">Conversão</h4>
@@ -595,13 +612,13 @@ const AdminDashboardPage: React.FC = () => {
                 <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                 <div className="flex-1">
                   <p className="text-sm text-gray-800 dark:text-gray-200">
-                    {action.action === 'page_view' && `Usuário de ${action.location} visualizou ${action.page}`}
+                    {action.action === 'page_view' && `Usuário de ${(action.location && action.location !== 'Unknown') ? action.location : 'Desconhecido'} visualizou ${action.page}`}
                     {action.action === 'vehicle_view' && `Usuário interessado no veículo ${action.vehicleName}`}
-                    {action.action === 'whatsapp_click' && `Contato via WhatsApp para ${action.vehicleName}`}
+                    {action.action === 'whatsapp_click' && `Contato via WhatsApp para ${action.vehicleName || ''}`}
                     {action.action === 'instagram_click' && `Visitou nosso Instagram`}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {new Date(action.timestamp).toLocaleTimeString('pt-BR')} • {action.device} • {action.location}
+                    {new Date(action.timestamp).toLocaleTimeString('pt-BR')} • {action.device || ''} • {(action.location && action.location !== 'Unknown') ? action.location : 'Desconhecido'}
                   </p>
                 </div>
               </motion.div>

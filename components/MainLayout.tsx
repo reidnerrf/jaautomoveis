@@ -20,7 +20,7 @@ const MainLayout: React.FC = () => {
         <Outlet />
       </main>
       <Footer />
-      <FloatingSocialButtons />
+      <FloatingSocialButtons page={location.pathname} />
     </div>
   );
 };

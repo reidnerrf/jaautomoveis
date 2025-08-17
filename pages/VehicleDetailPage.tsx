@@ -4,12 +4,10 @@ import { useVehicleData } from '../hooks/useVehicleData.tsx';
 import VehicleCarousel from '../components/VehicleCarousel.tsx';
 import PriceComparison from '../components/PriceComparison.tsx';
 import { FaWhatsapp } from 'react-icons/fa';
-import { FiChevronLeft, FiChevronRight, FiArrowLeft, FiTag, FiCalendar, FiTrello, FiSettings, FiDroplet, FiGitCommit, FiFolder, FiX, FiAward, FiShield, FiEye } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiArrowLeft, FiTag, FiCalendar, FiTrello, FiSettings, FiDroplet, FiGitCommit, FiFolder, FiX, FiAward, FiShield, FiEye, FiHeart } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Vehicle } from '../types.ts';
-import TopButton from '../components/TopButton.tsx';
 import ShareButton from '../components/ShareButton.tsx';
-import RealTimeViewers from '../components/RealTimeViewers.tsx';
 
 
 const VehicleDetailPage: React.FC = () => {
@@ -18,6 +16,7 @@ const VehicleDetailPage: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -74,8 +73,25 @@ const VehicleDetailPage: React.FC = () => {
 
   const otherVehicles = allVehicles.filter(v => v.id !== id).slice(0, 5);
 
+  const toggleFavorite = () => {
+    setIsFavorite(prev => !prev);
+    if ((window as any).trackRealTimeAction) {
+      (window as any).trackRealTimeAction('like_vehicle', 'engagement', vehicle.name);
+    }
+    try {
+      const liked = JSON.parse(localStorage.getItem('likedVehicles') || '[]');
+      const set = new Set<string>(liked);
+      if (isFavorite) {
+        set.delete(vehicle.id);
+      } else {
+        set.add(vehicle.id);
+      }
+      localStorage.setItem('likedVehicles', JSON.stringify(Array.from(set)));
+    } catch {}
+  };
+
   return (
-    <div className="bg-white">
+    <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Seta para voltar ao estoque */}
 <div className="mb-4">
@@ -120,35 +136,45 @@ const VehicleDetailPage: React.FC = () => {
           </div>
 
           {/* Informações do veículo */}
-          <div className="lg:col-span-2 bg-gray-50 p-6 rounded-2xl shadow-lg flex flex-col">
-            <div className="flex items-center text-sm text-gray-500 mb-6">
-              <FiEye className="mr-2" />
-              <span>{vehicle.views || 0} visualizações</span>
+          <div className="lg:col-span-2 bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center text-sm text-gray-500">
+                <FiEye className="mr-2" />
+                <span>{vehicle.views || 0} visualizações</span>
+              </div>
+              <button
+                onClick={toggleFavorite}
+                className={`p-2 rounded-full transition-all ${isFavorite ? 'bg-red-500 text-white' : 'bg-white text-gray-700 hover:bg-red-500 hover:text-white'} shadow`}
+                aria-label="Curtir"
+                title="Curtir"
+              >
+                <FiHeart size={18} className={isFavorite ? 'fill-current' : ''} />
+              </button>
             </div>
             <span className="inline-block bg-main-red text-white text-xs font-bold px-3 py-1 rounded-full shadow-md mb-2">
               Oferta Especial 🚗
             </span>
-            <h1 className="text-3xl font-extrabold text-gray-900">{vehicle.name}</h1>
+            <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">{vehicle.name}</h1>
             <p className="text-4xl font-bold text-main-red mt-2 mb-6 drop-shadow-sm">
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(vehicle.price)}
             </p>
 
             {/* Selos de confiança */}
             <div className="flex space-x-4 mb-6">
-              <div className="flex items-center text-gray-700"><FiAward className="mr-2 text-main-red" /> Revisado</div>
-              <div className="flex items-center text-gray-700"><FiShield className="mr-2 text-main-red" /> Garantia</div>
+              <div className="flex items-center text-gray-700 dark:text-gray-300"><FiAward className="mr-2 text-main-red" /> Revisado</div>
+              <div className="flex items-center text-gray-700 dark:text-gray-300"><FiShield className="mr-2 text-main-red" /> Garantia</div>
             </div>
 
             {/* Características */}
-            <div className="mb-6 bg-white p-4 rounded-xl shadow">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Características</h2>
+            <div className="mb-6 bg-white dark:bg-gray-900 p-4 rounded-xl shadow">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Características</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {details.map(detail => (
                   <div key={detail.label} className="flex items-center space-x-2">
                     {detail.icon}
                     <div>
-                      <p className="text-sm text-gray-500">{detail.label}</p>
-                      <p className="font-semibold text-gray-800">{detail.value}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{detail.label}</p>
+                      <p className="font-semibold text-gray-800 dark:text-gray-200">{detail.value}</p>
                     </div>
                   </div>
                 ))}
@@ -186,9 +212,9 @@ const VehicleDetailPage: React.FC = () => {
         {/* Opcionais e Comparativo */}
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
           {vehicle.optionals?.length > 0 && vehicle.optionals[0] !== '' && (
-            <div className="bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Opcionais</h2>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-600">
+            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Opcionais</h2>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-600 dark:text-gray-300">
                 {vehicle.optionals.map(opt => (
                   <li key={opt} className="flex items-center">
                     <FiChevronRight className="text-main-red mr-2" />
@@ -203,15 +229,15 @@ const VehicleDetailPage: React.FC = () => {
 
         {/* Informações adicionais */}
         {vehicle.additionalInfo && (
-          <div className="bg-gray-50 p-6 rounded-2xl shadow-lg mt-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Informações Adicionais</h2>
-            <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{vehicle.additionalInfo}</p>
+          <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg mt-8">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Informações Adicionais</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{vehicle.additionalInfo}</p>
           </div>
         )}
 
         {/* Outros veículos */}
         <div className="mt-16">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Outros Veículos que Você Pode Gostar</h2>
+          <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">Outros Veículos que Você Pode Gostar</h2>
           <VehicleCarousel vehicles={otherVehicles} />
         </div>
       </div>
@@ -272,11 +298,6 @@ const VehicleDetailPage: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <RealTimeViewers page={`/vehicle/${id}`} vehicleId={id} />
-      <TopButton />
-
-      {/* Floating WhatsApp removed: using global FloatingSocialButtons */}
     </div>
   );
 };

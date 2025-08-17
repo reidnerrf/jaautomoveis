@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
-import TopButton from '../components/TopButton.tsx';
 
 const FinancingPage: React.FC = () => {
   const [amount, setAmount] = useState(50000);
@@ -29,7 +28,7 @@ const FinancingPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-50 py-16">
+    <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
 
@@ -39,15 +38,15 @@ const FinancingPage: React.FC = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="bg-white p-8 rounded-2xl shadow-lg sticky top-24"
+              className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg sticky top-24"
             >
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">💰 Simulação Rápida</h1>
-              <p className="text-gray-500 mb-6">Veja quanto ficará seu financiamento.</p>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">💰 Simulação Rápida</h1>
+              <p className="text-gray-500 dark:text-gray-300 mb-6">Veja quanto ficará seu financiamento.</p>
 
               <form onSubmit={handleSimulate} className="space-y-6">
                 {/* Valor */}
                 <div>
-                  <label htmlFor="amount" className="block font-medium text-gray-700 mb-1">
+                  <label htmlFor="amount" className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Valor a Financiar: <span className="font-bold">{formatCurrency(amount)}</span>
                   </label>
                   <input
@@ -64,7 +63,7 @@ const FinancingPage: React.FC = () => {
 
                 {/* Parcelas */}
                 <div>
-                  <label htmlFor="installments" className="block font-medium text-gray-700 mb-1">
+                  <label htmlFor="installments" className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Parcelas: <span className="font-bold">{installments}</span>
                   </label>
                   <input
@@ -81,7 +80,7 @@ const FinancingPage: React.FC = () => {
 
                 {/* Taxa de juros */}
                 <div>
-                  <label htmlFor="rate" className="block font-medium text-gray-700 mb-1">
+                  <label htmlFor="rate" className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Taxa de Juros (% ao mês): <span className="font-bold">{rate.toFixed(2)}%</span>
                   </label>
                   <input
@@ -108,13 +107,13 @@ const FinancingPage: React.FC = () => {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-8 bg-blue-50 p-6 rounded-lg border border-blue-200 text-center"
+                  className="mt-8 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-700 text-center"
                 >
-                  <h2 className="text-xl font-bold text-blue-900 mb-3">Resultado da Simulação</h2>
-                  <p className="text-gray-700">💳 {installments} parcelas de</p>
-                  <p className="text-3xl font-extrabold text-blue-800">{formatCurrency(simulation.monthly)}</p>
-                  <p className="text-sm text-gray-500 mt-2">Total: {formatCurrency(simulation.total)}</p>
-                  <p className="text-sm text-gray-500">Juros Totais: {formatCurrency(simulation.interest)}</p>
+                  <h2 className="text-xl font-bold text-blue-900 dark:text-blue-300 mb-3">Resultado da Simulação</h2>
+                  <p className="text-gray-700 dark:text-gray-300">💳 {installments} parcelas de</p>
+                  <p className="text-3xl font-extrabold text-blue-800 dark:text-blue-400">{formatCurrency(simulation.monthly)}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Total: {formatCurrency(simulation.total)}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Juros Totais: {formatCurrency(simulation.interest)}</p>
                   <p className="text-xs text-gray-400 mt-3">*Valores aproximados, sujeitos à aprovação.</p>
                 </motion.div>
               )}
@@ -127,19 +126,19 @@ const FinancingPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="bg-white p-8 rounded-2xl shadow-lg"
+              className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
             >
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
                 Financie seu carro com segurança
               </h2>
-              <p className="text-gray-600 mb-8 leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
                 Trabalhamos com as principais instituições financeiras, oferecendo planos sob medida para o seu orçamento.
               </p>
 
               <div className="grid md:grid-cols-2 gap-6 mb-8">
                 <div>
                   <h3 className="text-xl font-bold mb-3">Como funciona</h3>
-                  <ul className="space-y-2 text-gray-600">
+                  <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                     <li>➡ Escolha seu veículo</li>
                     <li>➡ Simule seu financiamento</li>
                     <li>➡ Defina entrada e parcelas</li>
@@ -149,7 +148,7 @@ const FinancingPage: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold mb-3">Vantagens</h3>
-                  <ul className="space-y-2 text-gray-600">
+                  <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                     <li>✔ Aprovação rápida</li>
                     <li>✔ Taxas competitivas</li>
                     <li>✔ Planos flexíveis</li>
@@ -158,7 +157,7 @@ const FinancingPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg mb-8">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4 rounded-lg mb-8">
                 💡 <span className="font-bold">Dica:</span> Quanto maior a entrada, menores as parcelas.
               </div>
 
@@ -178,7 +177,6 @@ const FinancingPage: React.FC = () => {
 
         </div>
       </div>
-      <TopButton />
     </div>
   );
 };

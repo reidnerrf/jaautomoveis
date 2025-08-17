@@ -12,6 +12,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             colors: {
@@ -44,7 +45,7 @@
       }
     </script>
     <!-- Preload critical resources -->
-    <link rel="preload" href="/index.tsx" as="script" crossorigin="anonymous">
+    <link rel="modulepreload" href="/index.tsx" crossorigin="anonymous">
     <link rel="dns-prefetch" href="//lh3.googleusercontent.com">
     <link rel="preconnect" href="//lh3.googleusercontent.com">
   </head>

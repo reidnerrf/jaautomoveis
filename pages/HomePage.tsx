@@ -13,7 +13,6 @@ import {
   FaHandshake,
   FaTags,
   FaWhatsapp,
-  FaInstagram,
   FaPhone,
   FaMapMarkerAlt,
   FaClock,

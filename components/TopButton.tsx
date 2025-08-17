@@ -45,7 +45,7 @@ const TopButton: React.FC = () => {
           }}
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-40 group"
+          className="fixed bottom-8 right-8 z-30 group"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
