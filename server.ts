@@ -21,6 +21,20 @@ import analyticsRoutes from './backend/routes/analyticsRoutes';
 import Analytics from './backend/models/Analytics';
 import Vehicle from './backend/models/Vehicle';
 
+// Performance and optimization middlewares
+import performanceMiddleware, { 
+  memoryMetricsMiddleware, 
+  getPerformanceMetrics, 
+  clearPerformanceMetrics 
+} from './backend/middleware/performanceMiddleware';
+import { 
+  vehicleCacheMiddleware, 
+  singleVehicleCacheMiddleware, 
+  statsCacheMiddleware,
+  invalidateVehicleCacheMiddleware 
+} from './backend/middleware/cacheMiddleware';
+import { vehicleImageOptimization } from './backend/middleware/imageOptimization';
+
 // Load environment variables
 dotenv.config();
 
@@ -139,11 +153,23 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Performance monitoring middleware
+app.use(performanceMiddleware);
+app.use(memoryMetricsMiddleware);
+
+// Image optimization middleware
+app.use('/uploads', vehicleImageOptimization);
+app.use('/assets', vehicleImageOptimization);
+
 // 1. API Routes
 app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/vehicles', vehicleCacheMiddleware, vehicleRoutes);
 app.use('/api/upload', uploadRoutes);
-app.use('/api/analytics', analyticsRoutes);
+app.use('/api/analytics', statsCacheMiddleware, analyticsRoutes);
+
+// Performance metrics endpoints
+app.get('/api/performance/metrics', getPerformanceMetrics);
+app.delete('/api/performance/metrics', clearPerformanceMetrics);
 
 // serve public folder at /public for manifest/sw/favicon
 app.use('/public', express.static(path.join(__dirname, 'public'), {
