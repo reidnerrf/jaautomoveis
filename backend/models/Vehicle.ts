@@ -38,6 +38,16 @@ const vehicleSchema = new mongoose.Schema<Omit<IVehicle, 'id'>>({
   }
 });
 
+// Create indexes for better query performance
+vehicleSchema.index({ make: 1, model: 1 });
+vehicleSchema.index({ year: 1 });
+vehicleSchema.index({ price: 1 });
+vehicleSchema.index({ fuel: 1 });
+vehicleSchema.index({ gearbox: 1 });
+vehicleSchema.index({ views: -1 });
+vehicleSchema.index({ createdAt: -1 });
+vehicleSchema.index({ make: 1, model: 1, year: 1, price: 1 }); // Compound index for common filters
+
 const Vehicle = mongoose.model<Omit<IVehicle, 'id'>>('Vehicle', vehicleSchema);
 
 export default Vehicle;

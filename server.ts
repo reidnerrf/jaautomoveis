@@ -19,6 +19,7 @@ import authRoutes from './backend/routes/authRoutes';
 import uploadRoutes from './backend/routes/uploadRoutes';
 import analyticsRoutes from './backend/routes/analyticsRoutes';
 import Analytics from './backend/models/Analytics';
+import Vehicle from './backend/models/Vehicle';
 
 // Load environment variables
 dotenv.config();
@@ -160,6 +161,63 @@ app.get('/manifest.json', (req: Request, res: Response) => {
 app.get('/sw.js', (req: Request, res: Response) => {
   res.setHeader('Service-Worker-Allowed', '/');
   res.sendFile(path.join(process.cwd(), 'public', 'sw.js'));
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
+// Sitemap generation
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const vehicles = await Vehicle.find({}).select('id updatedAt').lean();
+    const baseUrl = req.protocol + '://' + req.get('host');
+    
+    let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+    
+    // Static pages
+    const staticPages = [
+      { url: '/', priority: '1.0', changefreq: 'daily' },
+      { url: '/inventory', priority: '0.9', changefreq: 'daily' },
+      { url: '/about', priority: '0.7', changefreq: 'monthly' },
+      { url: '/contact', priority: '0.7', changefreq: 'monthly' },
+      { url: '/financing', priority: '0.8', changefreq: 'monthly' },
+      { url: '/consortium', priority: '0.8', changefreq: 'monthly' },
+    ];
+    
+    staticPages.forEach(page => {
+      sitemap += `  <url>\n`;
+      sitemap += `    <loc>${baseUrl}${page.url}</loc>\n`;
+      sitemap += `    <changefreq>${page.changefreq}</changefreq>\n`;
+      sitemap += `    <priority>${page.priority}</priority>\n`;
+      sitemap += `  </url>\n`;
+    });
+    
+    // Vehicle pages
+    vehicles.forEach(vehicle => {
+      sitemap += `  <url>\n`;
+      sitemap += `    <loc>${baseUrl}/vehicle/${vehicle.id}</loc>\n`;
+      sitemap += `    <lastmod>${vehicle.updatedAt.toISOString()}</lastmod>\n`;
+      sitemap += `    <changefreq>weekly</changefreq>\n`;
+      sitemap += `    <priority>0.8</priority>\n`;
+      sitemap += `  </url>\n`;
+    });
+    
+    sitemap += '</urlset>';
+    
+    res.setHeader('Content-Type', 'application/xml');
+    res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+    res.send(sitemap);
+  } catch (error) {
+    console.error('Error generating sitemap:', error);
+    res.status(500).send('Error generating sitemap');
+  }
 });
 
 // 2. Development-only TSX/TS Transpilation

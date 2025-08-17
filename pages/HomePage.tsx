@@ -154,7 +154,25 @@ const HomePage: React.FC = () => {
               loop
               muted
               playsInline
+              poster="/assets/homepageabout.webp"
               className="absolute inset-0 w-full h-full object-cover"
+              onLoadStart={() => {
+                // Pause video when not in viewport for better performance
+                const observer = new IntersectionObserver(
+                  (entries) => {
+                    entries.forEach((entry) => {
+                      const video = entry.target as HTMLVideoElement;
+                      if (entry.isIntersecting) {
+                        video.play().catch(() => {});
+                      } else {
+                        video.pause();
+                      }
+                    });
+                  },
+                  { threshold: 0.1 }
+                );
+                observer.observe(document.querySelector('video') as Element);
+              }}
             >
               <source src="/assets/homevideo.mp4" type="video/mp4" />
             </motion.video>

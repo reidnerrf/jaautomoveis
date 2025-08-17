@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Vehicle } from '../types.ts';
 import ShareButton from '../components/ShareButton.tsx';
 import RealTimeViewers from '../components/RealTimeViewers.tsx';
+import SEOHead from '../components/SEOHead.tsx';
 
 
 const VehicleDetailPage: React.FC = () => {
@@ -68,6 +69,45 @@ const VehicleDetailPage: React.FC = () => {
     );
   }
 
+  // Generate JSON-LD structured data
+  const generateStructuredData = () => {
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "Car",
+      "name": vehicle.name,
+      "description": `${vehicle.year} ${vehicle.make} ${vehicle.model} - ${vehicle.color} - ${vehicle.km.toLocaleString('pt-BR')} km`,
+      "brand": {
+        "@type": "Brand",
+        "name": vehicle.make
+      },
+      "model": vehicle.model,
+      "vehicleModelDate": vehicle.year.toString(),
+      "mileageFromOdometer": {
+        "@type": "QuantitativeValue",
+        "value": vehicle.km,
+        "unitCode": "SMI" // Statute mile
+      },
+      "color": vehicle.color,
+      "numberOfDoors": vehicle.doors,
+      "fuelType": vehicle.fuel,
+      "vehicleTransmission": vehicle.gearbox,
+      "image": vehicle.images,
+      "offers": {
+        "@type": "Offer",
+        "price": vehicle.price,
+        "priceCurrency": "BRL",
+        "availability": "https://schema.org/InStock",
+        "seller": {
+          "@type": "Organization",
+          "name": "JA Automóveis",
+          "url": window.location.origin
+        }
+      }
+    };
+
+    return structuredData;
+  };
+
   const nextImage = () => {
     setCurrentImageIndex(prev => (prev + 1) % vehicle.images.length);
   };
@@ -112,7 +152,21 @@ const VehicleDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <>
+      <SEOHead
+        title={`${vehicle.year} ${vehicle.make} ${vehicle.model} - R$ ${vehicle.price.toLocaleString('pt-BR')} | JA Automóveis`}
+        description={`${vehicle.year} ${vehicle.make} ${vehicle.model} - ${vehicle.color} - ${vehicle.km.toLocaleString('pt-BR')} km - R$ ${vehicle.price.toLocaleString('pt-BR')}. Confira este veículo na JA Automóveis.`}
+        keywords={`${vehicle.make}, ${vehicle.model}, ${vehicle.year}, ${vehicle.color}, carro usado, seminovo, JA Automóveis`}
+        image={vehicle.images[0]}
+        url={`/vehicle/${vehicle.id}`}
+        type="product"
+      >
+        <script type="application/ld+json">
+          {JSON.stringify(generateStructuredData())}
+        </script>
+      </SEOHead>
+      
+      <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Seta para voltar ao estoque */}
 <div className="mb-4">
@@ -325,7 +379,8 @@ const VehicleDetailPage: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+      </div>
+    </>
   );
 };
 

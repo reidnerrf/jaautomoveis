@@ -11,6 +11,8 @@ interface OptimizedImageProps {
 	priority?: boolean;
 	onLoad?: () => void;
 	onError?: () => void;
+	quality?: number;
+	format?: 'webp' | 'avif' | 'auto';
 }
 
 const DEFAULT_PLACEHOLDER = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="%23e5e7eb"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%239ca3af" font-size="20">Carregando imagem...</text></svg>';
@@ -24,6 +26,8 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 	height,
 	sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
 	priority = false,
+	quality = 80,
+	format = 'auto',
 	...props
 }) => {
 	const [imageSrc, setImageSrc] = useState<string>(placeholder);
@@ -33,20 +37,31 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 	const imgRef = useRef<HTMLImageElement>(null);
 	const maxRetries = 3;
 
-	// Generate WebP and fallback sources
+	// Generate responsive image sources with different sizes
 	const getImageSources = (originalSrc: string) => {
-		const webpSrc = originalSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
-		return { webpSrc, originalSrc };
+		const baseUrl = originalSrc.split('?')[0];
+		const extension = originalSrc.split('.').pop()?.toLowerCase();
+		
+		// Generate different sizes for responsive images
+		const sizes = [600, 900, 1200];
+		const srcSet = sizes.map(size => {
+			const webpSrc = `${baseUrl}?w=${size}&q=${quality}&f=webp`;
+			const originalSrc = `${baseUrl}?w=${size}&q=${quality}`;
+			return { webpSrc, originalSrc, size };
+		});
+		
+		return srcSet;
 	};
 
 	const loadImage = useCallback((imageSrc: string) => {
-		const { webpSrc, originalSrc } = getImageSources(imageSrc);
+		const srcSet = getImageSources(imageSrc);
+		const primarySource = srcSet[1]; // Use 900px as default
 
 		// Try WebP first, fallback to original
 		const img = new Image();
 
 		img.onload = () => {
-			setImageSrc(webpSrc);
+			setImageSrc(primarySource.webpSrc);
 			setIsLoading(false);
 			setHasError(false);
 		};
@@ -55,7 +70,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 			// Fallback to original format
 			const fallbackImg = new Image();
 			fallbackImg.onload = () => {
-				setImageSrc(originalSrc);
+				setImageSrc(primarySource.originalSrc);
 				setIsLoading(false);
 				setHasError(false);
 			};
@@ -72,7 +87,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 				}
 			};
 
-			fallbackImg.src = originalSrc;
+			fallbackImg.src = primarySource.originalSrc;
 		};
 
 		// If original is already webp or data URL, use it directly
@@ -83,8 +98,8 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 			return;
 		}
 
-		img.src = webpSrc;
-	}, [retryCount, maxRetries]);
+		img.src = primarySource.webpSrc;
+	}, [retryCount, maxRetries, quality]);
 
 	useEffect(() => {
 		const observer = new IntersectionObserver(
@@ -132,18 +147,37 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
 	return (
 		<div className={`relative ${className}`}>
-			<img
-				ref={imgRef}
-				src={imageSrc}
-				alt={alt}
-				className={`transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}
-				loading={priority ? 'eager' : 'lazy'}
-				decoding="async"
-				width={width}
-				height={height}
-				sizes={sizes}
-				{...props}
-			/>
+			<picture>
+				{/* WebP sources for different sizes */}
+				{getImageSources(src).map(({ webpSrc, size }) => (
+					<source
+						key={`webp-${size}`}
+						srcSet={webpSrc}
+						type="image/webp"
+						media={`(max-width: ${size}px)`}
+					/>
+				))}
+				{/* Original format sources for different sizes */}
+				{getImageSources(src).map(({ originalSrc, size }) => (
+					<source
+						key={`original-${size}`}
+						srcSet={originalSrc}
+						media={`(max-width: ${size}px)`}
+					/>
+				))}
+				<img
+					ref={imgRef}
+					src={imageSrc}
+					alt={alt}
+					className={`transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}
+					loading={priority ? 'eager' : 'lazy'}
+					decoding="async"
+					width={width}
+					height={height}
+					sizes={sizes}
+					{...props}
+				/>
+			</picture>
 			{Boolean(isLoading) && (
 				<div className="absolute inset-0 flex items-center justify-center bg-gray-100">
 					<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
