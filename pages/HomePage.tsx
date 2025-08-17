@@ -165,8 +165,8 @@ const HomePage: React.FC = () => {
           </div>
         </div>
         
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 z-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-red-900/30 to-transparent z-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-red-900/25 to-transparent z-10"></div>
 
         <motion.div
           className="relative z-20 text-center px-6 max-w-6xl mx-auto"
@@ -181,12 +181,12 @@ const HomePage: React.FC = () => {
             className="mb-8"
           >
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-7xl font-black mb-6 tracking-tight">
-              <span className="block text-white drop-shadow-2xl">Seu Próximo</span>
-              <span className="block bg-gradient-to-r from-red-400 via-red-500 to-rose-500 bg-clip-text text-transparent">
+              <span className="block text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">Seu Próximo</span>
+              <span className="block bg-gradient-to-r from-red-400 via-red-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]">
                 Carro Está Aqui
               </span>
             </h1>
-                         <p className="text-lg sm:text-xl md:text-2xl text-gray-200/90 font-light max-w-4xl mx-auto leading-relaxed">
+                         <p className="text-lg sm:text-xl md:text-2xl text-gray-100 font-light max-w-4xl mx-auto leading-relaxed drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
               Na <span className="font-bold text-red-400">JA Automóveis</span>, ofertas exclusivas, 
               financiamento facilitado e garantia total de procedência.
             </p>
@@ -265,7 +265,7 @@ const HomePage: React.FC = () => {
       <section className="py-24 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-16 max-w-5xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -335,7 +335,7 @@ const HomePage: React.FC = () => {
       <section className="py-24 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-16 max-w-5xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}

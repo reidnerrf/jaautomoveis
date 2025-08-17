@@ -4,7 +4,7 @@ import { FiEye, FiHeart, FiCalendar, FiSettings, FiDollarSign, FiStar } from 're
 import { BsFuelPump, BsSpeedometer2 } from 'react-icons/bs';
 import OptimizedImage from './OptimizedImage';
 import { FaWhatsapp } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom'; // Assuming react-router-dom is used
+import { Link, useNavigate } from 'react-router-dom';
 
 // Placeholder for Vehicle type
 interface Vehicle {
@@ -30,6 +30,8 @@ interface VehicleCardProps {
   isFavorite?: boolean;
   index?: number;
   viewMode?: 'grid' | 'list';
+  badgeLabel?: string;
+  badgeColorClass?: string;
 }
 
 const VehicleCard: React.FC<VehicleCardProps> = memo(({ 
@@ -55,6 +57,15 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
     return new Intl.NumberFormat('pt-BR').format(mileage);
   };
 
+  // expose like analytics
+  const sendLikeAnalytics = (liked: boolean) => {
+    try {
+      if ((window as any).trackBusinessEvent) {
+        (window as any).trackBusinessEvent('like_vehicle', { vehicleId: vehicle.id, name: vehicle.name, liked });
+      }
+    } catch {}
+  };
+
   const handleCardClick = () => {
     if (onView) {
       onView(vehicle.id);
@@ -67,7 +78,17 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
     if (onFavorite) {
       onFavorite(vehicle.id);
     } else {
-      setLocalFavorite(prev => !prev);
+      setLocalFavorite(prev => {
+        const next = !prev;
+        sendLikeAnalytics(next);
+        try {
+          const current: string[] = JSON.parse(localStorage.getItem('likedVehicles') || '[]');
+          const set = new Set<string>(current);
+          if (next) set.add(vehicle.id); else set.delete(vehicle.id);
+          localStorage.setItem('likedVehicles', JSON.stringify(Array.from(set)));
+        } catch {}
+        return next;
+      });
     }
   };
 
@@ -154,7 +175,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
             <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
               <Link
                 to={`/vehicle/${vehicle.id}`}
-                className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-center transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-center transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
               >
                 <FiEye className="w-4 h-4" />
                 Ver Detalhes
@@ -211,7 +232,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
           alt={`${vehicle.make} ${vehicle.model}`}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
 
       {/* Content */}
@@ -260,7 +281,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
           <Link
             to={`/vehicle/${vehicle.id}`}
             onClick={(e) => e.stopPropagation()}
-            className="ml-3 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-300 text-sm font-medium"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-300 text-sm font-medium shrink-0 whitespace-nowrap"
           >
             <FiEye className="w-4 h-4" />
             Ver Detalhes

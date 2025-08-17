@@ -36,7 +36,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
   }, [vehicles.length, visibleSlides]);
 
   const nextSlide = useCallback(() => {
-    setCurrentIndex(prev => (prev >= vehicles.length - visibleSlides ? 0 : prev + 1));
+    setCurrentIndex(prev => (prev >= vehicles.length - visibleSlides ? Math.max(0, vehicles.length - visibleSlides) : prev + 1));
   }, [vehicles.length, visibleSlides]);
 
   // Auto-play suave em telas menores
@@ -87,8 +87,8 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
 
   // Memoize the carousel items to prevent unnecessary re-renders
   const carouselItems = useMemo(() => 
-    vehicles.map(vehicle => (
-      <div key={vehicle.id} className="p-2 box-border" style={{ flex: `0 0 ${100 / visibleSlides}%` }}>
+         vehicles.map(vehicle => (
+      <div key={vehicle.id} className="p-2 md:p-3 box-border" style={{ flex: `0 0 ${100 / visibleSlides}%` }}>
         <VehicleCard vehicle={vehicle} />
       </div>
     )), [vehicles, visibleSlides]
@@ -96,7 +96,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
 
   // Memoize indicators
   const indicators = useMemo(() => 
-    Array.from({ length: Math.max(0, vehicles.length - visibleSlides + 1) }, (_, i) => (
+    Array.from({ length: Math.max(1, vehicles.length - visibleSlides + 1) }, (_, i) => (
       <motion.button
         key={i}
         onClick={() => setCurrentIndex(i)}
@@ -113,8 +113,13 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
     return <div className="text-center p-8">Nenhum veículo para exibir.</div>;
   }
 
+  // clamp currentIndex when visibleSlides or vehicles length changes
+  useEffect(() => {
+    setCurrentIndex((prev) => Math.min(prev, Math.max(0, vehicles.length - visibleSlides)));
+  }, [visibleSlides, vehicles.length]);
+
   return (
-    <div className="relative w-full" ref={containerRef}>
+    <div className="relative w-full px-2 md:px-4" ref={containerRef}>
       {/* Lista de veículos */}
       <div className="overflow-hidden">
         <motion.div
@@ -131,21 +136,21 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
         <>
           <button
             onClick={prevSlide}
-            className="absolute top-1/2 left-2 md:-left-4 transform -translate-y-1/2 
-                       bg-white/30 backdrop-blur-md hover:bg-white/50 
+            className="absolute top-1/2 left-3 transform -translate-y-1/2 
+                       bg-white/70 dark:bg-gray-800/60 backdrop-blur-md hover:bg-white/90 dark:hover:bg-gray-800/80 
                        rounded-full p-2 shadow-lg transition-all duration-300"
             aria-label="Previous slide"
           >
-            <FiChevronLeft size={28} className="text-gray-800" />
+            <FiChevronLeft size={28} className="text-gray-800 dark:text-white" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute top-1/2 right-2 md:-right-4 transform -translate-y-1/2 
-                       bg-white/30 backdrop-blur-md hover:bg-white/50 
+            className="absolute top-1/2 right-3 transform -translate-y-1/2 
+                       bg-white/70 dark:bg-gray-800/60 backdrop-blur-md hover:bg-white/90 dark:hover:bg-gray-800/80 
                        rounded-full p-2 shadow-lg transition-all duration-300"
             aria-label="Next slide"
           >
-            <FiChevronRight size={28} className="text-gray-800" />
+            <FiChevronRight size={28} className="text-gray-800 dark:text-white" />
           </button>
         </>
       )}

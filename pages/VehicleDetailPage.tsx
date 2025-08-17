@@ -78,6 +78,9 @@ const VehicleDetailPage: React.FC = () => {
     if ((window as any).trackRealTimeAction) {
       (window as any).trackRealTimeAction('like_vehicle', 'engagement', vehicle.name);
     }
+    if ((window as any).trackBusinessEvent) {
+      (window as any).trackBusinessEvent('like_vehicle', { vehicleId: vehicle.id, name: vehicle.name });
+    }
     try {
       const liked = JSON.parse(localStorage.getItem('likedVehicles') || '[]');
       const set = new Set<string>(liked);

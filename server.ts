@@ -90,6 +90,7 @@ app.use(helmet({
       imgSrc: ["'self'", "data:", "https:"],
       scriptSrc: scriptSrcDirectives,
       connectSrc: ["'self'", "ws:", "wss:"],
+      manifestSrc: ["'self'"]
     },
   },
   crossOriginEmbedderPolicy: false,
@@ -139,6 +140,11 @@ app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/analytics', analyticsRoutes);
+
+// serve public folder at /public for manifest/sw/favicon
+app.use('/public', express.static(path.join(__dirname, 'public'), {
+  maxAge: isProduction ? '1h' : 0
+}));
 
 // 2. Development-only TSX/TS Transpilation
 if (!isProduction) {
