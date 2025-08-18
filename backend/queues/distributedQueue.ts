@@ -127,7 +127,7 @@ class DistributedQueue extends EventEmitter {
 
   // Add multiple jobs to a queue
   async addJobs(queueName: string, jobs: JobData[]): Promise<Queue.Job[]> {
-    const queue = this.getOrCreateQueue(queueName);
+    this.getOrCreateQueue(queueName);
     const addedJobs: Queue.Job[] = [];
 
     for (const jobData of jobs) {

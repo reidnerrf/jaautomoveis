@@ -1,5 +1,4 @@
 import { EventEmitter } from 'events';
-import { promisify } from 'util';
 
 // Interfaces para ML
 interface MLConfig {
@@ -217,15 +216,15 @@ class AdvancedML extends EventEmitter {
     console.log('Training collaborative model...');
     
     // Simular treinamento SVD
-    for (let epoch = 0; epoch < config.epochs; epoch++) {
-      const loss = this.calculateCollaborativeLoss(model, trainingData);
+    for (let epoch = 0; epoch < _config.epochs; epoch++) {
+      const loss = this.calculateCollaborativeLoss(_model, _trainingData);
       
       if (epoch % 10 === 0) {
         this.emit('training:progress', {
           modelType: 'collaborative',
           epoch,
           loss,
-          progress: (epoch / config.epochs) * 100
+          progress: (epoch / _config.epochs) * 100
         });
       }
 
@@ -235,7 +234,7 @@ class AdvancedML extends EventEmitter {
   }
 
   // Treinar modelo de conteúdo
-  private async trainContentModel(model: unknown, trainingData: unknown[], config: any): Promise<void> {
+  private async trainContentModel(model: unknown, trainingData: unknown[], _config: any): Promise<void> {
     console.log('Training content-based model...');
     
     // Calcular TF-IDF e similaridade

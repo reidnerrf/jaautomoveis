@@ -6,15 +6,11 @@ import crypto from 'crypto';
 
 // Extend Multer File interface to include custom properties
 declare module 'multer' {
-  export namespace Express {
-    export namespace Multer {
-      interface File {
-        optimized?: boolean;
-        originalSize?: number;
-        optimizedSize?: number;
-        thumbnailPath?: string;
-      }
-    }
+  interface File {
+    optimized?: boolean;
+    originalSize?: number;
+    optimizedSize?: number;
+    thumbnailPath?: string;
   }
 }
 

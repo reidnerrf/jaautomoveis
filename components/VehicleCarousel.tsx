@@ -109,14 +109,14 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
     )), [vehicles.length, visibleSlides, currentIndex]
   );
 
-  if (!vehicles.length) {
-    return <div className="text-center p-8">Nenhum veículo para exibir.</div>;
-  }
-
   // clamp currentIndex when visibleSlides or vehicles length changes
   useEffect(() => {
     setCurrentIndex((prev) => Math.min(prev, Math.max(0, vehicles.length - visibleSlides)));
   }, [visibleSlides, vehicles.length]);
+
+  if (!vehicles.length) {
+    return <div className="text-center p-8">Nenhum veículo para exibir.</div>;
+  }
 
   return (
     <div className="relative w-full px-2 md:px-4" ref={containerRef}>

@@ -279,10 +279,6 @@ export function conditionalCacheMiddleware(req: Request, res: Response, next: Ne
       }
       next();
     }).catch(() => next());
-        return res.status(304).end();
-      }
-      next();
-    }).catch(() => next());
   } else {
     next();
   }

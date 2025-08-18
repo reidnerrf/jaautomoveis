@@ -154,6 +154,7 @@ export function performanceMiddleware(req: Request, res: Response, next: NextFun
 
   const startTime = performance.now();
   const startCpu = getCpuUsage();
+  const startMemory = getMemoryUsage();
   
   // Interceptar resposta
   const originalSend = res.send;
@@ -178,7 +179,7 @@ function recordMetrics(
   res: Response, 
   startTime: number, 
   startCpu: NodeJS.CpuUsage, 
-  startMemory: NodeJS.MemoryUsage
+  _startMemory: NodeJS.MemoryUsage
 ) {
   const endTime = performance.now();
   const responseTime = endTime - startTime;
