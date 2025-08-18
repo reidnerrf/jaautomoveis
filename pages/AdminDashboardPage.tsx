@@ -46,7 +46,7 @@ const AdminDashboardPage: React.FC = () => {
         if (monthlyRes.ok) {
           const monthlyData = await monthlyRes.json();
           const normalized: Array<{ month: string; ['Visualizações']: number }> = Array.isArray(monthlyData)
-            ? monthlyData.map((item: any) => ({ month: item.month || item._id?.month || '', ['Visualizações']: Number(item.views || item.count || 0) }))
+            ? monthlyData.map((item: any) => ({ month: item.month || item._id?.month || '', ['Visualizações']: Number(item.views ?? item.count ?? 0) }))
             : [];
           setMonthlyViews(normalized);
         }
