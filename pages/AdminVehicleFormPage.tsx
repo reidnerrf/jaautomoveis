@@ -126,6 +126,31 @@ const AdminVehicleFormPage: React.FC = () => {
     }
   };
 
+  const handleDeleteVehicle = async () => {
+    if (!id) return;
+    
+    if (window.confirm('Tem certeza que deseja deletar este veículo? Esta ação não pode ser desfeita.')) {
+      try {
+        const response = await fetch(`/api/vehicles/${id}`, {
+          method: 'DELETE',
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Falha ao deletar veículo');
+        }
+
+        navigate('/admin/vehicles');
+      } catch (error) {
+        console.error("Failed to delete vehicle", error);
+        alert("Falha ao deletar o veículo. Verifique o console para mais detalhes.");
+      }
+    }
+  };
+
   const inputStyles = "w-full rounded-lg border border-gray-300 bg-gray-50 py-3 px-5 font-medium outline-none transition focus:border-blue-500 focus:bg-white shadow-sm";
   const labelStyles = "mb-2.5 block font-medium text-gray-700";
 
@@ -238,8 +263,31 @@ const AdminVehicleFormPage: React.FC = () => {
               <textarea name="optionals" value={vehicle.optionals.join(', ')} onChange={(e) => handleArrayChange(e, 'optionals')} rows={4} className={inputStyles}></textarea>
             </div>
 
-            {/* Botão de envio */}
-            <div className="flex justify-end">
+            {/* Botões de ação */}
+            <div className="flex justify-end gap-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                type="button"
+                onClick={() => navigate(-1)}
+                className="rounded-lg bg-gray-500 py-3 px-8 font-medium text-white shadow hover:bg-gray-600"
+              >
+                Cancelar
+              </motion.button>
+              
+              {isEditing && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  type="button"
+                  onClick={() => handleDeleteVehicle()}
+                  className="rounded-lg bg-red-600 py-3 px-8 font-medium text-white shadow hover:bg-red-700"
+                >
+                  <FiTrash2 className="inline mr-2" />
+                  Deletar Veículo
+                </motion.button>
+              )}
+              
               <motion.button 
                 whileHover={{ scale: 1.05 }} 
                 whileTap={{ scale: 0.95 }}
