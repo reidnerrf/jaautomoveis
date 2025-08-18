@@ -24,13 +24,13 @@ import {
 } from "react-icons/fa";
 import { GoogleReview } from "../types.ts";
 import { useAnalytics } from "../utils/analytics.ts";
-import { useTheme } from "../contexts/ThemeContext.tsx";
+//import { useTheme } from "../contexts/ThemeContext.tsx";
 
 const HomePage: React.FC = () => {
   const { vehicles } = useVehicleData();
   const { vehicles: mostViewedVehicles, loading: loadingMostViewed } = useTopVehicles({ limit: 8, periodDays: 30 });
   const { trackAction, trackBusinessEvent } = useAnalytics('HomePage');
-  const { isDarkMode } = useTheme();
+  //const { isDarkMode } = useTheme();
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 1000], [0, -100]);
   
@@ -269,7 +269,7 @@ const HomePage: React.FC = () => {
             </p>
           </motion.div>
           
-          {vehicles.length > 0 ? (
+          {vehicles && vehicles.length > 0 ? (
             <VehicleCarousel vehicles={vehicles.slice(0, 6)} />
           ) : (
             <div className="flex items-center justify-center py-12">
