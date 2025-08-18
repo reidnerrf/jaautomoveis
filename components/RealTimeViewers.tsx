@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiUsers } from 'react-icons/fi';
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 interface RealTimeViewersProps {
   page: string;
@@ -22,9 +21,6 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
       withCredentials: true,
     });
 
-    // Do not emit page view here to avoid double counting.
-    // MainLayout already emits page-view via analytics service.
-
     // Listen for viewer count updates
     newSocket.on('page-viewers', (data) => {
       if (data.page === page) {
@@ -37,8 +33,8 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
     };
   }, [page, vehicleId]);
 
-  // Show "Seja o primeiro a ver" when 0 users, or actual count when > 0
-  const shouldShow = viewers >= 0;
+  // Always show the component, even with 0 viewers
+  const shouldShow = true;
   if (!shouldShow) return null;
 
   if (variant === 'inline') {
@@ -46,11 +42,18 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="self-end bg-red-500 text-white px-3 py-1 rounded-full shadow-lg text-xs"
+        className="bg-red-500 text-white px-3 py-1 rounded-full shadow-lg text-xs"
       >
         <div className="flex items-center gap-1">
           <FiUsers size={14} />
-          <span>{viewers === 0 ? 'Seja o primeiro a ver' : `${viewers} visualizando agora`}</span>
+          <span>
+            {viewers === 0
+              ? 'Seja o primeiro a ver'
+              : viewers === 1
+                ? '1 pessoa visualizando'
+                : `${viewers} pessoas visualizando agora`
+            }
+          </span>
         </div>
       </motion.div>
     );
@@ -70,7 +73,12 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
           <FiUsers size={14} />
         </motion.div>
         <span className="text-xs font-medium">
-          {viewers === 0 ? 'Seja o primeiro a ver' : `${viewers} visualizando agora`}
+          {viewers === 0
+            ? 'Seja o primeiro a ver'
+            : viewers === 1
+              ? '1 pessoa visualizando'
+              : `${viewers} pessoas visualizando agora`
+          }
         </span>
       </div>
     </motion.div>

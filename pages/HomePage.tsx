@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useVehicleData } from "../hooks/useVehicleData.tsx";
+import { useVehicleData } from "../hooks/useVehicleData";
 import VehicleCarousel from "../components/VehicleCarousel.tsx";
 import { useTopVehicles } from "../hooks/useTopVehicles.tsx";
 import GoogleReviewsCarousel from "../components/GoogleReviewsCarousel.tsx";
@@ -41,52 +41,16 @@ const HomePage: React.FC = () => {
     // Fetch real Google reviews
     const fetchGoogleReviews = async () => {
       try {
-        const placeId = 'ChIJBfuB6mR_ngARsAmwbVRKdto';
-        // In production, you would fetch from Google Places API
-        // For now, using the provided mock data with some enhancements
-        const reviews: GoogleReview[] = [
-          {
-            id: "gr1",
-            reviewerName: "Leonardo Brun",
-            comment: "Muito bom atendimento e carros de qualidade. Recomendo!",
-            avatarUrl: "https://lh3.googleusercontent.com/a-/ALV-UjVgFyCp7VifEFdD58IDmL6AEwGPhit7yro9so_tf10z9Z1Q_XnG=w45-h45-p-rp-mo-br100",
-            rating: 5,
-            timeAgo: "3 meses atrás",
-          },
-          {
-            id: "gr2",
-            reviewerName: "Lael Teixeira",
-            comment: "Vendedor Victor é um destaque a parte muito educado e fiel nas vendas sempre arruma um desconto para carro à vista. Excelente experiência de compra!",
-            avatarUrl: "https://lh3.googleusercontent.com/a-/ALV-UjV1jmP4px3ZYNejnbp08ISsfFkdjLuMQLyKN7no7vGIW2JZy6s=w45-h45-p-rp-mo-ba4-br100",
-            rating: 5,
-            timeAgo: "um ano atrás",
-          },
-          {
-            id: "gr3",
-            reviewerName: "Eliel Rocha",
-            comment: "Recomendo !!! Excelente atendimento, preços justos e carros bem conservados.",
-            avatarUrl: "https://lh3.googleusercontent.com/a-/ALV-UjUUMPXBjfFNzqCWPOFU9-UkvrnW5nVwsHHkWfDl-AMfBPTWAR374Q=w45-h45-p-rp-mo-ba3-br100",
-            rating: 5,
-            timeAgo: "3 anos atrás",
-          },
-          {
-            id: "gr4",
-            reviewerName: "Daniel Francisco",
-            comment: "Gostei do bom atendimento e da transparência na negociação. Voltaria novamente.",
-            avatarUrl: "https://lh3.googleusercontent.com/a/ACg8ocKrjVlDRdK82wzZOblEh0QlZC_LdIh450-0PTFhKt7yKH_pBw=w45-h45-p-rp-mo-br100",
-            rating: 5,
-            timeAgo: "4 anos atrás",
-          },
-          {
-            id: "gr5",
-            reviewerName: "Rosemere Marciano",
-            comment: "Loja muito boa com ótimos preços e qualidade no atendimento. Equipe profissional e atenciosa. Recomendo.",
-            avatarUrl: "https://lh3.googleusercontent.com/a-/ALV-UjXe5kWvbPzd50VSrtTQLES5iPnCT128S0kmYdb6ONgzcSCqrSyOyQ=w45-h45-p-rp-mo-br100",
-            rating: 5,
-            timeAgo: "5 anos atrás",
-          },
-        ];
-
+        const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJBfuB6mR_ngARsAmwbVRKdto&fields=reviews&key=AIzaSyCeo9DXHn407c_tf2LlwX0egVW6aN_Try4');
+        const data = await response.json();
+        const reviews = data.result.reviews.map((review: any) => ({
+          id: review.id,
+          reviewerName: review.author_name,
+          comment: review.text,
+          avatarUrl: review.profile_photo_url,
+          rating: review.rating,
+          timeAgo: review.relative_time_description,
+        }));
         setGoogleReviews(reviews);
       } catch (error) {
         console.error('Error fetching Google reviews:', error);
@@ -97,6 +61,7 @@ const HomePage: React.FC = () => {
 
     fetchGoogleReviews();
   }, []);
+        
 
   const services = [
     {
@@ -143,6 +108,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="w-full bg-white dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden">
+      
       {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background media: video on desktop, image on mobile for performance */}

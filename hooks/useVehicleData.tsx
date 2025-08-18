@@ -4,7 +4,7 @@ import { useAuth } from './useAuth.tsx';
 import { apiCache, createCacheKey } from '../utils/cache';
 
 interface VehicleContextType {
-  vehicles: Vehicle[];
+  vehicles: Vehicle[] | undefined;
   getVehicleById: (id: string) => Promise<Vehicle | undefined>;
   addVehicle: (vehicle: Omit<Vehicle, 'id'>) => Promise<Vehicle | undefined>;
   updateVehicle: (vehicle: Vehicle) => Promise<Vehicle | undefined>;
@@ -16,61 +16,60 @@ interface VehicleContextType {
 
 const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
 
-// Cache for individual vehicles
-const vehicleCache = new Map<string, { vehicle: Vehicle; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { token } = useAuth();
 
   const fetchVehicles = useCallback(async () => {
-  try {
-    setLoading(true);
-    setError(null);
+    try {
+      setLoading(true);
+      setError(null);
 
-    const cacheKey = createCacheKey('vehicles');
-    const cachedData = apiCache.get<Vehicle[]>(cacheKey);
+      const cacheKey = createCacheKey('vehicles');
+      const cachedData = apiCache.get<Vehicle[]>(cacheKey);
 
-    if (cachedData && Array.isArray(cachedData)) {
-      setVehicles(cachedData);
-      return;
-    }
-
-    const response = await fetch('/api/vehicles', {
-      headers: { 'Cache-Control': 'max-age=300' },
-    });
-    if (!response.ok) throw new Error('Failed to fetch vehicles');
-
-    const data = await response.json();
-    const rawVehicles = Array.isArray(data)
-      ? data
-      : Array.isArray(data?.vehicles)
-      ? data.vehicles
-      : [];
-
-    // 🔹 Normaliza os veículos (sempre id)
-    const normalized = rawVehicles.map((v: any) => ({
-      ...v,
-      id: v.id || v._id,
-    }));
-
-    setVehicles(normalized);
-
-    apiCache.set(cacheKey, normalized, CACHE_DURATION);
-    normalized.forEach(vehicle => {
-      if (vehicle?.id) {
-        vehicleCache.set(vehicle.id, { vehicle, timestamp: Date.now() });
+      if (cachedData) {
+        setVehicles(cachedData);
+        setLoading(false);
+        return;
       }
-    });
-  } catch (err: any) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-}, []);
+
+      const response = await fetch('/api/vehicles', {
+        headers: { 'Cache-Control': 'max-age=300' },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      const normalized = Array.isArray(data)
+        ? data.map((v: any) => ({
+            ...v,
+            id: v.id || v._id || String(v._id),
+            views: v.views || 0,
+            images: v.images || [],
+            optionals: v.optionals || [],
+            additionalInfo: v.additionalInfo || '',
+          }))
+        : [];
+
+      setVehicles(normalized);
+
+      // Cache the normalized data
+      apiCache.set(cacheKey, normalized, CACHE_DURATION);
+    } catch (err: any) {
+      console.error('Error fetching vehicles:', err);
+      setError(err.message || 'Erro ao carregar veículos');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const refreshVehicles = useCallback(async () => {
     await fetchVehicles();
@@ -81,38 +80,39 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, [fetchVehicles]);
 
   const getVehicleById = useCallback(async (id: string): Promise<Vehicle | undefined> => {
-  const cached = vehicleCache.get(id);
-  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    return cached.vehicle;
-  }
-
-  try {
-    setLoading(true);
-    const response = await fetch(`/api/vehicles/${id}`, {
-      headers: { 
-        'Cache-Control': 'max-age=300',
-        ...(token ? { Authorization: `Bearer ${token}` } : {})
-      },
-    });
-    if (!response.ok) throw new Error('Failed to fetch vehicle');
-    const data: Vehicle = await response.json();
-
-    if (data?.id) {
-      vehicleCache.set(id, { vehicle: data, timestamp: Date.now() });
-      setVehicles(prev => {
-        // evita duplicar o veículo se já existir
-        const exists = prev.some(v => v.id === data.id);
-        return exists ? prev.map(v => v.id === data.id ? data : v) : [...prev, data];
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/vehicles/${id}`, {
+        headers: { 
+          'Cache-Control': 'max-age=300',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      const vehicle = {
+        ...data,
+        id: data.id || data._id || String(data._id),
+        views: data.views || 0,
+        images: data.images || [],
+        optionals: data.optionals || [],
+        additionalInfo: data.additionalInfo || '',
+      };
+
+      return vehicle;
+    } catch (err: any) {
+      console.error('Error fetching vehicle by ID:', err);
+      setError(err.message || 'Erro ao carregar veículo');
+      return undefined;
+    } finally {
+      setLoading(false);
     }
-    return data;
-  } catch (err: any) {
-    setError(err.message);
-    return undefined;
-  } finally {
-    setLoading(false);
-  }
-}, [token]);
+  }, [token]);
 
   const addVehicle = useCallback(async (vehicle: Omit<Vehicle, 'id'>) => {
     try {
@@ -127,10 +127,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       if (!response.ok) throw new Error('Failed to add vehicle');
 
       const newVehicle = await response.json();
-      if (newVehicle?.id) {
-        setVehicles(prev => [...prev, newVehicle]);
-        vehicleCache.set(newVehicle.id, { vehicle: newVehicle, timestamp: Date.now() });
-      }
+      setVehicles((prev) => [...(prev || []), newVehicle]);
       return newVehicle;
     } catch (err: any) {
       setError(err.message);
@@ -150,9 +147,15 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
       if (!response.ok) throw new Error('Failed to update vehicle');
 
-      setVehicles(prev => prev.map(v => v.id === updatedVehicle.id ? updatedVehicle : v));
-      vehicleCache.set(updatedVehicle.id, { vehicle: updatedVehicle, timestamp: Date.now() });
-
+      setVehicles((prev) => {
+        const index = (prev || []).findIndex(v => v.id === updatedVehicle.id);
+        if (index !== -1) {
+          const updatedVehicles = [...(prev || [])];
+          updatedVehicles[index] = updatedVehicle;
+          return updatedVehicles;
+        }
+        return prev;
+      });
       return updatedVehicle;
     } catch (err: any) {
       setError(err.message);
@@ -168,8 +171,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
       if (!response.ok) throw new Error('Failed to delete vehicle');
 
-      setVehicles(prev => prev.filter(v => v.id !== id));
-      vehicleCache.delete(id);
+      setVehicles((prev) => (prev || []).filter(v => v.id !== id));
       return true;
     } catch (err: any) {
       setError(err.message);
@@ -202,3 +204,4 @@ export const useVehicleData = (): VehicleContextType => {
   }
   return context;
 };
+

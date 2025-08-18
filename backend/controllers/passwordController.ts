@@ -2,7 +2,15 @@
 import express from 'express';
 import crypto from 'crypto';
 import User from '../models/User';
-// Note: You would need to set up email service like nodemailer here
+import nodemailer from 'nodemailer';
+
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: process.env.EMAIL_USERNAME,
+    pass: process.env.EMAIL_PASSWORD
+  }
+});
 
 export const forgotPassword = async (req: express.Request, res: express.Response) => {
   const { email } = req.body;
@@ -23,11 +31,15 @@ export const forgotPassword = async (req: express.Request, res: express.Response
     user.resetPasswordExpiry = resetTokenExpiry;
     await user.save();
 
-    // Here you would send email with reset link using an email service (SMTP/SendGrid/etc.)
-    // Fallback: log the URL so testers can copy it from server logs
+    // Send email with reset link
     const resetUrl = `${req.protocol}://${req.get('host')}/#/admin/reset-password/${resetToken}`;
-    console.log(`Password reset token for ${email}: ${resetToken}`);
-    console.log(`Reset URL: ${resetUrl}`);
+    const mailOptions = {
+      from: process.env.EMAIL_USERNAME,
+      to: email,
+      subject: 'Redefinir senha',
+      html: `<p>Clique <a href="${resetUrl}">aqui</a> para redefinir sua senha.</p>`
+    };
+    await transporter.sendMail(mailOptions);
 
     res.status(200).json({ message: 'Reset email sent' });
   } catch (error) {
@@ -61,3 +73,4 @@ export const resetPassword = async (req: express.Request, res: express.Response)
     res.status(500).json({ message: 'Server error' });
   }
 };
+

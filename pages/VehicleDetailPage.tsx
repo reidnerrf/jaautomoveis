@@ -215,7 +215,7 @@ const VehicleDetailPage: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center text-sm text-gray-500">
                 <FiEye className="mr-2" />
-                <span>{vehicle.views || 0} visualizações</span>
+                <span>{vehicle.views || 0} visualizações totais</span>
               </div>
               <button
                 onClick={toggleFavorite}
@@ -226,7 +226,7 @@ const VehicleDetailPage: React.FC = () => {
                 <FiHeart size={18} className={isFavorite ? 'fill-current' : ''} />
               </button>
             </div>
-            <div className="mb-2">
+            <div className="mb-4">
               <RealTimeViewers page={`vehicle-${id}`} vehicleId={id} variant="inline" />
             </div>
             <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">{vehicle.name}</h1>

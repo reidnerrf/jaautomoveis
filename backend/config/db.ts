@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+
 const connectDB = async (): Promise<void> => {
   let retryCount = 0;
   const maxRetries = 5;
@@ -10,7 +11,7 @@ const connectDB = async (): Promise<void> => {
       const mongoURI = process.env.MONGO_URI || process.env.MONGODB_URI;
 
       if (!mongoURI) {
-        throw new Error('MONGO_URI/MONGODB_URI is not defined in environment variables');
+        throw new Error('MONGO_URI/MONGODB_URI environment variable is not defined');
       }
 
       await mongoose.connect(mongoURI, {
@@ -23,18 +24,9 @@ const connectDB = async (): Promise<void> => {
       console.log('MongoDB Connected Successfully');
 
       // Handle connection events
-      mongoose.connection.on('error', (err) => {
-        console.error('MongoDB connection error:', err);
-      });
-
-      mongoose.connection.on('disconnected', () => {
-        console.log('MongoDB disconnected');
-      });
-
-      mongoose.connection.on('reconnected', () => {
-        console.log('MongoDB reconnected');
-      });
-
+      mongoose.connection.on('error', handleConnectionError);
+      mongoose.connection.on('disconnected', handleDisconnect);
+      mongoose.connection.on('reconnected', handleReconnect);
     } catch (error) {
       console.error(`Error connecting to MongoDB (attempt ${retryCount + 1}):`, error);
 
@@ -51,6 +43,18 @@ const connectDB = async (): Promise<void> => {
   };
 
   return connect();
+};
+
+const handleConnectionError = (err: Error) => {
+  console.error('MongoDB connection error:', err);
+};
+
+const handleDisconnect = () => {
+  console.log('MongoDB disconnected');
+};
+
+const handleReconnect = () => {
+  console.log('MongoDB reconnected');
 };
 
 // Graceful shutdown

@@ -45,27 +45,11 @@ class DistributedCache {
   }
 
   private setupEventHandlers() {
-    this.cluster.on('connect', () => {
-      console.log('Connected to Redis cluster');
-      this.stats.connected = true;
-    });
-
-    this.cluster.on('ready', () => {
-      console.log('Redis cluster is ready');
-    });
-
-    this.cluster.on('error', (error: any) => {
-      console.error('Redis cluster error:', error);
-      this.stats.connected = false;
-    });
-
-    this.cluster.on('node:connect', (node: any) => {
-      console.log(`Connected to Redis node: ${node.options.host}:${node.options.port}`);
-    });
-
-    this.cluster.on('node:error', (error: any, node: any) => {
-      console.error(`Redis node error on ${node.options.host}:${node.options.port}:`, error);
-    });
+    this.cluster.on('connect', () => this.stats.connected = true);
+    this.cluster.on('ready', () => {});
+    this.cluster.on('error', () => this.stats.connected = false);
+    this.cluster.on('node:connect', () => {});
+    this.cluster.on('node:error', () => {});
   }
 
   // Basic cache operations
@@ -80,9 +64,8 @@ class DistributedCache {
         return null;
       }
     } catch (error) {
-      console.error('Cache get error:', error);
       this.stats.misses++;
-      return null;
+      throw error;
     }
   }
 
@@ -91,7 +74,7 @@ class DistributedCache {
       const serializedValue = JSON.stringify(value);
       const finalTTL = ttl || this.defaultTTL;
       
-      await this.cluster.setex(key, finalTTL, serializedValue);
+      await this.cluster.pipeline().setex(key, finalTTL, serializedValue).exec();
       await this.updateStats();
     } catch (error) {
       console.error('Cache set error:', error);

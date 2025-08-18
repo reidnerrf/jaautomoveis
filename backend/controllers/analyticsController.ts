@@ -1,6 +1,7 @@
 import express from 'express';
 import Analytics from '../models/Analytics';
 import ViewLog from '../models/ViewLog';
+//import { ObjectId } from 'mongodb';
 
 export const getMonthlyViews = async (req: express.Request, res: express.Response) => {
   try {
@@ -8,42 +9,17 @@ export const getMonthlyViews = async (req: express.Request, res: express.Respons
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
     const monthlyViews = await ViewLog.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: sixMonthsAgo }
-        }
-      },
+      { $match: { createdAt: { $gte: sixMonthsAgo } } },
       {
         $group: {
-          _id: {
-            year: { $year: '$createdAt' },
-            month: { $month: '$createdAt' }
-          },
-          Visualizações: { $sum: 1 }
+          _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } },
+          views: { $sum: 1 }
         }
       },
       {
         $project: {
-          month: {
-            $switch: {
-              branches: [
-                { case: { $eq: ['$_id.month', 1] }, then: 'Jan' },
-                { case: { $eq: ['$_id.month', 2] }, then: 'Feb' },
-                { case: { $eq: ['$_id.month', 3] }, then: 'Mar' },
-                { case: { $eq: ['$_id.month', 4] }, then: 'Apr' },
-                { case: { $eq: ['$_id.month', 5] }, then: 'May' },
-                { case: { $eq: ['$_id.month', 6] }, then: 'Jun' },
-                { case: { $eq: ['$_id.month', 7] }, then: 'Jul' },
-                { case: { $eq: ['$_id.month', 8] }, then: 'Aug' },
-                { case: { $eq: ['$_id.month', 9] }, then: 'Sep' },
-                { case: { $eq: ['$_id.month', 10] }, then: 'Oct' },
-                { case: { $eq: ['$_id.month', 11] }, then: 'Nov' },
-                { case: { $eq: ['$_id.month', 12] }, then: 'Dec' }
-              ],
-              default: 'Unknown'
-            }
-          },
-          Visualizações: 1
+          month: { $let: { vars: { monthNum: { $subtract: ['$_id.month', 1] } }, in: { $arrayElemAt: ['$$months', '$monthNum'] } } },
+          views: 1
         }
       },
       { $sort: { '_id.year': 1, '_id.month': 1 } }
@@ -65,31 +41,23 @@ export const getDashboardStats = async (req: express.Request, res: express.Respo
     const totalViews = await ViewLog.countDocuments({});
 
     // Today's vehicle views
-    const todayViews = await ViewLog.countDocuments({
-      createdAt: { $gte: today }
-    });
+    const todayViews = await ViewLog.countDocuments({ createdAt: { $gte: today } });
 
     // WhatsApp clicks
-    const whatsappClicks = await Analytics.countDocuments({
-      action: 'whatsapp_click'
-    });
+    const whatsappClicks = await Analytics.countDocuments({ action: 'whatsapp_click' });
 
     // Instagram clicks
-    const instagramClicks = await Analytics.countDocuments({
-      action: 'instagram_click'
-    });
+    const instagramClicks = await Analytics.countDocuments({ action: 'instagram_click' });
 
     // Likes breakdown
     const likedVehiclesAgg = await Analytics.aggregate([
       { $match: { action: 'like_vehicle' } },
-      { $group: { _id: '$label' } },
-      { $count: 'count' }
+      { $group: { _id: '$label', count: { $sum: 1 } } },
+      { $group: { _id: null, vehicles: { $push: { label: '$_id', count: '$count' } } } },
+      { $project: { _id: 0, vehicles: 1 } }
     ]);
 
-    const totalLikesAgg = await Analytics.aggregate([
-      { $match: { action: 'like_vehicle' } },
-      { $count: 'count' }
-    ]);
+    const totalLikesAgg = await Analytics.countDocuments({ action: 'like_vehicle' });
 
     res.json({
       totalViews,
@@ -99,8 +67,8 @@ export const getDashboardStats = async (req: express.Request, res: express.Respo
       deviceStats: [],
       locationStats: [],
       browserStats: [],
-      likedVehicles: likedVehiclesAgg[0]?.count || 0,
-      totalLikes: totalLikesAgg[0]?.count || 0
+      likedVehicles: likedVehiclesAgg[0]?.vehicles || [],
+      totalLikes: totalLikesAgg || 0
     });
   } catch (error) {
     console.error('Dashboard stats error:', error);
@@ -133,3 +101,4 @@ export const getRealtimeStats = async (req: express.Request, res: express.Respon
     res.status(500).json({ message: 'Erro ao buscar dados em tempo real' });
   }
 };
+

@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { useVehicleData } from '../hooks/useVehicleData.tsx';
+import { useVehicleData } from "../hooks/useVehicleData";
 import VehicleCard from '../components/VehicleCard.tsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiFilter, FiX, FiSearch, FiGrid, FiList, FiChevronDown, FiMapPin, FiClock, FiTag, FiTrendingUp } from 'react-icons/fi';

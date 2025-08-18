@@ -2,31 +2,23 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
 
-const getJwtSecret = (): string => {
-  if (process.env.JWT_SECRET && process.env.JWT_SECRET.trim() !== '') {
-    return process.env.JWT_SECRET as string;
-  }
-  // Safe dev fallback to avoid login broken in local environments
-  // NOTE: Set JWT_SECRET in production
-  return 'dev-insecure-secret-change-me';
-};
+const jwtSecret = process.env.JWT_SECRET?.trim() || 'dev-insecure-secret-change-me';
 
 const generateToken = (id: string) => {
-  return jwt.sign({ id }, getJwtSecret(), {
+  return jwt.sign({ id }, jwtSecret, {
     expiresIn: '30d',
   });
 };
 
 // In-memory single-session registry (consider redis in production)
-const userActiveSession = new Map<string, string>();
+const userActiveSessions = new Map<string, string>();
 
 const getUserIdFromAuthHeader = (req: express.Request): string | null => {
   try {
     const header = req.headers.authorization || '';
     const [, token] = header.split(' ');
-    const secret = getJwtSecret();
-    if (!token || !secret) return null;
-    const decoded = jwt.verify(token, secret) as { id: string };
+    if (!token) return null;
+    const decoded = jwt.verify(token, jwtSecret) as { id: string };
     return decoded.id;
   } catch {
     return null;
@@ -38,7 +30,7 @@ export const loginUser = async (req: express.Request, res: express.Response) => 
   console.log(`[AUTH] Login attempt for user: "${username}"`);
 
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).select('+password');
 
     if (!user) {
       console.log(`[AUTH] Failure: User "${username}" not found in database.`);
@@ -50,7 +42,7 @@ export const loginUser = async (req: express.Request, res: express.Response) => 
 
     if (isMatch) {
       // Enforce single active session per user
-      const existingSession = userActiveSession.get(user._id.toString());
+      const existingSession = userActiveSessions.get(user._id.toString());
       if (existingSession) {
         return res.status(423).json({ message: 'Sessão ativa detectada em outro dispositivo. Encerre a sessão anterior.' });
       }
@@ -77,12 +69,12 @@ export const openSession = async (req: express.Request, res: express.Response) =
   if (!userId) return res.status(401).json({ message: 'Not authorized' });
 
   // If another session exists, block
-  if (userActiveSession.has(userId)) {
+  if (userActiveSessions.has(userId)) {
     return res.status(423).json({ message: 'Já existe uma sessão ativa.' });
   }
 
   const newSessionId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  userActiveSession.set(userId, newSessionId);
+  userActiveSessions.set(userId, newSessionId);
   return res.status(200).json({ sessionId: newSessionId });
 };
 
@@ -90,6 +82,6 @@ export const closeSession = async (req: express.Request, res: express.Response) 
   const userId = getUserIdFromAuthHeader(req);
   if (!userId) return res.status(401).json({ message: 'Not authorized' });
 
-  userActiveSession.delete(userId);
+  userActiveSessions.delete(userId);
   return res.status(200).json({ message: 'Sessão encerrada' });
 };
