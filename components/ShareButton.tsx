@@ -48,7 +48,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = '' }) =>
       </motion.button>
 
       <AnimatePresence>
-        {isOpen && (
+        {isOpen ? (
           <>
             {/* Backdrop */}
             <motion.div
@@ -105,7 +105,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = '' }) =>
               </button>
             </motion.div>
           </>
-        )}
+        ) : null}
       </AnimatePresence>
     </div>
   );

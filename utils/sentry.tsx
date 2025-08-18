@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/browser';
+import React from 'react';
 
 // Configuração do Sentry para o frontend
 export const initSentry = () => {
@@ -7,7 +7,7 @@ export const initSentry = () => {
     Sentry.init({
       dsn: process.env.SENTRY_DSN || 'https://your-sentry-dsn@sentry.io/project',
       integrations: [
-        new BrowserTracing({
+        new Sentry.BrowserTracing({
           // Configurar rotas para tracking
           routingInstrumentation: Sentry.reactRouterV6Instrumentation(
             (history) => history.listen

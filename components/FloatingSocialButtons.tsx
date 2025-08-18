@@ -30,7 +30,9 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
             if ((window as any).trackBusinessEvent) {
               (window as any).trackBusinessEvent('whatsapp_click', {});
             }
-          } catch {}
+          } catch {
+            // Ignore errors
+          }
         }}
       >
         <FaWhatsapp size={22} />
@@ -45,7 +47,9 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
             if ((window as any).trackBusinessEvent) {
               (window as any).trackBusinessEvent('instagram_click', {});
             }
-          } catch {}
+          } catch {
+            // Ignore errors
+          }
         }}
       >
         <FaInstagram size={22} />

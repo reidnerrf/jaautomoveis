@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import NodeCache from 'node-cache';
 import Redis from 'ioredis';
-import { promisify } from 'util';
 
 // Configurações de cache
 const CACHE_CONFIG = {
@@ -102,7 +101,7 @@ function getTTLForRequest(req: Request): number {
 }
 
 // Função para obter cache (local ou Redis)
-async function getCache(key: string): Promise<any> {
+async function getCache(key: string): Promise<unknown> {
   try {
     if (redisClient && redisClient.status === 'ready') {
       const value = await redisClient.get(key);
@@ -128,7 +127,7 @@ async function getCache(key: string): Promise<any> {
 }
 
 // Função para definir cache (local ou Redis)
-async function setCache(key: string, value: any, ttl: number): Promise<void> {
+async function setCache(key: string, value: unknown, ttl: number): Promise<void> {
   try {
     const serializedValue = JSON.stringify(value);
     
