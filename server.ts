@@ -200,6 +200,9 @@ app.get('/api/place-details', async (req: Request, res: Response) => {
     }
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=reviews&key=${encodeURIComponent(apiKey)}`;
     const response = await fetch(url);
+    if (!response.ok) {
+      return res.status(response.status).json({ error: 'Erro ao buscar dados do Google Maps' });
+    }
     const data = await response.json();
     res.json(data);
   } catch (error) {
