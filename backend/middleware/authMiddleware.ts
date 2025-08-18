@@ -19,7 +19,7 @@ export const protect = async (req: express.Request, res: express.Response, next:
   }
 
   const parts = authHeader.split(' ');
-  const token = parts.length === 2 ? parts[1] : parts[0];
+  const token = parts.length === 2 ? parts[1].trim() : parts[0].trim();
 
   if (token) {
     try {
