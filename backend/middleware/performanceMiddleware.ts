@@ -248,16 +248,12 @@ function recordMetrics(
 function cleanupOldMetrics(): void {
   const cutoff = Date.now() - PERFORMANCE_CONFIG.METRICS_RETENTION;
   
-  // Limpar métricas antigas
-  const oldMetricsIndex = metrics.findIndex(m => m.timestamp > cutoff);
-  if (oldMetricsIndex > 0) {
-    metrics.splice(0, oldMetricsIndex);
+  while (metrics.length && metrics[0].timestamp < cutoff) {
+    metrics.shift();
   }
   
-  // Limpar alertas antigos
-  const oldAlertsIndex = alerts.findIndex(a => a.timestamp > cutoff);
-  if (oldAlertsIndex > 0) {
-    alerts.splice(0, oldAlertsIndex);
+  while (alerts.length && alerts[0].timestamp < cutoff) {
+    alerts.shift();
   }
 }
 
