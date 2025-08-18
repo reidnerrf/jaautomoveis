@@ -361,8 +361,7 @@ const AdminVehicleListPage: React.FC = () => {
 
                     {/* Advanced Filters */}
                     <AnimatePresence>
-                        {showFilters && (
-                            <motion.div
+                        {showFilters ? <motion.div
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
@@ -439,8 +438,7 @@ const AdminVehicleListPage: React.FC = () => {
                                         Limpar Filtros
                                     </button>
                                 </div>
-                            </motion.div>
-                        )}
+                            </motion.div> : null}
                     </AnimatePresence>
                 </div>
             </motion.div>

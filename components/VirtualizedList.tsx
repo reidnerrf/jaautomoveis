@@ -59,7 +59,7 @@ function VirtualizedList<T>({
 
   // Handle scroll events
   const handleScroll = useCallback((event: React.UIEvent<HTMLDivElement>) => {
-    const scrollTop = event.currentTarget.scrollTop;
+    const {scrollTop} = event.currentTarget;
     setState(prev => ({ ...prev, scrollTop }));
     onScroll?.(scrollTop);
   }, [onScroll]);
@@ -221,14 +221,12 @@ export const VirtualizedVehicleList: React.FC<VehicleListProps> = ({
     >
       <div className="flex items-center space-x-4">
         <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
-          {vehicle.images?.[0] && (
-            <img
+          {vehicle.images?.[0] ? <img
               src={vehicle.images[0]}
               alt={vehicle.title}
               className="w-full h-full object-cover"
               loading="lazy"
-            />
-          )}
+            /> : null}
         </div>
         <div className="flex-1">
           <h3 className="font-semibold text-gray-900">{vehicle.title}</h3>

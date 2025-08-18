@@ -249,7 +249,7 @@ app.get('/health', (req, res) => {
 app.get('/sitemap.xml', async (req, res) => {
   try {
     const vehicles = await Vehicle.find({}).select('id updatedAt').lean();
-    const baseUrl = req.protocol + '://' + req.get('host');
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
     
     let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
     sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
@@ -454,7 +454,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const user = activeUsers.get(socket.id);
     if (user) {
-      const page = user.page;
+      const {page} = user;
       if (pageViews.has(page)) {
         pageViews.get(page).delete(socket.id);
         io.emit('page-viewers', {

@@ -140,7 +140,7 @@ export function useLazyLoad<T>(
             }
           })();
         }
-      }
+      },
       { threshold: 0.1, ...options }
     );
 

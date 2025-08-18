@@ -1,5 +1,4 @@
 import Redis, { Cluster, ClusterOptions } from 'ioredis';
-import { promisify } from 'util';
 
 interface CacheConfig {
   nodes: string[];
@@ -401,10 +400,9 @@ class DistributedCache {
         const originalSend = res.json;
         
         // Override send method to cache response
-        const cacheInstance = this;
-        res.json = function(data: any) {
-          cacheInstance.set(key, data, ttl);
-          return originalSend.call(this, data);
+        res.json = (data: any) => {
+          this.set(key, data, ttl);
+          return originalSend.call(res, data);
         };
         
         next();

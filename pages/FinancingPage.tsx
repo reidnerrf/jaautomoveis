@@ -123,8 +123,7 @@ const FinancingPage: React.FC = () => {
                 </button>
               </form>
 
-              {simulation && (
-                <motion.div
+              {simulation ? <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-8 space-y-6"
@@ -139,19 +138,16 @@ const FinancingPage: React.FC = () => {
                   </div>
 
                   {/* Consórcio */}
-                  {simulation.consortium && (
-                    <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg border border-green-200 dark:border-green-700 text-center">
+                  {simulation.consortium ? <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg border border-green-200 dark:border-green-700 text-center">
                       <h2 className="text-xl font-bold text-green-900 dark:text-green-300 mb-3">🏦 Consórcio</h2>
                       <p className="text-gray-700 dark:text-gray-300">💳 {installments} parcelas de</p>
                       <p className="text-3xl font-extrabold text-green-800 dark:text-green-400">{formatCurrency(simulation.consortium.monthly)}</p>
                       <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Total: {formatCurrency(simulation.consortium.total)}</p>
                       <p className="text-sm text-green-600 dark:text-green-400 font-semibold">Economia: {formatCurrency(simulation.consortium.savings)}</p>
-                    </div>
-                  )}
+                    </div> : null}
 
                   <p className="text-xs text-gray-400 text-center">*Valores aproximados, sujeitos à aprovação.</p>
-                </motion.div>
-              )}
+                </motion.div> : null}
             </motion.div>
           </div>
 

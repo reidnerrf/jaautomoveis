@@ -88,15 +88,13 @@ const AdminLoginPage: React.FC = () => {
             </div>
           </div>
 
-          {error && (
-            <motion.p
+          {error ? <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-red-400 text-sm"
             >
               {error}
-            </motion.p>
-          )}
+            </motion.p> : null}
 
           <motion.button
             type="submit"

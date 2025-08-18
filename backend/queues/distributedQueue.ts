@@ -21,12 +21,7 @@ interface QueueConfig {
   defaultJobOptions?: any;
 }
 
-interface JobResult {
-  success: boolean;
-  data?: unknown;
-  error?: string;
-  duration: number;
-}
+
 
 class DistributedQueue extends EventEmitter {
   private queues: Map<string, Queue.Queue> = new Map();

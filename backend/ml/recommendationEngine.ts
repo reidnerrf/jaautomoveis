@@ -1,5 +1,4 @@
 import Vehicle from '../models/Vehicle';
-import User from '../models/User';
 import ViewLog from '../models/ViewLog';
 
 interface UserPreferences {

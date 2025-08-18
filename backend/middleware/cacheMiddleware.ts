@@ -334,21 +334,15 @@ export function resetCacheMetrics(): void {
   cacheMetrics.hitRate = 0;
 }
 
-// Função para warm-up de cache
-export async function warmupCache(): Promise<void> {
-  try {
-    const warmupUrls = [
-      '/api/vehicles?limit=20',
-      '/api/categories',
-      '/api/vehicles/stats'
-    ];
-    
-    // Implementar warm-up assíncrono
-    console.log('Cache warm-up completed');
-  } catch (error) {
-    console.error('Cache warm-up error:', error);
+  // Função para warm-up de cache
+  export async function warmupCache(): Promise<void> {
+    try {
+      // Implementar warm-up assíncrono
+      console.log('Cache warm-up completed');
+    } catch (error) {
+      console.error('Cache warm-up error:', error);
+    }
   }
-}
 
 // Inicializar limpeza periódica
 setInterval(cleanupCache, CACHE_CONFIG.CHECK_PERIOD * 1000);

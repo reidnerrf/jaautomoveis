@@ -222,8 +222,8 @@ const AdminVehicleFormPage: React.FC = () => {
                   </label>
                   <p className="text-xs text-gray-500">ou arraste e solte</p>
                 </div>
-                {isUploading && <p className="text-sm text-gray-600 mt-2">Enviando imagens...</p>}
-                {uploadError && <p className="text-sm text-red-500 mt-2">{uploadError}</p>}
+                {isUploading ? <p className="text-sm text-gray-600 mt-2">Enviando imagens...</p> : null}
+                {uploadError ? <p className="text-sm text-red-500 mt-2">{uploadError}</p> : null}
               </div>
               <p className="mt-1 text-xs text-gray-500">A primeira imagem será a capa.</p>
             </div>

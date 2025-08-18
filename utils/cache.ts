@@ -80,7 +80,7 @@ class CacheManager {
       size: this.currentSize,
       maxSize: this.maxSize,
       itemCount: this.cache.size,
-      usage: (this.currentSize / this.maxSize * 100).toFixed(2) + '%'
+      usage: `${(this.currentSize / this.maxSize * 100).toFixed(2)}%`
     };
   }
 

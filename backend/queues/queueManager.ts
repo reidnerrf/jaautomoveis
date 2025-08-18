@@ -30,13 +30,7 @@ interface JobData {
   metadata?: Record<string, unknown>;
 }
 
-interface JobResult {
-  success: boolean;
-  data?: unknown;
-  error?: string;
-  duration: number;
-  attempts: number;
-}
+
 
 interface QueueStats {
   name: string;
