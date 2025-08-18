@@ -26,8 +26,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const storedToken = sessionStorage.getItem('authToken');
     const validateToken = async (candidate: string) => {
       try {
-        // Chama um endpoint protegido barato para validar o token (dashboard)
-        const res = await fetch('/api/analytics/dashboard-stats', {
+        // Use the dedicated token validation endpoint instead of a protected endpoint
+        const res = await fetch('/api/auth/validate', {
           headers: { Authorization: `Bearer ${candidate}` },
         });
         if (res.status === 401) {
