@@ -45,9 +45,9 @@ class RealTimeManager {
         const token = socket.handshake.auth.token || socket.handshake.headers.authorization;
         
         if (token) {
-          const secret = (process.env.JWT_SECRET && process.env.JWT_SECRET.trim() !== '')
-            ? process.env.JWT_SECRET.trim()!
-            : 'dev-insecure-secret-change-me';
+          const secret = process.env.JWT_SECRET && process.env.JWT_SECRET.trim() !== ''
+            ? process.env.JWT_SECRET.trim()
+            : (process.env.NODE_ENV !== 'production' ? 'dev-insecure-secret-change-me' : (() => { throw new Error('JWT secret must be defined in production'); })());
           const normalizedToken = (typeof token === 'string' && token.startsWith('Bearer '))
             ? token.split(' ')[1]
             : token as string;
