@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { MongoClient } from 'mongodb';
 
 interface ShardConfig {
   name: string;
@@ -338,7 +337,7 @@ class DatabaseSharding {
     return optimalDistribution;
   }
 
-  private async executeRebalancing(currentDistribution: Map<string, number>, optimalDistribution: Map<string, number>): Promise<void> {
+  private async executeRebalancing(_currentDistribution: Map<string, number>, _optimalDistribution: Map<string, number>): Promise<void> {
     // Implement actual rebalancing logic
     // This would involve moving documents between shards
     console.log('Executing rebalancing...');

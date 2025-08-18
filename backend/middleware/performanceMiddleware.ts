@@ -1,191 +1,392 @@
 import { Request, Response, NextFunction } from 'express';
 import { performance } from 'perf_hooks';
+import os from 'os';
 
+// Interface para métricas de performance
 interface PerformanceMetrics {
+  timestamp: number;
   route: string;
   method: string;
-  duration: number;
+  responseTime: number;
   statusCode: number;
-  timestamp: Date;
-  userAgent?: string;
-  ip?: string;
+  memoryUsage: NodeJS.MemoryUsage;
+  cpuUsage: NodeJS.CpuUsage;
+  activeConnections: number;
+  errorCount: number;
+  cacheHits: number;
+  cacheMisses: number;
 }
 
-class PerformanceMonitor {
-  private metrics: PerformanceMetrics[] = [];
-  private maxMetrics = 1000; // Manter apenas as últimas 1000 métricas
-
-  addMetric(metric: PerformanceMetrics) {
-    this.metrics.push(metric);
-    
-    // Limpar métricas antigas se exceder o limite
-    if (this.metrics.length > this.maxMetrics) {
-      this.metrics = this.metrics.slice(-this.maxMetrics);
-    }
-  }
-
-  getMetrics() {
-    return this.metrics;
-  }
-
-  getRouteStats(route?: string) {
-    const filteredMetrics = route 
-      ? this.metrics.filter(m => m.route === route)
-      : this.metrics;
-
-    if (filteredMetrics.length === 0) {
-      return {
-        count: 0,
-        avgDuration: 0,
-        p95Duration: 0,
-        p99Duration: 0,
-        minDuration: 0,
-        maxDuration: 0,
-        errorRate: 0
-      };
-    }
-
-    const durations = filteredMetrics.map(m => m.duration).sort((a, b) => a - b);
-    const errorCount = filteredMetrics.filter(m => m.statusCode >= 400).length;
-
-    return {
-      count: filteredMetrics.length,
-      avgDuration: durations.reduce((a, b) => a + b, 0) / durations.length,
-      p95Duration: durations[Math.floor(durations.length * 0.95)],
-      p99Duration: durations[Math.floor(durations.length * 0.99)],
-      minDuration: durations[0],
-      maxDuration: durations[durations.length - 1],
-      errorRate: errorCount / filteredMetrics.length
-    };
-  }
-
-  getTopSlowRoutes(limit = 10) {
-    const routeStats = new Map<string, any>();
-    
-    this.metrics.forEach(metric => {
-      if (!routeStats.has(metric.route)) {
-        routeStats.set(metric.route, []);
-      }
-      routeStats.get(metric.route).push(metric.duration);
-    });
-
-    return Array.from(routeStats.entries())
-      .map(([route, durations]) => ({
-        route,
-        avgDuration: durations.reduce((a: number, b: number) => a + b, 0) / durations.length,
-        count: durations.length
-      }))
-      .sort((a, b) => b.avgDuration - a.avgDuration)
-      .slice(0, limit);
-  }
-
-  clear() {
-    this.metrics = [];
-  }
+// Interface para alertas
+interface PerformanceAlert {
+  type: 'response_time' | 'memory_usage' | 'error_rate' | 'cpu_usage';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  message: string;
+  timestamp: number;
+  value: number;
+  threshold: number;
 }
 
-const performanceMonitor = new PerformanceMonitor();
+// Configurações de performance
+const PERFORMANCE_CONFIG = {
+  RESPONSE_TIME_THRESHOLD: 1000, // 1 segundo
+  MEMORY_USAGE_THRESHOLD: 0.8, // 80% da memória
+  CPU_USAGE_THRESHOLD: 0.7, // 70% da CPU
+  ERROR_RATE_THRESHOLD: 0.05, // 5% de erros
+  METRICS_RETENTION: 24 * 60 * 60 * 1000, // 24 horas
+  ALERT_COOLDOWN: 5 * 60 * 1000, // 5 minutos
+  SAMPLE_RATE: 0.1 // 10% das requisições
+};
 
-export const performanceMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const startTime = performance.now();
-  const startHrTime = process.hrtime();
+// Armazenamento de métricas
+const metrics: PerformanceMetrics[] = [];
+const alerts: PerformanceAlert[] = [];
+const routeStats = new Map<string, {
+  count: number;
+  totalTime: number;
+  errors: number;
+  avgResponseTime: number;
+}>();
 
-  // Interceptar o final da resposta
-  res.on('finish', () => {
-    const endTime = performance.now();
-    const duration = endTime - startTime;
+// Contadores globais
+let totalRequests = 0;
+let totalErrors = 0;
+let totalCacheHits = 0;
+let totalCacheMisses = 0;
+let lastAlertTime = 0;
 
-    const metric: PerformanceMetrics = {
-      route: req.route?.path || req.path,
-      method: req.method,
-      duration,
-      statusCode: res.statusCode,
-      timestamp: new Date(),
-      userAgent: req.get('User-Agent'),
-      ip: req.ip || req.connection.remoteAddress
-    };
+// Função para obter uso de CPU
+function getCpuUsage(): NodeJS.CpuUsage {
+  const cpus = os.cpus();
+  let totalIdle = 0;
+  let totalTick = 0;
 
-    performanceMonitor.addMetric(metric);
-
-    // Log de rotas lentas
-    if (duration > 1000) { // Mais de 1 segundo
-      console.warn(`Slow route detected: ${req.method} ${req.path} - ${duration.toFixed(2)}ms`);
+  cpus.forEach(cpu => {
+    for (const type in cpu.times) {
+      totalTick += cpu.times[type as keyof typeof cpu.times];
     }
+    totalIdle += cpu.times.idle;
   });
 
+  return {
+    user: totalTick - totalIdle,
+    system: totalIdle
+  };
+}
+
+// Função para obter uso de memória
+function getMemoryUsage(): NodeJS.MemoryUsage {
+  const memUsage = process.memoryUsage();
+  const totalMem = os.totalmem();
+  const freeMem = os.freemem();
+  
+  return {
+    ...memUsage,
+    external: memUsage.external || 0,
+    heapTotal: memUsage.heapTotal,
+    heapUsed: memUsage.heapUsed,
+    rss: memUsage.rss,
+    system: totalMem - freeMem
+  };
+}
+
+// Função para verificar alertas
+function checkAlerts(metrics: PerformanceMetrics): void {
+  const now = Date.now();
+  
+  // Cooldown para evitar spam de alertas
+  if (now - lastAlertTime < PERFORMANCE_CONFIG.ALERT_COOLDOWN) {
+    return;
+  }
+
+  // Alertas de tempo de resposta
+  if (metrics.responseTime > PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD) {
+    const severity = metrics.responseTime > 5000 ? 'critical' : 
+                    metrics.responseTime > 2000 ? 'high' : 
+                    metrics.responseTime > 1000 ? 'medium' : 'low';
+    
+    alerts.push({
+      type: 'response_time',
+      severity,
+      message: `Response time exceeded threshold: ${metrics.responseTime}ms`,
+      timestamp: now,
+      value: metrics.responseTime,
+      threshold: PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD
+    });
+    
+    lastAlertTime = now;
+  }
+
+  // Alertas de uso de memória
+  const memoryUsagePercent = metrics.memoryUsage.heapUsed / metrics.memoryUsage.heapTotal;
+  if (memoryUsagePercent > PERFORMANCE_CONFIG.MEMORY_USAGE_THRESHOLD) {
+    alerts.push({
+      type: 'memory_usage',
+      severity: memoryUsagePercent > 0.9 ? 'critical' : 'high',
+      message: `Memory usage exceeded threshold: ${(memoryUsagePercent * 100).toFixed(1)}%`,
+      timestamp: now,
+      value: memoryUsagePercent,
+      threshold: PERFORMANCE_CONFIG.MEMORY_USAGE_THRESHOLD
+    });
+    
+    lastAlertTime = now;
+  }
+
+  // Alertas de taxa de erro
+  const errorRate = totalErrors / Math.max(totalRequests, 1);
+  if (errorRate > PERFORMANCE_CONFIG.ERROR_RATE_THRESHOLD) {
+    alerts.push({
+      type: 'error_rate',
+      severity: errorRate > 0.1 ? 'critical' : 'high',
+      message: `Error rate exceeded threshold: ${(errorRate * 100).toFixed(1)}%`,
+      timestamp: now,
+      value: errorRate,
+      threshold: PERFORMANCE_CONFIG.ERROR_RATE_THRESHOLD
+    });
+    
+    lastAlertTime = now;
+  }
+}
+
+// Middleware principal de performance
+export function performanceMiddleware(req: Request, res: Response, next: NextFunction) {
+  // Amostragem para reduzir overhead
+  if (Math.random() > PERFORMANCE_CONFIG.SAMPLE_RATE) {
+    return next();
+  }
+
+  const startTime = performance.now();
+  const startCpu = getCpuUsage();
+  const startMemory = getMemoryUsage();
+  
+  // Interceptar resposta
+  const originalSend = res.send;
+  const originalJson = res.json;
+  
+  res.send = function(data: any) {
+    recordMetrics(req, res, startTime, startCpu, startMemory);
+    return originalSend.call(this, data);
+  };
+  
+  res.json = function(data: any) {
+    recordMetrics(req, res, startTime, startCpu, startMemory);
+    return originalJson.call(this, data);
+  };
+  
   next();
-};
+}
+
+// Função para registrar métricas
+function recordMetrics(
+  req: Request, 
+  res: Response, 
+  startTime: number, 
+  startCpu: NodeJS.CpuUsage, 
+  startMemory: NodeJS.MemoryUsage
+) {
+  const endTime = performance.now();
+  const responseTime = endTime - startTime;
+  const endCpu = getCpuUsage();
+  const endMemory = getMemoryUsage();
+  
+  totalRequests++;
+  if (res.statusCode >= 400) {
+    totalErrors++;
+  }
+  
+  // Atualizar estatísticas da rota
+  const route = req.route?.path || req.path;
+  const method = req.method;
+  const routeKey = `${method} ${route}`;
+  
+  if (!routeStats.has(routeKey)) {
+    routeStats.set(routeKey, {
+      count: 0,
+      totalTime: 0,
+      errors: 0,
+      avgResponseTime: 0
+    });
+  }
+  
+  const stats = routeStats.get(routeKey)!;
+  stats.count++;
+  stats.totalTime += responseTime;
+  stats.avgResponseTime = stats.totalTime / stats.count;
+  
+  if (res.statusCode >= 400) {
+    stats.errors++;
+  }
+  
+  // Criar métrica
+  const metric: PerformanceMetrics = {
+    timestamp: Date.now(),
+    route,
+    method,
+    responseTime,
+    statusCode: res.statusCode,
+    memoryUsage: endMemory,
+    cpuUsage: {
+      user: endCpu.user - startCpu.user,
+      system: endCpu.system - startCpu.system
+    },
+    activeConnections: (req as any).socket?.server?.connections || 0,
+    errorCount: res.statusCode >= 400 ? 1 : 0,
+    cacheHits: parseInt(res.get('X-Cache-Hits') || '0'),
+    cacheMisses: parseInt(res.get('X-Cache-Misses') || '0')
+  };
+  
+  metrics.push(metric);
+  
+  // Verificar alertas
+  checkAlerts(metric);
+  
+  // Limpar métricas antigas
+  cleanupOldMetrics();
+}
+
+// Função para limpar métricas antigas
+function cleanupOldMetrics(): void {
+  const cutoff = Date.now() - PERFORMANCE_CONFIG.METRICS_RETENTION;
+  
+  while (metrics.length && metrics[0].timestamp < cutoff) {
+    metrics.shift();
+  }
+  
+  while (alerts.length && alerts[0].timestamp < cutoff) {
+    alerts.shift();
+  }
+}
 
 // Middleware para métricas de memória
-export const memoryMetricsMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const memUsage = process.memoryUsage();
+export function memoryMetricsMiddleware(req: Request, res: Response, next: NextFunction) {
+  const memoryUsage = getMemoryUsage();
   
-  // Log de uso de memória alto
-  if (memUsage.heapUsed > 500 * 1024 * 1024) { // Mais de 500MB
-    console.warn(`High memory usage: ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-  }
-
-  // Adicionar headers de métricas
-  res.setHeader('X-Memory-Usage', `${(memUsage.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-  res.setHeader('X-Memory-Total', `${(memUsage.heapTotal / 1024 / 1024).toFixed(2)}MB`);
-
-  next();
-};
-
-// Rota para obter métricas de performance
-export const getPerformanceMetrics = (req: Request, res: Response) => {
-  const route = req.query.route as string;
-  const stats = performanceMonitor.getRouteStats(route);
-  const topSlowRoutes = performanceMonitor.getTopSlowRoutes(10);
-  const memUsage = process.memoryUsage();
-
-  res.json({
-    routeStats: stats,
-    topSlowRoutes,
-    memoryUsage: {
-      heapUsed: `${(memUsage.heapUsed / 1024 / 1024).toFixed(2)}MB`,
-      heapTotal: `${(memUsage.heapTotal / 1024 / 1024).toFixed(2)}MB`,
-      external: `${(memUsage.external / 1024 / 1024).toFixed(2)}MB`,
-      rss: `${(memUsage.rss / 1024 / 1024).toFixed(2)}MB`
-    },
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString()
+  res.set({
+    'X-Memory-Usage': JSON.stringify({
+      heapUsed: memoryUsage.heapUsed,
+      heapTotal: memoryUsage.heapTotal,
+      rss: memoryUsage.rss,
+      external: memoryUsage.external
+    })
   });
-};
+  
+  next();
+}
 
-// Rota para limpar métricas
-export const clearPerformanceMetrics = (req: Request, res: Response) => {
-  performanceMonitor.clear();
-  res.json({ message: 'Performance metrics cleared' });
-};
-
-// Middleware para monitorar queries do MongoDB
-export const mongoQueryMiddleware = () => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const startTime = performance.now();
-    
-    // Interceptar queries do MongoDB (se disponível)
-    if (req.app.locals.mongoose) {
-      const originalQuery = req.app.locals.mongoose.Query.prototype.exec;
-      
-      req.app.locals.mongoose.Query.prototype.exec = function(...args: any[]) {
-        const queryStartTime = performance.now();
-        
-        return originalQuery.apply(this, args).then((result: any) => {
-          const queryDuration = performance.now() - queryStartTime;
-          
-          if (queryDuration > 100) { // Queries lentas
-            console.warn(`Slow MongoDB query: ${this.mongooseCollection.name} - ${queryDuration.toFixed(2)}ms`);
-          }
-          
-          return result;
-        });
-      };
-    }
-    
-    next();
+// Função para obter métricas de performance
+export function getPerformanceMetrics(): {
+  current: PerformanceMetrics[];
+  summary: {
+    totalRequests: number;
+    totalErrors: number;
+    avgResponseTime: number;
+    errorRate: number;
+    memoryUsage: NodeJS.MemoryUsage;
+    cpuUsage: NodeJS.CpuUsage;
+    routeStats: Map<string, any>;
+    alerts: PerformanceAlert[];
+    cacheStats: {
+      hits: number;
+      misses: number;
+      hitRate: number;
+    };
   };
-};
+} {
+  const recentMetrics = metrics.filter(m => 
+    m.timestamp > Date.now() - 60 * 60 * 1000 // Última hora
+  );
+  
+  const avgResponseTime = recentMetrics.length > 0 
+    ? recentMetrics.reduce((sum, m) => sum + m.responseTime, 0) / recentMetrics.length 
+    : 0;
+  
+  const errorRate = totalRequests > 0 ? totalErrors / totalRequests : 0;
+  
+  const cacheHitRate = (totalCacheHits + totalCacheMisses) > 0 
+    ? totalCacheHits / (totalCacheHits + totalCacheMisses) 
+    : 0;
+  
+  return {
+    current: recentMetrics,
+    summary: {
+      totalRequests,
+      totalErrors,
+      avgResponseTime,
+      errorRate,
+      memoryUsage: getMemoryUsage(),
+      cpuUsage: getCpuUsage(),
+      routeStats: new Map(routeStats),
+      alerts: alerts.slice(-10), // Últimos 10 alertas
+      cacheStats: {
+        hits: totalCacheHits,
+        misses: totalCacheMisses,
+        hitRate: cacheHitRate
+      }
+    }
+  };
+}
 
-export { performanceMonitor };
+// Função para limpar métricas
+export function clearPerformanceMetrics(): void {
+  metrics.length = 0;
+  alerts.length = 0;
+  routeStats.clear();
+  totalRequests = 0;
+  totalErrors = 0;
+  totalCacheHits = 0;
+  totalCacheMisses = 0;
+}
+
+// Função para obter estatísticas de rota
+export function getRouteStats(): Map<string, any> {
+  return new Map(routeStats);
+}
+
+// Função para obter alertas ativos
+export function getActiveAlerts(): PerformanceAlert[] {
+  return alerts.filter(alert => 
+    alert.timestamp > Date.now() - 60 * 60 * 1000 // Última hora
+  );
+}
+
+// Função para verificar saúde do sistema
+export function getSystemHealth(): {
+  status: 'healthy' | 'warning' | 'critical';
+  checks: {
+    responseTime: boolean;
+    memoryUsage: boolean;
+    errorRate: boolean;
+    cpuUsage: boolean;
+  };
+  recommendations: string[];
+} {
+  const health = getPerformanceMetrics();
+  const checks = {
+    responseTime: health.summary.avgResponseTime < PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD,
+    memoryUsage: (health.summary.memoryUsage.heapUsed / health.summary.memoryUsage.heapTotal) < PERFORMANCE_CONFIG.MEMORY_USAGE_THRESHOLD,
+    errorRate: health.summary.errorRate < PERFORMANCE_CONFIG.ERROR_RATE_THRESHOLD,
+    cpuUsage: true // Implementar verificação de CPU
+  };
+  
+  const failedChecks = Object.values(checks).filter(check => !check).length;
+  const status = failedChecks === 0 ? 'healthy' : 
+                 failedChecks <= 2 ? 'warning' : 'critical';
+  
+  const recommendations = [];
+  if (!checks.responseTime) {
+    recommendations.push('Consider implementing caching or database optimization');
+  }
+  if (!checks.memoryUsage) {
+    recommendations.push('Consider increasing memory or optimizing memory usage');
+  }
+  if (!checks.errorRate) {
+    recommendations.push('Investigate and fix error sources');
+  }
+  
+  return { status, checks, recommendations };
+}
+
+// Limpeza automática de métricas
+setInterval(cleanupOldMetrics, 60 * 1000); // A cada minuto
+
 export default performanceMiddleware;

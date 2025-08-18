@@ -23,14 +23,14 @@ interface QueueConfig {
 
 interface JobResult {
   success: boolean;
-  data?: any;
+  data?: unknown;
   error?: string;
   duration: number;
 }
 
 class DistributedQueue extends EventEmitter {
   private queues: Map<string, Queue.Queue> = new Map();
-  private processors: Map<string, Function> = new Map();
+  private processors: Map<string, (job: Queue.Job) => Promise<unknown>> = new Map();
   private config: QueueConfig;
 
   constructor(config: QueueConfig) {
@@ -144,7 +144,7 @@ class DistributedQueue extends EventEmitter {
   }
 
   // Register a job processor
-  registerProcessor(queueName: string, jobType: string, processor: Function): void {
+  registerProcessor(queueName: string, jobType: string, processor: (job: Queue.Job) => Promise<unknown>): void {
     const key = `${queueName}:${jobType}`;
     this.processors.set(key, processor);
   }

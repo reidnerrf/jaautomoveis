@@ -19,7 +19,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return typeof parsed === 'boolean' ? parsed : false;
     } catch {
       // Valor corrompido ou storage indisponível
-      try { localStorage.removeItem('darkMode'); } catch {}
+      try { localStorage.removeItem('darkMode'); } catch {
+        // Ignore errors
+      }
       return false;
     }
   });
@@ -27,10 +29,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     try {
       localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
-    } catch {}
+    } catch {
+      // Ignore errors
+    }
     try {
       document.documentElement.classList.toggle('dark', isDarkMode);
-    } catch {}
+    } catch {
+      // Ignore errors
+    }
   }, [isDarkMode]);
 
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);

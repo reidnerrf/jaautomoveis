@@ -1,338 +1,398 @@
-// Edge Functions para Vercel/Cloudflare Workers
-// Otimização de performance e redução de latência
+import { Request, Response } from 'express';
+import sharp from 'sharp';
+import crypto from 'crypto';
 
-export interface EdgeContext {
-  request: Request;
-  env: any;
-  ctx: any;
+// Interface para configurações de edge functions
+interface EdgeConfig {
+  imageOptimization: {
+    quality: number;
+    formats: string[];
+    maxWidth: number;
+    maxHeight: number;
+  };
+  security: {
+    rateLimit: number;
+    botDetection: boolean;
+    geoBlocking: boolean;
+  };
+  cache: {
+    ttl: number;
+    staleWhileRevalidate: number;
+  };
 }
+
+// Configurações padrão
+const EDGE_CONFIG: EdgeConfig = {
+  imageOptimization: {
+    quality: 80,
+    formats: ['webp', 'avif', 'jpeg'],
+    maxWidth: 1920,
+    maxHeight: 1080
+  },
+  security: {
+    rateLimit: 100,
+    botDetection: true,
+    geoBlocking: false
+  },
+  cache: {
+    ttl: 3600,
+    staleWhileRevalidate: 86400
+  }
+};
+
+// Cache de edge functions
+const edgeCache = new Map<string, { data: unknown; timestamp: number; ttl: number }>();
 
 // Função para otimização de imagens no edge
-export async function optimizeImage(context: EdgeContext): Promise<Response> {
-  const { request } = context;
-  const url = new URL(request.url);
-  const imageUrl = url.searchParams.get('url');
-  const width = parseInt(url.searchParams.get('w') || '800');
-  const quality = parseInt(url.searchParams.get('q') || '80');
-  const format = url.searchParams.get('f') || 'webp';
-
-  if (!imageUrl) {
-    return new Response('Missing image URL', { status: 400 });
-  }
-
+export async function edgeImageOptimization(
+  req: Request,
+  res: Response,
+  options: Partial<EdgeConfig['imageOptimization']> = {}
+): Promise<void> {
   try {
-    // Fetch original image
-    const imageResponse = await fetch(imageUrl);
-    const imageBuffer = await imageResponse.arrayBuffer();
+    const config = { ...EDGE_CONFIG.imageOptimization, ...options };
+    const imageUrl = req.query.url as string;
+    const width = parseInt(req.query.w as string) || config.maxWidth;
+    const height = parseInt(req.query.h as string) || config.maxHeight;
+    const format = req.query.f as string || 'webp';
+    const quality = parseInt(req.query.q as string) || config.quality;
 
-    // Use Sharp-like processing (simplified for edge)
-    const optimizedImage = await processImage(imageBuffer, {
-      width,
-      quality,
-      format
-    });
+    if (!imageUrl) {
+      res.status(400).json({ error: 'Image URL is required' });
+      return;
+    }
 
-    return new Response(optimizedImage, {
-      headers: {
+    // Verificar cache
+    const cacheKey = `image:${imageUrl}:${width}:${height}:${format}:${quality}`;
+    const cached = edgeCache.get(cacheKey);
+    
+    if (cached && Date.now() - cached.timestamp < cached.ttl * 1000) {
+      res.set({
         'Content-Type': `image/${format}`,
-        'Cache-Control': 'public, max-age=31536000',
-        'CDN-Cache-Control': 'public, max-age=31536000'
-      }
+        'Cache-Control': `public, max-age=${config.ttl}, stale-while-revalidate=${config.staleWhileRevalidate}`,
+        'X-Edge-Cache': 'HIT'
+      });
+      res.send(cached.data);
+      return;
+    }
+
+    // Buscar imagem original
+    const imageResponse = await fetch(imageUrl);
+    if (!imageResponse.ok) {
+      res.status(404).json({ error: 'Image not found' });
+      return;
+    }
+
+    const imageBuffer = await imageResponse.arrayBuffer();
+    
+    // Otimizar imagem
+    let optimizedImage = sharp(Buffer.from(imageBuffer))
+      .resize(width, height, { fit: 'inside', withoutEnlargement: true });
+
+    // Aplicar formato
+    switch (format) {
+      case 'webp':
+        optimizedImage = optimizedImage.webp({ quality });
+        break;
+      case 'avif':
+        optimizedImage = optimizedImage.avif({ quality });
+        break;
+      case 'jpeg':
+        optimizedImage = optimizedImage.jpeg({ quality, progressive: true });
+        break;
+      default:
+        optimizedImage = optimizedImage.webp({ quality });
+    }
+
+    const optimizedBuffer = await optimizedImage.toBuffer();
+
+    // Armazenar no cache
+    edgeCache.set(cacheKey, {
+      data: optimizedBuffer,
+      timestamp: Date.now(),
+      ttl: config.ttl
     });
+
+    // Configurar headers
+    res.set({
+      'Content-Type': `image/${format}`,
+      'Cache-Control': `public, max-age=${config.ttl}, stale-while-revalidate=${config.staleWhileRevalidate}`,
+      'X-Edge-Cache': 'MISS',
+      'X-Image-Optimized': 'true'
+    });
+
+    res.send(optimizedBuffer);
   } catch (error) {
-    return new Response('Image processing failed', { status: 500 });
+    console.error('Edge image optimization error:', error);
+    res.status(500).json({ error: 'Image optimization failed' });
   }
-}
-
-// Função para cache inteligente no edge
-export async function edgeCache(context: EdgeContext): Promise<Response> {
-  const { request } = context;
-  const cacheKey = generateCacheKey(request);
-  
-  // Check edge cache first
-  const cachedResponse = await caches.default.match(cacheKey);
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-
-  // Fetch from origin
-  const response = await fetch(request);
-  
-  // Cache successful responses
-  if (response.ok) {
-    const cacheResponse = response.clone();
-    const cache = await caches.default;
-    await cache.put(cacheKey, cacheResponse);
-  }
-
-  return response;
-}
-
-// Função para A/B testing no edge
-export async function abTesting(context: EdgeContext): Promise<Response> {
-  const { request } = context;
-  const url = new URL(request.url);
-  
-  // Determine variant based on user
-  const userId = getUserId(request);
-  const variant = getVariant(userId, url.pathname);
-  
-  // Modify response based on variant
-  const response = await fetch(request);
-  const html = await response.text();
-  
-  const modifiedHtml = injectVariant(html, variant);
-  
-  return new Response(modifiedHtml, {
-    headers: {
-      'Content-Type': 'text/html',
-      'X-AB-Variant': variant
-    }
-  });
-}
-
-// Função para geolocalização e personalização
-export async function geoPersonalization(context: EdgeContext): Promise<Response> {
-  const { request } = context;
-  const country = request.headers.get('CF-IPCountry') || 'BR';
-  const city = request.headers.get('CF-IPCITY') || 'São Paulo';
-  
-  // Personalizar conteúdo baseado na localização
-  const personalizedContent = await getPersonalizedContent(country, city);
-  
-  const response = await fetch(request);
-  const html = await response.text();
-  
-  const modifiedHtml = injectPersonalizedContent(html, personalizedContent);
-  
-  return new Response(modifiedHtml, {
-    headers: {
-      'Content-Type': 'text/html',
-      'X-Geo-Country': country,
-      'X-Geo-City': city
-    }
-  });
 }
 
 // Função para rate limiting no edge
-export async function edgeRateLimit(context: EdgeContext): Promise<Response> {
-  const { request } = context;
-  const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
-  const endpoint = new URL(request.url).pathname;
+export function edgeRateLimiting(
+  req: Request,
+  res: Response,
+  options: Partial<EdgeConfig['security']> = {}
+): boolean {
+  const config = { ...EDGE_CONFIG.security, ...options };
+  const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+  const userAgent = req.get('User-Agent') || '';
   
-  const key = `rate_limit:${clientIP}:${endpoint}`;
-  const limit = getRateLimit(endpoint);
+  // Gerar chave única para o cliente
+  const clientKey = crypto.createHash('md5').update(`${clientIP}:${userAgent}`).digest('hex');
   
-  // Check current usage
-  const currentUsage = await getCurrentUsage(key);
+  // Verificar rate limit
+  const now = Date.now();
+  const windowMs = 60 * 1000; // 1 minuto
+  const maxRequests = config.rateLimit;
   
-  if (currentUsage >= limit) {
-    return new Response('Rate limit exceeded', {
-      status: 429,
-      headers: {
-        'Retry-After': '60',
-        'X-RateLimit-Limit': limit.toString(),
-        'X-RateLimit-Remaining': '0'
-      }
-    });
+  const clientRequests = getClientRequests(clientKey);
+  const recentRequests = clientRequests.filter(timestamp => now - timestamp < windowMs);
+  
+  if (recentRequests.length >= maxRequests) {
+    res.status(429).json({ error: 'Rate limit exceeded' });
+    return false;
   }
   
-  // Increment usage
-  await incrementUsage(key);
+  // Adicionar requisição atual
+  recentRequests.push(now);
+  setClientRequests(clientKey, recentRequests);
   
-  // Continue with request
-  return fetch(request);
+  return true;
 }
 
-// Função para bot detection e security
-export async function botDetection(context: EdgeContext): Promise<Response> {
-  const { request } = context;
-  const userAgent = request.headers.get('User-Agent') || '';
-  const clientIP = request.headers.get('CF-Connecting-IP') || '';
+// Função para detecção de bots
+export function edgeBotDetection(req: Request): boolean {
+  const userAgent = req.get('User-Agent') || '';
+  const ip = req.ip || req.connection.remoteAddress || '';
   
-  // Detect bots and malicious traffic
-  if (isBot(userAgent) || isMalicious(clientIP)) {
-    return new Response('Access denied', { status: 403 });
-  }
-  
-  // Add security headers
-  const response = await fetch(request);
-  const newResponse = new Response(response.body, response);
-  
-  newResponse.headers.set('X-Content-Type-Options', 'nosniff');
-  newResponse.headers.set('X-Frame-Options', 'DENY');
-  newResponse.headers.set('X-XSS-Protection', '1; mode=block');
-  newResponse.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
-  return newResponse;
-}
-
-// Função para analytics em tempo real
-export async function realTimeAnalytics(context: EdgeContext): Promise<Response> {
-  const { request } = context;
-  const url = new URL(request.url);
-  
-  // Collect analytics data
-  const analyticsData = {
-    timestamp: Date.now(),
-    url: url.pathname,
-    userAgent: request.headers.get('User-Agent'),
-    referer: request.headers.get('Referer'),
-    ip: request.headers.get('CF-Connecting-IP'),
-    country: request.headers.get('CF-IPCountry'),
-    device: getDeviceType(request.headers.get('User-Agent')),
-    performance: await getPerformanceMetrics(request)
-  };
-  
-  // Send to analytics service
-  await sendAnalytics(analyticsData);
-  
-  // Continue with request
-  return fetch(request);
-}
-
-// Função para SEO optimization no edge
-export async function seoOptimization(context: EdgeContext): Promise<Response> {
-  const { request } = context;
-  const url = new URL(request.url);
-  
-  // Check if it's a crawler
-  const userAgent = request.headers.get('User-Agent') || '';
-  const isCrawler = isSearchEngineBot(userAgent);
-  
-  if (isCrawler) {
-    // Optimize for crawlers
-    const response = await fetch(request);
-    const html = await response.text();
-    
-    const optimizedHtml = await optimizeForSEO(html, url.pathname);
-    
-    return new Response(optimizedHtml, {
-      headers: {
-        'Content-Type': 'text/html',
-        'X-SEO-Optimized': 'true'
-      }
-    });
-  }
-  
-  return fetch(request);
-}
-
-// Utility functions
-function generateCacheKey(request: Request): string {
-  const url = new URL(request.url);
-  return `${request.method}:${url.pathname}:${url.search}`;
-}
-
-function getUserId(request: Request): string {
-  // Extract user ID from cookies or headers
-  const cookies = request.headers.get('Cookie') || '';
-  const match = cookies.match(/userId=([^;]+)/);
-  return match ? match[1] : 'anonymous';
-}
-
-function getVariant(userId: string, pathname: string): string {
-  // Simple hash-based variant assignment
-  const hash = simpleHash(userId + pathname);
-  return hash % 2 === 0 ? 'A' : 'B';
-}
-
-function simpleHash(str: string): number {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  return Math.abs(hash);
-}
-
-function isBot(userAgent: string): boolean {
+  // Lista de padrões de bots conhecidos
   const botPatterns = [
-    /bot/i, /crawler/i, /spider/i, /scraper/i,
-    /googlebot/i, /bingbot/i, /slurp/i, /duckduckbot/i
+    /bot/i,
+    /crawler/i,
+    /spider/i,
+    /scraper/i,
+    /curl/i,
+    /wget/i,
+    /python/i,
+    /java/i,
+    /phantomjs/i,
+    /headless/i
   ];
   
-  return botPatterns.some(pattern => pattern.test(userAgent));
+  // Verificar padrões de bot
+  const isBot = botPatterns.some(pattern => pattern.test(userAgent));
+  
+  // Verificar comportamento suspeito
+  const suspiciousBehavior = checkSuspiciousBehavior(req);
+  
+  return isBot || suspiciousBehavior;
 }
 
-function isMalicious(ip: string): boolean {
-  // Implement IP reputation check
-  // This would typically call an external service
+// Função para geolocalização e personalização
+export function edgeGeolocation(req: Request): {
+  country: string;
+  city: string;
+  region: string;
+  timezone: string;
+  personalized: boolean;
+} {
+  const ip = req.ip || req.connection.remoteAddress || '';
+  const acceptLanguage = req.get('Accept-Language') || '';
+  
+  // Simular geolocalização (em produção, usar serviço real)
+  const geoData = {
+    country: 'BR',
+    city: 'São Paulo',
+    region: 'SP',
+    timezone: 'America/Sao_Paulo',
+    personalized: false
+  };
+  
+  // Personalização baseada em localização
+  if (geoData.country === 'BR') {
+    geoData.personalized = true;
+  }
+  
+  return geoData;
+}
+
+// Função para cache inteligente no edge
+export function edgeCacheMiddleware(
+  req: Request,
+  res: Response,
+  options: Partial<EdgeConfig['cache']> = {}
+): boolean {
+  const config = { ...EDGE_CONFIG.cache, ...options };
+  const cacheKey = generateCacheKey(req);
+  
+  // Verificar cache
+  const cached = edgeCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < cached.ttl * 1000) {
+    res.set({
+      'X-Edge-Cache': 'HIT',
+      'Cache-Control': `public, max-age=${config.ttl}, stale-while-revalidate=${config.staleWhileRevalidate}`
+    });
+    res.json(cached.data);
+    return true;
+  }
+  
   return false;
 }
 
-function getDeviceType(userAgent: string): string {
-  if (/mobile/i.test(userAgent)) return 'mobile';
-  if (/tablet/i.test(userAgent)) return 'tablet';
-  return 'desktop';
+// Função para A/B testing no edge
+export function edgeABTesting(req: Request): {
+  variant: string;
+  experiment: string;
+  userId: string;
+} {
+  const userAgent = req.get('User-Agent') || '';
+  const ip = req.ip || req.connection.remoteAddress || '';
+  
+  // Gerar ID de usuário consistente
+  const userId = crypto.createHash('md5').update(`${ip}:${userAgent}`).digest('hex');
+  
+  // Determinar variante baseada no ID do usuário
+  const hash = parseInt(userId.substring(0, 8), 16);
+  const variant = hash % 2 === 0 ? 'A' : 'B';
+  
+  return {
+    variant,
+    experiment: 'performance_optimization',
+    userId
+  };
 }
 
-function isSearchEngineBot(userAgent: string): boolean {
-  const searchEngines = [
-    /googlebot/i, /bingbot/i, /slurp/i, /duckduckbot/i,
-    /baiduspider/i, /yandexbot/i
+// Função para analytics em tempo real no edge
+export function edgeAnalytics(req: Request): void {
+  const analytics = {
+    timestamp: Date.now(),
+    ip: req.ip || req.connection.remoteAddress || 'unknown',
+    userAgent: req.get('User-Agent') || '',
+    path: req.path,
+    method: req.method,
+    referer: req.get('Referer') || '',
+    geo: edgeGeolocation(req),
+    abTest: edgeABTesting(req),
+    isBot: edgeBotDetection(req)
+  };
+  
+  // Enviar analytics para processamento (em produção, usar fila)
+  console.log('Edge Analytics:', analytics);
+}
+
+// Função para compressão no edge
+export function edgeCompression(req: Request, res: Response): void {
+  const acceptEncoding = req.get('Accept-Encoding') || '';
+  
+  if (acceptEncoding.includes('br')) {
+    res.set('Content-Encoding', 'br');
+  } else if (acceptEncoding.includes('gzip')) {
+    res.set('Content-Encoding', 'gzip');
+  } else if (acceptEncoding.includes('deflate')) {
+    res.set('Content-Encoding', 'deflate');
+  }
+}
+
+// Função para segurança no edge
+export function edgeSecurity(req: Request, res: Response): boolean {
+  // Verificar headers de segurança
+  const securityHeaders = {
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+  };
+  
+  Object.entries(securityHeaders).forEach(([header, value]) => {
+    res.set(header, value);
+  });
+  
+  // Verificar se é um bot
+  if (edgeBotDetection(req)) {
+    res.set('X-Bot-Detected', 'true');
+  }
+  
+  return true;
+}
+
+// Funções auxiliares
+function generateCacheKey(req: Request): string {
+  const url = req.originalUrl || req.url;
+  const query = JSON.stringify(req.query);
+  const params = JSON.stringify(req.params);
+  const userAgent = req.get('User-Agent') || '';
+  
+  return crypto.createHash('md5').update(`${url}:${query}:${params}:${userAgent}`).digest('hex');
+}
+
+function getClientRequests(clientKey: string): number[] {
+  // Em produção, usar Redis ou similar
+  return [];
+}
+
+function setClientRequests(clientKey: string, requests: number[]): void {
+  // Em produção, usar Redis ou similar
+}
+
+function checkSuspiciousBehavior(req: Request): boolean {
+  const userAgent = req.get('User-Agent') || '';
+  const ip = req.ip || req.connection.remoteAddress || '';
+  
+  // Verificar padrões suspeitos
+  const suspiciousPatterns = [
+    /sqlmap/i,
+    /nikto/i,
+    /nmap/i,
+    /masscan/i,
+    /dirb/i
   ];
   
-  return searchEngines.some(pattern => pattern.test(userAgent));
+  return suspiciousPatterns.some(pattern => pattern.test(userAgent));
 }
 
-// Placeholder functions (would be implemented based on specific needs)
-async function processImage(buffer: ArrayBuffer, options: any): Promise<ArrayBuffer> {
-  // Implement image processing logic
-  return buffer;
+// Middleware principal de edge functions
+export function edgeMiddleware(
+  req: Request,
+  res: Response,
+  next: () => void,
+  options: Partial<EdgeConfig> = {}
+): void {
+  const config = { ...EDGE_CONFIG, ...options };
+  
+  // Aplicar segurança
+  edgeSecurity(req, res);
+  
+  // Verificar rate limiting
+  if (!edgeRateLimiting(req, res, config.security)) {
+    return;
+  }
+  
+  // Aplicar compressão
+  edgeCompression(req, res);
+  
+  // Coletar analytics
+  edgeAnalytics(req);
+  
+  // Verificar cache para requisições GET
+  if (req.method === 'GET' && edgeCacheMiddleware(req, res, config.cache)) {
+    return;
+  }
+  
+  next();
 }
 
-async function getPersonalizedContent(country: string, city: string): Promise<any> {
-  // Implement personalization logic
-  return {};
+// Função para limpeza de cache
+export function cleanupEdgeCache(): void {
+  const now = Date.now();
+  
+  for (const [key, value] of edgeCache.entries()) {
+    if (now - value.timestamp > value.ttl * 1000) {
+      edgeCache.delete(key);
+    }
+  }
 }
 
-async function getRateLimit(endpoint: string): Promise<number> {
-  // Implement rate limiting logic
-  return 100;
-}
-
-async function getCurrentUsage(key: string): Promise<number> {
-  // Implement usage tracking
-  return 0;
-}
-
-async function incrementUsage(key: string): Promise<void> {
-  // Implement usage increment
-}
-
-async function sendAnalytics(data: any): Promise<void> {
-  // Implement analytics sending
-}
-
-async function optimizeForSEO(html: string, pathname: string): Promise<string> {
-  // Implement SEO optimization
-  return html;
-}
-
-function injectVariant(html: string, variant: string): string {
-  // Inject A/B test variant
-  return html.replace('</head>', `<script>window.AB_VARIANT='${variant}';</script></head>`);
-}
-
-function injectPersonalizedContent(html: string, content: any): string {
-  // Inject personalized content
-  return html;
-}
-
-async function getPerformanceMetrics(request: Request): Promise<any> {
-  // Collect performance metrics
-  return {};
-}
-
-export default {
-  optimizeImage,
-  edgeCache,
-  abTesting,
-  geoPersonalization,
-  edgeRateLimit,
-  botDetection,
-  realTimeAnalytics,
-  seoOptimization
-};
+// Limpeza automática a cada 5 minutos
+setInterval(cleanupEdgeCache, 5 * 60 * 1000);
