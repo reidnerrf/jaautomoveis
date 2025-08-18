@@ -127,9 +127,8 @@ async function optimizeImage(
       break;
     case 'png':
       pipeline = pipeline.png({ 
-        quality,
-        compressionLevel: IMAGE_CONFIG.COMPRESSION_LEVELS[options.compression || 'medium'].effort
-      });
+          compressionLevel: IMAGE_CONFIG.COMPRESSION_LEVELS[options.compression || 'medium'].effort
+        });
       break;
     default:
       pipeline = pipeline.jpeg({ 
