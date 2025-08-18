@@ -171,7 +171,7 @@ async function updateCacheMetrics(): Promise<void> {
       const keys = await redisClient.dbsize();
       
       cacheMetrics.keys = keys;
-      cacheMetrics.memory = parseInt(info.match(/used_memory_human:(\d+)/)?.[1] || '0');
+      cacheMetrics.memory = parseInt(info.match(/used_memory:(\d+)/)?.[1] || '0', 10);
     } else {
       const stats = localCache.getStats();
       cacheMetrics.keys = stats.keys;
