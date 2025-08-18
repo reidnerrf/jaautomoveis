@@ -1,37 +1,31 @@
-# JA Automóveis - Layout, Code Quality & Performance Improvements
+# Vehicle Management System Fixes - TODO
 
-## Phase 1: Layout & UI/UX Improvements
-- [ ] Enhance responsive design patterns
-- [ ] Implement modern CSS Grid/Flexbox layouts
-- [ ] Add skeleton loading states
-- [ ] Improve dark mode toggle functionality
-- [ ] Enhance accessibility (ARIA attributes, keyboard navigation)
+## Phase 1: Fix Analytics API Errors
+- [ ] Fix aggregation pipeline in `getMonthlyViews` function
+- [ ] Add proper error handling and validation
+- [ ] Ensure consistent data format
 
-## Phase 2: Performance Optimizations
-- [ ] Implement image optimization (WebP, lazy loading)
-- [ ] Add service worker for offline functionality
-- [ ] Optimize bundle size with tree shaking
-- [ ] Implement critical CSS extraction
-- [ ] Add performance budgets and monitoring
+## Phase 2: Fix Vehicle Fetching Issues
+- [ ] Add proper error handling for 404 responses in `useVehicleData`
+- [ ] Implement retry logic
+- [ ] Add validation for vehicle IDs
 
-## Phase 3: Code Quality Enhancements
-- [ ] Enable TypeScript strict mode
-- [ ] Implement better error boundaries
-- [ ] Add comprehensive TypeScript interfaces
-- [ ] Optimize component structure
-- [ ] Add comprehensive testing
+## Phase 3: Implement Real-time Sync
+- [ ] Add mutation hooks for create/update/delete
+- [ ] Implement cache invalidation
+- [ ] Add optimistic updates
 
-## Phase 4: Security & SEO
-- [ ] Implement security headers
-- [ ] Add structured data (JSON-LD)
-- [ ] Optimize meta tags and Open Graph
-- [ ] Add sitemap generation
+## Phase 4: Add Real-time Communication (Optional)
+- [ ] Add WebSocket events for vehicle changes
+- [ ] Broadcast updates to connected clients
 
-## Phase 5: Deployment & Monitoring
-- [ ] Optimize Docker configuration
-- [ ] Add health checks
-- [ ] Implement real user monitoring
-- [ ] Add comprehensive documentation
+## Phase 5: Testing and Validation
+- [ ] Create test files for API endpoints
+- [ ] Validate all fixes work correctly
 
-## Current Status
-Starting implementation...
+## Progress Tracking
+- [ ] Phase 1 completed
+- [ ] Phase 2 completed
+- [ ] Phase 3 completed
+- [ ] Phase 4 completed (optional)
+- [ ] Phase 5 completed

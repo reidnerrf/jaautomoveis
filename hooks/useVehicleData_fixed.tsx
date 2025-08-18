@@ -12,7 +12,6 @@ interface VehicleContextType {
   loading: boolean;
   error: string | null;
   refreshVehicles: () => Promise<void>;
-  clearError: () => void;
 }
 
 const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
@@ -24,8 +23,6 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { token } = useAuth();
-
-  const clearError = useCallback(() => setError(null), []);
 
   const fetchVehicles = useCallback(async () => {
     try {
@@ -65,6 +62,8 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       }));
 
       setVehicles(normalized);
+
+      // Cache the normalized data
       apiCache.set(cacheKey, normalized, CACHE_DURATION);
     } catch (err: any) {
       console.error('Error fetching vehicles:', err);
@@ -84,7 +83,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const getVehicleById = useCallback(async (id: string): Promise<Vehicle | undefined> => {
     if (!id || typeof id !== 'string') {
-      setError('ID de veículo inválido');
+      console.error('Invalid vehicle ID provided:', id);
       return undefined;
     }
 
@@ -101,7 +100,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
           console.warn(`Vehicle with ID ${id} not found`);
           return undefined;
         }
-        throw new Error(`Erro HTTP: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
@@ -125,23 +124,30 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
       
       if (!response.ok) {
-        throw new Error('Failed to add vehicle');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+      
       const newVehicle = await response.json();
+      
+      // Invalidate cache and refresh
+      const cacheKey = createCacheKey('vehicles');
+      apiCache.delete(cacheKey);
+      
       setVehicles((prev) => [...(prev || []), newVehicle]);
-      
-      // Clear cache to force refresh
-      apiCache.delete(createCacheKey('vehicles'));
-      
       return newVehicle;
     } catch (err: any) {
-      setError(err.message);
+      console.error('Error adding vehicle:', err);
+      setError(err.message || 'Erro ao adicionar veículo');
       return undefined;
     }
   }, [token]);
 
   const updateVehicle = useCallback(async (updatedVehicle: Vehicle) => {
+    if (!updatedVehicle.id) {
+      setError('ID do veículo é obrigatório');
+      return undefined;
+    }
+
     try {
       const response = await fetch(`/api/vehicles/${updatedVehicle.id}`, {
         method: 'PUT',
@@ -153,25 +159,29 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
       
       if (!response.ok) {
-        throw new Error('Failed to update vehicle');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+      
+      const updatedData = await response.json();
+      
+      // Invalidate cache and update local state
+      const cacheKey = createCacheKey('vehicles');
+      apiCache.delete(cacheKey);
+      
       setVehicles((prev) => {
         const index = (prev || []).findIndex(v => v.id === updatedVehicle.id);
         if (index !== -1) {
           const updatedVehicles = [...(prev || [])];
-          updatedVehicles[index] = updatedVehicle;
+          updatedVehicles[index] = updatedData;
           return updatedVehicles;
         }
         return prev;
       });
       
-      // Clear cache to force refresh
-      apiCache.delete(createCacheKey('vehicles'));
-      
-      return updatedVehicle;
+      return updatedData;
     } catch (err: any) {
-      setError(err.message);
+      console.error('Error updating vehicle:', err);
+      setError(err.message || 'Erro ao atualizar veículo');
       return undefined;
     }
   }, [token]);
@@ -189,17 +199,18 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
       
       if (!response.ok) {
-        throw new Error('Failed to delete vehicle');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+      
+      // Invalidate cache and update local state
+      const cacheKey = createCacheKey('vehicles');
+      apiCache.delete(cacheKey);
+      
       setVehicles((prev) => (prev || []).filter(v => v.id !== id));
-      
-      // Clear cache to force refresh
-      apiCache.delete(createCacheKey('vehicles'));
-      
       return true;
     } catch (err: any) {
-      setError(err.message);
+      console.error('Error deleting vehicle:', err);
+      setError(err.message || 'Erro ao deletar veículo');
       return false;
     }
   }, [token]);
@@ -213,8 +224,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
     loading,
     error,
     refreshVehicles,
-    clearError,
-  }), [vehicles, getVehicleById, addVehicle, updateVehicle, deleteVehicle, loading, error, refreshVehicles, clearError]);
+  }), [vehicles, getVehicleById, addVehicle, updateVehicle, deleteVehicle, loading, error, refreshVehicles]);
 
   return (
     <VehicleContext.Provider value={contextValue}>
