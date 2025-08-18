@@ -200,7 +200,7 @@ export async function vehicleImageOptimization(
     
     const imagePath = req.file?.path || req.path.replace('/uploads/', 'uploads/');
     
-    if (!imagePath || !fs.access(imagePath).then(() => true).catch(() => false)) {
+    if (!imagePath || !(await fs.access(imagePath).then(() => true).catch(() => false))) {
       return next();
     }
     
