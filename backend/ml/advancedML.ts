@@ -205,7 +205,7 @@ class AdvancedML extends EventEmitter {
       this.modelVersion++;
       this.emit('training:completed', { modelType, version: this.modelVersion });
     } catch (error) {
-      this.emit('training:failed', { modelType, error: (error as Error).message });
+      this.emit('training:failed', { modelType, error: error instanceof Error ? error.message : String(error) });
       throw error;
     } finally {
       this.isTraining = false;
