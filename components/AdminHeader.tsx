@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiMenu, FiCalendar, FiLogOut, FiMapPin } from 'react-icons/fi';
+import { FiMenu, FiLogOut, FiCalendar, FiMapPin } from 'react-icons/fi';
 import { useAuth } from '../hooks/useAuth.tsx';
 import DarkModeToggle from './DarkModeToggle.tsx';
 
@@ -10,7 +10,7 @@ interface AdminHeaderProps {
 }
 
 const AdminHeader: React.FC<AdminHeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
-	const { logout } = useAuth();
+	const { logout, token } = useAuth();
 	const navigate = useNavigate();
 
 	const today = new Date().toLocaleDateString('pt-BR', {
@@ -24,8 +24,12 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ sidebarOpen, setSidebarOpen }
 
 	React.useEffect(() => {
 		const fetchCity = async () => {
+			if (!token) return;
+			
 			try {
-				const res = await fetch('/api/analytics/dashboard-stats', { credentials: 'include' });
+				const res = await fetch('/api/analytics/dashboard-stats', { 
+					headers: { 'Authorization': `Bearer ${token}` }
+				});
 				if (!res.ok) return;
 				const data = await res.json();
 				const top = (data.locationStats || []).find((l: any) => l._id && l._id !== 'unknown');
@@ -35,7 +39,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ sidebarOpen, setSidebarOpen }
 			}
 		};
 		fetchCity();
-	}, []);
+	}, [token]);
 
 	const handleLogout = async () => {
 		await logout();

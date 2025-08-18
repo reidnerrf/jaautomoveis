@@ -119,3 +119,66 @@ export const validateInput = (fields: string[]) => {
     next();
   };
 };
+
+// Token validation endpoint (no auth required)
+export const validateToken = async (req: express.Request, res: express.Response) => {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader) {
+    return res.status(401).json({ 
+      success: false,
+      message: 'No authorization header' 
+    });
+  }
+
+  const parts = authHeader.split(' ');
+  const token = parts.length === 2 ? parts[1].trim() : parts[0].trim();
+
+  if (!token || token === 'null' || token === 'undefined') {
+    return res.status(401).json({ 
+      success: false,
+      message: 'Not authorized, no valid token provided' 
+    });
+  }
+
+  try {
+    const secret = getJwtSecret();
+    const decoded = jwt.verify(token, secret) as { 
+      id: string; 
+      iat: number; 
+      exp: number; 
+    };
+
+    if (decoded.exp && decoded.exp < Date.now() / 1000) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Token expired' 
+      });
+    }
+
+    res.json({ 
+      success: true,
+      message: 'Token is valid',
+      user: { id: decoded.id }
+    });
+  } catch (error) {
+    console.error('Token validation error:', error);
+    
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Invalid token' 
+      });
+    } else if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Token expired' 
+      });
+    } else {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Token verification failed' 
+      });
+    }
+  }
+};
