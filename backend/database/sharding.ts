@@ -249,8 +249,12 @@ class DatabaseSharding {
 
     for (const [shardName, shard] of this.shards) {
       try {
-        await shard.db.admin().ping();
-        healthStatus.set(shardName, true);
+        if (shard.db) {
+          await shard.db.admin().ping();
+          healthStatus.set(shardName, true);
+        } else {
+          healthStatus.set(shardName, false);
+        }
       } catch (error) {
         healthStatus.set(shardName, false);
         console.error(`Shard ${shardName} health check failed:`, error);

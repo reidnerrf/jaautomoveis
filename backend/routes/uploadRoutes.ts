@@ -15,8 +15,8 @@ const upload = multer({
     // from Multer's options, avoiding type conflicts.
     fileFilter: (req, file, cb) => {
         const filetypes = /jpe?g|png|webp/i;
-        const mimetype = filetypes.test(file.mimetype);
-        const extname = filetypes.test(path.extname(file.originalname));
+        const mimetype = filetypes.test((file as Express.Multer.File).mimetype);
+        const extname = filetypes.test(path.extname((file as Express.Multer.File).originalname));
 
         if (mimetype && extname) {
             return cb(null, true);

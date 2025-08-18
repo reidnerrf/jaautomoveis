@@ -42,11 +42,12 @@ class RecommendationEngine {
   private async loadUserPreferences() {
     try {
       // Carregar histórico de visualizações
-      const viewLogs = await ViewLog.find({}).populate('userId vehicleId');
+      const viewLogs = await ViewLog.find({}).populate('vehicle');
       
       viewLogs.forEach(log => {
-        const userId = log.userId.toString();
-        const vehicleId = log.vehicleId.toString();
+        const vehicleId = log.vehicle.toString();
+        // Since ViewLog doesn't have userId, we'll use a default user or skip user-specific logic
+        const userId = 'default';
         
         if (!this.userPreferences.has(userId)) {
           this.userPreferences.set(userId, {

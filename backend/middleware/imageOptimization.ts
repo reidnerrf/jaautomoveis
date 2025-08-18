@@ -4,6 +4,20 @@ import path from 'path';
 import fs from 'fs/promises';
 import crypto from 'crypto';
 
+// Extend Multer File interface to include custom properties
+declare global {
+  namespace Express {
+    namespace Multer {
+      interface File {
+        optimized?: boolean;
+        originalSize?: number;
+        optimizedSize?: number;
+        thumbnailPath?: string;
+      }
+    }
+  }
+}
+
 // Configurações de otimização
 const IMAGE_CONFIG = {
   QUALITY: 80,

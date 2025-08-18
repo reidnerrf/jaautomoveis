@@ -28,7 +28,6 @@ let redisClient: Redis | null = null;
 
 if (process.env.REDIS_URL) {
   redisClient = new Redis(process.env.REDIS_URL, {
-    retryDelayOnFailover: 100,
     maxRetriesPerRequest: 3,
     enableOfflineQueue: false,
     lazyConnect: true
@@ -275,8 +274,8 @@ export function conditionalCacheMiddleware(req: Request, res: Response, next: Ne
   if (etag || lastModified) {
     // Implementar lógica de cache condicional
     const cacheKey = generateCacheKey(req, 'conditional');
-    getCache(cacheKey).then(cachedData => {
-      if (cachedData && cachedData.etag === etag) {
+    getCache(cacheKey).then((cachedData: any) => {
+      if (cachedData && (cachedData as any).etag === etag) {
         return res.status(304).end();
       }
       next();

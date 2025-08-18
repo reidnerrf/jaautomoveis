@@ -112,7 +112,7 @@ export default defineConfig(({ mode }) => {
             },
             entryFileNames: 'assets/js/[name]-[hash].js',
             assetFileNames: (assetInfo) => {
-              const info = assetInfo.name.split('.');
+              const info = assetInfo.name?.split('.') || ['unknown'];
               const ext = info[info.length - 1];
               if (/png|jpe?g|svg|gif|tiff|bmp|ico|webp/i.test(ext)) {
                 return `assets/images/[name]-[hash].[ext]`;

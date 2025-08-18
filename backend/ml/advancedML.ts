@@ -205,7 +205,7 @@ class AdvancedML extends EventEmitter {
       this.modelVersion++;
       this.emit('training:completed', { modelType, version: this.modelVersion });
     } catch (error) {
-      this.emit('training:failed', { modelType, error: error.message });
+      this.emit('training:failed', { modelType, error: (error as Error).message });
       throw error;
     } finally {
       this.isTraining = false;
@@ -477,13 +477,17 @@ class AdvancedML extends EventEmitter {
       throw new Error('Neural model not available');
     }
 
-    const features = this.extractPriceFeatures(vehicleFeatures);
-    const prediction = this.forwardPass(model, features);
+    const featureArray = this.extractPriceFeatures(vehicleFeatures);
+    const prediction = this.forwardPass(model, featureArray);
     
     return {
       prediction,
       confidence: 0.85,
-      features,
+      features: {
+        year: vehicleFeatures.year || 0,
+        mileage: vehicleFeatures.mileage || 0,
+        popularity: vehicleFeatures.popularity || 0
+      },
       model: 'neural'
     };
   }
@@ -660,12 +664,12 @@ class AdvancedML extends EventEmitter {
     return Math.random();
   }
 
-  private extractPriceFeatures(vehicle: Partial<VehicleFeatures>): Record<string, number> {
-    return {
-      year: vehicle.year || 0,
-      mileage: vehicle.mileage || 0,
-      popularity: vehicle.popularity || 0
-    };
+  private extractPriceFeatures(vehicle: Partial<VehicleFeatures>): number[] {
+    return [
+      vehicle.year || 0,
+      vehicle.mileage || 0,
+      vehicle.popularity || 0
+    ];
   }
 
   private calculateSeasonalFactor(timeframe: string): number {

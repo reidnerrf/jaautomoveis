@@ -85,8 +85,7 @@ function getMemoryUsage(): NodeJS.MemoryUsage {
     external: memUsage.external || 0,
     heapTotal: memUsage.heapTotal,
     heapUsed: memUsage.heapUsed,
-    rss: memUsage.rss,
-    system: totalMem - freeMem
+    rss: memUsage.rss
   };
 }
 

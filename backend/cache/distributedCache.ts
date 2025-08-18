@@ -1,9 +1,9 @@
-import Redis from 'ioredis';
+import Redis, { Cluster, ClusterOptions } from 'ioredis';
 import { promisify } from 'util';
 
 interface CacheConfig {
   nodes: string[];
-  options?: Redis.ClusterOptions;
+  options?: ClusterOptions;
   defaultTTL?: number;
 }
 
@@ -16,7 +16,7 @@ interface CacheStats {
 }
 
 class DistributedCache {
-  private cluster: Redis.Cluster;
+  private cluster: Cluster;
   private stats: CacheStats;
   private defaultTTL: number;
 
@@ -32,7 +32,6 @@ class DistributedCache {
 
     this.cluster = new Redis.Cluster(config.nodes, {
       scaleReads: 'slave', // Read from slaves
-      maxRetriesPerRequest: 3,
       retryDelayOnFailover: 100,
       enableOfflineQueue: false,
       enableReadyCheck: true,
@@ -56,16 +55,16 @@ class DistributedCache {
       console.log('Redis cluster is ready');
     });
 
-    this.cluster.on('error', (error) => {
+    this.cluster.on('error', (error: Error) => {
       console.error('Redis cluster error:', error);
       this.stats.connected = false;
     });
 
-    this.cluster.on('node:connect', (node) => {
+    this.cluster.on('node:connect', (node: Redis) => {
       console.log(`Connected to Redis node: ${node.options.host}:${node.options.port}`);
     });
 
-    this.cluster.on('node:error', (error, node) => {
+    this.cluster.on('node:error', (error: Error, node: Redis) => {
       console.error(`Redis node error on ${node.options.host}:${node.options.port}:`, error);
     });
   }
@@ -257,7 +256,7 @@ class DistributedCache {
   async lrange(key: string, start: number, stop: number): Promise<any[]> {
     try {
       const values = await this.cluster.lrange(key, start, stop);
-      return values.map(value => JSON.parse(value));
+      return values.map((value: string) => JSON.parse(value));
     } catch (error) {
       console.error('Cache lrange error:', error);
       return [];
@@ -280,7 +279,7 @@ class DistributedCache {
   async smembers(key: string): Promise<any[]> {
     try {
       const values = await this.cluster.smembers(key);
-      return values.map(value => JSON.parse(value));
+      return values.map((value: string) => JSON.parse(value));
     } catch (error) {
       console.error('Cache smembers error:', error);
       return [];
@@ -402,10 +401,11 @@ class DistributedCache {
         const originalSend = res.json;
         
         // Override send method to cache response
+        const cacheInstance = this;
         res.json = function(data: any) {
-          this.set(key, data, ttl);
+          cacheInstance.set(key, data, ttl);
           return originalSend.call(this, data);
-        }.bind(this);
+        };
         
         next();
       } catch (error) {

@@ -275,8 +275,8 @@ app.get('/sitemap.xml', async (req, res) => {
     // Vehicle pages
     vehicles.forEach(vehicle => {
       sitemap += `  <url>\n`;
-      sitemap += `    <loc>${baseUrl}/vehicle/${vehicle.id}</loc>\n`;
-      sitemap += `    <lastmod>${vehicle.updatedAt.toISOString()}</lastmod>\n`;
+      sitemap += `    <loc>${baseUrl}/vehicle/${vehicle._id}</loc>\n`;
+      sitemap += `    <lastmod>${(vehicle as any).updatedAt?.toISOString() || new Date().toISOString()}</lastmod>\n`;
       sitemap += `    <changefreq>weekly</changefreq>\n`;
       sitemap += `    <priority>0.8</priority>\n`;
       sitemap += `  </url>\n`;

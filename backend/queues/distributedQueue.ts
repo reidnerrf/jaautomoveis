@@ -73,36 +73,36 @@ class DistributedQueue extends EventEmitter {
   }
 
   private setupQueueEvents(queue: Queue.Queue, name: string) {
-    queue.on('waiting', (job) => {
-      this.emit('job:waiting', { queue: name, jobId: job.id, data: job.data });
+    queue.on('waiting', (job: Queue.Job) => {
+      this.emit('job:waiting', { queue: name, jobId: job.id.toString(), data: job.data });
     });
 
-    queue.on('active', (job) => {
-      this.emit('job:active', { queue: name, jobId: job.id, data: job.data });
+    queue.on('active', (job: Queue.Job) => {
+      this.emit('job:active', { queue: name, jobId: job.id.toString(), data: job.data });
     });
 
-    queue.on('completed', (job, result) => {
+    queue.on('completed', (job: Queue.Job, result) => {
       this.emit('job:completed', { 
         queue: name, 
-        jobId: job.id, 
+        jobId: job.id.toString(), 
         data: job.data, 
         result,
         duration: Date.now() - job.timestamp
       });
     });
 
-    queue.on('failed', (job, err) => {
+    queue.on('failed', (job: Queue.Job, err) => {
       this.emit('job:failed', { 
         queue: name, 
-        jobId: job.id, 
+        jobId: job.id.toString(), 
         data: job.data, 
         error: err.message,
         attempts: job.attemptsMade
       });
     });
 
-    queue.on('stalled', (job) => {
-      this.emit('job:stalled', { queue: name, jobId: job.id, data: job.data });
+    queue.on('stalled', (job: Queue.Job) => {
+      this.emit('job:stalled', { queue: name, jobId: job.id.toString(), data: job.data });
     });
 
     queue.on('error', (error) => {
@@ -160,12 +160,12 @@ class DistributedQueue extends EventEmitter {
     }
 
     try {
-      const result = await processor(job.data.payload, job);
+      const result = await processor(job);
       const duration = Date.now() - startTime;
 
       this.emit('job:processed', {
         queue: job.queue.name,
-        jobId: job.id,
+        jobId: job.id.toString(),
         type: job.data.type,
         success: true,
         result,
@@ -178,10 +178,10 @@ class DistributedQueue extends EventEmitter {
 
       this.emit('job:processed', {
         queue: job.queue.name,
-        jobId: job.id,
+        jobId: job.id.toString(),
         type: job.data.type,
         success: false,
-        error: error.message,
+        error: (error as Error).message,
         duration
       });
 
@@ -209,15 +209,13 @@ class DistributedQueue extends EventEmitter {
       active,
       completed,
       failed,
-      delayed,
-      paused
+      delayed
     ] = await Promise.all([
       queue.getWaiting(),
       queue.getActive(),
       queue.getCompleted(),
       queue.getFailed(),
-      queue.getDelayed(),
-      queue.getPaused()
+      queue.getDelayed()
     ]);
 
     return {
@@ -227,7 +225,6 @@ class DistributedQueue extends EventEmitter {
       completed: completed.length,
       failed: failed.length,
       delayed: delayed.length,
-      paused: paused.length,
       total: waiting.length + active.length + completed.length + failed.length + delayed.length
     };
   }

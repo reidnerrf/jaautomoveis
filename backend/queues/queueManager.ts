@@ -124,7 +124,11 @@ class QueueManager extends EventEmitter {
   // Criar uma nova fila
   private createQueue(config: QueueConfig): Queue.Queue {
     const queue = new Queue(config.name, {
-      redis: this.redis,
+      redis: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT || '6379'),
+        password: process.env.REDIS_PASSWORD
+      },
       defaultJobOptions: {
         priority: config.priority,
         attempts: config.attempts,
@@ -166,21 +170,21 @@ class QueueManager extends EventEmitter {
 
   // Configurar eventos de uma fila específica
   private setupQueueEvents(queue: Queue.Queue, queueName: string): void {
-    queue.on('waiting', (job) => {
-      this.emit('job:waiting', { queue: queueName, jobId: job.id, data: job.data });
+    queue.on('waiting', (job: Queue.Job) => {
+      this.emit('job:waiting', { queue: queueName, jobId: job.id.toString(), data: job.data });
       this.updateStats(queueName, 'waiting', 1);
     });
 
-    queue.on('active', (job) => {
-      this.emit('job:active', { queue: queueName, jobId: job.id, data: job.data });
+    queue.on('active', (job: Queue.Job) => {
+      this.emit('job:active', { queue: queueName, jobId: job.id.toString(), data: job.data });
       this.updateStats(queueName, 'active', 1);
     });
 
-    queue.on('completed', (job, result) => {
+    queue.on('completed', (job: Queue.Job, result) => {
       const duration = Date.now() - job.timestamp;
       this.emit('job:completed', {
         queue: queueName,
-        jobId: job.id,
+        jobId: job.id.toString(),
         data: job.data,
         result,
         duration,
@@ -189,11 +193,11 @@ class QueueManager extends EventEmitter {
       this.updateStats(queueName, 'completed', 1, duration);
     });
 
-    queue.on('failed', (job, err) => {
+    queue.on('failed', (job: Queue.Job, err) => {
       const duration = Date.now() - job.timestamp;
       this.emit('job:failed', {
         queue: queueName,
-        jobId: job.id,
+        jobId: job.id.toString(),
         data: job.data,
         error: err.message,
         attempts: job.attemptsMade,
@@ -202,8 +206,8 @@ class QueueManager extends EventEmitter {
       this.updateStats(queueName, 'failed', 1);
     });
 
-    queue.on('stalled', (job) => {
-      this.emit('job:stalled', { queue: queueName, jobId: job.id, data: job.data });
+    queue.on('stalled', (job: Queue.Job) => {
+      this.emit('job:stalled', { queue: queueName, jobId: job.id.toString(), data: job.data });
     });
 
     queue.on('error', (error) => {
@@ -342,15 +346,13 @@ class QueueManager extends EventEmitter {
       active,
       completed,
       failed,
-      delayed,
-      paused
+      delayed
     ] = await Promise.all([
       queue.getWaiting(),
       queue.getActive(),
       queue.getCompleted(),
       queue.getFailed(),
-      queue.getDelayed(),
-      queue.getPaused()
+      queue.getDelayed()
     ]);
 
     const stats = this.stats.get(queueName) || this.createEmptyStats(queueName);
@@ -362,7 +364,6 @@ class QueueManager extends EventEmitter {
       completed: completed.length,
       failed: failed.length,
       delayed: delayed.length,
-      paused: paused.length,
       total: waiting.length + active.length + completed.length + failed.length + delayed.length
     };
   }
@@ -492,7 +493,7 @@ class QueueManager extends EventEmitter {
   private updateStats(queueName: string, field: keyof QueueStats, increment: number, duration?: number): void {
     const stats = this.stats.get(queueName);
     if (stats) {
-      stats[field] = (stats[field] as number) + increment;
+      (stats as any)[field] = (stats as any)[field] + increment;
       
       if (duration && field === 'completed') {
         stats.avgProcessingTime = (stats.avgProcessingTime + duration) / 2;
