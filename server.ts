@@ -187,6 +187,29 @@ app.use('/api/vehicles', vehicleListCacheMiddleware, vehicleRoutes);
 app.use('/api/upload', autoImageOptimization, uploadRoutes);
 app.use('/api/analytics', statsCacheMiddleware, analyticsRoutes);
 
+// Proxy para Google Places para evitar CORS no frontend
+app.get('/api/place-details', async (req: Request, res: Response) => {
+  try {
+    const placeId = (req.query.place_id as string) || '';
+    if (!placeId) {
+      return res.status(400).json({ error: 'place_id é obrigatório' });
+    }
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'GOOGLE_MAPS_API_KEY não configurada' });
+    }
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=reviews&key=${encodeURIComponent(apiKey)}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      return res.status(response.status).json({ error: 'Erro ao buscar dados do Google Maps' });
+    }
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar dados do Google Maps' });
+  }
+});
+
 // Performance metrics endpoints
 app.get('/api/performance/metrics', getPerformanceMetrics);
 app.get('/api/performance/health', (req: Request, res: Response) => {

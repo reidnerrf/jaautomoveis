@@ -91,13 +91,7 @@ const Header: React.FC = () => {
               </NavLink>
             ))}
 
-            {/* Botão de Ação */}
-            <Link
-              to="/anunciar"
-              className="bg-main-red text-white px-4 py-2 rounded-xl shadow hover:bg-red-700 transition"
-            >
-              Anunciar
-            </Link>
+            {/* Botão de Ação removido conforme solicitação */}
 
             {/* DarkMode */}
             <DarkModeToggle />
@@ -149,14 +143,7 @@ const Header: React.FC = () => {
                 </NavLink>
               ))}
 
-              {/* Botão de Ação no Mobile */}
-              <Link
-                to="/anunciar"
-                onClick={() => setIsOpen(false)}
-                className="block bg-main-red text-white text-center px-4 py-2 rounded-xl shadow hover:bg-red-700 transition mt-3"
-              >
-                Anunciar
-              </Link>
+              {/* Botão de Ação no Mobile removido */}
             </div>
           </motion.div>
         )}

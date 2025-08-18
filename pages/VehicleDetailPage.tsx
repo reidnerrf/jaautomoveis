@@ -230,7 +230,7 @@ const VehicleDetailPage: React.FC = () => {
               </button>
             </div>
             <div className="mb-4">
-              <RealTimeViewers page={`vehicle-${id}`} vehicleId={id} variant="inline" />
+              <RealTimeViewers page={`/vehicle/${id}`} vehicleId={id} variant="inline" />
             </div>
             <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">{vehicle.name}</h1>
             <div className="flex items-center gap-1 mt-2 mb-6">
@@ -240,10 +240,14 @@ const VehicleDetailPage: React.FC = () => {
               </p>
             </div>
 
-            {/* Selos de confiança */}
-            <div className="flex space-x-4 mb-6">
-              <div className="flex items-center text-gray-700 dark:text-gray-300"><FiAward className="mr-2 text-main-red" /> Revisado</div>
-              <div className="flex items-center text-gray-700 dark:text-gray-300"><FiShield className="mr-2 text-main-red" /> Garantia</div>
+            {/* Selos de confiança + Compartilhar */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex space-x-4">
+                <div className="flex items-center text-gray-700 dark:text-gray-300"><FiAward className="mr-2 text-main-red" /> Revisado</div>
+                <div className="flex items-center text-gray-700 dark:text-gray-300"><FiShield className="mr-2 text-main-red" /> Garantia</div>
+              </div>
+              {/* Botão de compartilhar ao lado de Revisado (posicionado no bloco) */}
+              <ShareButton vehicle={vehicle} className="!bg-blue-600 !hover:bg-blue-700 !py-2 !px-4 !rounded-full" />
             </div>
 
             {/* Características */}
@@ -262,7 +266,7 @@ const VehicleDetailPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Botão WhatsApp */}
+            {/* Botões de ação principais (sem compartilhar aqui) */}
             <div className="flex flex-col sm:flex-row gap-4">
                 <a
                   href={`https://api.whatsapp.com/send?phone=5524999037716&text=Tenho interesse no ${vehicle.name} ${vehicle.year}`}
@@ -285,7 +289,6 @@ const VehicleDetailPage: React.FC = () => {
                     Simular Financiamento
                   </button>
                 </Link>
-                <ShareButton vehicle={vehicle} />
               </div>
           </div>
         </div>
@@ -322,7 +325,7 @@ const VehicleDetailPage: React.FC = () => {
       </div>
 
       {/* Floating Real-time Viewers Button */}
-      <RealTimeViewers page={`vehicle-${id}`} vehicleId={id} variant="fixed" />
+      <RealTimeViewers page={`/vehicle/${id}`} vehicleId={id} variant="fixed" />
 
       {/* Lightbox */}
       <AnimatePresence>

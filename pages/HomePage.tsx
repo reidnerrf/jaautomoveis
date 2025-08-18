@@ -38,13 +38,13 @@ const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch real Google reviews
+    // Buscar avaliações do Google via backend (evita CORS e expõe menos a API key)
     const fetchGoogleReviews = async () => {
       try {
-        const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJBfuB6mR_ngARsAmwbVRKdto&fields=reviews&key=AIzaSyCeo9DXHn407c_tf2LlwX0egVW6aN_Try4');
+        const response = await fetch('/api/place-details?place_id=ChIJBfuB6mR_ngARsAmwbVRKdto');
         const data = await response.json();
-        const reviews = data.result.reviews.map((review: any) => ({
-          id: review.id,
+        const reviews = (data?.result?.reviews || []).map((review: any, index: number) => ({
+          id: review.id || `${review.author_name}-${index}`,
           reviewerName: review.author_name,
           comment: review.text,
           avatarUrl: review.profile_photo_url,

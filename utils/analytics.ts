@@ -24,11 +24,7 @@ class AnalyticsService {
 }
 
   private connectSocket() {
-    const isProd = import.meta.env.MODE === 'production';
-    if (!isProd) {
-      this.socket = null;
-      return;
-    }
+    // Conecta em dev e prod; servidor já permite CORS para origens locais
     this.socket = io('', {
       path: '/socket.io',
       transports: ['websocket'],

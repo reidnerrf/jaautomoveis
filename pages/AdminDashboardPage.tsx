@@ -19,7 +19,7 @@ import { motion } from 'framer-motion';
 const AdminDashboardPage: React.FC = () => {
   const { vehicles, loading } = useVehicleData();
   const { token } = useAuth();
-  const [monthlyViews, setMonthlyViews] = useState([]);
+  const [monthlyViews, setMonthlyViews] = useState<Array<{ month: string; ['Visualizações']: number }>>([]);
   const [dashboardStats, setDashboardStats] = useState({
     totalViews: 0,
     todayViews: 0,
@@ -45,7 +45,10 @@ const AdminDashboardPage: React.FC = () => {
 
         if (monthlyRes.ok) {
           const monthlyData = await monthlyRes.json();
-          setMonthlyViews(monthlyData);
+          const normalized: Array<{ month: string; ['Visualizações']: number }> = Array.isArray(monthlyData)
+            ? monthlyData.map((item: any) => ({ month: item.month || item._id?.month || '', ['Visualizações']: Number(item.views ?? item.count ?? 0) }))
+            : [];
+          setMonthlyViews(normalized);
         }
 
         if (dashboardRes.ok) {

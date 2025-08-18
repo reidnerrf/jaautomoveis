@@ -90,7 +90,7 @@ export default defineConfig(({ mode }) => {
                 return 'websockets';
               }
               // Forms and validation
-              if (id.includes('react-helmet') || id.includes('react-tooltip')) {
+              if (id.includes('react-helmet') || id.includes('react-helmet-async') || id.includes('react-tooltip')) {
                 return 'forms-utils';
               }
               // Apollo GraphQL
