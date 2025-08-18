@@ -196,17 +196,19 @@ app.get('/api/place-details', async (req: Request, res: Response) => {
     }
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: 'GOOGLE_MAPS_API_KEY não configurada' });
+      // Fail gracefully so frontend can continue rendering
+      return res.status(200).json({ result: { reviews: [] } });
     }
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=reviews&key=${encodeURIComponent(apiKey)}`;
     const response = await fetch(url);
     if (!response.ok) {
-      return res.status(response.status).json({ error: 'Erro ao buscar dados do Google Maps' });
+      return res.status(200).json({ result: { reviews: [] } });
     }
     const data = await response.json();
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao buscar dados do Google Maps' });
+    // Do not break page if Google service fails
+    res.status(200).json({ result: { reviews: [] } });
   }
 });
 

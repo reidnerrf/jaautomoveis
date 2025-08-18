@@ -4,7 +4,8 @@ import jwt from 'jsonwebtoken';
 
 const getJwtSecret = (): string => {
   if (process.env.JWT_SECRET && process.env.JWT_SECRET.trim() !== '') {
-    return process.env.JWT_SECRET as string;
+    // Always trim to avoid signature mismatches when env has trailing spaces/newlines
+    return process.env.JWT_SECRET.trim();
   }
   return 'dev-insecure-secret-change-me';
 };

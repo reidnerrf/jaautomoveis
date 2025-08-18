@@ -45,7 +45,13 @@ class RealTimeManager {
         const token = socket.handshake.auth.token || socket.handshake.headers.authorization;
         
         if (token) {
-          const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+          const secret = (process.env.JWT_SECRET && process.env.JWT_SECRET.trim() !== '')
+            ? process.env.JWT_SECRET.trim()!
+            : 'dev-insecure-secret-change-me';
+          const normalizedToken = (typeof token === 'string' && token.startsWith('Bearer '))
+            ? token.split(' ')[1]
+            : token as string;
+          const decoded = jwt.verify(normalizedToken, secret) as any;
           const user = await User.findById(decoded.id).select('-password');
           
           if (user) {
