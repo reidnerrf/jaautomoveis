@@ -12,7 +12,6 @@ interface RealTimeViewersProps {
 
 const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, variant = 'fixed' }) => {
   const [viewers, setViewers] = useState(0);
-  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
     const isProd = process.env.NODE_ENV === 'production';
@@ -22,7 +21,6 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
       transports: ['websocket'],
       withCredentials: true,
     });
-    setSocket(newSocket);
 
     // Do not emit page view here to avoid double counting.
     // MainLayout already emits page-view via analytics service.

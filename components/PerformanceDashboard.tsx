@@ -128,7 +128,7 @@ const PerformanceDashboard: React.FC = () => {
 
   const routeStatsData = summary?.routeStats ? 
     Array.from(summary.routeStats.entries()).map(([route, stats]) => ({
-      route: route.length > 30 ? route.substring(0, 30) + '...' : route,
+      route: route.length > 30 ? `${route.substring(0, 30)}...` : route,
       avgResponseTime: stats.avgResponseTime,
       count: stats.count,
       errors: stats.errors
@@ -153,14 +153,13 @@ const PerformanceDashboard: React.FC = () => {
         <div>
           <p className="text-sm font-medium text-gray-600">{title}</p>
           <p className="text-2xl font-bold text-gray-900">{value}</p>
-          {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+          {subtitle ? <p className="text-xs text-gray-500">{subtitle}</p> : null}
         </div>
         <div className={`p-3 rounded-full ${color}`}>
           {icon}
         </div>
       </div>
-      {trend && (
-        <div className="mt-2 flex items-center">
+      {trend ? <div className="mt-2 flex items-center">
           {trend === 'up' ? (
             <TrendingUp className="w-4 h-4 text-green-500" />
           ) : trend === 'down' ? (
@@ -168,8 +167,7 @@ const PerformanceDashboard: React.FC = () => {
           ) : (
             <div className="w-4 h-4 text-gray-400">—</div>
           )}
-        </div>
-      )}
+        </div> : null}
     </div>
   );
 
@@ -380,8 +378,7 @@ const PerformanceDashboard: React.FC = () => {
       </div>
 
       {/* System Health */}
-      {health && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {health ? <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <HealthStatus health={health} />
           </div>
@@ -400,14 +397,13 @@ const PerformanceDashboard: React.FC = () => {
                     </p>
                   </div>
                 </div>
-              ))
+              ))}
               {(!summary?.alerts || summary.alerts.length === 0) && (
                 <p className="text-sm text-gray-500">No recent alerts</p>
               )}
             </div>
           </div>
-        </div>
-      )}
+        </div> : null}
     </div>
   );
 };

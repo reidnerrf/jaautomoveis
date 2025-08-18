@@ -61,9 +61,9 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-semibold text-lg mb-4">Siga-nos</h4>
             <div className="flex space-x-4">
-              {socialLinks.map((social, i) => (
+              {socialLinks.map((social) => (
                 <a 
-                  key={i} 
+                  key={social.href} 
                   href={social.href} 
                   target="_blank" 
                   rel="noopener noreferrer" 

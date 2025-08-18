@@ -164,7 +164,6 @@ export function edgeRateLimiting(
 // Função para detecção de bots
 export function edgeBotDetection(req: Request): boolean {
   const userAgent = req.get('User-Agent') || '';
-  const ip = req.ip || req.connection.remoteAddress || '';
   
   // Lista de padrões de bots conhecidos
   const botPatterns = [
@@ -197,8 +196,6 @@ export function edgeGeolocation(req: Request): {
   timezone: string;
   personalized: boolean;
 } {
-  const ip = req.ip || req.connection.remoteAddress || '';
-  const acceptLanguage = req.get('Accept-Language') || '';
   
   // Simular geolocalização (em produção, usar serviço real)
   const geoData = {
@@ -327,18 +324,17 @@ function generateCacheKey(req: Request): string {
   return crypto.createHash('md5').update(`${url}:${query}:${params}:${userAgent}`).digest('hex');
 }
 
-function getClientRequests(clientKey: string): number[] {
+function getClientRequests(_clientKey: string): number[] {
   // Em produção, usar Redis ou similar
   return [];
 }
 
-function setClientRequests(clientKey: string, requests: number[]): void {
+function setClientRequests(_clientKey: string, _requests: number[]): void {
   // Em produção, usar Redis ou similar
 }
 
 function checkSuspiciousBehavior(req: Request): boolean {
   const userAgent = req.get('User-Agent') || '';
-  const ip = req.ip || req.connection.remoteAddress || '';
   
   // Verificar padrões suspeitos
   const suspiciousPatterns = [

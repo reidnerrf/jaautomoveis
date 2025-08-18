@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { Vehicle } from '../types/common';
 
 interface VirtualizedListProps<T> {
   items: T[];
@@ -144,13 +145,13 @@ function VirtualizedList<T>({
           }}
         >
           {visibleItems.map((item, index) => (
-            <div
-              key={startIndex + index}
-              style={{
-                height: itemHeight,
-                position: 'relative'
-              }}
-            >
+                    <div
+          key={`virtualized-item-${startIndex + index}`}
+          style={{
+            height: itemHeight,
+            position: 'relative'
+          }}
+        >
               {renderItem(item, startIndex + index)}
             </div>
           ))}
@@ -201,9 +202,9 @@ export function useVirtualization<T>(
 
 // Componente otimizado para listas de veículos
 interface VehicleListProps {
-  vehicles: any[];
+  vehicles: Vehicle[];
   height?: number;
-  onVehicleClick?: (vehicle: any) => void;
+  onVehicleClick?: (vehicle: Vehicle) => void;
   loading?: boolean;
 }
 
@@ -213,7 +214,7 @@ export const VirtualizedVehicleList: React.FC<VehicleListProps> = ({
   onVehicleClick,
   loading = false
 }) => {
-  const renderVehicleItem = useCallback((vehicle: any, index: number) => (
+  const renderVehicleItem = useCallback((vehicle: Vehicle, index: number) => (
     <div
       key={vehicle._id || index}
       className="p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"

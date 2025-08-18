@@ -27,7 +27,6 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 	sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
 	priority = false,
 	quality = 80,
-	format = 'auto',
 	...props
 }) => {
 	const [imageSrc, setImageSrc] = useState<string>(placeholder);
@@ -39,12 +38,11 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
 	// Generate responsive image sources with different sizes
 	const getImageSources = (originalSrc: string) => {
-		const baseUrl = originalSrc.split('?')[0];
-		const extension = originalSrc.split('.').pop()?.toLowerCase();
+		const [baseUrl] = originalSrc.split('?');
 		
 		// Generate different sizes for responsive images
-		const sizes = [600, 900, 1200];
-		const srcSet = sizes.map(size => {
+		const imageSizes = [600, 900, 1200];
+		const srcSet = imageSizes.map(size => {
 			const webpSrc = `${baseUrl}?w=${size}&q=${quality}&f=webp`;
 			const originalSrc = `${baseUrl}?w=${size}&q=${quality}`;
 			return { webpSrc, originalSrc, size };

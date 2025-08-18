@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import NodeCache from 'node-cache';
 import Redis from 'ioredis';
+import { CacheData, CacheMetrics as CacheMetricsType, ExtendedRequest, ExtendedResponse } from '../../types/common';
+import { logError, logInfo, logDebug, logCacheHit, logCacheMiss } from '../../utils/logger';
 
 // Configurações de cache
 const CACHE_CONFIG = {
@@ -33,25 +35,16 @@ if (process.env.REDIS_URL) {
   });
 
   redisClient.on('connect', () => {
-    console.log('Connected to Redis cache');
+    logInfo('Connected to Redis cache');
   });
 
   redisClient.on('error', (error) => {
-    console.error('Redis cache error:', error);
+    logError('Redis cache error:', error);
   });
 }
 
-// Interface para métricas de cache
-interface CacheMetrics {
-  hits: number;
-  misses: number;
-  keys: number;
-  memory: number;
-  hitRate: number;
-}
-
 // Métricas globais de cache
-const cacheMetrics: CacheMetrics = {
+const cacheMetrics: CacheMetricsType = {
   hits: 0,
   misses: 0,
   keys: 0,
@@ -118,7 +111,7 @@ async function getCache(key: string): Promise<unknown> {
     cacheMetrics.misses++;
     return null;
   } catch (error) {
-    console.error('Cache get error:', error);
+    logError('Cache get error:', error as Error);
     cacheMetrics.misses++;
     return null;
   }
@@ -137,7 +130,7 @@ async function setCache(key: string, value: unknown, ttl: number): Promise<void>
     
     await updateCacheMetrics();
   } catch (error) {
-    console.error('Cache set error:', error);
+    logError('Cache set error:', error as Error);
   }
 }
 
@@ -157,7 +150,7 @@ async function invalidateCache(pattern: string): Promise<void> {
     
     await updateCacheMetrics();
   } catch (error) {
-    console.error('Cache invalidation error:', error);
+    logError('Cache invalidation error:', error as Error);
   }
 }
 
@@ -178,7 +171,7 @@ async function updateCacheMetrics(): Promise<void> {
     
     cacheMetrics.hitRate = cacheMetrics.hits / (cacheMetrics.hits + cacheMetrics.misses) * 100;
   } catch (error) {
-    console.error('Cache metrics update error:', error);
+    logError('Cache metrics update error:', error as Error);
   }
 }
 
@@ -214,7 +207,7 @@ export function cacheMiddleware(prefix: string = 'api') {
 
       // Interceptar resposta para cache
       const originalSend = res.json;
-      res.json = function(data: any) {
+      res.json = function(data: unknown) {
         setCache(cacheKey, data, ttl);
         
         res.set({
@@ -228,7 +221,7 @@ export function cacheMiddleware(prefix: string = 'api') {
 
       next();
     } catch (error) {
-      console.error('Cache middleware error:', error);
+      logError('Cache middleware error:', error as Error);
       next();
     }
   };
@@ -273,12 +266,9 @@ export function conditionalCacheMiddleware(req: Request, res: Response, next: Ne
   if (etag || lastModified) {
     // Implementar lógica de cache condicional
     const cacheKey = generateCacheKey(req, 'conditional');
-    getCache(cacheKey).then((cachedData: any) => {
-      if ((cachedData && (cachedData as any).etag === etag) || (cachedData && (cachedData as any).lastModified === lastModified)) {
-        return res.status(304).end();
-      }
-      next();
-    }).catch(() => next());
+    getCache(cacheKey).then((cachedData: unknown) => {
+      const cacheData = cachedData as CacheData | null;
+      if ((cacheData && cacheData.etag === etag) || (cacheData && cacheData.lastModified === lastModified)) {
         return res.status(304).end();
       }
       next();
@@ -320,12 +310,12 @@ export async function cleanupCache(): Promise<void> {
     
     await updateCacheMetrics();
   } catch (error) {
-    console.error('Cache cleanup error:', error);
+    logError('Cache cleanup error:', error as Error);
   }
 }
 
 // Função para obter métricas de cache
-export function getCacheMetrics(): CacheMetrics {
+export function getCacheMetrics(): CacheMetricsType {
   return { ...cacheMetrics };
 }
 
@@ -338,15 +328,15 @@ export function resetCacheMetrics(): void {
   cacheMetrics.hitRate = 0;
 }
 
-  // Função para warm-up de cache
-  export async function warmupCache(): Promise<void> {
-    try {
-      // Implementar warm-up assíncrono
-      console.log('Cache warm-up completed');
-    } catch (error) {
-      console.error('Cache warm-up error:', error);
-    }
+// Função para warm-up de cache
+export async function warmupCache(): Promise<void> {
+  try {
+    // Implementar warm-up assíncrono
+    logInfo('Cache warm-up completed');
+  } catch (error) {
+    logError('Cache warm-up error:', error as Error);
   }
+}
 
 // Inicializar limpeza periódica
 setInterval(cleanupCache, CACHE_CONFIG.CHECK_PERIOD * 1000);
