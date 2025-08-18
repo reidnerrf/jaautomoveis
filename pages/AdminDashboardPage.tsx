@@ -49,11 +49,24 @@ const AdminDashboardPage: React.FC = () => {
             ? monthlyData.map((item: any) => ({ month: item.month || item._id?.month || '', ['Visualizações']: Number(item.views ?? item.count ?? 0) }))
             : [];
           setMonthlyViews(normalized);
+        } else {
+          setMonthlyViews([]);
         }
 
         if (dashboardRes.ok) {
           const dashboardData = await dashboardRes.json();
-          setDashboardStats(dashboardData);
+          // Normaliza e protege contra campos ausentes/undefined
+          setDashboardStats({
+            totalViews: Number(dashboardData?.totalViews ?? 0) || 0,
+            todayViews: Number(dashboardData?.todayViews ?? 0) || 0,
+            whatsappClicks: Number(dashboardData?.whatsappClicks ?? 0) || 0,
+            instagramClicks: Number(dashboardData?.instagramClicks ?? 0) || 0,
+            likedVehicles: Number(dashboardData?.likedVehicles ?? 0) || 0,
+            totalLikes: Number(dashboardData?.totalLikes ?? 0) || 0,
+          });
+        } else {
+          // Mantém valores seguros (zero) em caso de 401/erro para evitar NaN
+          setDashboardStats((prev) => ({ ...prev }));
         }
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
@@ -98,7 +111,7 @@ const AdminDashboardPage: React.FC = () => {
   const formatNumber = (value: number) =>
     new Intl.NumberFormat('pt-BR').format(value);
 
-  const estimatedSales = Math.max(0, Math.floor(dashboardStats.whatsappClicks * 0.2));
+  const estimatedSales = Math.max(0, Math.floor((dashboardStats.whatsappClicks || 0) * 0.2));
 
   if (loading) {
     return (
@@ -201,7 +214,7 @@ const AdminDashboardPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="text-center">
             <div className="w-full h-20 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">{dashboardStats.totalViews}</span>
+              <span className="text-white font-bold text-2xl">{Number(dashboardStats.totalViews || 0)}</span>
             </div>
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-b-lg">
               <h4 className="font-semibold text-blue-700 dark:text-blue-400">Visualizações</h4>
@@ -210,7 +223,7 @@ const AdminDashboardPage: React.FC = () => {
           </div>
           <div className="text-center">
             <div className="w-full h-20 bg-gradient-to-t from-green-500 to-green-400 rounded-t-lg flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">{Math.floor(dashboardStats.totalViews * 0.3)}</span>
+              <span className="text-white font-bold text-2xl">{Math.floor(Number(dashboardStats.totalViews || 0) * 0.3)}</span>
             </div>
             <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-b-lg">
               <h4 className="font-semibold text-green-700 dark:text-green-400">Interesse</h4>
@@ -219,7 +232,7 @@ const AdminDashboardPage: React.FC = () => {
           </div>
           <div className="text-center">
             <div className="w-full h-20 bg-gradient-to-t from-yellow-500 to-yellow-400 rounded-t-lg flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">{dashboardStats.whatsappClicks}</span>
+              <span className="text-white font-bold text-2xl">{Number(dashboardStats.whatsappClicks || 0)}</span>
             </div>
             <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-b-lg">
               <h4 className="font-semibold text-yellow-700 dark:text-yellow-400">Contato</h4>

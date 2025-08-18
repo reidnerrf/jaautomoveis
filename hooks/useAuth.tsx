@@ -24,10 +24,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem('authToken');
+    const validateToken = async (candidate: string) => {
+      try {
+        // Chama um endpoint protegido barato para validar o token (dashboard)
+        const res = await fetch('/api/analytics/dashboard-stats', {
+          headers: { Authorization: `Bearer ${candidate}` },
+        });
+        if (res.status === 401) {
+          sessionStorage.removeItem('authToken');
+          setToken(null);
+        } else {
+          setToken(candidate);
+        }
+      } catch {
+        // Em falha de rede, mantém o token, mas evita travar
+        setToken(candidate || null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (storedToken) {
-      setToken(storedToken);
+      validateToken(storedToken);
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const isAuthenticated = !!token;

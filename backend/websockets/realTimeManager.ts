@@ -54,9 +54,15 @@ class RealTimeManager {
           if (!normalizedToken) {
             throw new Error('JWT token is empty or invalid.');
           }
+<<<<<<< HEAD
           const decoded = jwt.verify(normalizedToken, secret);
           const decodedId = typeof decoded === 'string' ? decoded : decoded.id;
           const user = await User.findById(decodedId).select('-password');
+=======
+          const decoded = jwt.verify(normalizedToken, secret) as { id?: string } | string;
+          const userId = typeof decoded === 'string' ? undefined : decoded.id;
+          const user = userId ? await User.findById(userId).select('-password') : null;
+>>>>>>> 291db3bd580a3b57d4accfb60a579ed1e6ef185a
           
           if (user) {
             socket.data.user = user;
