@@ -13,11 +13,6 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
   const [viewers, setViewers] = useState(0);
 
   useEffect(() => {
-    const isProd = import.meta.env.MODE === 'production';
-    // Only attempt socket connection if backend is available or in production
-    if (!isProd) {
-      return; // avoid noisy connection errors during frontend-only dev
-    }
     const newSocket = io('', {
       path: '/socket.io',
       transports: ['websocket'],
@@ -29,6 +24,9 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
         setViewers(data.count);
       }
     });
+
+    // Ao montar, emitir um page-view para entrar na sala correta
+    newSocket.emit('page-view', { page });
 
     return () => {
       newSocket.close();

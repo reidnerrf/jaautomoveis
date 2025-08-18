@@ -8,6 +8,7 @@ import { analytics } from '../utils/analytics.ts';
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
+  const isHome = location.pathname === '/';
 
   React.useEffect(() => {
     analytics.trackPageView(location.pathname);
@@ -16,7 +17,8 @@ const MainLayout: React.FC = () => {
   return (
     <div className="bg-comp-light-gray dark:bg-gray-900 min-h-screen flex flex-col font-sans antialiased">
       <Header />
-      <main className="flex-grow pt-20">
+      {/* Sem padding no topo na Home para o vídeo encostar no header transparente */}
+      <main className={`flex-grow ${isHome ? 'pt-0' : 'pt-20'}`}>
         <Outlet />
       </main>
       <Footer />
