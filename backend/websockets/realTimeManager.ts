@@ -45,7 +45,16 @@ class RealTimeManager {
         const token = socket.handshake.auth.token || socket.handshake.headers.authorization;
         
         if (token) {
-          const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+          const secret = process.env.JWT_SECRET && process.env.JWT_SECRET.trim() !== ''
+            ? process.env.JWT_SECRET.trim()
+            : (process.env.NODE_ENV !== 'production' ? 'dev-insecure-secret-change-me' : (() => { throw new Error('JWT secret must be defined in production'); })());
+          const normalizedToken = (typeof token === 'string' && token.startsWith('Bearer '))
+            ? token.split(' ')[1]
+            : token as string;
+          if (!normalizedToken) {
+            throw new Error('JWT token is empty or invalid.');
+          }
+          const decoded = jwt.verify(normalizedToken, secret);
           const user = await User.findById(decoded.id).select('-password');
           
           if (user) {

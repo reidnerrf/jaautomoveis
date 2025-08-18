@@ -39,12 +39,13 @@ const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = '' }) =>
     <div className={`relative ${className}`}>
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-all duration-200 ${className}`}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        className={`flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors ${className}`}
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        aria-label="Compartilhar"
       >
-        <FiShare2 size={20} />
-        Compartilhar
+        <FiShare2 size={18} />
+        <span>Compartilhar</span>
       </motion.button>
 
       <AnimatePresence>

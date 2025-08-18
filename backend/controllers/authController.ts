@@ -2,7 +2,9 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
 
-const jwtSecret = process.env.JWT_SECRET?.trim() || 'dev-insecure-secret-change-me';
+const jwtSecret = process.env.JWT_SECRET && process.env.JWT_SECRET.trim() !== ''
+  ? process.env.JWT_SECRET.trim()
+  : 'dev-insecure-secret-change-me';
 
 const generateToken = (id: string) => {
   return jwt.sign({ id }, jwtSecret, {

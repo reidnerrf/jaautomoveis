@@ -242,12 +242,12 @@ const VehicleDetailPage: React.FC = () => {
 
             {/* Selos de confiança + Compartilhar */}
             <div className="flex items-center justify-between mb-6">
-              <div className="flex space-x-4">
+              <div className="flex items-center gap-4">
                 <div className="flex items-center text-gray-700 dark:text-gray-300"><FiAward className="mr-2 text-main-red" /> Revisado</div>
                 <div className="flex items-center text-gray-700 dark:text-gray-300"><FiShield className="mr-2 text-main-red" /> Garantia</div>
+                {/* Compartilhar simples, só texto + ícone, sem contorno */}
+                <ShareButton vehicle={vehicle} className="!p-0 !m-0" />
               </div>
-              {/* Botão de compartilhar ao lado de Revisado (posicionado no bloco) */}
-              <ShareButton vehicle={vehicle} className="!bg-blue-600 !hover:bg-blue-700 !py-2 !px-4 !rounded-full" />
             </div>
 
             {/* Características */}
@@ -324,8 +324,7 @@ const VehicleDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Floating Real-time Viewers Button */}
-      <RealTimeViewers page={`/vehicle/${id}`} vehicleId={id} variant="fixed" />
+      {/* Floating Real-time Viewers Button removed per request */}
 
       {/* Lightbox */}
       <AnimatePresence>

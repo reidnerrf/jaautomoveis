@@ -45,44 +45,30 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
         className="bg-red-500 text-white px-3 py-1 rounded-full shadow-lg text-xs"
       >
         <div className="flex items-center gap-1">
-          <FiUsers size={14} />
-          <span>
+          <motion.div
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ repeat: Infinity, duration: 1.6 }}
+          >
+            <FiUsers size={14} />
+          </motion.div>
+          <motion.span
+            animate={{ opacity: [1, 0.6, 1] }}
+            transition={{ repeat: Infinity, duration: 1.6 }}
+          >
             {viewers === 0
               ? 'Seja o primeiro a ver'
               : viewers === 1
                 ? '1 pessoa visualizando'
                 : `${viewers} pessoas visualizando agora`
             }
-          </span>
+          </motion.span>
         </div>
       </motion.div>
     );
   }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="fixed bottom-32 right-8 z-50 bg-red-500 text-white px-3 py-2 rounded-full shadow-lg"
-    >
-      <div className="flex items-center gap-1">
-        <motion.div
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-        >
-          <FiUsers size={14} />
-        </motion.div>
-        <span className="text-xs font-medium">
-          {viewers === 0
-            ? 'Seja o primeiro a ver'
-            : viewers === 1
-              ? '1 pessoa visualizando'
-              : `${viewers} pessoas visualizando agora`
-          }
-        </span>
-      </div>
-    </motion.div>
-  );
+  // Floating variant removed per request
+  return null;
 };
 
 export default RealTimeViewers;
