@@ -13,15 +13,17 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
   const [viewers, setViewers] = useState(0);
 
   useEffect(() => {
-    const isProd = process.env.NODE_ENV === 'production';
-    const baseUrl = isProd ? '' : 'http://localhost:5000';
-    const newSocket = io(baseUrl, {
+    const isProd = import.meta.env.MODE === 'production';
+    // Only attempt socket connection if backend is available or in production
+    if (!isProd) {
+      return; // avoid noisy connection errors during frontend-only dev
+    }
+    const newSocket = io('', {
       path: '/socket.io',
       transports: ['websocket'],
       withCredentials: true,
     });
 
-    // Listen for viewer count updates
     newSocket.on('page-viewers', (data) => {
       if (data.page === page) {
         setViewers(data.count);

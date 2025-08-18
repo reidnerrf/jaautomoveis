@@ -6,11 +6,9 @@ import {
   FiTrendingUp, 
   FiAlertTriangle, 
   FiRefreshCw,
-  FiDatabase,
-  FiHardDrive,
-  FiCpu
+  FiDatabase
 } from 'react-icons/fi';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 interface PerformanceMetrics {
   routeStats: {
@@ -48,12 +46,11 @@ const PerformanceDashboardPage: React.FC = () => {
       setLoading(true);
       const response = await fetch('/api/performance/metrics');
       if (!response.ok) throw new Error('Failed to fetch metrics');
-      
       const data = await response.json();
       setMetrics(data);
       setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+    } catch (e: unknown) {
+      setError('Não foi possível carregar as métricas.');
     } finally {
       setLoading(false);
     }
@@ -74,9 +71,8 @@ const PerformanceDashboardPage: React.FC = () => {
 
   useEffect(() => {
     if (!autoRefresh) return;
-
-    const interval = setInterval(fetchMetrics, 5000); // Refresh every 5 seconds
-    return () => clearInterval(interval);
+    const id = setInterval(fetchMetrics, 10000);
+    return () => clearInterval(id);
   }, [autoRefresh]);
 
   const formatDuration = (ms: number) => {
@@ -206,7 +202,7 @@ const PerformanceDashboardPage: React.FC = () => {
                 className="bg-white rounded-lg shadow p-6"
               >
                 <div className="flex items-center">
-                  <FiCpu className="h-8 w-8 text-purple-500" />
+                  <FiDatabase className="h-8 w-8 text-purple-500" />
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Memory Usage</p>
                     <p className="text-2xl font-bold text-gray-900">

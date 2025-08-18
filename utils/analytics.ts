@@ -24,9 +24,12 @@ class AnalyticsService {
 }
 
   private connectSocket() {
-    const isProd = process.env.NODE_ENV === 'production';
-    const baseUrl = isProd ? '' : 'http://localhost:5000';
-    this.socket = io(baseUrl, {
+    const isProd = import.meta.env.MODE === 'production';
+    if (!isProd) {
+      this.socket = null;
+      return;
+    }
+    this.socket = io('', {
       path: '/socket.io',
       transports: ['websocket'],
       withCredentials: true,

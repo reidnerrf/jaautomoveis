@@ -159,9 +159,7 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
-        hmr: {
-          port: 3000,
-        },
+        hmr: true,
         allowedHosts: true,
         proxy: {
           '/api': {

@@ -163,16 +163,18 @@ class WebVitalsMonitor {
       });
     }
 
-    // Enviar para servidor
-    fetch('/api/analytics/web-vitals', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(metric)
-    }).catch(error => {
-      console.warn('Failed to send web vitals to server:', error);
-    });
+    // Enviar para servidor (somente em produção e se a rota existir)
+    try {
+      if (import.meta.env.MODE === 'production') {
+        fetch('/api/analytics/web-vitals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(metric)
+        }).catch(() => {});
+      }
+    } catch {
+      // ignore
+    }
   }
 
   getMetrics(): Partial<WebVitalsMetrics> {
@@ -247,10 +249,7 @@ class WebVitalsMonitor {
   // Função para otimizar fontes
   optimizeFonts() {
     // Preload fontes críticas
-    const criticalFonts = [
-      '/fonts/inter-var.woff2',
-      '/fonts/inter-var.woff'
-    ];
+    const criticalFonts = [] as string[];
 
     criticalFonts.forEach(font => {
       const link = document.createElement('link');
@@ -263,15 +262,7 @@ class WebVitalsMonitor {
     });
 
     // Adicionar font-display: swap
-    const style = document.createElement('style');
-    style.textContent = `
-      @font-face {
-        font-family: 'Inter';
-        font-display: swap;
-        src: url('/fonts/inter-var.woff2') format('woff2');
-      }
-    `;
-    document.head.appendChild(style);
+    // Rely on Google Fonts CSS; avoid injecting non-existent local font files
   }
 
   // Função para otimizar recursos críticos

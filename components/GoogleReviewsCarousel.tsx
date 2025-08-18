@@ -27,7 +27,7 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
     <div className="w-full max-w-3xl mx-auto text-center">
       <AnimatePresence mode="wait">
         <motion.div
-          key={currentIndex}
+          key={currentReview.id || `${currentReview.reviewerName}-${currentIndex}`}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
@@ -81,7 +81,7 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
       <div className="flex justify-center mt-6 space-x-2">
         {reviews.map((review, index) => (
           <motion.button
-            key={`indicator-${review.reviewerName}-${index}`}
+            key={`indicator-${review.id || review.reviewerName}-${index}`}
             onClick={() => setCurrentIndex(index)}
             className={`w-3 h-3 rounded-full transition-colors duration-300 ${
               currentIndex === index ? 'bg-red-500 scale-110' : 'bg-gray-300 hover:bg-gray-400'

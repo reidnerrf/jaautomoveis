@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useVehicleData } from '../hooks/useVehicleData.tsx';
 import StatCard from '../components/StatCard.tsx';
-import { FiEye, FiDollarSign, FiGrid, FiTrendingUp, FiArrowRight, FiActivity, FiHeart } from 'react-icons/fi';
+import { FiEye, FiDollarSign, FiTrendingUp, FiArrowRight, FiActivity, FiHeart } from 'react-icons/fi';
 import {
   AreaChart,
   Area,
@@ -169,7 +169,7 @@ const AdminDashboardPage: React.FC = () => {
         <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Top 5 Veículos Mais Visualizados</h3>
         <div className="space-y-3">
           {vehicleStats.topVehicles.map((vehicle, index) => (
-            <Link to={`/vehicle/${vehicle.id}`} key={index} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
+            <Link to={vehicle.id ? `/vehicle/${vehicle.id}` : '#'} key={vehicle.id || index} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
               <div className="flex items-center">
                 <div className="w-12 h-12 flex-shrink-0 mr-3">
                   <img src={vehicle.images[0]} alt={vehicle.name} className="w-full h-full rounded-lg object-cover" />

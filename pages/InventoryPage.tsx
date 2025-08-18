@@ -9,6 +9,7 @@ import SEOHead from '../components/SEOHead.tsx';
 
 const InventoryPage: React.FC = () => {
   const { vehicles, loading } = useVehicleData();
+  const safeVehicles = React.useMemo(() => (Array.isArray(vehicles) ? vehicles : []), [vehicles]);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [makeFilter, setMakeFilter] = useState('');
@@ -24,14 +25,14 @@ const InventoryPage: React.FC = () => {
   
   const itemsPerPage = 12;
 
-  const uniqueMakes = useMemo(() => [...new Set(vehicles.map(v => v.make))].sort(), [vehicles]);
-  const uniqueYears = useMemo(() => [...new Set(vehicles.map(v => v.year))].sort((a, b) => b - a), [vehicles]);
-  const uniqueColors = useMemo(() => [...new Set(vehicles.map(v => v.color))].sort(), [vehicles]);
-  const uniqueFuels = useMemo(() => [...new Set(vehicles.map(v => v.fuel || 'Flex'))], [vehicles]);
-  const uniqueTransmissions = useMemo(() => [...new Set(vehicles.map(v => v.gearbox || 'Manual'))], [vehicles]);
+  const uniqueMakes = useMemo(() => [...new Set(safeVehicles.map(v => v.make))].sort(), [safeVehicles]);
+  const uniqueYears = useMemo(() => [...new Set(safeVehicles.map(v => v.year))].sort((a, b) => b - a), [safeVehicles]);
+  const uniqueColors = useMemo(() => [...new Set(safeVehicles.map(v => v.color))].sort(), [safeVehicles]);
+  const uniqueFuels = useMemo(() => [...new Set(safeVehicles.map(v => v.fuel || 'Flex'))], [safeVehicles]);
+  const uniqueTransmissions = useMemo(() => [...new Set(safeVehicles.map(v => v.gearbox || 'Manual'))], [safeVehicles]);
 
   const filteredAndSortedVehicles = useMemo(() => {
-    const tempVehicles = vehicles.filter(vehicle => {
+    const tempVehicles = safeVehicles.filter(vehicle => {
       const matchesSearch = vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            vehicle.model.toLowerCase().includes(searchTerm.toLowerCase());
@@ -63,7 +64,7 @@ const InventoryPage: React.FC = () => {
     }
 
     return tempVehicles;
-  }, [vehicles, searchTerm, makeFilter, yearFilter, colorFilter, fuelFilter, transmissionFilter, priceFilter, sortBy]);
+  }, [safeVehicles, searchTerm, makeFilter, yearFilter, colorFilter, fuelFilter, transmissionFilter, priceFilter, sortBy]);
 
   const totalPages = Math.ceil(filteredAndSortedVehicles.length / itemsPerPage);
   const currentVehicles = filteredAndSortedVehicles.slice(

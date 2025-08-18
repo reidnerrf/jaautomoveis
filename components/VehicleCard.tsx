@@ -78,7 +78,9 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
     if (onView) {
       onView(vehicle.id);
     }
-    navigate(`/vehicle/${vehicle.id}`);
+    if (vehicle.id) {
+      navigate(`/vehicle/${vehicle.id}`);
+    }
   };
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
