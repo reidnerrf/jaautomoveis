@@ -91,7 +91,7 @@ export function withLazyRetry<T extends object>(
           setTimeout(() => {
             setRetryCount(prev => prev + 1);
             loadComponent();
-          }, 1000 * (retryCount + 1)); // Exponential backoff
+          }, 1000 * Math.pow(2, retryCount)); // Exponential backoff
         }
       }
     }, [importFunc, retryCount, retries]);
