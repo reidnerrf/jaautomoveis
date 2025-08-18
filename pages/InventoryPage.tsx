@@ -66,7 +66,7 @@ const InventoryPage: React.FC = () => {
     return tempVehicles;
   }, [safeVehicles, searchTerm, makeFilter, yearFilter, colorFilter, fuelFilter, transmissionFilter, priceFilter, sortBy]);
 
-  const totalPages = Math.ceil(filteredAndSortedVehicles.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredAndSortedVehicles.length / itemsPerPage) || 1;
   const currentVehicles = filteredAndSortedVehicles.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage

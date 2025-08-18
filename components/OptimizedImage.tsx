@@ -38,7 +38,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
 	// Generate responsive image sources with different sizes
 	const getImageSources = (originalSrc: string) => {
-		const [baseUrl] = originalSrc.split('?');
+		const baseUrl = originalSrc.split('?')[0];
 		
 		// Generate different sizes for responsive images
 		const imageSizes = [600, 900, 1200];

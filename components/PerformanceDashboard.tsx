@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { AlertTriangle, CheckCircle, Clock, Activity, Database, Cpu, Memory, TrendingUp, TrendingDown } from 'lucide-react';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AlertTriangle, CheckCircle, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface PerformanceMetrics {
   timestamp: number;
@@ -204,8 +204,8 @@ const PerformanceDashboard: React.FC = () => {
         <div className="mt-4 pt-4 border-t border-gray-200">
           <h4 className="text-sm font-medium text-gray-900 mb-2">Recommendations</h4>
           <ul className="text-sm text-gray-600 space-y-1">
-            {health.recommendations.map((rec, index) => (
-              <li key={index} className="flex items-start">
+            {health.recommendations.map((rec) => (
+              <li key={rec} className="flex items-start">
                 <span className="text-red-500 mr-2">•</span>
                 {rec}
               </li>
