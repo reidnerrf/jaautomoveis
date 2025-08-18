@@ -274,7 +274,11 @@ export function conditionalCacheMiddleware(req: Request, res: Response, next: Ne
     // Implementar lógica de cache condicional
     const cacheKey = generateCacheKey(req, 'conditional');
     getCache(cacheKey).then((cachedData: any) => {
-      if (cachedData && (cachedData as any).etag === etag) {
+      if ((cachedData && (cachedData as any).etag === etag) || (cachedData && (cachedData as any).lastModified === lastModified)) {
+        return res.status(304).end();
+      }
+      next();
+    }).catch(() => next());
         return res.status(304).end();
       }
       next();
