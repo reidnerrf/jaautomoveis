@@ -5,14 +5,13 @@ import path from 'path';
 import fs from 'fs/promises';
 import compression from 'compression';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
-import mongoSanitize from 'express-mongo-sanitize';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';import mongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 import * as esbuild from 'esbuild';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import UAParser from 'ua-parser-js';
-import geoip from 'geoip-lite';
+// geoip removed as it's unused
 import connectDB from './backend/config/db';
 import vehicleRoutes from './backend/routes/vehicleRoutes';
 import authRoutes from './backend/routes/authRoutes';
@@ -53,8 +52,15 @@ import {
 // Load environment variables
 dotenv.config();
 
-// Define PORT variable
-const PORT = parseInt(process.env.PORT || '5000', 10);
+// Define PORT variable - handle port conflicts
+const getAvailablePort = (preferredPort: number): number => {
+  const envPort = process.env.PORT ? parseInt(process.env.PORT, 10) : preferredPort;
+  // se for 3000 (porta do frontend), troca para 5000
+  if (envPort === 3000) return 5000;
+  return envPort;
+};
+
+const PORT = getAvailablePort(5000);
 
 // Connect to MongoDB
 connectDB();
@@ -93,25 +99,24 @@ if (!isProduction) {
 const uploadsDir = path.join(__dirname, 'uploads');
 fs.access(uploadsDir).catch(() => fs.mkdir(uploadsDir));
 
-// Rate limiting
+// Rate limiting - Fixed IPv6 handling
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
-  // Safety: use Express-calculated req.ip which respects trust proxy = 1
-  keyGenerator: (req) => (req.ip || (Array.isArray(req.headers['x-forwarded-for']) ? req.headers['x-forwarded-for'][0] : (req.headers['x-forwarded-for'] as string)) || req.socket.remoteAddress || 'unknown'),
+  keyGenerator: (req) => ipKeyGenerator(req.ip ?? 'unknown'),   // ✅ corrige undefined
 });
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 requests per windowMs for auth routes
+  windowMs: 15 * 60 * 1000,
+  max: 5,
   message: 'Too many authentication attempts, please try again later.',
   skipSuccessfulRequests: true,
-  keyGenerator: (req) => (req.ip || (Array.isArray(req.headers['x-forwarded-for']) ? req.headers['x-forwarded-for'][0] : (req.headers['x-forwarded-for'] as string)) || req.socket.remoteAddress || 'unknown'),
+  keyGenerator: (req) => ipKeyGenerator(req.ip ?? 'unknown'),   // ✅ idem
 });
-
+// Middleware to handle cache invalidation for vehicle detail pages
 // Security Middleware
 app.use(helmet({
   contentSecurityPolicy: {

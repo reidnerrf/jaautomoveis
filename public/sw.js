@@ -483,5 +483,373 @@ function getTTLForCache(cacheName) {
   }
 }
 
+// Advanced runtime optimizations
+class RuntimeOptimizer {
+  constructor() {
+    this.initializeOptimization();
+  }
+
+  async initializeOptimization() {
+    // Preload critical resources
+    await this.preloadCriticalResources();
+    
+    // Optimize cache usage
+    await this.optimizeCacheUsage();
+    
+    // Setup performance monitoring
+    this.setupPerformanceMonitoring();
+  }
+
+  async preloadCriticalResources() {
+    const criticalResources = [
+      '/api/vehicles?limit=10',
+      '/api/categories',
+      '/api/vehicles/stats',
+      '/assets/logo.png',
+      '/assets/favicon-32x32.png'
+    ];
+
+    const promises = criticalResources.map(async (url) => {
+      try {
+        const cache = await caches.open(DYNAMIC_CACHE);
+        const response = await fetch(url);
+        if (response.ok) {
+          const responseClone = response.clone();
+          const headers = new Headers(response.headers);
+          headers.set('x-cache-timestamp', Date.now().toString());
+          const cachedResponse = new Response(responseClone.body, {
+            status: response.status,
+            statusText: response.status.text,
+            headers
+          });
+          await cache.put(url, cachedResponse);
+        }
+      } catch (error) {
+        console.warn('Failed to preload resource:', url, error);
+      }
+    });
+
+    await Promise.allSettled(promises);
+  }
+
+  async optimizeCacheUsage() {
+    // Implement adaptive cache sizing
+    const cacheSizes = await this.getCacheSizes();
+    const totalCacheSize = Object.values(cacheSizes).reduce((sum, size) => sum + size, 0);
+    
+    if (totalCacheSize > 100 * 1024 * 1024) { // 100MB threshold
+      await this.evictLeastUsedCache();
+    }
+  }
+
+  async getCacheSizes() {
+    const cacheNames = [STATIC_CACHE, DYNAMIC_CACHE, IMAGE_CACHE, API_CACHE];
+    const sizes = {};
+    
+    for (const cacheName of cacheNames) {
+      const cache = await caches.open(cacheName);
+      const keys = await cache.keys();
+      let totalSize = 0;
+      
+      for (const request of keys) {
+        const response = await cache.match(request);
+        if (response) {
+          const blob = await response.blob();
+          totalSize += blob.size;
+        }
+      }
+      
+      sizes[cacheName] = totalSize;
+    }
+    
+    return sizes;
+  }
+
+  async evictLeastUsedCache() {
+    const cacheNames = [DYNAMIC_CACHE, IMAGE_CACHE, API_CACHE];
+    
+    for (const cacheName of cacheNames) {
+      const cache = await caches.open(cacheName);
+      const keys = await cache.keys();
+      
+      // Sort by last access time (using timestamp)
+      const entries = await Promise.all(
+        keys.map(async (request) => {
+          const response = await cache.match(request);
+          const timestamp = response?.headers.get('x-cache-timestamp');
+          return {
+            request,
+            timestamp: timestamp ? parseInt(timestamp) : 0
+          };
+        })
+      );
+      
+      entries.sort((a, b) => a.timestamp - b.timestamp);
+      
+      // Remove oldest 20% of entries
+      const toRemove = Math.floor(entries.length * 0.2);
+      for (let i = 0; i < toRemove; i++) {
+        await cache.delete(entries[i].request);
+      }
+    }
+  }
+
+  setupPerformanceMonitoring() {
+    // Monitor cache hit rates
+    this.cacheHitRates = {
+      static: 0,
+      dynamic: 0,
+      images: 0,
+      api: 0
+    };
+    
+    // Monitor response times
+    this.responseTimes = [];
+    
+    // Setup periodic reporting
+    setInterval(() => {
+      this.reportPerformanceMetrics();
+    }, 60000); // Report every minute
+  }
+
+  async reportPerformanceMetrics() {
+    const metrics = {
+      cacheHitRates: this.cacheHitRates,
+      averageResponseTime: this.calculateAverageResponseTime(),
+      cacheSizes: await this.getCacheSizes(),
+      timestamp: Date.now()
+    };
+    
+    // Store metrics for later analysis
+    const cache = await caches.open(DYNAMIC_CACHE);
+    const response = new Response(JSON.stringify(metrics), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    await cache.put('/performance-metrics', response);
+  }
+
+  calculateAverageResponseTime() {
+    if (this.responseTimes.length === 0) return 0;
+    return this.responseTimes.reduce((sum, time) => sum + time, 0) / this.responseTimes.length;
+  }
+
+  recordCacheHit(type) {
+    this.cacheHitRates[type]++;
+  }
+
+  recordResponseTime(time) {
+    this.responseTimes.push(time);
+    if (this.responseTimes.length > 100) {
+      this.responseTimes.shift(); // Keep only last 100
+    }
+  }
+}
+
+// Initialize runtime optimizer
+const runtimeOptimizer = new RuntimeOptimizer();
+
+// Enhanced fetch handler with runtime optimization
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+  const startTime = Date.now();
+
+  // Add performance tracking
+  const trackPerformance = async (response) => {
+    const endTime = Date.now();
+    runtimeOptimizer.recordResponseTime(endTime - startTime);
+    return response;
+  };
+
+  // Ignorar requisições não-GET
+  if (request.method !== 'GET') {
+    return;
+  }
+
+  // Estratégia para navegação (SPA)
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then(trackPerformance)
+        .then(response => {
+          const responseClone = response.clone();
+          caches.open(DYNAMIC_CACHE).then(cache => {
+            const headers = new Headers(responseClone.headers);
+            headers.set('x-cache-timestamp', Date.now().toString());
+            const cachedResponse = new Response(responseClone.body, {
+              status: responseClone.status,
+              statusText: responseClone.statusText,
+              headers
+            });
+            cache.put(request, cachedResponse);
+          });
+          return response;
+        })
+        .catch(() => caches.match('/'))
+    );
+    return;
+  }
+
+  // Estratégia para imagens com cache-first otimizado
+  if (request.destination === 'image') {
+    event.respondWith(
+      caches.match(request).then(cachedResponse => {
+        if (cachedResponse) {
+          runtimeOptimizer.recordCacheHit('images');
+          return cachedResponse;
+        }
+        
+        return fetch(request)
+          .then(trackPerformance)
+          .then(response => {
+            if (response.status === 200) {
+              const responseClone = response.clone();
+              caches.open(IMAGE_CACHE).then(cache => {
+                const headers = new Headers(response.headers);
+                headers.set('x-cache-timestamp', Date.now().toString());
+                const cachedResponse = new Response(responseClone.body, {
+                  status: response.status,
+                  statusText: response.statusText,
+                  headers
+                });
+                cache.put(request, cachedResponse);
+              });
+            }
+            return response;
+          })
+          .catch(() => caches.match('/assets/placeholder.png'));
+      })
+    );
+    return;
+  }
+
+  // Estratégia para APIs com stale-while-revalidate otimizado
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      caches.match(request).then(cachedResponse => {
+        const fetchPromise = fetch(request)
+          .then(trackPerformance)
+          .then(response => {
+            if (response.status === 200) {
+              const responseClone = response.clone();
+              caches.open(API_CACHE).then(cache => {
+                const headers = new Headers(response.headers);
+                headers.set('x-cache-timestamp', Date.now().toString());
+                const cachedResponse = new Response(responseClone.body, {
+                  status: response.status,
+                  statusText: response.statusText,
+                  headers
+                });
+                cache.put(request, cachedResponse);
+              });
+            }
+            return response;
+          });
+
+        if (cachedResponse) {
+          runtimeOptimizer.recordCacheHit('api');
+          return cachedResponse;
+        }
+        
+        return fetchPromise;
+      })
+    );
+    return;
+  }
+
+  // Estratégia para assets estáticos
+  if (request.destination === 'script' || request.destination === 'style') {
+    event.respondWith(
+      caches.match(request).then(cachedResponse => {
+        if (cachedResponse) {
+          runtimeOptimizer.recordCacheHit('static');
+          return cachedResponse;
+        }
+        
+        return fetch(request)
+          .then(trackPerformance)
+          .then(response => {
+            if (response.status === 200) {
+              const responseClone = response.clone();
+              caches.open(STATIC_CACHE).then(cache => {
+                const headers = new Headers(response.headers);
+                headers.set('x-cache-timestamp', Date.now().toString());
+                const cachedResponse = new Response(responseClone.body, {
+                  status: response.status,
+                  statusText: response.statusText,
+                  headers
+                });
+                cache.put(request, cachedResponse);
+              });
+            }
+            return response;
+          });
+      })
+    );
+    return;
+  }
+
+  // Estratégia padrão: stale-while-revalidate com otimização
+  event.respondWith(
+    caches.match(request).then(cachedResponse => {
+      const fetchPromise = fetch(request)
+        .then(trackPerformance)
+        .then(response => {
+          if (response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(DYNAMIC_CACHE).then(cache => {
+              const headers = new Headers(response.headers);
+              headers.set('x-cache-timestamp', Date.now().toString());
+              const cachedResponse = new Response(responseClone.body, {
+                status: response.status,
+                statusText: response.statusText,
+                headers
+              });
+              cache.put(request, cachedResponse);
+            });
+          }
+          return response;
+        });
+
+      return cachedResponse || fetchPromise;
+    })
+  );
+});
+
+// Message handler for runtime communication
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'GET_PERFORMANCE_METRICS') {
+    event.ports[0].postMessage({
+      type: 'PERFORMANCE_METRICS',
+      data: {
+        cacheHitRates: runtimeOptimizer.cacheHitRates,
+        averageResponseTime: runtimeOptimizer.calculateAverageResponseTime()
+      }
+    });
+  }
+  
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => caches.delete(cacheName))
+      );
+    }).then(() => {
+      event.ports[0].postMessage({ type: 'CACHE_CLEARED' });
+    });
+  }
+});
+
 // Executar limpeza de cache a cada 24 horas
-setInterval(cleanupCache, 24 * 60 * 60 * 1000);
+setInterval(() => {
+  cleanupCache();
+  runtimeOptimizer.optimizeCacheUsage();
+}, 24 * 60 * 60 * 1000);
+
+// Initialize optimization on startup
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    runtimeOptimizer.initializeOptimization().then(() => {
+      console.log('Runtime optimization initialized');
+    })
+  );
+});

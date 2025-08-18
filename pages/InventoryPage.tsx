@@ -5,6 +5,7 @@ import VehicleCard from '../components/VehicleCard.tsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiFilter, FiX, FiSearch, FiGrid, FiList, FiChevronDown, FiMapPin, FiClock, FiTag, FiTrendingUp } from 'react-icons/fi';
 import { FaCarSide, FaGasPump, FaCog, FaCalendarAlt } from 'react-icons/fa';
+import SEOHead from '../components/SEOHead.tsx';
 
 const InventoryPage: React.FC = () => {
   const { vehicles, loading } = useVehicleData();
@@ -27,7 +28,7 @@ const InventoryPage: React.FC = () => {
   const uniqueYears = useMemo(() => [...new Set(vehicles.map(v => v.year))].sort((a, b) => b - a), [vehicles]);
   const uniqueColors = useMemo(() => [...new Set(vehicles.map(v => v.color))].sort(), [vehicles]);
   const uniqueFuels = useMemo(() => [...new Set(vehicles.map(v => v.fuel || 'Flex'))], [vehicles]);
-  const uniqueTransmissions = useMemo(() => [...new Set(vehicles.map(v => v.transmission || 'Manual'))], [vehicles]);
+  const uniqueTransmissions = useMemo(() => [...new Set(vehicles.map(v => v.gearbox || 'Manual'))], [vehicles]);
 
   const filteredAndSortedVehicles = useMemo(() => {
     const tempVehicles = vehicles.filter(vehicle => {
@@ -38,7 +39,7 @@ const InventoryPage: React.FC = () => {
       const passesYear = !yearFilter || vehicle.year === parseInt(yearFilter, 10);
       const passesColor = !colorFilter || vehicle.color === colorFilter;
       const passesFuel = !fuelFilter || (vehicle.fuel || 'Flex') === fuelFilter;
-      const passesTransmission = !transmissionFilter || (vehicle.transmission || 'Manual') === transmissionFilter;
+      const passesTransmission = !transmissionFilter || (vehicle.gearbox || 'Manual') === transmissionFilter;
       const passesPrice = !priceFilter || (
         (priceFilter === '30000' && vehicle.price < 30000) ||
         (priceFilter === '30000-60000' && vehicle.price >= 30000 && vehicle.price <= 60000) ||
@@ -100,9 +101,16 @@ const InventoryPage: React.FC = () => {
   );
 
   return (
+    
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen transition-colors duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+        <SEOHead
+          title={`JA Automóveis`}
+          description={`A melhor plataforma de vendas de carros usados e seminovos do Brasil.`}
+          keywords={`carros, veículos, usados, seminovos, compra e venda de carros, JA Automóveis`}
+          image={`/assets/logo.png`}
+        >
+        </SEOHead>
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}

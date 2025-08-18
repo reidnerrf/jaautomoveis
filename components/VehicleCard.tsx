@@ -16,7 +16,7 @@ interface Vehicle {
   price: number;
   km: number;
   fuel: string;
-  transmission: string;
+  gearbox: string;
   images: string[];
   description?: string;
   featured?: boolean;
@@ -184,7 +184,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <FiSettings className="w-4 h-4 text-purple-500" />
-                <span>{vehicle.transmission}</span>
+                <span>{vehicle.gearbox}</span>
               </div>
             </div>
 
@@ -282,7 +282,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <FiSettings className="w-4 h-4 text-purple-500" />
-            <span>{vehicle.transmission}</span>
+            <span>{vehicle.gearbox}</span>
           </div>
         </div>
 
