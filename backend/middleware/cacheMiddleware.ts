@@ -28,7 +28,6 @@ let redisClient: Redis | null = null;
 
 if (process.env.REDIS_URL) {
   redisClient = new Redis(process.env.REDIS_URL, {
-    maxRetriesPerRequest: 3,
     enableOfflineQueue: false,
     lazyConnect: true
   });

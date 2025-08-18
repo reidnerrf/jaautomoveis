@@ -311,10 +311,10 @@ export async function autoImageOptimization(
       await fs.writeFile(thumbnailPath, thumbnailBuffer);
       
       // Adicionar informações ao req.file
-      req.file.optimized = true;
-      req.file.originalSize = originalBuffer.length;
-      req.file.optimizedSize = optimizedBuffer.length;
-      req.file.thumbnailPath = thumbnailPath;
+      (req.file as any).optimized = true;
+      (req.file as any).originalSize = originalBuffer.length;
+      (req.file as any).optimizedSize = optimizedBuffer.length;
+      (req.file as any).thumbnailPath = thumbnailPath;
     }
     
     next();

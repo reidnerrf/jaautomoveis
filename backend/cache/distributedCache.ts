@@ -55,16 +55,16 @@ class DistributedCache {
       console.log('Redis cluster is ready');
     });
 
-    this.cluster.on('error', (error: Error) => {
+    this.cluster.on('error', (error: any) => {
       console.error('Redis cluster error:', error);
       this.stats.connected = false;
     });
 
-    this.cluster.on('node:connect', (node: Redis) => {
+    this.cluster.on('node:connect', (node: any) => {
       console.log(`Connected to Redis node: ${node.options.host}:${node.options.port}`);
     });
 
-    this.cluster.on('node:error', (error: Error, node: Redis) => {
+    this.cluster.on('node:error', (error: any, node: any) => {
       console.error(`Redis node error on ${node.options.host}:${node.options.port}:`, error);
     });
   }
@@ -230,7 +230,7 @@ class DistributedCache {
       const result = new Map<string, any>();
       
       for (const [field, value] of Object.entries(hash)) {
-        result.set(field, JSON.parse(value));
+        result.set(field, JSON.parse(value as string));
       }
       
       return result;
