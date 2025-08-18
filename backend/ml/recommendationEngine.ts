@@ -44,7 +44,7 @@ class RecommendationEngine {
       const viewLogs = await ViewLog.find({}).populate('vehicle');
       
       viewLogs.forEach(log => {
-        const vehicleId = log.vehicle.toString();
+        const vehicleId = (log.vehicle as any)._id?.toString?.() ?? log.vehicle.toString();
         // Since ViewLog doesn't have userId, we'll use a default user or skip user-specific logic
         const userId = 'default';
         
