@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route } from 'react-router-dom';
 import { VehicleProvider } from './hooks/useVehicleData.tsx';
 import { AuthProvider } from './hooks/useAuth.tsx';
 import { ThemeProvider } from './contexts/ThemeContext.tsx';
+import { HelmetProvider } from 'react-helmet-async';
 import ErrorBoundary from './components/ErrorBoundary'; // Assuming ErrorBoundary is in this path
 
 // Lazy load all pages for better performance
@@ -35,6 +36,7 @@ const LoadingSpinner = () => (
 const App: React.FC = () => {
   return (
     <ErrorBoundary>
+      <HelmetProvider>
       <ThemeProvider>
         <AuthProvider>
           <VehicleProvider>
@@ -72,6 +74,7 @@ const App: React.FC = () => {
         </VehicleProvider>
         </AuthProvider>
       </ThemeProvider>
+      </HelmetProvider>
     </ErrorBoundary>
   );
 };

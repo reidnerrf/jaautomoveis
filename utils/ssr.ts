@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server';
-import { Helmet } from 'react-helmet';
+import { HelmetProvider } from 'react-helmet-async';
 import App from '../App';
 import { Vehicle } from '../types';
 
@@ -33,15 +33,20 @@ export const renderSSR = async (
     data: data || {}
   };
 
+  const helmetContext: any = {};
   const app = renderToString(
     React.createElement(
       StaticRouter,
       { location: url, context },
-      React.createElement(App)
+      React.createElement(
+        HelmetProvider,
+        { context: helmetContext },
+        React.createElement(App)
+      )
     )
   );
 
-  const helmet = Helmet.renderStatic();
+  const helmet = helmetContext.helmet;
 
   return {
     html: app,
