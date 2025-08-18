@@ -77,16 +77,13 @@ function getCpuUsage(): NodeJS.CpuUsage {
 // Função para obter uso de memória
 function getMemoryUsage(): NodeJS.MemoryUsage {
   const memUsage = process.memoryUsage();
-  const totalMem = os.totalmem();
-  const freeMem = os.freemem();
   
   return {
     ...memUsage,
     external: memUsage.external || 0,
     heapTotal: memUsage.heapTotal,
     heapUsed: memUsage.heapUsed,
-    rss: memUsage.rss,
-    system: totalMem - freeMem
+    rss: memUsage.rss
   };
 }
 
@@ -157,7 +154,6 @@ export function performanceMiddleware(req: Request, res: Response, next: NextFun
 
   const startTime = performance.now();
   const startCpu = getCpuUsage();
-  const startMemory = getMemoryUsage();
   
   // Interceptar resposta
   const originalSend = res.send;
@@ -196,7 +192,7 @@ function recordMetrics(
   
   // Atualizar estatísticas da rota
   const route = req.route?.path || req.path;
-  const method = req.method;
+  const {method} = req;
   const routeKey = `${method} ${route}`;
   
   if (!routeStats.has(routeKey)) {

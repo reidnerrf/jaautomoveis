@@ -306,12 +306,10 @@ const VehicleDetailPage: React.FC = () => {
         </div>
 
         {/* Informações adicionais */}
-        {vehicle.additionalInfo && (
-          <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg mt-8">
+        {vehicle.additionalInfo ? <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg mt-8">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Informações Adicionais</h2>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{vehicle.additionalInfo}</p>
-          </div>
-        )}
+          </div> : null}
 
         {/* Outros veículos */}
         <div className="mt-16">
@@ -325,8 +323,7 @@ const VehicleDetailPage: React.FC = () => {
 
       {/* Lightbox */}
       <AnimatePresence>
-        {isLightboxOpen && (
-          <motion.div
+        {isLightboxOpen ? <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -376,8 +373,7 @@ const VehicleDetailPage: React.FC = () => {
                 </button>
               )}
             </div>
-          </motion.div>
-        )}
+          </motion.div> : null}
       </AnimatePresence>
       </div>
     </>

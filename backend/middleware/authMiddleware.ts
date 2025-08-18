@@ -11,12 +11,16 @@ const getJwtSecret = (): string => {
 
 // Enhanced JWT validation with more security checks
 export const protect = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  let token;
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader) {
+    return res.status(401).json({ message: 'No authorization header' });
+  }
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+  const [, token] = authHeader.split(' ');
+
+  if (token) {
     try {
-      const [scheme, value] = req.headers.authorization.split(' ');
-      token = value;
       
       // Verify token exists and is not empty
       if (!token || token === 'null' || token === 'undefined') {

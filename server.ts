@@ -249,7 +249,7 @@ app.get('/health', (req, res) => {
 app.get('/sitemap.xml', async (req, res) => {
   try {
     const vehicles = await Vehicle.find({}).select('id updatedAt').lean();
-    const baseUrl = req.protocol + '://' + req.get('host');
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
     
     let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
     sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
@@ -275,8 +275,8 @@ app.get('/sitemap.xml', async (req, res) => {
     // Vehicle pages
     vehicles.forEach(vehicle => {
       sitemap += `  <url>\n`;
-      sitemap += `    <loc>${baseUrl}/vehicle/${vehicle.id}</loc>\n`;
-      sitemap += `    <lastmod>${vehicle.updatedAt.toISOString()}</lastmod>\n`;
+      sitemap += `    <loc>${baseUrl}/vehicle/${vehicle._id}</loc>\n`;
+      sitemap += `    <lastmod>${(vehicle as any).updatedAt?.toISOString() || new Date().toISOString()}</lastmod>\n`;
       sitemap += `    <changefreq>weekly</changefreq>\n`;
       sitemap += `    <priority>0.8</priority>\n`;
       sitemap += `  </url>\n`;
@@ -454,7 +454,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const user = activeUsers.get(socket.id);
     if (user) {
-      const page = user.page;
+      const {page} = user;
       if (pageViews.has(page)) {
         pageViews.get(page).delete(socket.id);
         io.emit('page-viewers', {

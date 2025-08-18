@@ -30,7 +30,7 @@ const InventoryPage: React.FC = () => {
   const uniqueTransmissions = useMemo(() => [...new Set(vehicles.map(v => v.transmission || 'Manual'))], [vehicles]);
 
   const filteredAndSortedVehicles = useMemo(() => {
-    let tempVehicles = vehicles.filter(vehicle => {
+    const tempVehicles = vehicles.filter(vehicle => {
       const matchesSearch = vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            vehicle.model.toLowerCase().includes(searchTerm.toLowerCase());
@@ -200,8 +200,7 @@ const InventoryPage: React.FC = () => {
 
         {/* Advanced Filters */}
         <AnimatePresence>
-          {showFilters && (
-            <motion.div
+          {showFilters ? <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -348,8 +347,7 @@ const InventoryPage: React.FC = () => {
                   </button>
                 </div>
               </div>
-            </motion.div>
-          )}
+            </motion.div> : null}
         </AnimatePresence>
 
         {/* Results Info */}

@@ -181,7 +181,7 @@ class DatabaseSharding {
     const promises: Promise<any[]>[] = [];
 
     // Query all shards in parallel
-    for (const [shardName, shard] of this.shards) {
+    for (const [, shard] of this.shards) {
       const VehicleModel = shard.model('Vehicle', this.getVehicleSchema());
       promises.push(VehicleModel.find(query).limit(limit).lean());
     }
@@ -203,7 +203,7 @@ class DatabaseSharding {
     const promises: Promise<any[]>[] = [];
 
     // Run aggregation on all shards
-    for (const [shardName, shard] of this.shards) {
+    for (const [, shard] of this.shards) {
       const VehicleModel = shard.model('Vehicle', this.getVehicleSchema());
       promises.push(VehicleModel.aggregate(pipeline));
     }
@@ -249,8 +249,12 @@ class DatabaseSharding {
 
     for (const [shardName, shard] of this.shards) {
       try {
-        await shard.db.admin().ping();
-        healthStatus.set(shardName, true);
+        if (shard.db) {
+          await shard.db.admin().ping();
+          healthStatus.set(shardName, true);
+        } else {
+          healthStatus.set(shardName, false);
+        }
       } catch (error) {
         healthStatus.set(shardName, false);
         console.error(`Shard ${shardName} health check failed:`, error);
@@ -345,7 +349,7 @@ class DatabaseSharding {
 
   // Cleanup
   public async closeAllConnections(): Promise<void> {
-    for (const [shardName, shard] of this.shards) {
+    for (const [, shard] of this.shards) {
       await shard.close();
     }
   }

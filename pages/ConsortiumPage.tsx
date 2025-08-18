@@ -140,8 +140,7 @@ const ConsortiumPage: React.FC = () => {
                 </button>
               </form>
 
-              {simulation && (
-                <motion.div
+              {simulation ? <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-8 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-700 text-center"
@@ -152,8 +151,7 @@ const ConsortiumPage: React.FC = () => {
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Total a pagar: {formatCurrency(simulation.total)}</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Custo adicional: {formatCurrency(simulation.extra)}</p>
                   <p className="text-xs text-gray-400 mt-3">*Valores aproximados. Sujeitos à formação de grupo.</p>
-                </motion.div>
-              )}
+                </motion.div> : null}
             </motion.div>
           </div>
 

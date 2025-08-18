@@ -4,6 +4,20 @@ import path from 'path';
 import fs from 'fs/promises';
 import crypto from 'crypto';
 
+// Extend Multer File interface to include custom properties
+declare module 'multer' {
+  export namespace Express {
+    export namespace Multer {
+      interface File {
+        optimized?: boolean;
+        originalSize?: number;
+        optimizedSize?: number;
+        thumbnailPath?: string;
+      }
+    }
+  }
+}
+
 // Configurações de otimização
 const IMAGE_CONFIG = {
   QUALITY: 80,
@@ -250,7 +264,7 @@ export async function vehicleImageOptimization(
       'X-Image-Optimized': 'true',
       'X-Original-Size': originalBuffer.length.toString(),
       'X-Optimized-Size': size.toString(),
-      'X-Compression-Ratio': ((1 - size / originalBuffer.length) * 100).toFixed(1) + '%'
+      'X-Compression-Ratio': `${((1 - size / originalBuffer.length) * 100).toFixed(1)}%`
     });
     
     res.send(optimizedBuffer);
@@ -282,7 +296,7 @@ export async function autoImageOptimization(
       originalBuffer.length > 1024 * 1024; // 1MB
     
     if (needsOptimization) {
-      const { buffer: optimizedBuffer, format } = await optimizeImage(originalBuffer, {
+      const { buffer: optimizedBuffer } = await optimizeImage(originalBuffer, {
         width: Math.min(metadata.width!, IMAGE_CONFIG.MAX_WIDTH),
         height: Math.min(metadata.height!, IMAGE_CONFIG.MAX_HEIGHT),
         quality: IMAGE_CONFIG.QUALITY
@@ -297,10 +311,10 @@ export async function autoImageOptimization(
       await fs.writeFile(thumbnailPath, thumbnailBuffer);
       
       // Adicionar informações ao req.file
-      req.file.optimized = true;
-      req.file.originalSize = originalBuffer.length;
-      req.file.optimizedSize = optimizedBuffer.length;
-      req.file.thumbnailPath = thumbnailPath;
+      (req.file as any).optimized = true;
+      (req.file as any).originalSize = originalBuffer.length;
+      (req.file as any).optimizedSize = optimizedBuffer.length;
+      (req.file as any).thumbnailPath = thumbnailPath;
     }
     
     next();

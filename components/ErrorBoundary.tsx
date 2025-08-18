@@ -84,8 +84,7 @@ class ErrorBoundary extends Component<Props, State> {
             </motion.div>
 
             {/* Error Details (Development Only) */}
-            {showDevError && (
-              <motion.div
+            {showDevError ? <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
@@ -95,8 +94,7 @@ class ErrorBoundary extends Component<Props, State> {
                 <p className="text-sm text-red-600 font-mono break-all">
                   {this.state.error.message}
                 </p>
-              </motion.div>
-            )}
+              </motion.div> : null}
 
             {/* Action Buttons */}
             <motion.div

@@ -110,7 +110,7 @@ class RealTimeManager {
 
   private handleJoinPage(socket: any, data: { page: string; vehicleId?: string }) {
     const roomId = data.vehicleId ? `${data.page}-${data.vehicleId}` : data.page;
-    const user = socket.data.user;
+    const {user} = socket.data;
 
     socket.join(roomId);
 
@@ -147,7 +147,7 @@ class RealTimeManager {
 
   private handleLeavePage(socket: any, data: { page: string }) {
     const roomId = data.page;
-    const user = socket.data.user;
+    const {user} = socket.data;
 
     socket.leave(roomId);
 
@@ -190,7 +190,7 @@ class RealTimeManager {
   }
 
   private handleVehicleLike(socket: any, data: { vehicleId: string }) {
-    const user = socket.data.user;
+    const {user} = socket.data;
     if (!user) return;
 
     this.io.to(`vehicle-${data.vehicleId}`).emit('vehicle-liked', {
@@ -204,7 +204,7 @@ class RealTimeManager {
   }
 
   private handleVehicleShare(socket: any, data: { vehicleId: string; platform: string }) {
-    const user = socket.data.user;
+    const {user} = socket.data;
 
     this.io.to(`vehicle-${data.vehicleId}`).emit('vehicle-shared', {
       vehicleId: data.vehicleId,
@@ -233,7 +233,7 @@ class RealTimeManager {
 
   private handleChatMessage(socket: any, data: { vehicleId: string; message: string }) {
     const chatRoom = `chat-${data.vehicleId}`;
-    const user = socket.data.user;
+    const {user} = socket.data;
 
     this.io.to(chatRoom).emit('chat-message', {
       vehicleId: data.vehicleId,
@@ -248,7 +248,7 @@ class RealTimeManager {
   }
 
   private handleAdminNotification(socket: any, data: { type: string; message: string }) {
-    const user = socket.data.user;
+    const {user} = socket.data;
     if (!user || user.role !== 'admin') return;
 
     this.io.to('admin').emit('admin-notification', {
@@ -263,7 +263,7 @@ class RealTimeManager {
   }
 
   private handleDisconnect(socket: any) {
-    const user = socket.data.user;
+    const {user} = socket.data;
     if (user) {
       this.userSockets.delete(user.id);
     }

@@ -114,7 +114,7 @@ async function staleWhileRevalidate(request, cacheName) {
       const cachedResponse = new Response(responseClone.body, {
         status: response.status,
         statusText: response.statusText,
-        headers: headers
+        headers
       });
       cache.put(request, cachedResponse);
     }
@@ -137,7 +137,7 @@ async function networkFirst(request, cacheName) {
       const cachedResponse = new Response(responseClone.body, {
         status: response.status,
         statusText: response.statusText,
-        headers: headers
+        headers
       });
       cache.put(request, cachedResponse);
     }
@@ -169,7 +169,7 @@ async function cacheFirst(request, cacheName) {
       const cachedResponse = new Response(responseClone.body, {
         status: response.status,
         statusText: response.statusText,
-        headers: headers
+        headers
       });
       cache.put(request, cachedResponse);
     }
@@ -202,7 +202,7 @@ self.addEventListener('fetch', (event) => {
             const cachedResponse = new Response(responseClone.body, {
               status: responseClone.status,
               statusText: responseClone.statusText,
-              headers: headers
+              headers
             });
             cache.put(request, cachedResponse);
           });
@@ -286,7 +286,7 @@ async function doBackgroundSync() {
         const cachedResponse = new Response(responseClone.body, {
           status: response.status,
           statusText: response.statusText,
-          headers: headers
+          headers
         });
         
         const urls = ['/api/vehicles/recent', '/api/categories', '/api/vehicles/stats'];
@@ -313,7 +313,7 @@ async function syncContent() {
       
       const cachedResponse = new Response(JSON.stringify(data), {
         status: 200,
-        headers: headers
+        headers
       });
       
       await cache.put('/api/vehicles/content', cachedResponse);

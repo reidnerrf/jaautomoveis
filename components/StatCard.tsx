@@ -34,8 +34,8 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, rate, levelUp, levelD
           `}
         >
           {rate}
-          {levelUp && <FiArrowUp />}
-          {levelDown && <FiArrowDown />}
+          {levelUp ? <FiArrowUp /> : null}
+          {levelDown ? <FiArrowDown /> : null}
         </span>
       </div>
     </div>

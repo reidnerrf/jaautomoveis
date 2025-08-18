@@ -28,8 +28,6 @@ let redisClient: Redis | null = null;
 
 if (process.env.REDIS_URL) {
   redisClient = new Redis(process.env.REDIS_URL, {
-    retryDelayOnFailover: 100,
-    maxRetriesPerRequest: 3,
     enableOfflineQueue: false,
     lazyConnect: true
   });
@@ -275,8 +273,12 @@ export function conditionalCacheMiddleware(req: Request, res: Response, next: Ne
   if (etag || lastModified) {
     // Implementar lógica de cache condicional
     const cacheKey = generateCacheKey(req, 'conditional');
-    getCache(cacheKey).then(cachedData => {
-      if (cachedData && cachedData.etag === etag) {
+    getCache(cacheKey).then((cachedData: any) => {
+      if ((cachedData && (cachedData as any).etag === etag) || (cachedData && (cachedData as any).lastModified === lastModified)) {
+        return res.status(304).end();
+      }
+      next();
+    }).catch(() => next());
         return res.status(304).end();
       }
       next();
@@ -336,21 +338,15 @@ export function resetCacheMetrics(): void {
   cacheMetrics.hitRate = 0;
 }
 
-// Função para warm-up de cache
-export async function warmupCache(): Promise<void> {
-  try {
-    const warmupUrls = [
-      '/api/vehicles?limit=20',
-      '/api/categories',
-      '/api/vehicles/stats'
-    ];
-    
-    // Implementar warm-up assíncrono
-    console.log('Cache warm-up completed');
-  } catch (error) {
-    console.error('Cache warm-up error:', error);
+  // Função para warm-up de cache
+  export async function warmupCache(): Promise<void> {
+    try {
+      // Implementar warm-up assíncrono
+      console.log('Cache warm-up completed');
+    } catch (error) {
+      console.error('Cache warm-up error:', error);
+    }
   }
-}
 
 // Inicializar limpeza periódica
 setInterval(cleanupCache, CACHE_CONFIG.CHECK_PERIOD * 1000);

@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import crypto from 'crypto';
+import { promisify } from 'util';
 
 // Interfaces para ML
 interface MLConfig {
@@ -205,7 +205,7 @@ class AdvancedML extends EventEmitter {
       this.modelVersion++;
       this.emit('training:completed', { modelType, version: this.modelVersion });
     } catch (error) {
-      this.emit('training:failed', { modelType, error: error.message });
+      this.emit('training:failed', { modelType, error: error instanceof Error ? error.message : String(error) });
       throw error;
     } finally {
       this.isTraining = false;
@@ -213,7 +213,7 @@ class AdvancedML extends EventEmitter {
   }
 
   // Treinar modelo colaborativo
-  private async trainCollaborativeModel(model: unknown, trainingData: unknown[], config: any): Promise<void> {
+  private async trainCollaborativeModel(_model: unknown, _trainingData: unknown[], _config: any): Promise<void> {
     console.log('Training collaborative model...');
     
     // Simular treinamento SVD
@@ -477,13 +477,17 @@ class AdvancedML extends EventEmitter {
       throw new Error('Neural model not available');
     }
 
-    const features = this.extractPriceFeatures(vehicleFeatures);
-    const prediction = this.forwardPass(model, features);
+    const featureArray = this.extractPriceFeatures(vehicleFeatures);
+    const prediction = this.forwardPass(model, featureArray);
     
     return {
       prediction,
       confidence: 0.85,
-      features,
+      features: {
+        year: vehicleFeatures.year || 0,
+        mileage: vehicleFeatures.mileage || 0,
+        popularity: vehicleFeatures.popularity || 0
+      },
       model: 'neural'
     };
   }
@@ -591,31 +595,31 @@ class AdvancedML extends EventEmitter {
     };
   }
 
-  private calculateCollaborativeLoss(model: unknown, data: unknown[]): number {
+  private calculateCollaborativeLoss(_model: unknown, _data: unknown[]): number {
     // Simular cálculo de loss
     return Math.random() * 0.5;
   }
 
-  private calculateTFIDF(data: unknown[]): Map<string, number[]> {
+  private calculateTFIDF(_data: unknown[]): Map<string, number[]> {
     // Simular cálculo TF-IDF
     return new Map();
   }
 
-  private calculateSimilarityMatrix(vectors: Map<string, number[]>): Map<string, Map<string, number>> {
+  private calculateSimilarityMatrix(_vectors: Map<string, number[]>): Map<string, Map<string, number>> {
     // Simular matriz de similaridade
     return new Map();
   }
 
-  private initializeNeuralWeights(model: unknown, config: any): void {
+  private initializeNeuralWeights(_model: unknown, _config: any): void {
     // Simular inicialização de pesos
   }
 
-  private trainNeuralEpoch(model: unknown, data: unknown[], config: any): number {
+  private trainNeuralEpoch(_model: unknown, _data: unknown[], _config: any): number {
     // Simular treinamento de época
     return Math.random() * 0.3;
   }
 
-  private calculateNeuralLoss(model: unknown, data: unknown[]): number {
+  private calculateNeuralLoss(_model: unknown, _data: unknown[]): number {
     // Simular cálculo de loss
     return Math.random() * 0.4;
   }
@@ -638,7 +642,7 @@ class AdvancedML extends EventEmitter {
     return a.reduce((sum, val, i) => sum + val * (b[i] || 0), 0);
   }
 
-  private createUserFeatureVector(profile: UserProfile): number[] {
+  private createUserFeatureVector(_profile: UserProfile): number[] {
     // Simular vetor de características do usuário
     return [1, 0, 1, 0, 1];
   }
@@ -650,31 +654,31 @@ class AdvancedML extends EventEmitter {
     return dotProduct / (normA * normB);
   }
 
-  private createNeuralInput(userProfile: UserProfile, vehicleFeatures: VehicleFeatures): number[] {
+  private createNeuralInput(_userProfile: UserProfile, _vehicleFeatures: VehicleFeatures): number[] {
     // Simular entrada neural
     return [1, 0, 1, 0, 1, 0, 1, 0];
   }
 
-  private forwardPass(model: unknown, input: number[]): number {
+  private forwardPass(_model: unknown, _input: number[]): number {
     // Simular forward pass
     return Math.random();
   }
 
-  private extractPriceFeatures(vehicle: Partial<VehicleFeatures>): Record<string, number> {
-    return {
-      year: vehicle.year || 0,
-      mileage: vehicle.mileage || 0,
-      popularity: vehicle.popularity || 0
-    };
+  private extractPriceFeatures(vehicle: Partial<VehicleFeatures>): number[] {
+    return [
+      vehicle.year || 0,
+      vehicle.mileage || 0,
+      vehicle.popularity || 0
+    ];
   }
 
-  private calculateSeasonalFactor(timeframe: string): number {
+  private calculateSeasonalFactor(_timeframe: string): number {
     const month = new Date().getMonth();
     const seasonalFactors = [0.8, 0.9, 1.0, 1.1, 1.2, 1.1, 1.0, 0.9, 0.8, 0.7, 0.8, 0.9];
     return seasonalFactors[month];
   }
 
-  private calculateAnomalyScore(item: unknown): number {
+  private calculateAnomalyScore(_item: unknown): number {
     // Simular cálculo de score de anomalia
     return Math.random();
   }
@@ -695,7 +699,7 @@ class AdvancedML extends EventEmitter {
   }
 
   // Métricas de performance
-  public getModelMetrics(modelType: string): Record<string, number> {
+  public getModelMetrics(_modelType: string): Record<string, number> {
     return {
       accuracy: Math.random() * 0.3 + 0.7,
       precision: Math.random() * 0.3 + 0.7,

@@ -163,8 +163,7 @@ const PerformanceDashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {metrics && (
-          <>
+        {metrics ? <>
             {/* Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <motion.div
@@ -355,8 +354,7 @@ const PerformanceDashboardPage: React.FC = () => {
                 </div>
               </div>
             </motion.div>
-          </>
-        )}
+          </> : null}
       </div>
     </div>
   );
