@@ -51,7 +51,10 @@ class RealTimeManager {
           const normalizedToken = (typeof token === 'string' && token.startsWith('Bearer '))
             ? token.split(' ')[1]
             : token as string;
-          const decoded = jwt.verify(normalizedToken, secret) as any;
+          if (!normalizedToken) {
+            throw new Error('JWT token is empty or invalid.');
+          }
+          const decoded = jwt.verify(normalizedToken, secret);
           const user = await User.findById(decoded.id).select('-password');
           
           if (user) {
