@@ -390,7 +390,7 @@ const PerformanceDashboard: React.FC = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Alerts</h3>
             <div className="space-y-3">
-              {summary?.alerts.slice(0, 5).map((alert, index) => (
+              (summary?.alerts || []).slice(0, 5).map((alert, index) => (
                 <div key={index} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
                   <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5" />
                   <div>
@@ -400,7 +400,7 @@ const PerformanceDashboard: React.FC = () => {
                     </p>
                   </div>
                 </div>
-              ))}
+              ))
               {(!summary?.alerts || summary.alerts.length === 0) && (
                 <p className="text-sm text-gray-500">No recent alerts</p>
               )}
