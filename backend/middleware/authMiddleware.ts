@@ -18,7 +18,8 @@ export const protect = async (req: express.Request, res: express.Response, next:
     return res.status(401).json({ message: 'No authorization header' });
   }
 
-  const [, token] = authHeader.split(' ');
+  const parts = authHeader.split(' ');
+  const token = parts.length === 2 ? parts[1].trim() : parts[0].trim();
 
   if (token) {
     try {
