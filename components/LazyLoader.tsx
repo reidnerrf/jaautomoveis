@@ -124,21 +124,23 @@ export function useLazyLoad<T>(
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
-      async (entries) => {
+      (entries) => {
         const [entry] = entries;
         if (entry.isIntersecting && !data && !loading) {
-          setLoading(true);
-          try {
-            const result = await importFunc();
-            setData(result);
-            setError(null);
-          } catch (err) {
-            setError(err as Error);
-          } finally {
-            setLoading(false);
-          }
+          (async () => {
+            setLoading(true);
+            try {
+              const result = await importFunc();
+              setData(result);
+              setError(null);
+            } catch (err) {
+              setError(err as Error);
+            } finally {
+              setLoading(false);
+            }
+          })();
         }
-      },
+      }
       { threshold: 0.1, ...options }
     );
 
