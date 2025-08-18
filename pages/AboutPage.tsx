@@ -91,7 +91,7 @@ const AboutPage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {values.map((value, index) => (
                             <motion.div 
-                                key={index} 
+                                key={value.title || index} 
                                 className="text-center p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl transition-shadow duration-300"
                                 initial={{ opacity: 0, y: 50 }}
                                 whileInView={{ opacity: 1, y: 0 }}

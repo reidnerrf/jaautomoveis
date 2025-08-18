@@ -10,21 +10,16 @@ initSentry();
 
 // Inicializar Web Vitals monitoring
 import { initWebVitalsMonitoring } from './utils/webVitals';
-initWebVitalsMonitoring((metric) => {
-  // Callback para métricas de Web Vitals
-  console.log('Web Vital:', metric.name, metric.value);
-});
+if (import.meta.env.MODE === 'production') {
+  initWebVitalsMonitoring((metric) => {
+    console.log('Web Vital:', metric.name, metric.value);
+  });
+}
 
 // Inicializar PWA
-if ('serviceWorker' in navigator) {
+if (import.meta.env.MODE === 'production' && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('SW registered: ', registration);
-      })
-      .catch(registrationError => {
-        console.log('SW registration failed: ', registrationError);
-      });
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
   });
 }
 

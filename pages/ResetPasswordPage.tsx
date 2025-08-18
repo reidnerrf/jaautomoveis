@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import { FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 
 const ResetPasswordPage: React.FC = () => {
-  const { token } = useParams();
+  const params = useParams<{ token: string }>();
+  const token = params?.token;
   const navigate = useNavigate();
   
   const [password, setPassword] = useState('');

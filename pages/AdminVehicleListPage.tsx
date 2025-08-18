@@ -549,7 +549,7 @@ const AdminVehicleListPage: React.FC = () => {
                                             <td className="py-4 px-6">
                                                 <div className="flex items-center gap-2">
                                                     <Link
-                                                        to={`/vehicle/${vehicle.id}`}
+                                                        to={vehicle.id ? `/vehicle/${vehicle.id}` : '#'}
                                                         className="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 transition-colors"
                                                         title="Visualizar"
                                                     >
@@ -629,7 +629,7 @@ const AdminVehicleListPage: React.FC = () => {
                                 <div className="flex justify-between items-center">
                                     <div className="flex gap-2">
                                         <Link
-                                            to={`/vehicle/${vehicle.id}`}
+                                            to={vehicle.id ? `/vehicle/${vehicle.id}` : '#'}
                                             className="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
                                         >
                                             <FiEye size={16} />

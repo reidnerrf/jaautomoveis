@@ -83,8 +83,8 @@ const ContactPage: React.FC = () => {
                                 { icon: FiMapPin, text: "Av. Brasília, n°35 - Vila Julieta, Resende - RJ, 27521-060" },
                                 { icon: FiPhone, text: "(24) 99903-7716" },
                                 { icon: FiMail, text: "contato@jaautomoveis.com" }
-                            ].map(({ icon: Icon, text }, idx) => (
-                                <p key={idx} className="flex items-center group">
+                            ].map(({ icon: Icon, text }) => (
+                                <p key={text} className="flex items-center group">
                                     <Icon className="mr-3 text-main-red group-hover:text-red-700 transition-colors duration-300" size={20} />
                                     {text}
                                 </p>

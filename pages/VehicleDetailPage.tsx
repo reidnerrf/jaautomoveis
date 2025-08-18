@@ -13,7 +13,8 @@ import SEOHead from '../components/SEOHead.tsx';
 
 
 const VehicleDetailPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ id: string }>();
+  const id = params?.id;
   const { getVehicleById, vehicles: allVehicles, loading } = useVehicleData();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
@@ -39,6 +40,8 @@ const VehicleDetailPage: React.FC = () => {
         }
       };
       fetchVehicle();
+    } else {
+      setVehicle(null);
     }
   }, [id, getVehicleById]);
 
@@ -200,7 +203,7 @@ const VehicleDetailPage: React.FC = () => {
             <div className="flex space-x-2 mt-4 overflow-x-auto pb-2">
               {vehicle.images.map((img, index) => (
                 <img
-                  key={index}
+                  key={`${img}-${index}`}
                   src={img}
                   alt={`${vehicle.name} thumbnail ${index + 1}`}
                   className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${index === currentImageIndex ? 'border-main-red' : 'border-transparent'} transition`}

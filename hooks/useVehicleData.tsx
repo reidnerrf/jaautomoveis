@@ -38,7 +38,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
         return;
       }
 
-      const response = await fetch('/api/vehicles', {
+      const response = await fetch('/api/vehicles?limit=1000', {
         headers: { 'Cache-Control': 'max-age=300' },
       });
       
@@ -47,17 +47,19 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       }
 
       const data = await response.json();
-      
-      const normalized = Array.isArray(data)
-        ? data.map((v: any) => ({
-            ...v,
-            id: v.id || v._id || String(v._id),
-            views: v.views || 0,
-            images: v.images || [],
-            optionals: v.optionals || [],
-            additionalInfo: v.additionalInfo || '',
-          }))
-        : [];
+
+      const items = Array.isArray(data)
+        ? data
+        : (Array.isArray((data as any)?.vehicles) ? (data as any).vehicles : []);
+
+      const normalized = items.map((v: any) => ({
+        ...v,
+        id: v.id || v._id || String(v._id),
+        views: v.views || 0,
+        images: v.images || [],
+        optionals: v.optionals || [],
+        additionalInfo: v.additionalInfo || '',
+      }));
 
       setVehicles(normalized);
 
@@ -94,15 +96,15 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       }
       
       const data = await response.json();
-      
+
       const vehicle = {
-        ...data,
-        id: data.id || data._id || String(data._id),
-        views: data.views || 0,
-        images: data.images || [],
-        optionals: data.optionals || [],
-        additionalInfo: data.additionalInfo || '',
-      };
+        ...(data || {}),
+        id: data?.id || data?._id || String(data?._id || ''),
+        views: data?.views || 0,
+        images: data?.images || [],
+        optionals: data?.optionals || [],
+        additionalInfo: data?.additionalInfo || '',
+      } as Vehicle;
 
       return vehicle;
     } catch (err: any) {
