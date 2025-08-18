@@ -1,6 +1,6 @@
 import React, { memo, useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FiEye, FiHeart, FiCalendar, FiSettings, FiDollarSign, FiStar } from 'react-icons/fi';
+import { FiEye, FiHeart, FiCalendar, FiSettings, FiStar } from 'react-icons/fi';
 import { BsFuelPump, BsSpeedometer2 } from 'react-icons/bs';
 import OptimizedImage from './OptimizedImage';
 import { FaWhatsapp } from 'react-icons/fa';
@@ -51,18 +51,13 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
       const likedVehicles = JSON.parse(localStorage.getItem('likedVehicles') || '[]');
       setLocalFavorite(likedVehicles.includes(vehicle.id));
     } catch (error) {
-      console.warn('Failed to load favorite state:', error);
+      // Silently handle error
     }
   }, [vehicle.id]);
   
   const favorite = useMemo(() => localFavorite || isFavorite, [localFavorite, isFavorite]);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(price);
-  };
+
 
   const formatMileage = (mileage: number) => {
     return new Intl.NumberFormat('pt-BR').format(mileage);
@@ -71,10 +66,12 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
   // expose like analytics
   const sendLikeAnalytics = (liked: boolean) => {
     try {
-      if ((window as any).trackBusinessEvent) {
-        (window as any).trackBusinessEvent('like_vehicle', { vehicleId: vehicle.id, name: vehicle.name, liked });
+      if ((window as unknown as { trackBusinessEvent?: (event: string, data: Record<string, unknown>) => void }).trackBusinessEvent) {
+        (window as unknown as { trackBusinessEvent: (event: string, data: Record<string, unknown>) => void }).trackBusinessEvent('like_vehicle', { vehicleId: vehicle.id, name: vehicle.name, liked });
       }
-    } catch {}
+    } catch {
+      // Silently handle error
+    }
   };
 
   const handleCardClick = () => {
@@ -103,7 +100,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(({
         }
         localStorage.setItem('likedVehicles', JSON.stringify(Array.from(set)));
       } catch (error) {
-        console.warn('Failed to save favorite state:', error);
+        // Silently handle error
       }
     }
   };

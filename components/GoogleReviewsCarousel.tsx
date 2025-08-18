@@ -52,7 +52,7 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
           <div className="flex text-yellow-400 mb-4">
             {[...Array(5)].map((_, i) => (
               <motion.div
-                key={i}
+                key={`star-${i}`}
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
@@ -64,7 +64,7 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
 
           {/* Comentário */}
           <p className="text-gray-700 italic text-lg mb-6 leading-relaxed">
-            "{currentReview.comment}"
+            &ldquo;{currentReview.comment}&rdquo;
           </p>
 
           {/* Nome e tempo */}
@@ -79,9 +79,9 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
 
       {/* Indicadores */}
       <div className="flex justify-center mt-6 space-x-2">
-        {reviews.map((_, index) => (
+        {reviews.map((review, index) => (
           <motion.button
-            key={index}
+            key={`indicator-${review.reviewerName}-${index}`}
             onClick={() => setCurrentIndex(index)}
             className={`w-3 h-3 rounded-full transition-colors duration-300 ${
               currentIndex === index ? 'bg-red-500 scale-110' : 'bg-gray-300 hover:bg-gray-400'

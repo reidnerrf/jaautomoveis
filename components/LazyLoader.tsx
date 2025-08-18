@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, Component, ReactNode } from 'react';
 
 interface LazyLoaderProps {
-  component: () => Promise<{ default: React.ComponentType<any> }>;
+  component: () => Promise<{ default: React.ComponentType<Record<string, unknown>> }>;
   fallback?: ReactNode;
   errorFallback?: ReactNode;
   onLoad?: () => void;
@@ -27,7 +27,7 @@ class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('LazyLoader Error:', error, errorInfo);
+    // Log error silently
     this.props.onError?.(error);
   }
 
@@ -75,7 +75,7 @@ export function withLazyRetry<T extends object>(
   importFunc: () => Promise<{ default: React.ComponentType<T> }>,
   retries = 3
 ) {
-  return React.forwardRef<any, T>((props, ref) => {
+  const WrappedComponent = React.forwardRef<unknown, T>((props, ref) => {
     const [Component, setComponent] = React.useState<React.ComponentType<T> | null>(null);
     const [error, setError] = React.useState<Error | null>(null);
     const [retryCount, setRetryCount] = React.useState(0);
@@ -110,6 +110,9 @@ export function withLazyRetry<T extends object>(
 
     return <Component {...props} ref={ref} />;
   });
+
+  WrappedComponent.displayName = 'withLazyRetry';
+  return WrappedComponent;
 }
 
 // Hook para lazy loading com intersection observer

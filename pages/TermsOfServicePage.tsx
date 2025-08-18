@@ -48,7 +48,7 @@ const TermsOfServicePage: React.FC = () => {
               <FiShield className="text-purple-500" /> 3. Isenção de responsabilidade
             </h2>
             <p className={textClasses}>
-              Os materiais no site da JA Automóveis são fornecidos "como estão". JA Automóveis não oferece garantias, expressas ou implícitas...
+              Os materiais no site da JA Automóveis são fornecidos &ldquo;como estão&rdquo;. JA Automóveis não oferece garantias, expressas ou implícitas...
             </p>
           </div>
 
