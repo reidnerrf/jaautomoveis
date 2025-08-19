@@ -59,10 +59,7 @@ const getAvailablePort = (preferredPort: number): number => {
 
 const PORT = getAvailablePort(5000);
 
-// Connect to MongoDB (skip during tests)
-if (process.env.SKIP_DB !== "true") {
-  connectDB();
-}
+// Defer DB connection until just before starting the server so queries don't run before connecting
 
 const app = express();
 // Hide framework signature
@@ -633,13 +630,25 @@ app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   res.status(500).send("Something broke!");
 });
 
-// Start Server
+// Start Server (after DB is connected unless SKIP_DB=true)
 if (process.env.NODE_ENV !== "test") {
-  server.listen(PORT, "0.0.0.0", () => {
-    console.log(
-      `Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`,
-    );
-  });
+  const startServer = () =>
+    server.listen(PORT, "0.0.0.0", () => {
+      console.log(
+        `Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`,
+      );
+    });
+
+  if (process.env.SKIP_DB === "true") {
+    startServer();
+  } else {
+    connectDB()
+      .then(startServer)
+      .catch((err) => {
+        console.error("Failed to connect to MongoDB. Server not started.", err);
+        process.exit(1);
+      });
+  }
 }
 
 export { app, server };
