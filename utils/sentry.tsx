@@ -6,37 +6,19 @@ export const initSentry = () => {
   if (process.env.NODE_ENV === 'production') {
     Sentry.init({
       dsn: process.env.SENTRY_DSN || 'https://your-sentry-dsn@sentry.io/project',
-      integrations: [
-        new Sentry.BrowserTracing({
-          // Configurar rotas para tracking
-          routingInstrumentation: Sentry.reactRouterV6Instrumentation(
-            (history) => history.listen
-          ),
-        }),
-      ],
-      // Performance monitoring
-      tracesSampleRate: 0.1, // 10% das transações
-      replaysSessionSampleRate: 0.1, // 10% das sessões
-      replaysOnErrorSampleRate: 1.0, // 100% dos erros
-      
-      // Configurações de ambiente
+      // Evitamos integrações que variam entre versões do SDK para manter build limpo
+      // Performance monitoring básico pode ser reativado futuramente conforme versão do SDK
       environment: process.env.NODE_ENV,
       release: process.env.APP_VERSION || '1.0.0',
-      
-      // Filtrar erros
       beforeSend(event) {
-        // Filtrar erros de rede que não são críticos
         if (event.exception) {
           const exception = event.exception.values?.[0];
-          if (exception?.type === 'NetworkError' && 
-              exception?.value?.includes('Failed to fetch')) {
+          if (exception?.type === 'NetworkError' && exception?.value?.includes('Failed to fetch')) {
             return null;
           }
         }
         return event;
       },
-      
-      // Configurações de contexto
       initialScope: {
         tags: {
           app: 'ja-automoveis',
@@ -133,25 +115,13 @@ export const withSentryErrorBoundary = (Component: React.ComponentType<any>) => 
 
 // Função para monitorar performance
 export const startTransaction = (name: string, operation: string) => {
-  if (process.env.NODE_ENV === 'production') {
-    return Sentry.startTransaction({
-      name,
-      op: operation
-    });
-  }
+  // No-op para evitar dependência de APIs variáveis do Sentry
   return null;
 };
 
 // Função para monitorar métricas customizadas
 export const captureMetric = (name: string, value: number, unit: string = 'millisecond') => {
-  if (process.env.NODE_ENV === 'production') {
-    Sentry.metrics.increment(name, value, {
-      unit,
-      tags: {
-        environment: process.env.NODE_ENV
-      }
-    });
-  }
+  // No-op por compatibilidade entre versões
 };
 
 export default {
