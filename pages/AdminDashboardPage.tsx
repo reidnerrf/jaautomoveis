@@ -104,7 +104,30 @@ const AdminDashboardPage: React.FC = () => {
     socket.on("vehicle-updated", () => refreshVehicles());
     socket.on("vehicle-deleted", () => refreshVehicles());
 
-    return () => {};
+    // Update likes/live counters immediately
+    const seen = new Set<string>();
+    socket.on("user-action-live", (payload: any) => {
+      if (payload?.action === "like_vehicle") {
+        try {
+          const parsed = payload?.label ? JSON.parse(payload.label) : {};
+          const vehicleId = String(parsed?.vehicleId || "");
+          setDashboardStats((prev) => ({
+            ...prev,
+            totalLikes: Number(prev.totalLikes || 0) + 1,
+            likedVehicles: vehicleId
+              ? (() => {
+                  if (!seen.has(vehicleId)) seen.add(vehicleId);
+                  return seen.size;
+                })()
+              : prev.likedVehicles,
+          }));
+        } catch {}
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, [refreshVehicles]);
 
   const vehicleStats = useMemo(() => {

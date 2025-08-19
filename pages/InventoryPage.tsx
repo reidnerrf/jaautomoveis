@@ -16,6 +16,7 @@ import {
 } from "react-icons/fi";
 import { FaCarSide, FaGasPump, FaCog, FaCalendarAlt } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
+import { io } from "socket.io-client";
 
 const InventoryPage: React.FC = () => {
   const { vehicles, loading } = useVehicleData();
@@ -35,6 +36,7 @@ const InventoryPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
 
   const itemsPerPage = 12;
 
@@ -58,6 +60,51 @@ const InventoryPage: React.FC = () => {
     () => [...new Set(safeVehicles.map((v) => v.gearbox || "Manual"))],
     [safeVehicles],
   );
+
+  // Load like counts to enable sorting by most liked
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/analytics/likes/by-vehicle", {
+          headers: { "Cache-Control": "no-store" },
+          cache: "no-store",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (active && Array.isArray(data)) {
+            const map: Record<string, number> = {};
+            for (const item of data) {
+              if (item?.vehicleId) map[item.vehicleId] = Number(item.count || 0);
+            }
+            setLikeCounts(map);
+          }
+        }
+      } catch {}
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Real-time likes updates
+  useEffect(() => {
+    const socket = io("", { path: "/socket.io", transports: ["websocket"] });
+    socket.on("user-action-live", (payload: any) => {
+      if (payload?.action === "like_vehicle") {
+        try {
+          const parsed = payload?.label ? JSON.parse(payload.label) : {};
+          const vehicleId = String(parsed?.vehicleId || "");
+          if (vehicleId) {
+            setLikeCounts((prev) => ({ ...prev, [vehicleId]: (prev[vehicleId] || 0) + 1 }));
+          }
+        } catch {}
+      }
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const filteredAndSortedVehicles = useMemo(() => {
     const tempVehicles = safeVehicles.filter((vehicle) => {
@@ -97,6 +144,11 @@ const InventoryPage: React.FC = () => {
 
     // Sorting
     switch (sortBy) {
+      case "likes-desc":
+        tempVehicles.sort(
+          (a, b) => (likeCounts[b.id] || 0) - (likeCounts[a.id] || 0),
+        );
+        break;
       case "price-asc":
         tempVehicles.sort((a, b) => a.price - b.price);
         break;
@@ -133,6 +185,7 @@ const InventoryPage: React.FC = () => {
     transmissionFilter,
     priceFilter,
     sortBy,
+    likeCounts,
   ]);
 
   const totalPages =
@@ -436,6 +489,7 @@ const InventoryPage: React.FC = () => {
                       className="px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-300"
                     >
                       <option value="recent">Mais Recentes</option>
+                      <option value="likes-desc">Mais Curtidos</option>
                       <option value="price-asc">Menor Preço</option>
                       <option value="price-desc">Maior Preço</option>
                       <option value="km-asc">Menor KM</option>

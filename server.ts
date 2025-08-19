@@ -296,7 +296,7 @@ app.use(
 );
 
 // servir build do React (ajuste o caminho conforme sua estrutura)
-const clientDistPath = path.join(process.cwd(), "/dist");
+const clientDistPath = path.join(process.cwd(), "dist");
 app.use(express.static(clientDistPath));
 
 // fallback para React Router SPA
@@ -486,7 +486,10 @@ const getUAResult = (uaInput: unknown) => {
 };
 
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+  if (!isProduction) {
+    // Useful during development; avoid noisy logs in production
+    console.log("User connected:", socket.id);
+  }
 
   socket.on("page-view", async (data) => {
     const { page } = data;
@@ -549,6 +552,18 @@ io.on("connection", (socket) => {
         label,
         timestamp: Date.now(),
       });
+
+      // Broadcast a dedicated event for likes with parsed payload
+      if (action === "like_vehicle") {
+        try {
+          const parsed = label ? JSON.parse(label) : {};
+          const vehicleId = parsed?.vehicleId || null;
+          const name = parsed?.name || null;
+          if (vehicleId) {
+            io.emit("like-updated", { vehicleId, name });
+          }
+        } catch {}
+      }
     } catch (error) {
       console.error("Analytics save error:", error);
     }
@@ -567,7 +582,9 @@ io.on("connection", (socket) => {
       }
       activeUsers.delete(socket.id);
     }
-    console.log("User disconnected:", socket.id);
+    if (!isProduction) {
+      console.log("User disconnected:", socket.id);
+    }
   });
 
   // allow admin dashboard to join a room for concise broadcasts

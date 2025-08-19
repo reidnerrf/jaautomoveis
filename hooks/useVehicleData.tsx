@@ -96,6 +96,8 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({
   }, [fetchVehicles]);
 
   useEffect(() => {
+    // Ensure fresh cache on full reloads
+    apiCache.clear();
     fetchVehicles();
 
     // subscribe to real-time updates

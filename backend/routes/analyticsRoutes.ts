@@ -3,6 +3,7 @@ import {
   getMonthlyViews,
   getDashboardStats,
   getRealtimeStats,
+  getLikesByVehicle,
 } from "../controllers/analyticsController";
 import { protect } from "../middleware/authMiddleware";
 
@@ -42,5 +43,7 @@ router.post("/batch", (req, res) => {
 router.get("/monthly-views", protect, getMonthlyViews);
 router.get("/dashboard-stats", protect, getDashboardStats);
 router.get("/realtime-stats", protect, getRealtimeStats);
+// Público: apenas contagem agregada
+router.get("/likes/by-vehicle", getLikesByVehicle);
 
 export default router;

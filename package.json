@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "prestart": "npm run build",
-    "start": "npm run db:up && npm run wait:db && cross-env NODE_ENV=production MONGODB_URI=mongodb://127.0.0.1:27017/ja-automoveis node dist/server.js",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
     "start:nodb": "cross-env NODE_ENV=production SKIP_DB=true node dist/server.js",
     "start:full": "bash -lc \"docker compose up -d --build mongo app nginx || docker-compose up -d --build mongo app nginx\"",
     "stop:full": "bash -lc \"docker compose down || docker-compose down\"",
