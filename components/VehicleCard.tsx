@@ -215,7 +215,9 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
                 </Link>
                 <div className="flex gap-3">
                   <a
-                    href={`https://wa.me/5511999999999?text=Olá! Tenho interesse no ${vehicle.make} ${vehicle.model} ${vehicle.year}`}
+                    href={`https://wa.me/5524999037716?text=${encodeURIComponent(
+                      `Olá! Tenho interesse no ${vehicle.make} ${vehicle.model} ${vehicle.year}`,
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -249,7 +251,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
         {/* Favorite Button */}
         <button
           onClick={handleFavoriteClick}
-          className={`absolute top-4 right-4 z-10 p-2 rounded-full transition-all duration-300 ${
+          className={`absolute top-4 right-4 z-10 p-2 rounded-full transition-all duration-300 md:top-4 md:right-4 top-2 right-2 ${
             favorite
               ? "bg-red-500 text-white shadow-lg"
               : "bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white"

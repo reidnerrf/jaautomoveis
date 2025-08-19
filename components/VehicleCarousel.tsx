@@ -163,7 +163,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(
           <>
             <button
               onClick={prevSlide}
-              className="absolute top-1/2 left-3 transform -translate-y-1/2 
+              className="absolute top-24 md:top-1/2 left-3 transform -translate-y-1/2 
                        bg-white/70 dark:bg-gray-800/60 backdrop-blur-md hover:bg-white/90 dark:hover:bg-gray-800/80 
                        rounded-full p-2 shadow-lg transition-all duration-300"
               aria-label="Previous slide"
@@ -175,7 +175,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(
             </button>
             <button
               onClick={nextSlide}
-              className="absolute top-1/2 right-3 transform -translate-y-1/2 
+              className="absolute top-24 md:top-1/2 right-3 transform -translate-y-1/2 
                        bg-white/70 dark:bg-gray-800/60 backdrop-blur-md hover:bg-white/90 dark:hover:bg-gray-800/80 
                        rounded-full p-2 shadow-lg transition-all duration-300"
               aria-label="Next slide"

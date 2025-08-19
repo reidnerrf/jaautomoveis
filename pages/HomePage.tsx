@@ -25,6 +25,7 @@ import { GoogleReview } from "../types.ts";
 import { useAnalytics } from "../utils/analytics.ts";
 import { analytics } from "../utils/analytics";
 //import { useTheme } from "../contexts/ThemeContext.tsx";
+import SEOHead from "../components/SEOHead.tsx";
 
 const HomePage: React.FC = () => {
   const { vehicles, refreshVehicles } = useVehicleData();
@@ -146,6 +147,11 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="w-full bg-white dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden ">
+      <SEOHead
+        title="JA Automóveis - Seu Próximo Carro Está Aqui"
+        description="Encontre seu próximo carro com as melhores ofertas e financiamento facilitado na JA Automóveis"
+        image="/assets/logo.png"
+      />
       {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden ">
         {/* Background media: video on desktop, image on mobile for performance */}
@@ -241,7 +247,7 @@ const HomePage: React.FC = () => {
               </motion.button>
             </Link>
             <a
-              href="https://api.whatsapp.com/send?phone=5524999037716&text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es"
+              href="https://wa.me/5524999037716?text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => handleSocialClick("whatsapp")}
@@ -722,7 +728,7 @@ const HomePage: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row justify-center gap-8 max-w-2xl mx-auto">
               <a
-                href="https://api.whatsapp.com/send?phone=5524999037716"
+                href="https://wa.me/5524999037716?text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => handleSocialClick("whatsapp")}
