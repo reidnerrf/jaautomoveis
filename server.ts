@@ -301,10 +301,12 @@ app.use(
 const clientDistPath = path.join(process.cwd(), "dist");
 app.use(express.static(clientDistPath));
 
-// fallback para React Router SPA
-app.get("*", (_, res) => {
-  res.sendFile(path.join(clientDistPath, "index.html"));
-});
+// fallback para React Router SPA (apenas em produção)
+if (isProduction) {
+  app.get("*", (_, res) => {
+    res.sendFile(path.join(clientDistPath, "index.html"));
+  });
+}
 
 // Expose PWA files at root for proper scope
 app.get("/manifest.json", (req: Request, res: Response) => {
@@ -413,26 +415,24 @@ app.use(
   }),
 );
 
-if (isProduction) {
-  app.use(
-    "/assets",
-    express.static(path.join(__dirname, "assets"), {
-      maxAge: "1y",
-      etag: true,
-      lastModified: true,
-      immutable: true,
-    }),
-  );
-  app.use(
-    "/assets",
-    express.static(path.join(process.cwd(), "assets"), {
-      maxAge: "1y",
-      etag: true,
-      lastModified: true,
-      immutable: true,
-    }),
-  );
-}
+app.use(
+  "/assets",
+  express.static(path.join(__dirname, "assets"), {
+    maxAge: isProduction ? "1y" : 0,
+    etag: true,
+    lastModified: true,
+    immutable: isProduction,
+  }),
+);
+app.use(
+  "/assets",
+  express.static(path.join(process.cwd(), "assets"), {
+    maxAge: isProduction ? "1y" : 0,
+    etag: true,
+    lastModified: true,
+    immutable: isProduction,
+  }),
+);
 
 app.use(
   express.static(__dirname, {
@@ -451,10 +451,12 @@ app.use(
   }),
 );
 
-// 4. Fallback for Single-Page Application (SPA)
-app.get("*", (req: Request, res: Response) => {
-  res.sendFile(path.resolve(__dirname, "index.html"));
-});
+// 4. Fallback for Single-Page Application (SPA) - only in production (dist)
+if (isProduction) {
+  app.get("*", (req: Request, res: Response) => {
+    res.sendFile(path.resolve(__dirname, "index.html"));
+  });
+}
 
 // Socket.IO real-time analytics
 const activeUsers = new Map();
