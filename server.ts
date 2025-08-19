@@ -32,13 +32,7 @@ import performanceMiddleware, {
   getActiveAlerts,
 } from "./backend/middleware/performanceMiddleware";
 import {
-  cacheMiddleware,
   vehicleListCacheMiddleware,
-  vehicleDetailCacheMiddleware,
-  statsCacheMiddleware,
-  invalidateVehicleCacheMiddleware,
-  searchCacheMiddleware,
-  conditionalCacheMiddleware,
   getCacheMetrics,
   resetCacheMetrics,
   warmupCache,
@@ -46,7 +40,6 @@ import {
 import {
   vehicleImageOptimization,
   autoImageOptimization,
-  batchImageOptimization,
   getImageOptimizationStats,
   clearImageCache,
 } from "./backend/middleware/imageOptimization";
@@ -596,7 +589,7 @@ io.on("connection", (socket) => {
 });
 
 // Error handling middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });

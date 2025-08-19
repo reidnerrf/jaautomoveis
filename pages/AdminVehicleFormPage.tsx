@@ -134,22 +134,22 @@ const AdminVehicleFormPage: React.FC = () => {
   };
 
   const handleDeleteImage = (imageUrl: string) => {
-    if (window.confirm("Tem certeza que deseja remover esta imagem?")) {
-      setVehicle((prev) => ({
-        ...prev,
-        images: prev.images.filter((url) => url !== imageUrl),
-      }));
-    }
+    const confirmed = window && typeof window !== 'undefined' ? window.confirm("Tem certeza que deseja remover esta imagem?") : true;
+    if (!confirmed) return;
+    setVehicle((prev) => ({
+      ...prev,
+      images: prev.images.filter((url) => url !== imageUrl),
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (vehicle.images.length === 0) {
-      alert("Por favor, adicione pelo menos uma imagem.");
+      console.warn("Validação: pelo menos uma imagem é necessária.");
       return;
     }
     if (vehicle.make === "") {
-      alert("Por favor, selecione uma marca.");
+      console.warn("Validação: marca é obrigatória.");
       return;
     }
     const vehicleDataToSubmit = {
@@ -169,40 +169,32 @@ const AdminVehicleFormPage: React.FC = () => {
       navigate("/admin/vehicles");
     } catch (error) {
       console.error("Failed to save vehicle", error);
-      alert(
-        "Falha ao salvar o veículo. Verifique o console para mais detalhes.",
-      );
     }
   };
 
   const handleDeleteVehicle = async () => {
     if (!id) return;
 
-    if (
-      window.confirm(
-        "Tem certeza que deseja deletar este veículo? Esta ação não pode ser desfeita.",
-      )
-    ) {
-      try {
-        const response = await fetch(`/api/vehicles/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+    const confirmed = window && typeof window !== 'undefined' ? window.confirm(
+      "Tem certeza que deseja deletar este veículo? Esta ação não pode ser desfeita.",
+    ) : true;
+    if (!confirmed) return;
+    try {
+      const response = await fetch(`/api/vehicles/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error("Falha ao deletar veículo");
-        }
-
-        navigate("/admin/vehicles");
-      } catch (error) {
-        console.error("Failed to delete vehicle", error);
-        alert(
-          "Falha ao deletar o veículo. Verifique o console para mais detalhes.",
-        );
+      if (!response.ok) {
+        throw new Error("Falha ao deletar veículo");
       }
+
+      navigate("/admin/vehicles");
+    } catch (error) {
+      console.error("Failed to delete vehicle", error);
     }
   };
 
