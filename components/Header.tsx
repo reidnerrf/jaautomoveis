@@ -39,13 +39,13 @@ const Header: React.FC = () => {
     if (!isOpen) return;
     const onClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Fecha se clicar em links do menu ou fora do contêiner do nav
-      if (target.closest("nav") == null || target.closest("a, button")) {
+      // Fecha apenas se clicar fora do nav
+      if (target.closest("nav") == null) {
         setIsOpen(false);
       }
     };
-    document.addEventListener("click", onClick);
-    return () => document.removeEventListener("click", onClick);
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
   }, [isOpen]);
 
   const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -66,7 +66,7 @@ const Header: React.FC = () => {
           : "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md"
       }`}
     >
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="container mx-auto px-4 sm:px-6 lg:px-8" onClick={(e) => e.stopPropagation()}>
         <div
           className={`flex items-center justify-between ${
             isScrolled ? "h-16" : "h-20"
@@ -115,7 +115,11 @@ const Header: React.FC = () => {
           <div className="lg:hidden flex items-center gap-3">
             <DarkModeToggle />
             <button
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpen(!isOpen);
+              }}
+              aria-label="Toggle menu"
               className={`focus:outline-none ${
                 isTransparent
                   ? "text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
@@ -136,6 +140,7 @@ const Header: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             className="lg:hidden bg-white dark:bg-gray-900 shadow-lg border-t border-gray-200 dark:border-gray-700"
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="px-4 pt-4 pb-6 space-y-3">
               {navLinks.map((link) => (
