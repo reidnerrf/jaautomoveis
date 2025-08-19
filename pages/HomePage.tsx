@@ -27,8 +27,8 @@ import { useAnalytics } from "../utils/analytics.ts";
 //import { useTheme } from "../contexts/ThemeContext.tsx";
 
 const HomePage: React.FC = () => {
-  const { vehicles } = useVehicleData();
-  const { vehicles: mostViewedVehicles, loading: loadingMostViewed } = useTopVehicles({ limit: 8, periodDays: 30 });
+  const { vehicles, refreshVehicles } = useVehicleData();
+  const { vehicles: mostViewedVehicles, loading: loadingMostViewed, refresh: refreshMostViewed } = useTopVehicles({ limit: 8, periodDays: 30 });
   const { trackAction, trackBusinessEvent } = useAnalytics('HomePage');
   //const { isDarkMode } = useTheme();
   const { scrollY } = useScroll();
@@ -36,6 +36,18 @@ const HomePage: React.FC = () => {
   
   const [googleReviews, setGoogleReviews] = useState<GoogleReview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Atualizações em tempo real para carrosséis
+    try {
+      const { io } = require('socket.io-client');
+      const socket = io('', { path: '/socket.io', transports: ['websocket'] });
+      socket.on('vehicle-updated', () => { refreshVehicles(); refreshMostViewed(); });
+      socket.on('vehicle-created', () => { refreshVehicles(); refreshMostViewed(); });
+      socket.on('vehicle-deleted', () => { refreshVehicles(); refreshMostViewed(); });
+      return () => { try { socket.disconnect(); } catch {} };
+    } catch {}
+  }, [refreshVehicles, refreshMostViewed]);
 
   useEffect(() => {
     // Buscar avaliações do Google via backend (evita CORS e expõe menos a API key)
