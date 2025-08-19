@@ -15,8 +15,13 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   type = "website",
   children,
 }) => {
-  const siteUrl = window.location.origin;
-  const fullUrl = url ? `${siteUrl}${url}` : window.location.href;
+  const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const fullUrl =
+    typeof window !== "undefined"
+      ? url
+        ? `${siteUrl}${url}`
+        : window.location.href
+      : url || "";
   const imageUrl = image?.startsWith("http")
     ? image
     : `${siteUrl}${image || "/assets/logo.png"}`;

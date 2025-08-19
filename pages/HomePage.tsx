@@ -25,6 +25,7 @@ import { GoogleReview } from "../types.ts";
 import { useAnalytics } from "../utils/analytics.ts";
 import { analytics } from "../utils/analytics";
 //import { useTheme } from "../contexts/ThemeContext.tsx";
+import SEOHead from "../components/SEOHead.tsx";
 
 const HomePage: React.FC = () => {
   const { vehicles, refreshVehicles } = useVehicleData();
@@ -146,6 +147,11 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="w-full bg-white dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden ">
+      <SEOHead
+        title="JA Automóveis - Seu Próximo Carro Está Aqui"
+        description="Encontre seu próximo carro com as melhores ofertas e financiamento facilitado na JA Automóveis"
+        image="/assets/logo.png"
+      />
       {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden ">
         {/* Background media: video on desktop, image on mobile for performance */}

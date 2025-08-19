@@ -101,9 +101,11 @@ if (!isProduction) {
   scriptSrcDirectives.push("data:");
 }
 
-// Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, "uploads");
-fs.access(uploadsDir).catch(() => fs.mkdir(uploadsDir));
+// Create uploads directories if they don't exist (both runtime and project root)
+const uploadsDirBuild = path.join(__dirname, "uploads");
+const uploadsDirRoot = path.join(process.cwd(), "uploads");
+fs.access(uploadsDirBuild).catch(() => fs.mkdir(uploadsDirBuild));
+fs.access(uploadsDirRoot).catch(() => fs.mkdir(uploadsDirRoot));
 
 // Rate limiting - Fixed IPv6 handling
 const limiter = rateLimit({
@@ -136,6 +138,10 @@ app.use(
           "data:",
           "https:",
           "https://lh3.googleusercontent.com",
+          // Google Maps images
+          "https://maps.gstatic.com",
+          "https://maps.googleapis.com",
+          "https://maps.google.com",
         ],
         scriptSrc: scriptSrcDirectives,
         // Allow external connections for fonts, Tailwind CDN, and Google avatars/images
@@ -147,6 +153,15 @@ app.use(
           "https://fonts.gstatic.com",
           "https://cdn.tailwindcss.com",
           "https://lh3.googleusercontent.com",
+          // Google Maps APIs
+          "https://maps.googleapis.com",
+        ],
+        // Allow Google Maps embeds
+        frameSrc: [
+          "'self'",
+          "https://www.google.com",
+          "https://www.google.com.br",
+          "https://maps.google.com",
         ],
         manifestSrc: ["'self'"],
       },
@@ -409,6 +424,16 @@ app.all(["/api/*"], (req: Request, res: Response) => {
 app.use(
   "/uploads",
   express.static(path.join(__dirname, "uploads"), {
+    maxAge: isProduction ? "1d" : 0,
+    etag: true,
+    lastModified: true,
+  }),
+);
+
+// Also serve uploads from project root (when images are saved outside dist in production)
+app.use(
+  "/uploads",
+  express.static(path.join(process.cwd(), "uploads"), {
     maxAge: isProduction ? "1d" : 0,
     etag: true,
     lastModified: true,

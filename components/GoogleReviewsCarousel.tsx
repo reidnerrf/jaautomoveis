@@ -45,15 +45,15 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({
 
           {/* Avatar with robust fallback */}
           <motion.img
-            src={currentReview.avatarUrl || "./assets/semavatar.png"}
+            src={currentReview.avatarUrl || "/assets/semavatar.png"}
             alt={currentReview.reviewerName}
             className="w-24 h-24 rounded-full mb-4 border-4 border-yellow-400 shadow-md object-cover bg-gray-100"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
             onError={(e) => {
               const target = e.currentTarget as HTMLImageElement;
-              if (!target.src.includes("./assets/semavatar.png")) {
-                target.src = "./assets/semavatar.png";
+              if (!target.src.includes("/assets/semavatar.png")) {
+                target.src = "/assets/semavatar.png";
               }
             }}
           />

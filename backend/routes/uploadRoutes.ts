@@ -47,7 +47,8 @@ router.post(
     try {
       const uploadedImagePaths: string[] = [];
       const files = req.files as Express.Multer.File[];
-      const rootPath = path.resolve();
+      // Save under project root to ensure static serving regardless of build dir
+      const rootPath = process.cwd();
       const vehicleName = req.body.vehicleName || "vehicle";
 
       // Sanitize the vehicle name to create a URL-friendly slug
