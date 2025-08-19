@@ -5,7 +5,10 @@
   "main": "dist/server.js",
   "scripts": {
     "prestart": "npm run build",
-    "start": "cross-env NODE_ENV=production SKIP_DB=true node dist/server.js",
+    "start": "npm run db:up && npm run wait:db && cross-env NODE_ENV=production MONGODB_URI=mongodb://127.0.0.1:27017/ja-automoveis node dist/server.js",
+    "start:nodb": "cross-env NODE_ENV=production SKIP_DB=true node dist/server.js",
+    "db:up": "bash -lc \"docker compose up -d mongo || docker-compose up -d mongo\"",
+    "wait:db": "wait-on -t 120000 tcp:127.0.0.1:27017",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "tsc",
@@ -89,6 +92,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
+    "wait-on": "^7.2.0",
     "@types/jest": "^29.5.13",
     "@types/supertest": "^2.0.16",
     "identity-obj-proxy": "^3.0.0",
