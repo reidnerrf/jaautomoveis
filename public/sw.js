@@ -100,10 +100,14 @@ self.addEventListener('fetch', (event) => {
   if (request.destination === 'image') {
     if (url.pathname.startsWith('/uploads/')) {
       const noStoreReq = new Request(request, { headers: { ...Object.fromEntries(request.headers), 'Cache-Control': 'no-store' } });
-      event.respondWith(networkFirst(noStoreReq, IMAGE_CACHE).catch(() => caches.match('/assets/placeholder.png')));
+      event.respondWith(networkFirst(noStoreReq, IMAGE_CACHE).catch(() => new Response(
+        "data:image/svg+xml;utf8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='#e5e7eb'/></svg>")
+      )));
       return;
     }
-    event.respondWith(cacheFirst(request, IMAGE_CACHE).catch(() => caches.match('/assets/placeholder.png')));
+    event.respondWith(cacheFirst(request, IMAGE_CACHE).catch(() => new Response(
+      "data:image/svg+xml;utf8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='#e5e7eb'/></svg>")
+    )));
     return;
   }
 

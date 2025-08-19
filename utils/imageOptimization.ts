@@ -18,25 +18,28 @@ export const useImageOptimization = () => {
   }, []);
 
   const getOptimizedImageUrl = (src: string, width?: number, height?: number): string => {
-    if (!isWebPSupported) {
-      return src.replace(/\.webp$/, '.jpg');
-    }
+    if (!src) return src;
+
+    // Do not append params for remote avatars (e.g., Google) or data URLs
+    const isRemote = /^https?:\/\//i.test(src) || src.startsWith('data:');
+    if (isRemote) return src;
+
+    // Respect WebP support
+    const baseSrc = !isWebPSupported ? src.replace(/\.webp$/i, '.jpg') : src;
 
     if (width && height) {
-      return `${src}?w=${width}&h=${height}&format=webp`;
+      // Backend expects short param keys: w, h, f
+      return `${baseSrc}?w=${width}&h=${height}&f=webp`;
     }
 
-    return src;
+    return baseSrc;
   };
 
   const getResponsiveImageSet = (src: string): string => {
-    const baseName = src.replace(/\.(jpg|jpeg|png|webp)$/, '');
-    return `
-      ${baseName}-320w.webp 320w,
-      ${baseName}-640w.webp 640w,
-      ${baseName}-1024w.webp 1024w,
-      ${baseName}-1280w.webp 1280w
-    `;
+    if (!src || /^https?:\/\//i.test(src) || src.startsWith('data:')) return '';
+    const clean = src.split('?')[0];
+    const baseName = clean.replace(/\.(jpg|jpeg|png|webp)$/i, '');
+    return `${baseName}-320w.webp 320w, ${baseName}-640w.webp 640w, ${baseName}-1024w.webp 1024w, ${baseName}-1280w.webp 1280w`;
   };
 
   return {
