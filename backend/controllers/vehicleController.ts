@@ -201,17 +201,52 @@ export const getMostViewedVehicles = async (
     const since = new Date(
       Date.now() - Number(periodDays) * 24 * 60 * 60 * 1000,
     );
+    
+    // Optimized aggregation using $lookup to join with Vehicle collection
     const results = await ViewLog.aggregate([
       { $match: { createdAt: { $gte: since } } },
       { $group: { _id: "$vehicle", views: { $sum: 1 } } },
       { $sort: { views: -1 } },
       { $limit: +limit },
-    ]);
-    const vehicleIds = results.map(({ _id }) => _id);
-    const vehicles = await Vehicle.find({ _id: { $in: vehicleIds } }).lean();
-    res.json(vehicles);
+      {
+        $lookup: {
+          from: "vehicles",
+          localField: "_id",
+          foreignField: "_id",
+          as: "vehicle"
+        }
+      },
+      { $unwind: { path: "$vehicle", preserveNullAndEmptyArrays: true } },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [{ views: "$views" }, { $ifNull: ["$vehicle", {}] }]
+          }
+        }
+      }
+    ], {
+      maxTimeMS: 30000, // 30 seconds timeout
+      allowDiskUse: true, // Allow disk usage for large aggregations
+    });
+    
+    if (!Array.isArray(results)) {
+      throw new Error('Most viewed vehicles aggregation did not return an array');
+    }
+    
+    res.json(results);
   } catch (error) {
     console.error("Error fetching most viewed vehicles:", error);
-    res.status(500).json({ message: "Server Error" });
+    
+    // Provide more specific error messages
+    const err = error as Error;
+    if (err.name === 'MongoServerSelectionError') {
+      res.status(503).json({ message: "Database connection error. Please try again later." });
+    } else if (err.name === 'MongooseError' && err.message.includes('buffering timed out')) {
+      res.status(504).json({ message: "Query timeout. The operation took too long to complete." });
+    } else if (err.name === 'TypeError' && err.message.includes('Cannot read property')) {
+      res.status(500).json({ message: "Server Error" });
+    } else {
+      res.status(500).json({ message: "Server Error" });
+    }
   }
 };

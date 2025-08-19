@@ -17,9 +17,10 @@ const connectDB = async (): Promise<void> => {
 
       await mongoose.connect(mongoURI, {
         maxPoolSize: 10, // Maximum number of connections
-        serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-        socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+        serverSelectionTimeoutMS: 10000, // Increase to 10 seconds for slower connections
+        socketTimeoutMS: 60000, // Increase to 60 seconds for long operations
         bufferCommands: false, // Disable mongoose buffering
+        waitQueueTimeoutMS: 10000, // Wait up to 10 seconds for connection
       });
 
       console.log("MongoDB Connected Successfully");

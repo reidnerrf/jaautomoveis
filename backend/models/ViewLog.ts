@@ -18,8 +18,10 @@ const ViewLogSchema: Schema = new Schema(
   },
 );
 
-// Create an index on createdAt for faster time-based queries
+// Create indexes for better query performance
 ViewLogSchema.index({ createdAt: 1 });
+ViewLogSchema.index({ vehicle: 1, createdAt: 1 }); // Compound index for aggregation
+ViewLogSchema.index({ vehicle: 1 }); // Single index for vehicle lookups
 
 const ViewLog = mongoose.model<IViewLog>("ViewLog", ViewLogSchema);
 
