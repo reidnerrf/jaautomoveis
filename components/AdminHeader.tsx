@@ -37,7 +37,10 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
     <header className="sticky top-0 z-40 flex w-full items-center justify-between bg-white/80 backdrop-blur border-b border-gray-200 px-4 py-3 dark:bg-gray-900/80 dark:border-gray-800">
       <div className="flex items-center gap-3">
         <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setSidebarOpen(!sidebarOpen);
+          }}
           aria-label="Toggle sidebar"
           className="inline-flex h-10 w-10 items-center justify-center rounded-md text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 lg:hidden"
         >

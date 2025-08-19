@@ -98,6 +98,18 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
+  // Do not interfere with Vite dev server or TS/TSX module requests
+  // This prevents incorrect caching/mime issues during development
+  if (
+    (url.hostname === "localhost" || url.hostname === "127.0.0.1") &&
+    (url.port === "3000" || url.port === "5173")
+  ) {
+    return;
+  }
+  if (url.pathname.endsWith(".tsx") || url.pathname.endsWith(".ts")) {
+    return;
+  }
+
   if (request.method !== "GET") return;
 
   if (request.mode === "navigate") {
