@@ -2,21 +2,10 @@ import React, { useState, useMemo, useEffect } from "react";
 import { useVehicleData } from "../hooks/useVehicleData";
 import VehicleCard from "../components/VehicleCard.tsx";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FiFilter,
-  FiX,
-  FiSearch,
-  FiGrid,
-  FiList,
-  FiChevronDown,
-  FiMapPin,
-  FiClock,
-  FiTag,
-  FiTrendingUp,
-} from "react-icons/fi";
+import { FiFilter, FiX, FiSearch, FiGrid, FiList, FiChevronDown, FiTag, FiTrendingUp } from "react-icons/fi";
 import { FaCarSide, FaGasPump, FaCog, FaCalendarAlt } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
-import { io } from "socket.io-client";
+import { analytics } from "../utils/analytics";
 
 const InventoryPage: React.FC = () => {
   const { vehicles, loading } = useVehicleData();
@@ -80,17 +69,18 @@ const InventoryPage: React.FC = () => {
             setLikeCounts(map);
           }
         }
-      } catch {}
+      } catch {
+        // ignore network errors; non-critical enrichment
+      }
     })();
     return () => {
       active = false;
     };
   }, []);
 
-  // Real-time likes updates
+  // Real-time likes updates via shared socket
   useEffect(() => {
-    const socket = io("", { path: "/socket.io", transports: ["websocket"] });
-    socket.on("user-action-live", (payload: any) => {
+    const off = analytics.on("user-action-live", (payload: any) => {
       if (payload?.action === "like_vehicle") {
         try {
           const parsed = payload?.label ? JSON.parse(payload.label) : {};
@@ -98,11 +88,13 @@ const InventoryPage: React.FC = () => {
           if (vehicleId) {
             setLikeCounts((prev) => ({ ...prev, [vehicleId]: (prev[vehicleId] || 0) + 1 }));
           }
-        } catch {}
+        } catch {
+          // ignore malformed payloads
+        }
       }
     });
     return () => {
-      socket.disconnect();
+      if (typeof off === "function") off();
     };
   }, []);
 

@@ -22,7 +22,7 @@ import {
 import { Vehicle } from "../types.ts";
 import { useAuth } from "../hooks/useAuth.tsx";
 import { motion } from "framer-motion";
-import { io } from "socket.io-client";
+import { analytics } from "../utils/analytics";
 
 const AdminDashboardPage: React.FC = () => {
   const { vehicles, loading, refreshVehicles } = useVehicleData();
@@ -96,17 +96,15 @@ const AdminDashboardPage: React.FC = () => {
 
   // Real-time refresh when vehicles change
   useEffect(() => {
-    const socket = io("", { path: "/socket.io", transports: ["websocket"] });
+    analytics.emit("join-admin");
 
-    socket.emit("join-admin");
-
-    socket.on("vehicle-created", () => refreshVehicles());
-    socket.on("vehicle-updated", () => refreshVehicles());
-    socket.on("vehicle-deleted", () => refreshVehicles());
+    const offCreated = analytics.on("vehicle-created", () => refreshVehicles());
+    const offUpdated = analytics.on("vehicle-updated", () => refreshVehicles());
+    const offDeleted = analytics.on("vehicle-deleted", () => refreshVehicles());
 
     // Update likes/live counters immediately
     const seen = new Set<string>();
-    socket.on("user-action-live", (payload: any) => {
+    const offLive = analytics.on("user-action-live", (payload: any) => {
       if (payload?.action === "like_vehicle") {
         try {
           const parsed = payload?.label ? JSON.parse(payload.label) : {};
@@ -128,7 +126,10 @@ const AdminDashboardPage: React.FC = () => {
     });
 
     return () => {
-      socket.disconnect();
+      if (typeof offCreated === "function") offCreated();
+      if (typeof offUpdated === "function") offUpdated();
+      if (typeof offDeleted === "function") offDeleted();
+      if (typeof offLive === "function") offLive();
     };
   }, [refreshVehicles]);
 

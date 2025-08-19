@@ -103,6 +103,17 @@ class AnalyticsService {
       page: payload.page,
     });
   }
+
+  // Allow components to reuse the same socket connection
+  on<T = any>(event: string, handler: (data: T) => void) {
+    if (!this.socket) return () => {};
+    this.socket.on(event, handler as any);
+    return () => this.socket?.off(event, handler as any);
+  }
+
+  emit(event: string, payload?: any) {
+    this.socket?.emit(event, payload);
+  }
 }
 
 export const analytics = new AnalyticsService();
