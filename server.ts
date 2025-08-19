@@ -66,8 +66,10 @@ const getAvailablePort = (preferredPort: number): number => {
 
 const PORT = getAvailablePort(5000);
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB (skip during tests)
+if (process.env.SKIP_DB !== "true") {
+  connectDB();
+}
 
 const app = express();
 // Hide framework signature
@@ -581,8 +583,12 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Start Server
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(
-    `Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`,
-  );
-});
+if (process.env.NODE_ENV !== "test") {
+  server.listen(PORT, "0.0.0.0", () => {
+    console.log(
+      `Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`,
+    );
+  });
+}
+
+export { app, server };

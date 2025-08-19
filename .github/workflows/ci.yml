@@ -1,3 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })' || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - name: Install deps
+        run: npm ci
+      - name: Type check
+        run: npm run type-check
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Unit/API tests
+        run: npm test
+        env:
+          MONGODB_URI: mongodb://127.0.0.1:27017/ja-automoveis
+      - name: Start server
+        run: |
+          nohup node dist/server.js > server.log 2>&1 &
+          npx wait-on -t 120000 http-get://127.0.0.1:5000/health
+        env:
+          NODE_ENV: production
+          MONGODB_URI: mongodb://127.0.0.1:27017/ja-automoveis
+      - name: E2E tests (Playwright)
+        run: npx playwright install --with-deps && npm run test:e2e
+        env:
+          TEST_BASE_URL: http://127.0.0.1:5000
+      - name: Performance tests (Lighthouse)
+        run: npm run test:performance
+        env:
+          TEST_BASE_URL: http://127.0.0.1:5000
 name: CI/CD Pipeline
 
 on:
