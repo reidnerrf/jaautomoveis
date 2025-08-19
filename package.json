@@ -16,7 +16,7 @@
     "build:server": "tsc -p tsconfig.server.json",
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "vite",
-    "dev:server": "nodemon --exec ts-node -P tsconfig.server.json server.ts",
+    "dev:server": "cross-env TS_NODE_PROJECT=tsconfig.server.json nodemon --watch server.ts --watch backend --ext ts,tsx --exec node -r ts-node/register/transpile-only server.ts",
     "seed": "ts-node seeder.ts",
     "analyze": "npm run build:client && npx vite-bundle-analyzer dist/assets",
     "lint": "eslint . --ext .ts,.tsx",
