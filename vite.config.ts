@@ -34,14 +34,29 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id: string) {
-            // Separar apenas o que realmente pesa
             if (id.includes("react") || id.includes("react-dom")) {
               return "react-vendor";
             }
-            // Todos os demais de node_modules juntos
-            if (id.includes("node_modules")) {
-              return "vendor";
+            if (id.includes("framer-motion")) {
+              return "motion";
             }
+            if (id.includes("chart.js") || id.includes("react-chartjs-2")) {
+              return "chartjs";
+            }
+            if (id.includes("recharts")) {
+              return "recharts";
+            }
+            if (id.includes("jspdf")) {
+              return "jspdf";
+            }
+            if (id.includes("socket.io-client")) {
+              return "socket";
+            }
+            if (id.includes("@apollo/client")) {
+              return "apollo";
+            }
+            // Deixe o Rollup dividir o restante automaticamente
+            return undefined;
           },
           chunkFileNames: "assets/js/[name]-[hash].js",
           entryFileNames: "assets/js/[name]-[hash].js",
@@ -61,7 +76,7 @@ export default defineConfig(({ mode }) => {
         },
       },
       cssCodeSplit: true,
-      assetsInlineLimit: 4096,
+      assetsInlineLimit: 1024,
       chunkSizeWarningLimit: 1000,
       commonjsOptions: {
         transformMixedEsModules: true,
