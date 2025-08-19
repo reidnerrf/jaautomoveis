@@ -103,12 +103,17 @@ export default defineConfig(({ mode }) => {
           target: "http://localhost:5000",
           changeOrigin: true,
         },
+        "/assets": {
+          target: "http://localhost:5000",
+          changeOrigin: true,
+        },
         "/socket.io": {
           target: "http://localhost:5000",
           changeOrigin: true,
           ws: true,
         },
       },
+      strictPort: false,
     },
     preview: {
       port: 4173,
