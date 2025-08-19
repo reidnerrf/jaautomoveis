@@ -109,9 +109,17 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
           </div>
 
           {/* Avatar */}
-          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow">
-            {initials}
-          </div>
+          <img
+            src="/assets/semavatar.png"
+            alt="Avatar"
+            className="h-10 w-10 rounded-full object-cover shadow border border-gray-200 dark:border-gray-700"
+            onError={(e) => {
+              const target = e.currentTarget as HTMLImageElement;
+              if (!target.src.includes("/assets/semavatar.png")) {
+                target.src = "/assets/semavatar.png";
+              }
+            }}
+          />
         </div>
       </div>
     </header>

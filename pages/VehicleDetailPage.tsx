@@ -356,7 +356,9 @@ const VehicleDetailPage: React.FC = () => {
               {/* Botões de ação principais (sem compartilhar aqui) */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
-                  href={`https://api.whatsapp.com/send?phone=5524999037716&text=Tenho interesse no ${vehicle.name} ${vehicle.year}`}
+                  href={`https://api.whatsapp.com/send?phone=5524999037716&text=${encodeURIComponent(
+                    `Tenho interesse no ${vehicle.name} ${vehicle.year}`,
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1"

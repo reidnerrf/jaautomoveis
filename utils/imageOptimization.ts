@@ -41,7 +41,8 @@ export const useImageOptimization = () => {
 
   const getResponsiveImageSet = (src: string): string => {
     if (!src || /^https?:\/\//i.test(src) || src.startsWith("data:")) return "";
-    const clean = src.split("?")[0];
+    const parts = src.split("?");
+    const clean = parts[0];
     const baseName = clean.replace(/\.(jpg|jpeg|png|webp)$/i, "");
     return `${baseName}-320w.webp 320w, ${baseName}-640w.webp 640w, ${baseName}-1024w.webp 1024w, ${baseName}-1280w.webp 1280w`;
   };

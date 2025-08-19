@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import http from "http";
-import Vehicle from "../models/Vehicle";
+// import Vehicle from "../models/Vehicle"; // not used
 
 export class RealTimeManager {
   private io: Server;

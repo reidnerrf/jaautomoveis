@@ -121,7 +121,9 @@ const AdminDashboardPage: React.FC = () => {
                 })()
               : prev.likedVehicles,
           }));
-        } catch {}
+        } catch (e) {
+          // ignore malformed payloads
+        }
       }
     });
 
