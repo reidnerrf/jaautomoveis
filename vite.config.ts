@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        "@": path.resolve(__dirname, "src"),
       },  
     },
     plugins: [
@@ -30,6 +30,7 @@ export default defineConfig(({ mode }) => {
     ].filter(Boolean),
     build: {
       target: "es2018",
+      outDir: "/dist", // ou só "dist" se você não usa client/
       minify: isProduction ? "esbuild" : false, // ⚡ muito mais rápido que terser
       sourcemap: !isProduction,
       rollupOptions: {

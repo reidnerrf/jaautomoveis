@@ -295,6 +295,15 @@ app.use(
   }),
 );
 
+// servir build do React (ajuste o caminho conforme sua estrutura)
+const clientDistPath = path.join(process.cwd(), "/dist");
+app.use(express.static(clientDistPath));
+
+// fallback para React Router SPA
+app.get("*", (_, res) => {
+  res.sendFile(path.join(clientDistPath, "index.html"));
+});
+
 // Expose PWA files at root for proper scope
 app.get("/manifest.json", (req: Request, res: Response) => {
   res.sendFile(path.join(process.cwd(), "public", "manifest.json"));
