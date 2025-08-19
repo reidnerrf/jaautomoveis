@@ -204,7 +204,7 @@ const VehicleDetailPage: React.FC = () => {
               {vehicle.images.map((img, index) => (
                 <img
                   key={`${img}-${index}`}
-                  src={`${img}?v=${encodeURIComponent(vehicle.updatedAt || '')}`}
+                  src={`${img}${img.includes('?') ? '&' : '?'}v=${encodeURIComponent(vehicle.updatedAt || '')}`}
                   alt={`${vehicle.name} thumbnail ${index + 1}`}
                   className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${index === currentImageIndex ? 'border-main-red' : 'border-transparent'} transition`}
                   onClick={() => setCurrentImageIndex(index)}
