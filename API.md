@@ -7,15 +7,15 @@ All endpoints are prefixed with `/api`.
 - POST `/api/auth/login`
   - body: `{ username: string, password: string }`
   - 200: `{ _id, username, token }`
-  - 401/423 on invalid or blocked session
+  - 401 on invalid credentials
 
 - POST `/api/auth/session/open`
   - headers: `Authorization: Bearer <token>`
-  - 200: `{ sessionId }`
+  - 200: `{ sessionId }` (no-op; múltiplas sessões permitidas)
 
 - POST `/api/auth/session/close`
   - headers: `Authorization: Bearer <token>`
-  - 200: `{ message }`
+  - 200: `{ message }` (no-op; múltiplas sessões permitidas)
 
 - POST `/api/auth/forgot-password`
   - body: `{ email: string }`

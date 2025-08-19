@@ -23,11 +23,7 @@ const AdminLoginPage: React.FC = () => {
         setError('Usuário ou senha inválidos. Por favor, tente novamente.');
       }
     } catch (err: any) {
-      if (err?.status === 423) {
-        setError('Já existe uma sessão ativa. Encerre a sessão anterior para entrar.');
-      } else {
-        setError('Falha no login.');
-      }
+      setError('Falha no login.');
     }
   };
 
