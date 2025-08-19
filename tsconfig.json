@@ -12,8 +12,6 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "jsx": "react-jsx",
-    "noEmit": true,
-    //"allowImportingTsExtensions": true,
     "declaration": true,
     "sourceMap": true,
     "types": ["node", "jest", "@testing-library/jest-dom"]

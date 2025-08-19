@@ -89,23 +89,22 @@ export const getDashboardStats = async (
       action: "instagram_click",
     });
 
-    // Likes breakdown
-    const likedVehiclesAgg = await Analytics.aggregate([
-      { $match: { action: "like_vehicle" } },
-      { $group: { _id: "$label", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 10 },
-      {
-        $group: {
-          _id: null,
-          vehicles: { $push: { label: "$_id", count: "$count" } },
-        },
-      },
-      { $project: { _id: 0, vehicles: 1 } },
-    ]);
+    // Total likes
+    const totalLikesAgg = await Analytics.countDocuments({ action: "like_vehicle" });
 
-    const totalLikesAgg = await Analytics.countDocuments({
-      action: "like_vehicle",
+    // Count distinct vehicles that received at least one like
+    const likeDocs = await Analytics.find({ action: "like_vehicle" })
+      .select("label")
+      .lean();
+    const likedVehicleIds = new Set<string>();
+    likeDocs.forEach((doc: any) => {
+      try {
+        const parsed = doc?.label ? JSON.parse(doc.label) : null;
+        const vehicleId = parsed?.vehicleId || doc?.label;
+        if (vehicleId) likedVehicleIds.add(String(vehicleId));
+      } catch {
+        if (doc?.label) likedVehicleIds.add(String(doc.label));
+      }
     });
 
     res.json({
@@ -116,12 +115,52 @@ export const getDashboardStats = async (
       deviceStats: [],
       locationStats: [],
       browserStats: [],
-      likedVehicles: likedVehiclesAgg[0]?.vehicles || [],
+      likedVehicles: likedVehicleIds.size,
       totalLikes: totalLikesAgg || 0,
     });
   } catch (error) {
     console.error("Dashboard stats error:", error);
     res.status(500).json({ message: "Erro ao buscar estatísticas" });
+  }
+};
+
+// Lista de likes por veículo para ordenação/filtro no frontend
+export const getLikesByVehicle = async (
+  req: express.Request,
+  res: express.Response,
+) => {
+  try {
+    const docs = await Analytics.find({ action: "like_vehicle" })
+      .select("label")
+      .lean();
+    const counts = new Map<string, { name: string; count: number }>();
+    for (const d of docs) {
+      try {
+        const parsed = d?.label ? JSON.parse(d.label) : {};
+        const vehicleId = String(parsed?.vehicleId || d?.label || "");
+        if (!vehicleId) continue;
+        const name = String(parsed?.name || "");
+        const entry = counts.get(vehicleId) || { name, count: 0 };
+        entry.count += 1;
+        if (name) entry.name = name;
+        counts.set(vehicleId, entry);
+      } catch {
+        const vehicleId = String(d?.label || "");
+        if (!vehicleId) continue;
+        const entry = counts.get(vehicleId) || { name: "", count: 0 };
+        entry.count += 1;
+        counts.set(vehicleId, entry);
+      }
+    }
+
+    const result = Array.from(counts.entries())
+      .map(([vehicleId, { name, count }]) => ({ vehicleId, name, count }))
+      .sort((a, b) => b.count - a.count);
+
+    res.json(result);
+  } catch (error) {
+    console.error("Likes by vehicle error:", error);
+    res.status(500).json({ message: "Erro ao buscar likes por veículo" });
   }
 };
 
