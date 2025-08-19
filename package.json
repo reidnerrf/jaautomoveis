@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "prestart": "npm run build",
-    "start": "node dist/server.js",
+    "start": "cross-env NODE_ENV=production SKIP_DB=true node dist/server.js",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "tsc",
@@ -88,6 +88,7 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "@types/jest": "^29.5.13",
     "@types/supertest": "^2.0.16",
     "identity-obj-proxy": "^3.0.0",
