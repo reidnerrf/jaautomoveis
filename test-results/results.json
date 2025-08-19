@@ -10,7 +10,9 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {},
+    "metadata": {
+      "actualWorkers": 6
+    },
     "preserveOutput": "always",
     "reporter": [
       [
@@ -40,7 +42,9 @@
         "outputDir": "C:/Users/Zummit/Documents/Reidner/Site/ja3/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 6
+        },
         "id": "chromium",
         "name": "chromium",
         "testDir": "C:/Users/Zummit/Documents/Reidner/Site/ja3/tests/e2e",
@@ -54,7 +58,9 @@
         "outputDir": "C:/Users/Zummit/Documents/Reidner/Site/ja3/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 6
+        },
         "id": "firefox",
         "name": "firefox",
         "testDir": "C:/Users/Zummit/Documents/Reidner/Site/ja3/tests/e2e",
@@ -68,7 +74,9 @@
         "outputDir": "C:/Users/Zummit/Documents/Reidner/Site/ja3/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 6
+        },
         "id": "webkit",
         "name": "webkit",
         "testDir": "C:/Users/Zummit/Documents/Reidner/Site/ja3/tests/e2e",
@@ -82,7 +90,9 @@
         "outputDir": "C:/Users/Zummit/Documents/Reidner/Site/ja3/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 6
+        },
         "id": "Mobile Chrome",
         "name": "Mobile Chrome",
         "testDir": "C:/Users/Zummit/Documents/Reidner/Site/ja3/tests/e2e",
@@ -96,7 +106,9 @@
         "outputDir": "C:/Users/Zummit/Documents/Reidner/Site/ja3/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 6
+        },
         "id": "Mobile Safari",
         "name": "Mobile Safari",
         "testDir": "C:/Users/Zummit/Documents/Reidner/Site/ja3/tests/e2e",
@@ -119,19 +131,1072 @@
       "timeout": 120000
     }
   },
-  "suites": [],
-  "errors": [
+  "suites": [
     {
-      "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
-      "stack": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
+      "title": "performance.spec.ts",
+      "file": "performance.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Performance Tests",
+          "file": "performance.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should load homepage within performance budget",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 11793,
+                      "error": {
+                        "message": "Error: page.waitForLoadState: Target page, context or browser has been closed",
+                        "stack": "Error: page.waitForLoadState: Target page, context or browser has been closed\n    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:10:16",
+                        "location": {
+                          "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                          "column": 16,
+                          "line": 10
+                        },
+                        "snippet": "\u001b[0m \u001b[90m  8 |\u001b[39m\n \u001b[90m  9 |\u001b[39m     \u001b[90m// Aguardar carregamento completo\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m\"networkidle\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 11 |\u001b[39m\n \u001b[90m 12 |\u001b[39m     \u001b[36mconst\u001b[39m loadTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow() \u001b[33m-\u001b[39m startTime\u001b[33m;\u001b[39m\n \u001b[90m 13 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                            "column": 16,
+                            "line": 10
+                          },
+                          "message": "Error: page.waitForLoadState: Target page, context or browser has been closed\n\n\u001b[0m \u001b[90m  8 |\u001b[39m\n \u001b[90m  9 |\u001b[39m     \u001b[90m// Aguardar carregamento completo\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 10 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m\"networkidle\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 11 |\u001b[39m\n \u001b[90m 12 |\u001b[39m     \u001b[36mconst\u001b[39m loadTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow() \u001b[33m-\u001b[39m startTime\u001b[33m;\u001b[39m\n \u001b[90m 13 |\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:10:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-19T13:50:00.673Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                        "column": 16,
+                        "line": 10
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-26c14b6bbca15e5beef5",
+              "file": "performance.spec.ts",
+              "line": 4,
+              "column": 7
+            },
+            {
+              "title": "should load inventory page efficiently",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "interrupted",
+                      "duration": 11974,
+                      "error": {
+                        "message": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"vehicle-card\"]') to be visible\u001b[22m\n",
+                        "stack": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"vehicle-card\"]') to be visible\u001b[22m\n\n    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:47:16",
+                        "location": {
+                          "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                          "column": 16,
+                          "line": 47
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 45 |\u001b[39m\n \u001b[90m 46 |\u001b[39m     \u001b[90m// Aguardar carregamento dos veículos\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 47 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'[data-testid=\"vehicle-card\"]'\u001b[39m\u001b[33m,\u001b[39m {\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 48 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 49 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 50 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                            "column": 16,
+                            "line": 47
+                          },
+                          "message": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"vehicle-card\"]') to be visible\u001b[22m\n\n\n\u001b[0m \u001b[90m 45 |\u001b[39m\n \u001b[90m 46 |\u001b[39m     \u001b[90m// Aguardar carregamento dos veículos\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 47 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'[data-testid=\"vehicle-card\"]'\u001b[39m\u001b[33m,\u001b[39m {\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 48 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 49 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 50 |\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:47:16\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-19T13:50:00.686Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                        "column": 16,
+                        "line": 47
+                      }
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-6cd1f1d3814aa2995e34",
+              "file": "performance.spec.ts",
+              "line": 43,
+              "column": 7
+            },
+            {
+              "title": "should handle vehicle detail page performance",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 11769,
+                      "error": {
+                        "message": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"vehicle-card\"]') to be visible\u001b[22m\n",
+                        "stack": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"vehicle-card\"]') to be visible\u001b[22m\n\n    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:83:16",
+                        "location": {
+                          "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                          "column": 16,
+                          "line": 83
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 81 |\u001b[39m     \u001b[90m// Primeiro, ir para o estoque para pegar um ID de veículo\u001b[39m\n \u001b[90m 82 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m\"/inventory\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 83 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'[data-testid=\"vehicle-card\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 84 |\u001b[39m\n \u001b[90m 85 |\u001b[39m     \u001b[90m// Clicar no primeiro veículo\u001b[39m\n \u001b[90m 86 |\u001b[39m     \u001b[36mconst\u001b[39m firstVehicle \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39m$(\u001b[32m'[data-testid=\"vehicle-card\"]'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                            "column": 16,
+                            "line": 83
+                          },
+                          "message": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"vehicle-card\"]') to be visible\u001b[22m\n\n\n\u001b[0m \u001b[90m 81 |\u001b[39m     \u001b[90m// Primeiro, ir para o estoque para pegar um ID de veículo\u001b[39m\n \u001b[90m 82 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m\"/inventory\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 83 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'[data-testid=\"vehicle-card\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 84 |\u001b[39m\n \u001b[90m 85 |\u001b[39m     \u001b[90m// Clicar no primeiro veículo\u001b[39m\n \u001b[90m 86 |\u001b[39m     \u001b[36mconst\u001b[39m firstVehicle \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39m$(\u001b[32m'[data-testid=\"vehicle-card\"]'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:83:16\u001b[22m"
+                        },
+                        {
+                          "message": "Error: browserContext._wrapApiCall: Test ended.\nBrowser logs:\n\n<launching> C:\\Users\\Zummit\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1181\\chrome-win\\headless_shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AutoExpandDetailsElement,AvoidUnnecessaryBeforeUnloadCheckSync,CertificateTransparencyComponentUpdater,DestroyProfileOnBrowserClose,DialMediaRouteProvider,ExtensionManifestV2Disabled,GlobalMediaControls,HttpsUpgrades,ImprovedCookieControls,LazyFrameLoading,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Zummit\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-ulkpwb --remote-debugging-pipe --no-startup-window\n<launched> pid=35300\n[pid=35300] <gracefully close start>"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-19T13:50:00.554Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                        "column": 16,
+                        "line": 83
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-690c6578552ab525a67b",
+              "file": "performance.spec.ts",
+              "line": 80,
+              "column": 7
+            },
+            {
+              "title": "should maintain performance during navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "interrupted",
+                      "duration": 12019,
+                      "error": {
+                        "message": "Error: page.waitForLoadState: Target page, context or browser has been closed",
+                        "stack": "Error: page.waitForLoadState: Target page, context or browser has been closed\n    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:131:18",
+                        "location": {
+                          "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                          "column": 18,
+                          "line": 131
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 129 |\u001b[39m       \u001b[36mconst\u001b[39m startTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow()\u001b[33m;\u001b[39m\n \u001b[90m 130 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(pagePath)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 131 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m\"networkidle\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 132 |\u001b[39m\n \u001b[90m 133 |\u001b[39m       \u001b[36mconst\u001b[39m loadTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow() \u001b[33m-\u001b[39m startTime\u001b[33m;\u001b[39m\n \u001b[90m 134 |\u001b[39m       navigationTimes\u001b[33m.\u001b[39mpush(loadTime)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                            "column": 18,
+                            "line": 131
+                          },
+                          "message": "Error: page.waitForLoadState: Target page, context or browser has been closed\n\n\u001b[0m \u001b[90m 129 |\u001b[39m       \u001b[36mconst\u001b[39m startTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow()\u001b[33m;\u001b[39m\n \u001b[90m 130 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(pagePath)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 131 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m\"networkidle\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 132 |\u001b[39m\n \u001b[90m 133 |\u001b[39m       \u001b[36mconst\u001b[39m loadTime \u001b[33m=\u001b[39m \u001b[33mDate\u001b[39m\u001b[33m.\u001b[39mnow() \u001b[33m-\u001b[39m startTime\u001b[33m;\u001b[39m\n \u001b[90m 134 |\u001b[39m       navigationTimes\u001b[33m.\u001b[39mpush(loadTime)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:131:18\u001b[22m"
+                        },
+                        {
+                          "message": "Error: browserContext._wrapApiCall: Test ended.\nBrowser logs:\n\n<launching> C:\\Users\\Zummit\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1181\\chrome-win\\headless_shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AutoExpandDetailsElement,AvoidUnnecessaryBeforeUnloadCheckSync,CertificateTransparencyComponentUpdater,DestroyProfileOnBrowserClose,DialMediaRouteProvider,ExtensionManifestV2Disabled,GlobalMediaControls,HttpsUpgrades,ImprovedCookieControls,LazyFrameLoading,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Zummit\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-UaNrXX --remote-debugging-pipe --no-startup-window\n<launched> pid=7984"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-19T13:50:00.532Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                        "column": 18,
+                        "line": 131
+                      }
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-9b2a1e6118f29d28c536",
+              "file": "performance.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "should handle mobile performance",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 11790,
+                      "error": {
+                        "message": "Error: page.waitForLoadState: Target page, context or browser has been closed",
+                        "stack": "Error: page.waitForLoadState: Target page, context or browser has been closed\n    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:151:16",
+                        "location": {
+                          "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                          "column": 16,
+                          "line": 151
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 149 |\u001b[39m\n \u001b[90m 150 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m\"/\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 151 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m\"networkidle\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 152 |\u001b[39m\n \u001b[90m 153 |\u001b[39m     \u001b[90m// Verificar se elementos responsivos carregam corretamente\u001b[39m\n \u001b[90m 154 |\u001b[39m     \u001b[36mconst\u001b[39m heroSection \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39m$(\u001b[32m'[data-testid=\"hero-section\"]'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                            "column": 16,
+                            "line": 151
+                          },
+                          "message": "Error: page.waitForLoadState: Target page, context or browser has been closed\n\n\u001b[0m \u001b[90m 149 |\u001b[39m\n \u001b[90m 150 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m\"/\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 151 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m\"networkidle\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 152 |\u001b[39m\n \u001b[90m 153 |\u001b[39m     \u001b[90m// Verificar se elementos responsivos carregam corretamente\u001b[39m\n \u001b[90m 154 |\u001b[39m     \u001b[36mconst\u001b[39m heroSection \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39m$(\u001b[32m'[data-testid=\"hero-section\"]'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:151:16\u001b[22m"
+                        },
+                        {
+                          "message": "Error: browserContext._wrapApiCall: Test ended.\nBrowser logs:\n\n<launching> C:\\Users\\Zummit\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1181\\chrome-win\\headless_shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AutoExpandDetailsElement,AvoidUnnecessaryBeforeUnloadCheckSync,CertificateTransparencyComponentUpdater,DestroyProfileOnBrowserClose,DialMediaRouteProvider,ExtensionManifestV2Disabled,GlobalMediaControls,HttpsUpgrades,ImprovedCookieControls,LazyFrameLoading,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Zummit\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-hxmh5A --remote-debugging-pipe --no-startup-window\n<launched> pid=38936\n[pid=38936] <gracefully close start>"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-19T13:50:00.728Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                        "column": 16,
+                        "line": 151
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-3b8bb3e5fd8cb08d9c6b",
+              "file": "performance.spec.ts",
+              "line": 146,
+              "column": 7
+            },
+            {
+              "title": "should handle search and filtering performance",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "failed",
+                      "duration": 11839,
+                      "error": {
+                        "message": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"vehicle-card\"]') to be visible\u001b[22m\n",
+                        "stack": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"vehicle-card\"]') to be visible\u001b[22m\n\n    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:171:16",
+                        "location": {
+                          "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                          "column": 16,
+                          "line": 171
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 169 |\u001b[39m   test(\u001b[32m\"should handle search and filtering performance\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 170 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m\"/inventory\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 171 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'[data-testid=\"vehicle-card\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 172 |\u001b[39m\n \u001b[90m 173 |\u001b[39m     \u001b[90m// Contar veículos iniciais\u001b[39m\n \u001b[90m 174 |\u001b[39m     \u001b[36mconst\u001b[39m initialCount \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39m$$eval(\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                            "column": 16,
+                            "line": 171
+                          },
+                          "message": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"vehicle-card\"]') to be visible\u001b[22m\n\n\n\u001b[0m \u001b[90m 169 |\u001b[39m   test(\u001b[32m\"should handle search and filtering performance\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 170 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m\"/inventory\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 171 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForSelector(\u001b[32m'[data-testid=\"vehicle-card\"]'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 172 |\u001b[39m\n \u001b[90m 173 |\u001b[39m     \u001b[90m// Contar veículos iniciais\u001b[39m\n \u001b[90m 174 |\u001b[39m     \u001b[36mconst\u001b[39m initialCount \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39m$$eval(\u001b[0m\n\u001b[2m    at C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts:171:16\u001b[22m"
+                        },
+                        {
+                          "message": "Error: browserContext._wrapApiCall: Test ended.\nBrowser logs:\n\n<launching> C:\\Users\\Zummit\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1181\\chrome-win\\headless_shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AutoExpandDetailsElement,AvoidUnnecessaryBeforeUnloadCheckSync,CertificateTransparencyComponentUpdater,DestroyProfileOnBrowserClose,DialMediaRouteProvider,ExtensionManifestV2Disabled,GlobalMediaControls,HttpsUpgrades,ImprovedCookieControls,LazyFrameLoading,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Zummit\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-KvQDYO --remote-debugging-pipe --no-startup-window\n<launched> pid=42316\n[pid=42316] <gracefully close start>"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-19T13:50:00.567Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\Zummit\\Documents\\Reidner\\Site\\ja3\\tests\\e2e\\performance.spec.ts",
+                        "column": 16,
+                        "line": 171
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-9671c994c091db42ce27",
+              "file": "performance.spec.ts",
+              "line": 169,
+              "column": 7
+            },
+            {
+              "title": "should handle image optimization",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-9ae3b94866b4061c94c0",
+              "file": "performance.spec.ts",
+              "line": 206,
+              "column": 7
+            },
+            {
+              "title": "should handle service worker functionality",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-c5874cd7bddf791c769d",
+              "file": "performance.spec.ts",
+              "line": 224,
+              "column": 7
+            },
+            {
+              "title": "should load homepage within performance budget",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-8ae24ed471bc290c23f1",
+              "file": "performance.spec.ts",
+              "line": 4,
+              "column": 7
+            },
+            {
+              "title": "should load inventory page efficiently",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-74c8928e629b23a1a886",
+              "file": "performance.spec.ts",
+              "line": 43,
+              "column": 7
+            },
+            {
+              "title": "should handle vehicle detail page performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-390f854ee6d0fac8cf63",
+              "file": "performance.spec.ts",
+              "line": 80,
+              "column": 7
+            },
+            {
+              "title": "should maintain performance during navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-36836309500b5d63811d",
+              "file": "performance.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "should handle mobile performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-65d01ba6a901e863ec85",
+              "file": "performance.spec.ts",
+              "line": 146,
+              "column": 7
+            },
+            {
+              "title": "should handle search and filtering performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-a9bf9e6db9c30ac351c5",
+              "file": "performance.spec.ts",
+              "line": 169,
+              "column": 7
+            },
+            {
+              "title": "should handle image optimization",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-e7c4b98a70d0103757fe",
+              "file": "performance.spec.ts",
+              "line": 206,
+              "column": 7
+            },
+            {
+              "title": "should handle service worker functionality",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-83ef4838412fc3df0f37",
+              "file": "performance.spec.ts",
+              "line": 224,
+              "column": 7
+            },
+            {
+              "title": "should load homepage within performance budget",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-ffa1352eb6276f5ee3f1",
+              "file": "performance.spec.ts",
+              "line": 4,
+              "column": 7
+            },
+            {
+              "title": "should load inventory page efficiently",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-1d1b2ddc566e122322d8",
+              "file": "performance.spec.ts",
+              "line": 43,
+              "column": 7
+            },
+            {
+              "title": "should handle vehicle detail page performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-da601908726120ecfc07",
+              "file": "performance.spec.ts",
+              "line": 80,
+              "column": 7
+            },
+            {
+              "title": "should maintain performance during navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-80bdccf10d503f031bc4",
+              "file": "performance.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "should handle mobile performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-d5aff5c51d2dda8a7578",
+              "file": "performance.spec.ts",
+              "line": 146,
+              "column": 7
+            },
+            {
+              "title": "should handle search and filtering performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-ede26fa5b27656de7134",
+              "file": "performance.spec.ts",
+              "line": 169,
+              "column": 7
+            },
+            {
+              "title": "should handle image optimization",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-3b4aa7d1a7a0d8923ed7",
+              "file": "performance.spec.ts",
+              "line": 206,
+              "column": 7
+            },
+            {
+              "title": "should handle service worker functionality",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-3ec6a76157e04bad51ec",
+              "file": "performance.spec.ts",
+              "line": 224,
+              "column": 7
+            },
+            {
+              "title": "should load homepage within performance budget",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-7c7a0380524f571d6c3a",
+              "file": "performance.spec.ts",
+              "line": 4,
+              "column": 7
+            },
+            {
+              "title": "should load inventory page efficiently",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-7794cff3ddb12205581b",
+              "file": "performance.spec.ts",
+              "line": 43,
+              "column": 7
+            },
+            {
+              "title": "should handle vehicle detail page performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-a2e07f9cb77772339215",
+              "file": "performance.spec.ts",
+              "line": 80,
+              "column": 7
+            },
+            {
+              "title": "should maintain performance during navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-ad6fb2debbcd8c0232c9",
+              "file": "performance.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "should handle mobile performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-00e51ca133bd31efb840",
+              "file": "performance.spec.ts",
+              "line": 146,
+              "column": 7
+            },
+            {
+              "title": "should handle search and filtering performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-9ed79e1ad02430cf5090",
+              "file": "performance.spec.ts",
+              "line": 169,
+              "column": 7
+            },
+            {
+              "title": "should handle image optimization",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-4fb049079d233e66fb7e",
+              "file": "performance.spec.ts",
+              "line": 206,
+              "column": 7
+            },
+            {
+              "title": "should handle service worker functionality",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-27c7146aa422ea937f43",
+              "file": "performance.spec.ts",
+              "line": 224,
+              "column": 7
+            },
+            {
+              "title": "should load homepage within performance budget",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-7818f18b7f40457bea87",
+              "file": "performance.spec.ts",
+              "line": 4,
+              "column": 7
+            },
+            {
+              "title": "should load inventory page efficiently",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-2cc055f774a45f770d62",
+              "file": "performance.spec.ts",
+              "line": 43,
+              "column": 7
+            },
+            {
+              "title": "should handle vehicle detail page performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-dc40f0a729d34be513aa",
+              "file": "performance.spec.ts",
+              "line": 80,
+              "column": 7
+            },
+            {
+              "title": "should maintain performance during navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-815a14a1f8d7efad3cc7",
+              "file": "performance.spec.ts",
+              "line": 124,
+              "column": 7
+            },
+            {
+              "title": "should handle mobile performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-9ae22c24cb74fd0e48f7",
+              "file": "performance.spec.ts",
+              "line": 146,
+              "column": 7
+            },
+            {
+              "title": "should handle search and filtering performance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-5050b0a88a3f6f740ea9",
+              "file": "performance.spec.ts",
+              "line": 169,
+              "column": 7
+            },
+            {
+              "title": "should handle image optimization",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-5847205a1b751c134a8e",
+              "file": "performance.spec.ts",
+              "line": 206,
+              "column": 7
+            },
+            {
+              "title": "should handle service worker functionality",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b15d6361b2fc38288977-9c192c7a2b21164ca16e",
+              "file": "performance.spec.ts",
+              "line": 224,
+              "column": 7
+            }
+          ]
+        }
+      ]
     }
   ],
+  "errors": [],
   "stats": {
-    "startTime": "2025-08-19T11:57:05.479Z",
-    "duration": 4460.134,
+    "startTime": "2025-08-19T13:49:50.743Z",
+    "duration": 27180.314,
     "expected": 0,
-    "skipped": 0,
-    "unexpected": 0,
+    "skipped": 36,
+    "unexpected": 4,
     "flaky": 0
   }
 }

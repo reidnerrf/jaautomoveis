@@ -1,2 +1,251 @@
-<testsuites id="" name="" tests="0" failures="0" skipped="0" errors="0" time="4.460134">
+<testsuites id="" name="" tests="40" failures="4" skipped="36" errors="0" time="27.180314">
+<testsuite name="performance.spec.ts" timestamp="2025-08-19T13:49:56.589Z" hostname="chromium" tests="8" failures="4" skipped="4" time="71.184" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="11.793">
+<failure message="performance.spec.ts:4:7 should load homepage within performance budget" type="FAILURE">
+<![CDATA[  [chromium] › performance.spec.ts:4:7 › Performance Tests › should load homepage within performance budget 
+
+    Error: page.waitForLoadState: Target page, context or browser has been closed
+
+       8 |
+       9 |     // Aguardar carregamento completo
+    > 10 |     await page.waitForLoadState("networkidle");
+         |                ^
+      11 |
+      12 |     const loadTime = Date.now() - startTime;
+      13 |
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:10:16
+]]>
+</failure>
+</testcase>
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="11.974">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="11.769">
+<failure message="performance.spec.ts:80:7 should handle vehicle detail page performance" type="FAILURE">
+<![CDATA[  [chromium] › performance.spec.ts:80:7 › Performance Tests › should handle vehicle detail page performance 
+
+    Error: page.waitForSelector: Target page, context or browser has been closed
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      81 |     // Primeiro, ir para o estoque para pegar um ID de veículo
+      82 |     await page.goto("/inventory");
+    > 83 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+         |                ^
+      84 |
+      85 |     // Clicar no primeiro veículo
+      86 |     const firstVehicle = await page.$('[data-testid="vehicle-card"]');
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:83:16
+
+    Error: browserContext._wrapApiCall: Test ended.
+    Browser logs:
+
+    <launching> C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1181\chrome-win\headless_shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AutoExpandDetailsElement,AvoidUnnecessaryBeforeUnloadCheckSync,CertificateTransparencyComponentUpdater,DestroyProfileOnBrowserClose,DialMediaRouteProvider,ExtensionManifestV2Disabled,GlobalMediaControls,HttpsUpgrades,ImprovedCookieControls,LazyFrameLoading,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\Users\Zummit\AppData\Local\Temp\playwright_chromiumdev_profile-ulkpwb --remote-debugging-pipe --no-startup-window
+    <launched> pid=35300
+    [pid=35300] <gracefully close start>
+]]>
+</failure>
+</testcase>
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="12.019">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="11.79">
+<failure message="performance.spec.ts:146:7 should handle mobile performance" type="FAILURE">
+<![CDATA[  [chromium] › performance.spec.ts:146:7 › Performance Tests › should handle mobile performance ────
+
+    Error: page.waitForLoadState: Target page, context or browser has been closed
+
+      149 |
+      150 |     await page.goto("/");
+    > 151 |     await page.waitForLoadState("networkidle");
+          |                ^
+      152 |
+      153 |     // Verificar se elementos responsivos carregam corretamente
+      154 |     const heroSection = await page.$('[data-testid="hero-section"]');
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:151:16
+
+    Error: browserContext._wrapApiCall: Test ended.
+    Browser logs:
+
+    <launching> C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1181\chrome-win\headless_shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AutoExpandDetailsElement,AvoidUnnecessaryBeforeUnloadCheckSync,CertificateTransparencyComponentUpdater,DestroyProfileOnBrowserClose,DialMediaRouteProvider,ExtensionManifestV2Disabled,GlobalMediaControls,HttpsUpgrades,ImprovedCookieControls,LazyFrameLoading,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\Users\Zummit\AppData\Local\Temp\playwright_chromiumdev_profile-hxmh5A --remote-debugging-pipe --no-startup-window
+    <launched> pid=38936
+    [pid=38936] <gracefully close start>
+]]>
+</failure>
+</testcase>
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="11.839">
+<failure message="performance.spec.ts:169:7 should handle search and filtering performance" type="FAILURE">
+<![CDATA[  [chromium] › performance.spec.ts:169:7 › Performance Tests › should handle search and filtering performance 
+
+    Error: page.waitForSelector: Target page, context or browser has been closed
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      169 |   test("should handle search and filtering performance", async ({ page }) => {
+      170 |     await page.goto("/inventory");
+    > 171 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+          |                ^
+      172 |
+      173 |     // Contar veículos iniciais
+      174 |     const initialCount = await page.$$eval(
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:171:16
+
+    Error: browserContext._wrapApiCall: Test ended.
+    Browser logs:
+
+    <launching> C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1181\chrome-win\headless_shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AutoExpandDetailsElement,AvoidUnnecessaryBeforeUnloadCheckSync,CertificateTransparencyComponentUpdater,DestroyProfileOnBrowserClose,DialMediaRouteProvider,ExtensionManifestV2Disabled,GlobalMediaControls,HttpsUpgrades,ImprovedCookieControls,LazyFrameLoading,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\Users\Zummit\AppData\Local\Temp\playwright_chromiumdev_profile-KvQDYO --remote-debugging-pipe --no-startup-window
+    <launched> pid=42316
+    [pid=42316] <gracefully close start>
+]]>
+</failure>
+</testcase>
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="performance.spec.ts" timestamp="2025-08-19T13:49:56.589Z" hostname="firefox" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="performance.spec.ts" timestamp="2025-08-19T13:49:56.589Z" hostname="webkit" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="performance.spec.ts" timestamp="2025-08-19T13:49:56.589Z" hostname="Mobile Chrome" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="performance.spec.ts" timestamp="2025-08-19T13:49:56.589Z" hostname="Mobile Safari" tests="8" failures="0" skipped="8" time="0" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
 </testsuites>
