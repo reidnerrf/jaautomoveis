@@ -18,21 +18,29 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
 
-  // Fechar no clique fora
+  // Fechar no clique fora (but ignore clicks on the header toggle button)
   useEffect(() => {
-    const clickHandler = ({ target }: MouseEvent) => {
-      if (!sidebar.current || !trigger.current) return;
-      if (
-        !sidebarOpen ||
-        sidebar.current.contains(target) ||
-        trigger.current.contains(target)
-      )
-        return;
+    const clickHandler = (event: MouseEvent) => {
+      if (!sidebar.current) return;
+      const target = event.target as Node | null;
+      if (!sidebarOpen) return;
+      // If click is inside the sidebar, ignore
+      if (target && sidebar.current.contains(target)) return;
+      // If click originated from a button with aria-label Toggle sidebar, ignore
+      const path = (event.composedPath?.() || []) as EventTarget[];
+      const interactedWithHeaderToggle = path.some((el) => {
+        return (
+          el instanceof Element &&
+          el.getAttribute &&
+          el.getAttribute("aria-label") === "Toggle sidebar"
+        );
+      });
+      if (interactedWithHeaderToggle) return;
       setSidebarOpen(false);
     };
-    document.addEventListener("click", clickHandler);
-    return () => document.removeEventListener("click", clickHandler);
-  });
+    document.addEventListener("click", clickHandler, true);
+    return () => document.removeEventListener("click", clickHandler, true);
+  }, [sidebarOpen, setSidebarOpen]);
 
   // Fechar com ESC
   useEffect(() => {
@@ -74,7 +82,10 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
         <button
           ref={trigger}
-          onClick={() => setSidebarOpen(!sidebarOpen)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setSidebarOpen(!sidebarOpen);
+          }}
           aria-controls="sidebar"
           aria-expanded={sidebarOpen}
           className="absolute right-4 top-4 block lg:hidden text-gray-400 hover:text-white"
