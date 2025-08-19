@@ -10,6 +10,7 @@ import hpp from 'hpp';
 import * as esbuild from 'esbuild';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import { setSocketServer } from './backend/socket';
 import UAParser from 'ua-parser-js';
 // geoip removed as it's unused
 import connectDB from './backend/config/db';
@@ -79,6 +80,8 @@ const io = new Server(server, {
   },
   path: '/socket.io'
 });
+// make io accessible to controllers
+setSocketServer(io);
 
 // trust proxy for correct client IP and ws upgrades via reverse proxy
 app.set('trust proxy', 1);
@@ -185,7 +188,7 @@ app.use('/assets', vehicleImageOptimization);
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/vehicles', vehicleListCacheMiddleware, vehicleRoutes);
 app.use('/api/upload', autoImageOptimization, uploadRoutes);
-app.use('/api/analytics', statsCacheMiddleware, analyticsRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Proxy para Google Places para evitar CORS no frontend
 app.get('/api/place-details', async (req: Request, res: Response) => {
@@ -495,6 +498,11 @@ io.on('connection', (socket) => {
       activeUsers.delete(socket.id);
     }
     console.log('User disconnected:', socket.id);
+  });
+
+  // allow admin dashboard to join a room for concise broadcasts
+  socket.on('join-admin', () => {
+    socket.join('admin-room');
   });
 });
 

@@ -16,13 +16,28 @@ export const getMonthlyViews = async (req: express.Request, res: express.Respons
           views: { $sum: 1 }
         }
       },
+      { $sort: { '_id.year': 1, '_id.month': 1 } },
       {
         $project: {
-          month: { $let: { vars: { monthNum: { $subtract: ['$_id.month', 1] } }, in: { $arrayElemAt: ['$$months', '$monthNum'] } } },
+          _id: 0,
+          month: {
+            $concat: [
+              {
+                $arrayElemAt: [
+                  [
+                    'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                    'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+                  ],
+                  { $subtract: ['$_id.month', 1] }
+                ]
+              },
+              ' ',
+              { $toString: '$_id.year' }
+            ]
+          },
           views: 1
         }
-      },
-      { $sort: { '_id.year': 1, '_id.month': 1 } }
+      }
     ]);
 
     res.json(monthlyViews);
@@ -53,6 +68,8 @@ export const getDashboardStats = async (req: express.Request, res: express.Respo
     const likedVehiclesAgg = await Analytics.aggregate([
       { $match: { action: 'like_vehicle' } },
       { $group: { _id: '$label', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 10 },
       { $group: { _id: null, vehicles: { $push: { label: '$_id', count: '$count' } } } },
       { $project: { _id: 0, vehicles: 1 } }
     ]);

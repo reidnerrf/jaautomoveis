@@ -75,11 +75,24 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, []);
 
   const refreshVehicles = useCallback(async () => {
+    // Invalidate cache then refetch
+    apiCache.delete(createCacheKey('vehicles'));
     await fetchVehicles();
   }, [fetchVehicles]);
 
   useEffect(() => {
     fetchVehicles();
+    // subscribe to real-time updates
+    try {
+      const { io } = require('socket.io-client');
+      const socket = io('', { path: '/socket.io', transports: ['websocket'] });
+      socket.on('vehicle-created', () => refreshVehicles());
+      socket.on('vehicle-updated', () => refreshVehicles());
+      socket.on('vehicle-deleted', () => refreshVehicles());
+      return () => { try { socket.disconnect(); } catch {} };
+    } catch {
+      // ignore socket errors in SSR/tests
+    }
   }, [fetchVehicles]);
 
   const getVehicleById = useCallback(async (id: string): Promise<Vehicle | undefined> => {
@@ -153,14 +166,16 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       });
       
       if (!response.ok) {
-        throw new Error('Failed to update vehicle');
+        const msg = await response.text().catch(() => '');
+        throw new Error(`Failed to update vehicle ${response.status}: ${msg}`);
       }
 
+      const saved = await response.json();
       setVehicles((prev) => {
         const index = (prev || []).findIndex(v => v.id === updatedVehicle.id);
         if (index !== -1) {
           const updatedVehicles = [...(prev || [])];
-          updatedVehicles[index] = updatedVehicle;
+          updatedVehicles[index] = { ...updatedVehicle, ...saved } as Vehicle;
           return updatedVehicles;
         }
         return prev;
@@ -169,7 +184,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       // Clear cache to force refresh
       apiCache.delete(createCacheKey('vehicles'));
       
-      return updatedVehicle;
+      return saved;
     } catch (err: any) {
       setError(err.message);
       return undefined;

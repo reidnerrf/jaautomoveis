@@ -17,7 +17,7 @@ import { useAuth } from '../hooks/useAuth.tsx';
 import { motion } from 'framer-motion';
 
 const AdminDashboardPage: React.FC = () => {
-  const { vehicles, loading } = useVehicleData();
+  const { vehicles, loading, refreshVehicles } = useVehicleData();
   const { token } = useAuth();
   const [monthlyViews, setMonthlyViews] = useState<Array<{ month: string; ['Visualizações']: number }>>([]);
   const [dashboardStats, setDashboardStats] = useState({
@@ -77,6 +77,17 @@ const AdminDashboardPage: React.FC = () => {
     const interval = setInterval(fetchAnalyticsData, 30000);
     return () => clearInterval(interval);
   }, [token]);
+
+  // Real-time refresh when vehicles change
+  useEffect(() => {
+    const { io } = require('socket.io-client');
+    const socket = io('', { path: '/socket.io', transports: ['websocket'] });
+    socket.emit('join-admin');
+    socket.on('vehicle-created', () => refreshVehicles());
+    socket.on('vehicle-updated', () => refreshVehicles());
+    socket.on('vehicle-deleted', () => refreshVehicles());
+    return () => { try { socket.disconnect(); } catch {} };
+  }, [refreshVehicles]);
 
   const vehicleStats = useMemo(() => {
     if (!vehicles || vehicles.length === 0) {

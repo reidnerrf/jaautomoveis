@@ -221,7 +221,13 @@ export async function vehicleImageOptimization(
     }
     
     // Ler imagem original
-    const originalBuffer = await fs.readFile(imagePath);
+    // Fail gracefully if image vanished
+    let originalBuffer: Buffer;
+    try {
+      originalBuffer = await fs.readFile(imagePath);
+    } catch (e: any) {
+      return next();
+    }
     const supportedFormats = getSupportedFormats(req);
     
     // Extrair opções da query string
@@ -366,6 +372,11 @@ export async function getImageOptimizationStats(): Promise<{
   totalSavings: number;
 }> {
   try {
+    // If cache dir doesn't exist yet, return zeros
+    const exists = await fs.access(IMAGE_CONFIG.CACHE_DIR).then(() => true).catch(() => false);
+    if (!exists) {
+      return { cacheSize: 0, cacheEntries: 0, totalSavings: 0 };
+    }
     const cacheFiles = await fs.readdir(IMAGE_CONFIG.CACHE_DIR);
     let totalSize = 0;
     
@@ -392,6 +403,8 @@ export async function getImageOptimizationStats(): Promise<{
 // Limpeza periódica do cache
 setInterval(async () => {
   try {
+    const exists = await fs.access(IMAGE_CONFIG.CACHE_DIR).then(() => true).catch(() => false);
+    if (!exists) return;
     const cacheFiles = await fs.readdir(IMAGE_CONFIG.CACHE_DIR);
     const now = Date.now();
     const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 dias

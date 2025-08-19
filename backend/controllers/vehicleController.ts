@@ -3,22 +3,21 @@ import Vehicle from '../models/Vehicle';
 import ViewLog from '../models/ViewLog';
 import fs from 'fs/promises';
 import path from 'path';
-import { promisify } from 'util';
-
-const unlink = promisify(fs.unlink);
+import { getSocketServer } from '../socket';
 
 // Helper to delete image files from the filesystem
 const deleteImageFiles = async (imagePaths: string[]) => {
-    const root = path.resolve();
-    for (const imagePath of imagePaths) {
-        // Basic security check to ensure we only delete from the uploads folder
-        if (imagePath && imagePath.startsWith('/uploads/')) {
-            const filePath = path.join(root, imagePath);
+    const uploadsRoot = path.join(process.cwd(), 'uploads');
+    for (const rawPath of imagePaths) {
+        // Only allow deletion inside the uploads folder and normalize the path
+        if (rawPath && rawPath.startsWith('/uploads/')) {
+            const relativePath = rawPath.replace(/^\/+uploads\/+/, '');
+            const filePath = path.join(uploadsRoot, relativePath);
             try {
-                await unlink(filePath);
+                await fs.unlink(filePath);
             } catch (err: any) {
-                // It's okay if the file doesn't exist, but log other errors
-                if (err.code !== 'ENOENT') {
+                // Ignore missing files; log others
+                if (err && err.code !== 'ENOENT') {
                     console.error(`Error deleting file ${filePath}:`, err);
                 }
             }
@@ -76,6 +75,8 @@ export const createVehicle = async (req: express.Request, res: express.Response)
   try {
     const vehicle = new Vehicle(req.body);
     const createdVehicle = await vehicle.save();
+    // Emit real-time event for admins
+    try { getSocketServer()?.emit('vehicle-created', createdVehicle.toObject ? createdVehicle.toObject() : createdVehicle); } catch {}
     res.status(201).json(createdVehicle);
   } catch (error) {
     res.status(400).json({ message: 'Invalid vehicle data' });
@@ -92,6 +93,8 @@ export const updateVehicle = async (req: express.Request, res: express.Response)
       const imagesToDelete = oldImages.filter(p => !newImages.includes(p));
       await deleteImageFiles(imagesToDelete);
       const updatedVehicle = await Vehicle.findByIdAndUpdate(id, req.body, { new: true }).lean();
+      // Emit real-time update
+      try { getSocketServer()?.emit('vehicle-updated', updatedVehicle); } catch {}
       res.json(updatedVehicle);
     } else {
       res.status(404).json({ message: 'Vehicle not found' });
@@ -107,6 +110,7 @@ export const deleteVehicle = async (req: express.Request, res: express.Response)
     if (vehicle) {
       await deleteImageFiles(vehicle.images);
       await vehicle.deleteOne();
+      try { getSocketServer()?.emit('vehicle-deleted', req.params.id); } catch {}
       res.json({ message: 'Vehicle removed' });
     } else {
       res.status(404).json({ message: 'Vehicle not found' });
