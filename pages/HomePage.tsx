@@ -23,7 +23,7 @@ import {
 } from "react-icons/fa";
 import { GoogleReview } from "../types.ts";
 import { useAnalytics } from "../utils/analytics.ts";
-import { io } from "socket.io-client";
+import { analytics } from "../utils/analytics";
 //import { useTheme } from "../contexts/ThemeContext.tsx";
 
 const HomePage: React.FC = () => {
@@ -42,26 +42,23 @@ const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Atualiza es em tempo real para carrosséis
-    const socket = io("", { path: "/socket.io", transports: ["websocket"] });
-    socket.on("vehicle-updated", () => {
+    // Atualiza em tempo real para carrosséis usando socket compartilhado
+    const offUpdated = analytics.on("vehicle-updated", () => {
       refreshVehicles();
       refreshMostViewed();
     });
-    socket.on("vehicle-created", () => {
+    const offCreated = analytics.on("vehicle-created", () => {
       refreshVehicles();
       refreshMostViewed();
     });
-    socket.on("vehicle-deleted", () => {
+    const offDeleted = analytics.on("vehicle-deleted", () => {
       refreshVehicles();
       refreshMostViewed();
     });
     return () => {
-      try {
-        socket.disconnect();
-      } catch (error) {
-        console.error("Error disconnecting from socket.io:", error);
-      }
+      if (typeof offUpdated === "function") offUpdated();
+      if (typeof offCreated === "function") offCreated();
+      if (typeof offDeleted === "function") offDeleted();
     };
   }, [refreshVehicles, refreshMostViewed]);
 

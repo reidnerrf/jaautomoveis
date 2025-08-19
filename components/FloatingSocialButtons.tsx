@@ -14,8 +14,8 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Don't show realtime viewers here since we have a specific button on vehicle pages
-  const showRealtime = false;
+  // Show realtime viewers only when explicitly enabled per page
+  const showRealtime = false; // keep disabled to avoid duplicate counters
 
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3 items-end">

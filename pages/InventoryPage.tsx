@@ -16,7 +16,7 @@ import {
 } from "react-icons/fi";
 import { FaCarSide, FaGasPump, FaCog, FaCalendarAlt } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
-import { io } from "socket.io-client";
+import { analytics } from "../utils/analytics";
 
 const InventoryPage: React.FC = () => {
   const { vehicles, loading } = useVehicleData();
@@ -87,10 +87,9 @@ const InventoryPage: React.FC = () => {
     };
   }, []);
 
-  // Real-time likes updates
+  // Real-time likes updates via shared socket
   useEffect(() => {
-    const socket = io("", { path: "/socket.io", transports: ["websocket"] });
-    socket.on("user-action-live", (payload: any) => {
+    const off = analytics.on("user-action-live", (payload: any) => {
       if (payload?.action === "like_vehicle") {
         try {
           const parsed = payload?.label ? JSON.parse(payload.label) : {};
@@ -102,7 +101,7 @@ const InventoryPage: React.FC = () => {
       }
     });
     return () => {
-      socket.disconnect();
+      if (typeof off === "function") off();
     };
   }, []);
 

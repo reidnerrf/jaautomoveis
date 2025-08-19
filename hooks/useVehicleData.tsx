@@ -10,7 +10,7 @@ import React, {
 import { Vehicle } from "../types.ts";
 import { useAuth } from "./useAuth.tsx";
 import { apiCache, createCacheKey } from "../utils/cache";
-import { io } from "socket.io-client";
+import { analytics } from "../utils/analytics";
 
 interface VehicleContextType {
   vehicles: Vehicle[] | undefined;
@@ -100,15 +100,15 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({
     apiCache.clear();
     fetchVehicles();
 
-    // subscribe to real-time updates
-    const socket = io("", { path: "/socket.io", transports: ["websocket"] });
-
-    socket.on("vehicle-created", () => refreshVehicles());
-    socket.on("vehicle-updated", () => refreshVehicles());
-    socket.on("vehicle-deleted", () => refreshVehicles());
+    // subscribe to real-time updates using shared socket
+    const offCreated = analytics.on("vehicle-created", () => refreshVehicles());
+    const offUpdated = analytics.on("vehicle-updated", () => refreshVehicles());
+    const offDeleted = analytics.on("vehicle-deleted", () => refreshVehicles());
 
     return () => {
-      socket.disconnect();
+      if (typeof offCreated === "function") offCreated();
+      if (typeof offUpdated === "function") offUpdated();
+      if (typeof offDeleted === "function") offDeleted();
     };
   }, [fetchVehicles, refreshVehicles]);
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiUsers } from "react-icons/fi";
-import { io } from "socket.io-client";
+import { analytics } from "../utils/analytics";
 
 interface RealTimeViewersProps {
   page: string;
@@ -17,23 +17,20 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({
   const [viewers, setViewers] = useState(0);
 
   useEffect(() => {
-    const newSocket = io("", {
-      path: "/socket.io",
-      transports: ["websocket"],
-      withCredentials: true,
-    });
-
-    newSocket.on("page-viewers", (data) => {
-      if (data.page === page) {
-        setViewers(data.count);
+    // Use shared analytics socket to avoid duplicate connections
+    const off = analytics.on("page-viewers", (data: any) => {
+      if (data?.page === page) {
+        setViewers(Number(data.count || 0));
       }
     });
 
-    // Ao montar, emitir um page-view para entrar na sala correta
-    newSocket.emit("page-view", { page });
+    // Do not emit here; MainLayout already emits page-view on route change
+    // Still, on first mount, request a refresh in case we navigated directly
+    analytics.emit("page-view", { page });
 
     return () => {
-      newSocket.close();
+      // remove listener only
+      if (typeof off === "function") off();
     };
   }, [page, vehicleId]);
 

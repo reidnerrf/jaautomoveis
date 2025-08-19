@@ -189,8 +189,8 @@ app.use(
   }),
 );
 
-// Apply rate limiting
-app.use(limiter);
+// Apply rate limiting only to API routes to avoid throttling static assets and websockets
+app.use("/api", limiter);
 
 // CORS configuration
 app.use(
@@ -488,6 +488,16 @@ io.on("connection", (socket) => {
 
   socket.on("page-view", async (data) => {
     const { page } = data;
+
+    // If socket was previously on another page, remove it from that set
+    const previous = activeUsers.get(socket.id)?.page;
+    if (previous && previous !== page && pageViews.has(previous)) {
+      pageViews.get(previous).delete(socket.id);
+      io.emit("page-viewers", {
+        page: previous,
+        count: pageViews.get(previous).size,
+      });
+    }
 
     if (!pageViews.has(page)) {
       pageViews.set(page, new Set());
