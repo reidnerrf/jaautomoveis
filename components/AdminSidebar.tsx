@@ -66,7 +66,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       {/* Header */}
       <div className="flex flex-col items-center px-6 py-5 border-b border-gray-800">
         <Link to="/admin" className="flex flex-col items-center">
-          <img src="/assets/logo.png" alt="Logo" className="h-12 w-auto" />
+          <img src="/assets/logo.png" alt="Logo" className="h-12 w-auto" loading="lazy" decoding="async" />
           <span className="text-sm text-gray-300 mt-1 font-semibold">
             Painel Admin
           </span>
