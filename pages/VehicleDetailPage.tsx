@@ -184,7 +184,7 @@ const VehicleDetailPage: React.FC = () => {
             <div className="relative rounded-2xl overflow-hidden shadow-xl">
               <motion.img
                 whileHover={{ scale: 1.02 }}
-                src={`${vehicle.images[currentImageIndex]}?v=${encodeURIComponent(vehicle.updatedAt || '')}`}
+                src={`${vehicle.images[currentImageIndex]}${vehicle.images[currentImageIndex].includes('?') ? '&' : '?'}v=${encodeURIComponent(vehicle.updatedAt || '')}`}
                 alt={`${vehicle.name} - ${currentImageIndex + 1}`}
                 className="w-full h-[26rem] object-cover cursor-pointer transition-all"
                 onClick={() => setIsLightboxOpen(true)}
