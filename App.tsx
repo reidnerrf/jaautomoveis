@@ -4,7 +4,7 @@ import { VehicleProvider } from './hooks/useVehicleData.tsx';
 import { AuthProvider } from './hooks/useAuth.tsx';
 import { ThemeProvider } from './contexts/ThemeContext.tsx';
 import { HelmetProvider } from 'react-helmet-async';
-import ErrorBoundary from './components/ErrorBoundary'; // Assuming ErrorBoundary is in this path
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Lazy load all pages for better performance
 const HomePage = lazy(() => import('./pages/HomePage.tsx'));
