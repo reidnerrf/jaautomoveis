@@ -34,6 +34,20 @@ const Header: React.FC = () => {
   const isHome = location.pathname === "/";
   const isTransparent = isHome && !isScrolled;
 
+  // Fechar ao clicar fora do menu mobile
+  useEffect(() => {
+    if (!isOpen) return;
+    const onClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Fecha se clicar em links do menu ou fora do contêiner do nav
+      if (target.closest("nav") == null || target.closest("a, button")) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [isOpen]);
+
   const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
     `relative block py-2 px-3 transition-all duration-300 font-medium group
      ${

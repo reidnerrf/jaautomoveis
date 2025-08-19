@@ -247,7 +247,7 @@ const HomePage: React.FC = () => {
               </motion.button>
             </Link>
             <a
-              href="https://api.whatsapp.com/send?phone=5524999037716&text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es"
+              href="https://wa.me/5524999037716?text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => handleSocialClick("whatsapp")}
@@ -728,7 +728,7 @@ const HomePage: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row justify-center gap-8 max-w-2xl mx-auto">
               <a
-                href="https://api.whatsapp.com/send?phone=5524999037716"
+                href="https://wa.me/5524999037716?text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => handleSocialClick("whatsapp")}
