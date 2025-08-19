@@ -24,6 +24,7 @@ import {
 } from "react-icons/fa";
 import { GoogleReview } from "../types.ts";
 import { useAnalytics } from "../utils/analytics.ts";
+import {io} from 'socket.io-client';
 //import { useTheme } from "../contexts/ThemeContext.tsx";
 
 const HomePage: React.FC = () => {
@@ -38,15 +39,12 @@ const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Atualizações em tempo real para carrosséis
-    try {
-      const { io } = require('socket.io-client');
-      const socket = io('', { path: '/socket.io', transports: ['websocket'] });
-      socket.on('vehicle-updated', () => { refreshVehicles(); refreshMostViewed(); });
-      socket.on('vehicle-created', () => { refreshVehicles(); refreshMostViewed(); });
-      socket.on('vehicle-deleted', () => { refreshVehicles(); refreshMostViewed(); });
-      return () => { try { socket.disconnect(); } catch {} };
-    } catch {}
+    // Atualiza es em tempo real para carrosséis
+    const socket = io('', { path: '/socket.io', transports: ['websocket'] });
+    socket.on('vehicle-updated', () => { refreshVehicles(); refreshMostViewed(); });
+    socket.on('vehicle-created', () => { refreshVehicles(); refreshMostViewed(); });
+    socket.on('vehicle-deleted', () => { refreshVehicles(); refreshMostViewed(); });
+    return () => { try { socket.disconnect(); } catch (error) { console.error('Error disconnecting from socket.io:', error); } };
   }, [refreshVehicles, refreshMostViewed]);
 
   useEffect(() => {
@@ -119,10 +117,10 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-white dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden">
+    <div className="w-full bg-white dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden ">
       
       {/* HERO SECTION */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden ">
         {/* Background media: video on desktop, image on mobile for performance */}
         <div className="absolute inset-0 z-0">
           <div className="hidden sm:block h-full w-full">
@@ -170,7 +168,7 @@ const HomePage: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-red-900/25 to-transparent z-10"></div>
 
         <motion.div
-          className="relative z-20 text-center px-6 max-w-6xl mx-auto"
+          className="relative z-20 text-center px-6 max-w-6xl mx-auto pt-28 pb-16 sm:pt-20 sm:pb-12"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
