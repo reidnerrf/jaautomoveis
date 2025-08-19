@@ -41,7 +41,8 @@ export const useTopVehicles = (options: UseTopVehiclesOptions = {}): UseTopVehic
       });
 
       const response = await fetch(`/api/vehicles/most-viewed?${params.toString()}`, {
-        headers: { 'Cache-Control': 'max-age=300' }
+        headers: { 'Cache-Control': 'no-store', 'x-skip-cache': 'true' },
+        cache: 'no-store'
       });
       if (!response.ok) throw new Error('Falha ao carregar veículos mais vistos');
       const data: Vehicle[] = await response.json();
