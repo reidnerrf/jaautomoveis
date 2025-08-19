@@ -5,23 +5,7 @@ import { BsFuelPump, BsSpeedometer2 } from "react-icons/bs";
 import OptimizedImage from "./OptimizedImage";
 import { FaWhatsapp } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-
-// Placeholder for Vehicle type
-interface Vehicle {
-  _id: string;
-  name: string;
-  make: string;
-  model: string;
-  year: number;
-  price: number;
-  km: number;
-  fuel: string;
-  gearbox: string;
-  images: string[];
-  description?: string;
-  featured?: boolean;
-  id: string; // Assuming 'id' is also available and used for links
-}
+import { Vehicle } from "../types";
 
 interface VehicleCardProps {
   vehicle: Vehicle;

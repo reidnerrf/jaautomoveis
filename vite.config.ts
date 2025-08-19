@@ -1,17 +1,15 @@
 import path from "path";
-import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, ".", "");
   const isProduction = mode === "production";
 
   return {
     define: {
-      "process.env.NODE_ENV": JSON.stringify(mode),
-      "import.meta.env.MODE": JSON.stringify(mode),
-      "process.env.API_KEY": JSON.stringify(env.GEMINI_API_KEY),
-      "process.env.GEMINI_API_KEY": JSON.stringify(env.GEMINI_API_KEY),
+      "process.env": {}, // evita undefined
+      "import.meta.env.MODE": JSON.stringify(mode)
     },
     resolve: {
       alias: {
@@ -19,7 +17,7 @@ export default defineConfig(({ mode }) => {
       },  
     },
     plugins: [
-      splitVendorChunkPlugin(),
+      react(),
       isProduction &&
         visualizer({
           filename: "dist/stats.html",
@@ -35,7 +33,7 @@ export default defineConfig(({ mode }) => {
       sourcemap: !isProduction,
       rollupOptions: {
         output: {
-          manualChunks(id) {
+          manualChunks(id: string) {
             // Separar apenas o que realmente pesa
             if (id.includes("react") || id.includes("react-dom")) {
               return "react-vendor";
@@ -47,7 +45,7 @@ export default defineConfig(({ mode }) => {
           },
           chunkFileNames: "assets/js/[name]-[hash].js",
           entryFileNames: "assets/js/[name]-[hash].js",
-          assetFileNames: (assetInfo) => {
+          assetFileNames: (assetInfo: { name?: string }) => {
             const ext = assetInfo.name?.split(".").pop() ?? "unknown";
             if (/png|jpe?g|svg|gif|ico|webp/i.test(ext)) {
               return `assets/images/[name]-[hash].[ext]`;

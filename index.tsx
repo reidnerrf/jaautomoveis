@@ -3,6 +3,11 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./styles.css";
 
+// Providers
+import { AuthProvider } from "./hooks/useAuth";
+import { VehicleProvider } from "./hooks/useVehicleData";
+import { ThemeProvider } from "./contexts/ThemeContext";
+
 // Inicializar Sentry
 import { initSentry, withSentryErrorBoundary } from "./utils/sentry";
 initSentry();
@@ -29,8 +34,16 @@ if (!rootElement) {
 
 const SafeApp = withSentryErrorBoundary(App);
 const root = ReactDOM.createRoot(rootElement);
+
 root.render(
   <React.StrictMode>
-    <SafeApp />
-  </React.StrictMode>,
+    <AuthProvider>
+      <VehicleProvider>
+        <ThemeProvider>
+          {typeof window !== "undefined" && <SafeApp />}
+        </ThemeProvider>
+      </VehicleProvider>
+    </AuthProvider>
+  </React.StrictMode>
 );
+

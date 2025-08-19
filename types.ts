@@ -16,6 +16,8 @@ export interface Vehicle {
   views: number;
   createdAt?: string;
   updatedAt?: string;
+  description?: string;
+  featured?: boolean;
 }
 
 export interface GoogleReview {
