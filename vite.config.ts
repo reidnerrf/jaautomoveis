@@ -93,6 +93,10 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       host: "0.0.0.0",
       hmr: true,
+      headers: {
+        // Ensure correct MIME for module scripts
+        "Cache-Control": "no-store",
+      },
       proxy: {
         "/api": {
           target: "http://localhost:5000",
@@ -100,10 +104,6 @@ export default defineConfig(({ mode }) => {
           ws: true,
         },
         "/uploads": {
-          target: "http://localhost:5000",
-          changeOrigin: true,
-        },
-        "/assets": {
           target: "http://localhost:5000",
           changeOrigin: true,
         },

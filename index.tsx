@@ -20,11 +20,17 @@ if (import.meta.env.MODE === "production") {
   });
 }
 
-// Inicializar PWA
-if (import.meta.env.MODE === "production" && "serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
-  });
+// Inicializar PWA (unregister SW in development to avoid caching issues)
+if ("serviceWorker" in navigator) {
+  if (import.meta.env.MODE === "production") {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    });
+  } else {
+    navigator.serviceWorker.getRegistrations?.().then((regs) => {
+      regs.forEach((reg) => reg.unregister().catch(() => {}));
+    });
+  }
 }
 
 const rootElement = document.getElementById("root");
