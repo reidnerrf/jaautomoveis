@@ -7,6 +7,8 @@
     "prestart": "npm run build",
     "start": "npm run db:up && npm run wait:db && cross-env NODE_ENV=production MONGODB_URI=mongodb://127.0.0.1:27017/ja-automoveis node dist/server.js",
     "start:nodb": "cross-env NODE_ENV=production SKIP_DB=true node dist/server.js",
+    "start:full": "bash -lc \"docker compose up -d --build mongo app nginx || docker-compose up -d --build mongo app nginx\"",
+    "stop:full": "bash -lc \"docker compose down || docker-compose down\"",
     "db:up": "bash -lc \"docker compose up -d mongo || docker-compose up -d mongo\"",
     "wait:db": "wait-on -t 120000 tcp:127.0.0.1:27017",
     "build": "npm run build:client && npm run build:server",
@@ -33,7 +35,8 @@
     "docker:build": "docker build -t ja-automoveis .",
     "docker:run": "docker-compose up -d",
     "docker:stop": "docker-compose down",
-    "performance:audit": "npm run test:performance && npm run test:e2e"
+    "performance:audit": "npm run test:performance && npm run test:e2e",
+    "ci": "npm run lint && npm run type-check && npm run test && npm run test:e2e"
   },
   "dependencies": {
     "@apollo/client": "^3.13.9",
