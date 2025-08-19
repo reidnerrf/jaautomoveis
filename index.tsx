@@ -5,7 +5,7 @@ import App from './App.tsx';
 import './styles.css';
 
 // Inicializar Sentry
-import { initSentry } from './utils/sentry';
+import { initSentry, withSentryErrorBoundary } from './utils/sentry';
 initSentry();
 
 // Inicializar Web Vitals monitoring
@@ -28,9 +28,10 @@ if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
 
+const SafeApp = withSentryErrorBoundary(App);
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
+    <SafeApp />
   </React.StrictMode>
 );

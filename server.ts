@@ -67,6 +67,8 @@ const PORT = getAvailablePort(5000);
 connectDB();
 
 const app = express();
+// Hide framework signature
+app.disable('x-powered-by');
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -139,9 +141,6 @@ app.use(helmet({
 
 // health check endpoints
 app.get('/socket.io/health', (req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok' });
-});
-app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok' });
 });
 
@@ -355,6 +354,11 @@ if (!isProduction) {
     }
   });
 }
+
+// API 404 fallback to avoid serving index.html for unknown API routes
+app.all(['/api/*'], (req: Request, res: Response) => {
+  res.status(404).json({ success: false, message: 'Not Found' });
+});
 
 // 3. Serve Static Assets with Caching
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
