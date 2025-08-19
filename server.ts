@@ -567,7 +567,9 @@ io.on("connection", (socket) => {
           if (vehicleId) {
             io.emit("like-updated", { vehicleId, name });
           }
-        } catch {}
+        } catch (e) {
+          // ignore JSON parse errors in like payloads
+        }
       }
     } catch (error) {
       console.error("Analytics save error:", error);

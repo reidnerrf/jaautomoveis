@@ -315,8 +315,9 @@ const MultiMicroFrontend: React.FC<MultiMicroFrontendProps> = ({
   onAllLoaded,
   onError,
 }) => {
-  const [loadedCount, setLoadedCount] = useState(0);
-  const [errors, setErrors] = useState<Record<string, Error>>({});
+  // Track progress internally only; no external reads to avoid unused-var lint
+  const [, setLoadedCount] = useState(0);
+  const [, setErrors] = useState<Record<string, Error>>({});
 
   const handleLoad = useCallback(() => {
     setLoadedCount((prev) => {
