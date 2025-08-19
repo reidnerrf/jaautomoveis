@@ -19,7 +19,9 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   const fullUrl =
     typeof window !== "undefined"
       ? url
-        ? `${siteUrl}${url}`
+        ? url.startsWith("http")
+          ? url
+          : `${siteUrl}${url}`
         : window.location.href
       : url || "";
   const imageUrl = image?.startsWith("http")
