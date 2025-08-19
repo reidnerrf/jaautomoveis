@@ -17,6 +17,8 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
+          react: path.resolve(__dirname, 'node_modules/react'),
+          'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
         }
       },
       plugins: [
@@ -58,8 +60,8 @@ export default defineConfig(({ mode }) => {
           output: {
             manualChunks: (id) => {
               // React core
-              if (id.includes('react') && !id.includes('react-dom')) {
-                return 'react-core';
+              if (id.includes('react') || id.includes('react-dom')) {
+                return 'react-vendor';
               }
               // React DOM
               if (id.includes('react-dom')) {
