@@ -43,7 +43,9 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       }
 
       const response = await fetch('/api/vehicles?limit=1000', {
-        headers: { 'Cache-Control': 'max-age=300' },
+        // Force fresh data: bypass SW/server caches
+        headers: { 'Cache-Control': 'no-store', 'x-skip-cache': 'true' },
+        cache: 'no-store'
       });
       
       if (!response.ok) {
@@ -103,12 +105,16 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
 
     try {
-      const response = await fetch(`/api/vehicles/${id}`, {
-        headers: { 
-          'Cache-Control': 'max-age=300',
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
-        },
-      });
+      const response = await fetch(`/api/vehicles/${id}`,
+        {
+          headers: {
+            'Cache-Control': 'no-store',
+            'x-skip-cache': 'true',
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          cache: 'no-store'
+        }
+      );
       
       if (!response.ok) {
         if (response.status === 404) {

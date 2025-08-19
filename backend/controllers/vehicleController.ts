@@ -92,7 +92,7 @@ export const updateVehicle = async (req: express.Request, res: express.Response)
       const newImages = req.body.images || [];
       const imagesToDelete = oldImages.filter(p => !newImages.includes(p));
       await deleteImageFiles(imagesToDelete);
-      const updatedVehicle = await Vehicle.findByIdAndUpdate(id, req.body, { new: true }).lean();
+      const updatedVehicle = await Vehicle.findByIdAndUpdate(id, { ...req.body, updatedAt: new Date() }, { new: true }).lean();
       // Emit real-time update
       try { getSocketServer()?.emit('vehicle-updated', updatedVehicle); } catch {}
       res.json(updatedVehicle);

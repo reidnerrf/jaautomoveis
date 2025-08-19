@@ -12,7 +12,7 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, rate, levelUp, levelDown, children }) => {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300">
+    <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300">
       
       {/* Ícone com destaque */}
       <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-indigo-400 text-white shadow-md">
@@ -21,14 +21,14 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, rate, levelUp, levelD
 
       {/* Conteúdo */}
       <div className="mt-5 flex items-end justify-between">
-        <div>
+        <div className="min-w-0">
           <h4 className="text-3xl font-extrabold text-gray-900">{value}</h4>
           <span className="text-sm font-medium text-gray-500">{title}</span>
         </div>
 
         {/* Indicador de variação */}
         <span
-          className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm
+          className={`shrink-0 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm
             ${levelUp ? 'bg-green-100 text-green-600' : ''}
             ${levelDown ? 'bg-red-100 text-red-600' : ''}
           `}

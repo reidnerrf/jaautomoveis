@@ -20,8 +20,7 @@ const generateToken = (id: string) => {
   });
 };
 
-// In-memory single-session registry (consider redis in production)
-const userActiveSessions = new Map<string, string>();
+// Single-session enforcement removed to allow multiple concurrent logins
 
 const getUserIdFromAuthHeader = (req: express.Request): string | null => {
   try {
@@ -52,15 +51,6 @@ export const loginUser = async (req: express.Request, res: express.Response) => 
     const isMatch = await user.matchPassword(password);
 
     if (isMatch) {
-      // Enforce single active session per user
-      const existingSession = userActiveSessions.get(user._id.toString());
-      if (existingSession) {
-        return res.status(423).json({
-          message:
-            "Sessão ativa detectada em outro dispositivo. Encerre a sessão anterior.",
-        });
-      }
-
       const token = generateToken(user._id.toString());
       console.log(`[AUTH] Success: Password for user "${username}" matches.`);
 
@@ -85,15 +75,8 @@ export const openSession = async (req: express.Request, res: express.Response) =
   const userId = getUserIdFromAuthHeader(req);
   if (!userId) return res.status(401).json({ message: "Not authorized" });
 
-  // If another session exists, block
-  if (userActiveSessions.has(userId)) {
-    return res.status(423).json({ message: "Já existe uma sessão ativa." });
-  }
-
-  const newSessionId = `${Date.now()}-${Math.random()
-    .toString(36)
-    .slice(2)}`;
-  userActiveSessions.set(userId, newSessionId);
+  // No-op session open: always allow and return a generated session id
+  const newSessionId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   return res.status(200).json({ sessionId: newSessionId });
 };
 
@@ -101,6 +84,6 @@ export const closeSession = async (req: express.Request, res: express.Response) 
   const userId = getUserIdFromAuthHeader(req);
   if (!userId) return res.status(401).json({ message: "Not authorized" });
 
-  userActiveSessions.delete(userId);
+  // No-op: with multi-login allowed, we do not track active sessions here
   return res.status(200).json({ message: "Sessão encerrada" });
 };

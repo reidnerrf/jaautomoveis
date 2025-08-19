@@ -80,19 +80,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       sessionStorage.setItem('authToken', data.token);
       setToken(data.token);
 
-      // Create a server-side session for single-login enforcement
-      try {
-        await fetch('/api/auth/session/open', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${data.token}`,
-          },
-        });
-      } catch (e) {
-        // ignore network/session errors
-      }
-
       return true; // sucesso
     } catch (error) {
       console.error('Erro no login:', error);
@@ -107,19 +94,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     sessionStorage.removeItem('authToken');
     setToken(null);
 
-    try {
-      if (currentToken) {
-        await fetch('/api/auth/session/close', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${currentToken}`,
-          },
-        });
-      }
-    } catch (e) {
-      // ignore
-    }
+    // No server-side session tracking when multi-login is allowed
   };
 
   return (
