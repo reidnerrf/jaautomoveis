@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect, useCa
 import { Vehicle } from '../types.ts';
 import { useAuth } from './useAuth.tsx';
 import { apiCache, createCacheKey } from '../utils/cache';
+import { io } from "socket.io-client";
 
 interface VehicleContextType {
   vehicles: Vehicle[] | undefined;
@@ -81,19 +82,19 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, [fetchVehicles]);
 
   useEffect(() => {
-    fetchVehicles();
-    // subscribe to real-time updates
-    try {
-      const { io } = require('socket.io-client');
-      const socket = io('', { path: '/socket.io', transports: ['websocket'] });
-      socket.on('vehicle-created', () => refreshVehicles());
-      socket.on('vehicle-updated', () => refreshVehicles());
-      socket.on('vehicle-deleted', () => refreshVehicles());
-      return () => { try { socket.disconnect(); } catch {} };
-    } catch {
-      // ignore socket errors in SSR/tests
-    }
-  }, [fetchVehicles]);
+  fetchVehicles();
+
+  // subscribe to real-time updates
+  const socket = io("", { path: "/socket.io", transports: ["websocket"] });
+
+  socket.on("vehicle-created", () => refreshVehicles());
+  socket.on("vehicle-updated", () => refreshVehicles());
+  socket.on("vehicle-deleted", () => refreshVehicles());
+
+  return () => {
+    socket.disconnect();
+  };
+  }, [fetchVehicles, refreshVehicles]);
 
   const getVehicleById = useCallback(async (id: string): Promise<Vehicle | undefined> => {
     if (!id || typeof id !== 'string') {

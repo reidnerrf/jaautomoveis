@@ -15,6 +15,7 @@ import {
 import { Vehicle } from '../types.ts';
 import { useAuth } from '../hooks/useAuth.tsx';
 import { motion } from 'framer-motion';
+import {io} from 'socket.io-client';
 
 const AdminDashboardPage: React.FC = () => {
   const { vehicles, loading, refreshVehicles } = useVehicleData();
@@ -80,14 +81,17 @@ const AdminDashboardPage: React.FC = () => {
 
   // Real-time refresh when vehicles change
   useEffect(() => {
-    const { io } = require('socket.io-client');
-    const socket = io('', { path: '/socket.io', transports: ['websocket'] });
-    socket.emit('join-admin');
-    socket.on('vehicle-created', () => refreshVehicles());
-    socket.on('vehicle-updated', () => refreshVehicles());
-    socket.on('vehicle-deleted', () => refreshVehicles());
-    return () => { try { socket.disconnect(); } catch {} };
+  const socket = io("", { path: "/socket.io", transports: ["websocket"] });
+
+  socket.emit("join-admin");
+
+  socket.on("vehicle-created", () => refreshVehicles());
+  socket.on("vehicle-updated", () => refreshVehicles());
+  socket.on("vehicle-deleted", () => refreshVehicles());
+
+  return () => {};
   }, [refreshVehicles]);
+
 
   const vehicleStats = useMemo(() => {
     if (!vehicles || vehicles.length === 0) {
