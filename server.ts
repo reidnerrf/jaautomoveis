@@ -32,13 +32,7 @@ import performanceMiddleware, {
   getActiveAlerts,
 } from "./backend/middleware/performanceMiddleware";
 import {
-  cacheMiddleware,
   vehicleListCacheMiddleware,
-  vehicleDetailCacheMiddleware,
-  statsCacheMiddleware,
-  invalidateVehicleCacheMiddleware,
-  searchCacheMiddleware,
-  conditionalCacheMiddleware,
   getCacheMetrics,
   resetCacheMetrics,
   warmupCache,
@@ -46,7 +40,6 @@ import {
 import {
   vehicleImageOptimization,
   autoImageOptimization,
-  batchImageOptimization,
   getImageOptimizationStats,
   clearImageCache,
 } from "./backend/middleware/imageOptimization";
@@ -165,6 +158,15 @@ app.use(
 // health check endpoints
 app.get("/socket.io/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "ok" });
+});
+
+// Health check endpoint (must come before SPA fallback)
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
 });
 
 // Data sanitization against NoSQL injection
@@ -313,14 +315,7 @@ app.get("/sw.js", (req: Request, res: Response) => {
   res.sendFile(path.join(process.cwd(), "public", "sw.js"));
 });
 
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "ok",
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-  });
-});
+// (moved earlier)
 
 // Sitemap generation
 app.get("/sitemap.xml", async (req, res) => {
@@ -594,7 +589,7 @@ io.on("connection", (socket) => {
 });
 
 // Error handling middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });

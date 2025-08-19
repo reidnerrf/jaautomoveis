@@ -103,7 +103,9 @@ export const createVehicle = async (
         "vehicle-created",
         createdVehicle.toObject ? createdVehicle.toObject() : createdVehicle,
       );
-    } catch {}
+    } catch (e) {
+      // ignore socket broadcast errors in API response path
+    }
     res.status(201).json(createdVehicle);
   } catch (error) {
     res.status(400).json({ message: "Invalid vehicle data" });
@@ -130,7 +132,9 @@ export const updateVehicle = async (
       // Emit real-time update
       try {
         getSocketServer()?.emit("vehicle-updated", updatedVehicle);
-      } catch {}
+      } catch (e) {
+        // ignore socket broadcast errors
+      }
       res.json(updatedVehicle);
     } else {
       res.status(404).json({ message: "Vehicle not found" });
@@ -151,7 +155,9 @@ export const deleteVehicle = async (
       await vehicle.deleteOne();
       try {
         getSocketServer()?.emit("vehicle-deleted", req.params.id);
-      } catch {}
+      } catch (e) {
+        // ignore socket broadcast errors
+      }
       res.json({ message: "Vehicle removed" });
     } else {
       res.status(404).json({ message: "Vehicle not found" });

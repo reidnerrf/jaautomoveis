@@ -1,19 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import NodeCache from "node-cache";
 import Redis from "ioredis";
-import {
-  CacheData,
-  CacheMetrics as CacheMetricsType,
-  ExtendedRequest,
-  ExtendedResponse,
-} from "../../types/common";
-import {
-  logError,
-  logInfo,
-  logDebug,
-  logCacheHit,
-  logCacheMiss,
-} from "../../utils/logger";
+import { CacheData, CacheMetrics as CacheMetricsType } from "../../types/common";
+import { logError, logInfo } from "../../utils/logger";
 
 // Configurações de cache
 const CACHE_CONFIG = {
@@ -392,8 +381,10 @@ export async function warmupCache(): Promise<void> {
   }
 }
 
-// Inicializar limpeza periódica
-setInterval(cleanupCache, CACHE_CONFIG.CHECK_PERIOD * 1000);
+// Inicializar limpeza periódica (desabilitar em testes para evitar handles abertos)
+if (process.env.NODE_ENV !== 'test') {
+  setInterval(cleanupCache, CACHE_CONFIG.CHECK_PERIOD * 1000);
+}
 
 // Warm-up inicial
 if (process.env.NODE_ENV === "production") {

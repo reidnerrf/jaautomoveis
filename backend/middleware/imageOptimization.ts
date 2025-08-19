@@ -433,9 +433,10 @@ export async function getImageOptimizationStats(): Promise<{
   }
 }
 
-// Limpeza periódica do cache
-setInterval(
-  async () => {
+// Limpeza periódica do cache (desabilitar em testes para evitar handles abertos)
+if (process.env.NODE_ENV !== 'test') {
+  setInterval(
+    async () => {
     try {
       const exists = await fs
         .access(IMAGE_CONFIG.CACHE_DIR)
@@ -457,6 +458,7 @@ setInterval(
     } catch (error) {
       console.error("Cache cleanup error:", error);
     }
-  },
-  24 * 60 * 60 * 1000,
-); // Diariamente
+    },
+    24 * 60 * 60 * 1000,
+  ); // Diariamente
+}

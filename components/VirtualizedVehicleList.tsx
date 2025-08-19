@@ -85,7 +85,7 @@ const VirtualizedVehicleList: React.FC<VirtualizedVehicleListProps> = ({
             right: 0,
           }}
         >
-          {visibleItems.map((vehicle, index) => (
+          {visibleItems.map((vehicle) => (
             <div
               key={vehicle.id}
               style={{ height: itemHeight }}

@@ -48,7 +48,7 @@ function VirtualizedList<T>({
   const scrollElementRef = useRef<HTMLDivElement>(null);
 
   // Calculate visible range
-  const { startIndex, endIndex, visibleItems } = useMemo(() => {
+  const { startIndex, visibleItems } = useMemo(() => {
     const startIndex = Math.max(
       0,
       Math.floor(state.scrollTop / itemHeight) - overscan,
@@ -63,7 +63,6 @@ function VirtualizedList<T>({
 
     return {
       startIndex,
-      endIndex,
       visibleItems,
     };
   }, [items, state.scrollTop, state.containerHeight, itemHeight, overscan]);
