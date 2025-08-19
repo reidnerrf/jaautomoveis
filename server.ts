@@ -167,6 +167,15 @@ app.get("/socket.io/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "ok" });
 });
 
+// Health check endpoint (must come before SPA fallback)
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
+
 // Data sanitization against NoSQL injection
 app.use(mongoSanitize());
 
@@ -313,14 +322,7 @@ app.get("/sw.js", (req: Request, res: Response) => {
   res.sendFile(path.join(process.cwd(), "public", "sw.js"));
 });
 
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "ok",
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-  });
-});
+// (moved earlier)
 
 // Sitemap generation
 app.get("/sitemap.xml", async (req, res) => {

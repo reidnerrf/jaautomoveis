@@ -392,8 +392,10 @@ export async function warmupCache(): Promise<void> {
   }
 }
 
-// Inicializar limpeza periódica
-setInterval(cleanupCache, CACHE_CONFIG.CHECK_PERIOD * 1000);
+// Inicializar limpeza periódica (desabilitar em testes para evitar handles abertos)
+if (process.env.NODE_ENV !== 'test') {
+  setInterval(cleanupCache, CACHE_CONFIG.CHECK_PERIOD * 1000);
+}
 
 // Warm-up inicial
 if (process.env.NODE_ENV === "production") {

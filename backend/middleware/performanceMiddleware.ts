@@ -413,7 +413,9 @@ export function getSystemHealth(): {
   return { status, checks, recommendations };
 }
 
-// Limpeza automática de métricas
-setInterval(cleanupOldMetrics, 60 * 1000); // A cada minuto
+// Limpeza automática de métricas (desabilitar em ambiente de teste para evitar handles abertos)
+if (process.env.NODE_ENV !== 'test') {
+	setInterval(cleanupOldMetrics, 60 * 1000); // A cada minuto
+}
 
 export default performanceMiddleware;
