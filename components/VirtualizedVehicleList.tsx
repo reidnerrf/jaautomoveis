@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Vehicle } from '../types';
-import VehicleCard from './VehicleCard';
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Vehicle } from "../types";
+import VehicleCard from "./VehicleCard";
 
 interface VirtualizedVehicleListProps {
   vehicles: Vehicle[];
@@ -13,7 +13,7 @@ const VirtualizedVehicleList: React.FC<VirtualizedVehicleListProps> = ({
   vehicles,
   itemHeight = 400, // Altura estimada de cada card
   containerHeight = 800,
-  overscan = 5 // Número de itens extras para renderizar
+  overscan = 5, // Número de itens extras para renderizar
 }) => {
   const [scrollTop, setScrollTop] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,7 +22,7 @@ const VirtualizedVehicleList: React.FC<VirtualizedVehicleListProps> = ({
   const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
   const endIndex = Math.min(
     vehicles.length - 1,
-    Math.floor((scrollTop + containerHeight) / itemHeight) + overscan
+    Math.floor((scrollTop + containerHeight) / itemHeight) + overscan,
   );
 
   // Itens visíveis
@@ -47,19 +47,19 @@ const VirtualizedVehicleList: React.FC<VirtualizedVehicleListProps> = ({
             const img = entry.target as HTMLImageElement;
             if (img.dataset.src) {
               img.src = img.dataset.src;
-              img.removeAttribute('data-src');
+              img.removeAttribute("data-src");
               observer.unobserve(img);
             }
           }
         });
       },
       {
-        rootMargin: '50px 0px',
-        threshold: 0.1
-      }
+        rootMargin: "50px 0px",
+        threshold: 0.1,
+      },
     );
 
-    const images = containerRef.current?.querySelectorAll('img[data-src]');
+    const images = containerRef.current?.querySelectorAll("img[data-src]");
     images?.forEach((img) => observer.observe(img));
 
     return () => observer.disconnect();
@@ -70,19 +70,19 @@ const VirtualizedVehicleList: React.FC<VirtualizedVehicleListProps> = ({
       ref={containerRef}
       style={{
         height: containerHeight,
-        overflow: 'auto',
-        position: 'relative'
+        overflow: "auto",
+        position: "relative",
       }}
       onScroll={handleScroll}
       className="virtualized-list"
     >
-      <div style={{ height: totalHeight, position: 'relative' }}>
+      <div style={{ height: totalHeight, position: "relative" }}>
         <div
           style={{
-            position: 'absolute',
+            position: "absolute",
             top: offsetY,
             left: 0,
-            right: 0
+            right: 0,
           }}
         >
           {visibleItems.map((vehicle, index) => (
@@ -103,9 +103,11 @@ const VirtualizedVehicleList: React.FC<VirtualizedVehicleListProps> = ({
 // Hook para otimizar re-renders
 export const useVirtualizedList = (vehicles: Vehicle[]) => {
   const [filteredVehicles, setFilteredVehicles] = useState(vehicles);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState<'price' | 'year' | 'km' | 'name'>('name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<"price" | "year" | "km" | "name">(
+    "name",
+  );
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   // Memoizar filtros e ordenação
   useEffect(() => {
@@ -113,10 +115,11 @@ export const useVirtualizedList = (vehicles: Vehicle[]) => {
 
     // Aplicar filtro de busca
     if (searchTerm) {
-      filtered = filtered.filter(vehicle =>
-        vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vehicle.model.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (vehicle) =>
+          vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          vehicle.model.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -125,12 +128,12 @@ export const useVirtualizedList = (vehicles: Vehicle[]) => {
       let aValue: any = a[sortBy];
       let bValue: any = b[sortBy];
 
-      if (sortBy === 'name') {
+      if (sortBy === "name") {
         aValue = a.name.toLowerCase();
         bValue = b.name.toLowerCase();
       }
 
-      if (sortOrder === 'asc') {
+      if (sortOrder === "asc") {
         return aValue > bValue ? 1 : -1;
       } else {
         return aValue < bValue ? 1 : -1;
@@ -147,7 +150,7 @@ export const useVirtualizedList = (vehicles: Vehicle[]) => {
     sortBy,
     setSortBy,
     sortOrder,
-    setSortOrder
+    setSortOrder,
   };
 };
 

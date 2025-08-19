@@ -68,6 +68,7 @@ All endpoints are prefixed with `/api`.
   - 200: `{ totalViews, todayViews, whatsappClicks, instagramClicks, likedVehicles, totalLikes, ... }`
 
 Socket.IO:
+
 - Client connects at path `/socket.io`
 - Events:
   - `page-view` -> `{ page }` (emitted pelo front)
@@ -86,8 +87,8 @@ interface Vehicle {
   year: number;
   km: number;
   color: string;
-  gearbox: 'Manual' | 'Automático';
-  fuel: 'Gasolina' | 'Etanol' | 'Flex' | 'Diesel' | 'Elétrico' | 'Híbrido';
+  gearbox: "Manual" | "Automático";
+  fuel: "Gasolina" | "Etanol" | "Flex" | "Diesel" | "Elétrico" | "Híbrido";
   doors: number;
   additionalInfo: string;
   optionals: string[];
@@ -100,14 +101,24 @@ interface Vehicle {
 ## Examples
 
 - Login from the browser:
+
 ```ts
-const res = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: 'admin', password: '***' }) });
+const res = await fetch("/api/auth/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ username: "admin", password: "***" }),
+});
 const data = await res.json();
 ```
 
 - Upload images with token:
+
 ```ts
 const fd = new FormData();
-files.forEach(f => fd.append('images', f));
-await fetch('/api/upload', { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
+files.forEach((f) => fd.append("images", f));
+await fetch("/api/upload", {
+  method: "POST",
+  headers: { Authorization: `Bearer ${token}` },
+  body: fd,
+});
 ```

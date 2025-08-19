@@ -35,7 +35,10 @@ const getUserIdFromAuthHeader = (req: express.Request): string | null => {
   }
 };
 
-export const loginUser = async (req: express.Request, res: express.Response) => {
+export const loginUser = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   const { username, password } = req.body;
   console.log(`[AUTH] Login attempt for user: "${username}"`);
 
@@ -61,7 +64,7 @@ export const loginUser = async (req: express.Request, res: express.Response) => 
       });
     } else {
       console.log(
-        `[AUTH] Failure: Password for user "${username}" does not match.`
+        `[AUTH] Failure: Password for user "${username}" does not match.`,
       );
       res.status(401).json({ message: "Invalid Credentials" });
     }
@@ -71,7 +74,10 @@ export const loginUser = async (req: express.Request, res: express.Response) => 
   }
 };
 
-export const openSession = async (req: express.Request, res: express.Response) => {
+export const openSession = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   const userId = getUserIdFromAuthHeader(req);
   if (!userId) return res.status(401).json({ message: "Not authorized" });
 
@@ -80,7 +86,10 @@ export const openSession = async (req: express.Request, res: express.Response) =
   return res.status(200).json({ sessionId: newSessionId });
 };
 
-export const closeSession = async (req: express.Request, res: express.Response) => {
+export const closeSession = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   const userId = getUserIdFromAuthHeader(req);
   if (!userId) return res.status(401).json({ message: "Not authorized" });
 

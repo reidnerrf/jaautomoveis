@@ -17,18 +17,22 @@ interface DecodedToken extends JwtPayload {
 export const protect = (
   req: express.Request,
   res: express.Response,
-  next: express.NextFunction
+  next: express.NextFunction,
 ) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(401).json({ success: false, message: "No authorization header" });
+    return res
+      .status(401)
+      .json({ success: false, message: "No authorization header" });
   }
 
   const token = authHeader.split(" ")[1]?.trim();
 
   if (!token) {
-    return res.status(401).json({ success: false, message: "Token not provided" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Token not provided" });
   }
 
   try {
@@ -53,7 +57,9 @@ export const protect = (
       return res.status(401).json({ success: false, message: "Invalid token" });
     }
 
-    return res.status(401).json({ success: false, message: "Token verification failed" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Token verification failed" });
   }
 };
 
@@ -61,7 +67,7 @@ export const protect = (
 export const requireAdmin = (
   req: express.Request,
   res: express.Response,
-  next: express.NextFunction
+  next: express.NextFunction,
 ) => {
   try {
     // Aqui você faria a checagem real de papel do usuário
@@ -76,7 +82,11 @@ export const requireAdmin = (
 
 // Middleware de validação de inputs
 export const validateInput = (fields: string[]) => {
-  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  return (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
     const errors: string[] = [];
 
     fields.forEach((field) => {
@@ -98,20 +108,21 @@ export const validateInput = (fields: string[]) => {
 };
 
 // Endpoint para validar token
-export const validateToken = (
-  req: express.Request,
-  res: express.Response
-) => {
+export const validateToken = (req: express.Request, res: express.Response) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(401).json({ success: false, message: "No authorization header" });
+    return res
+      .status(401)
+      .json({ success: false, message: "No authorization header" });
   }
 
   const token = authHeader.split(" ")[1]?.trim();
 
   if (!token) {
-    return res.status(401).json({ success: false, message: "Token not provided" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Token not provided" });
   }
 
   try {
@@ -138,6 +149,8 @@ export const validateToken = (
       return res.status(401).json({ success: false, message: "Invalid token" });
     }
 
-    return res.status(401).json({ success: false, message: "Token verification failed" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Token verification failed" });
   }
 };

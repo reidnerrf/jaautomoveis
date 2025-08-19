@@ -5,6 +5,7 @@
 This document summarizes the comprehensive performance optimizations implemented in the JA Automóveis application. The optimizations target bundle size reduction, faster load times, and improved user experience.
 
 ### Changes in this iteration
+
 - Header rendering stabilized: transparent header only on Home hero; solid elsewhere to avoid costly repaints and ensure contrast.
 - Admin dashboard simplified: removed device, city and real-time charts, decreasing JS executed and Recharts usage on that screen.
 - Images hardened: `OptimizedImage` now uses a tiny inline SVG placeholder, attempts WebP with graceful fallback and exponential backoff, and lazy loads via IntersectionObserver.
@@ -13,12 +14,14 @@ This document summarizes the comprehensive performance optimizations implemented
 ## 📊 Performance Improvements
 
 ### Bundle Size Optimization
+
 - **Before**: ~2.5MB initial bundle
 - **After**: ~800KB initial bundle (68% reduction)
 - **Code Splitting**: Implemented lazy loading for all routes
 - **Vendor Chunking**: Separated dependencies into optimized chunks
 
 ### Load Time Improvements
+
 - **First Contentful Paint**: 44% improvement (3.2s → 1.8s)
 - **Largest Contentful Paint**: 40% improvement (4.8s → 2.9s)
 - **Cumulative Layout Shift**: 67% improvement (0.15 → 0.05)
@@ -28,20 +31,23 @@ This document summarizes the comprehensive performance optimizations implemented
 ### 1. Frontend Optimizations
 
 #### Code Splitting & Lazy Loading
+
 ```typescript
 // All routes now lazy-loaded
-const HomePage = lazy(() => import('./pages/HomePage.tsx'));
-const InventoryPage = lazy(() => import('./pages/InventoryPage.tsx'));
+const HomePage = lazy(() => import("./pages/HomePage.tsx"));
+const InventoryPage = lazy(() => import("./pages/InventoryPage.tsx"));
 // ... etc
 ```
 
 #### Component Optimization
+
 - **React.memo**: Applied to VehicleCard and VehicleCarousel
 - **useMemo**: Price formatting and expensive calculations
 - **useCallback**: Event handlers and callbacks
 - **OptimizedImage**: Custom component with lazy loading
 
 #### Bundle Analysis Results
+
 ```
 ✓ Built in 5.38s
 - react-vendor: 11.42 kB (gzipped: 4.09 kB)
@@ -54,12 +60,14 @@ const InventoryPage = lazy(() => import('./pages/InventoryPage.tsx'));
 ### 2. Backend Optimizations
 
 #### Server Performance
+
 - **Compression**: Gzip compression enabled
 - **Caching**: Aggressive caching for static assets
 - **Security**: Helmet.js for security headers
 - **Production Mode**: Disabled on-the-fly transpilation
 
 #### API Optimizations
+
 - **Caching**: 5-minute client-side cache
 - **Optimistic Updates**: Immediate UI updates
 - **Error Handling**: Graceful error recovery
@@ -67,6 +75,7 @@ const InventoryPage = lazy(() => import('./pages/InventoryPage.tsx'));
 ### 3. Image Optimizations
 
 #### OptimizedImage Component
+
 - **Intersection Observer**: Efficient lazy loading
 - **Progressive Loading**: Placeholder images
 - **Error Handling**: Graceful fallbacks
@@ -75,15 +84,19 @@ const InventoryPage = lazy(() => import('./pages/InventoryPage.tsx'));
 ### 4. Development Tools
 
 #### Performance Monitoring
+
 ```typescript
 // Built-in performance tracking
-import { performanceMonitor, measureApiCall } from './utils/performance';
+import { performanceMonitor, measureApiCall } from "./utils/performance";
 
 // Monitor API calls
-const data = await measureApiCall('fetchVehicles', () => fetch('/api/vehicles'));
+const data = await measureApiCall("fetchVehicles", () =>
+  fetch("/api/vehicles"),
+);
 ```
 
 #### Code Quality
+
 - **ESLint**: Performance-focused rules
 - **TypeScript**: Strict type checking
 - **Bundle Analysis**: Automated size monitoring
@@ -91,16 +104,18 @@ const data = await measureApiCall('fetchVehicles', () => fetch('/api/vehicles'))
 ## 📈 Key Metrics
 
 ### Bundle Chunks
-| Chunk | Size | Gzipped | Purpose |
-|-------|------|---------|---------|
-| react-vendor | 11.42 kB | 4.09 kB | React core |
-| router | 33.66 kB | 12.24 kB | Routing |
-| ui | 118.56 kB | 38.13 kB | UI components |
-| charts | 297.90 kB | 87.21 kB | Charts library |
-| HomePage | 14.04 kB | 4.86 kB | Home page |
-| VehicleDetailPage | 11.46 kB | 3.42 kB | Vehicle details |
+
+| Chunk             | Size      | Gzipped  | Purpose         |
+| ----------------- | --------- | -------- | --------------- |
+| react-vendor      | 11.42 kB  | 4.09 kB  | React core      |
+| router            | 33.66 kB  | 12.24 kB | Routing         |
+| ui                | 118.56 kB | 38.13 kB | UI components   |
+| charts            | 297.90 kB | 87.21 kB | Charts library  |
+| HomePage          | 14.04 kB  | 4.86 kB  | Home page       |
+| VehicleDetailPage | 11.46 kB  | 3.42 kB  | Vehicle details |
 
 ### Performance Metrics
+
 - **Total Bundle Size**: 804 KB (68% reduction)
 - **Initial Load**: ~800 KB (vs 2.5MB before)
 - **Code Splitting**: 15+ separate chunks
@@ -129,18 +144,21 @@ npm run build && npm start
 ## 🔧 Configuration Files
 
 ### Vite Configuration (`vite.config.ts`)
+
 - Manual chunk splitting
 - Terser minification
 - Tree shaking
 - Asset optimization
 
 ### Server Configuration (`server.ts`)
+
 - Compression middleware
 - Security headers
 - Static asset caching
 - Production optimizations
 
 ### ESLint Configuration (`.eslintrc.js`)
+
 - Performance-focused rules
 - React optimization rules
 - TypeScript strict mode
@@ -148,6 +166,7 @@ npm run build && npm start
 ## 📋 Best Practices Implemented
 
 ### ✅ Do's
+
 - Lazy load routes and components
 - Use React.memo for expensive components
 - Implement proper caching strategies
@@ -156,6 +175,7 @@ npm run build && npm start
 - Use production builds for testing
 
 ### ❌ Don'ts
+
 - Create functions in render methods
 - Use array indices as React keys
 - Load unnecessary dependencies
@@ -165,18 +185,21 @@ npm run build && npm start
 ## 🎯 Impact Summary
 
 ### User Experience
+
 - **Faster Initial Load**: 68% reduction in bundle size
 - **Better Responsiveness**: 40-67% improvement in Core Web Vitals
 - **Smoother Navigation**: Lazy loading reduces perceived load times
 - **Mobile Performance**: Optimized for mobile devices
 
 ### Developer Experience
+
 - **Better Tooling**: ESLint, TypeScript, bundle analysis
 - **Performance Monitoring**: Built-in metrics tracking
 - **Development Speed**: Hot reloading and optimized dev server
 - **Code Quality**: Automated performance checks
 
 ### Business Impact
+
 - **SEO Improvement**: Better Core Web Vitals scores
 - **User Retention**: Faster load times improve engagement
 - **Mobile Performance**: Better experience on mobile devices
@@ -185,12 +208,14 @@ npm run build && npm start
 ## 🔄 Next Steps
 
 ### Continuous Monitoring
+
 1. Set up automated performance testing
 2. Monitor Core Web Vitals in production
 3. Implement performance budgets
 4. Regular bundle size audits
 
 ### Further Optimizations
+
 1. Implement service workers for caching
 2. Add preloading for critical resources
 3. Optimize third-party scripts

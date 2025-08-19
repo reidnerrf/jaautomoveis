@@ -1,26 +1,28 @@
-
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FacebookShareButton, 
-  TwitterShareButton, 
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
   WhatsappShareButton,
   FacebookIcon,
   TwitterIcon,
-  WhatsappIcon
-} from 'react-share';
-import { FiShare2, FiCopy, FiCheck } from 'react-icons/fi';
-import { Vehicle } from '../types';
+  WhatsappIcon,
+} from "react-share";
+import { FiShare2, FiCopy, FiCheck } from "react-icons/fi";
+import { Vehicle } from "../types";
 
 interface ShareButtonProps {
   vehicle: Vehicle;
   className?: string;
 }
 
-const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = '' }) => {
+const ShareButton: React.FC<ShareButtonProps> = ({
+  vehicle,
+  className = "",
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  
+
   const shareUrl = window.location.href;
   const title = `Confira este ${vehicle.name} na JA Automóveis!`;
   // removed unused description variable
@@ -31,7 +33,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = '' }) =>
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy: ', err);
+      console.error("Failed to copy: ", err);
     }
   };
 
@@ -59,7 +61,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = '' }) =>
               className="fixed inset-0 bg-black/20 z-40"
               onClick={() => setIsOpen(false)}
             />
-            
+
             {/* Share menu */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8, y: 10 }}
@@ -70,27 +72,36 @@ const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = '' }) =>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 Compartilhar veículo
               </h3>
-              
+
               <div className="flex gap-3 mb-4">
                 <FacebookShareButton url={shareUrl} quote={title}>
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
                     <FacebookIcon size={40} round />
                   </motion.div>
                 </FacebookShareButton>
-                
+
                 <TwitterShareButton url={shareUrl} title={title}>
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
                     <TwitterIcon size={40} round />
                   </motion.div>
                 </TwitterShareButton>
-                
+
                 <WhatsappShareButton url={shareUrl} title={title}>
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
                     <WhatsappIcon size={40} round />
                   </motion.div>
                 </WhatsappShareButton>
               </div>
-              
+
               <button
                 onClick={copyToClipboard}
                 className="w-full flex items-center gap-3 p-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl transition-colors duration-200"
@@ -98,10 +109,13 @@ const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = '' }) =>
                 {copied ? (
                   <FiCheck className="text-green-500" size={18} />
                 ) : (
-                  <FiCopy className="text-gray-600 dark:text-gray-300" size={18} />
+                  <FiCopy
+                    className="text-gray-600 dark:text-gray-300"
+                    size={18}
+                  />
                 )}
                 <span className="text-gray-900 dark:text-white font-medium">
-                  {copied ? 'Link copiado!' : 'Copiar link'}
+                  {copied ? "Link copiado!" : "Copiar link"}
                 </span>
               </button>
             </motion.div>

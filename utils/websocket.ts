@@ -1,5 +1,8 @@
-
-type WebSocketEventType = 'vehicle_update' | 'new_vehicle' | 'price_change' | 'system_notification';
+type WebSocketEventType =
+  | "vehicle_update"
+  | "new_vehicle"
+  | "price_change"
+  | "system_notification";
 
 interface WebSocketMessage {
   type: WebSocketEventType;
@@ -20,35 +23,35 @@ class WebSocketManager {
 
   private connect() {
     try {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsUrl = `${protocol}//${window.location.host}/ws`;
-      
+
       this.ws = new WebSocket(wsUrl);
-      
+
       this.ws.onopen = () => {
-        console.log('WebSocket connected');
+        console.log("WebSocket connected");
         this.reconnectAttempts = 0;
       };
-      
+
       this.ws.onmessage = (event) => {
         try {
           const message: WebSocketMessage = JSON.parse(event.data);
           this.handleMessage(message);
         } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
+          console.error("Error parsing WebSocket message:", error);
         }
       };
-      
+
       this.ws.onclose = () => {
-        console.log('WebSocket disconnected');
+        console.log("WebSocket disconnected");
         this.attemptReconnect();
       };
-      
+
       this.ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        console.error("WebSocket error:", error);
       };
     } catch (error) {
-      console.error('Error connecting to WebSocket:', error);
+      console.error("Error connecting to WebSocket:", error);
       this.attemptReconnect();
     }
   }
@@ -56,10 +59,13 @@ class WebSocketManager {
   private attemptReconnect() {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
-      
+      const delay =
+        this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
+
       setTimeout(() => {
-        console.log(`Reconnecting to WebSocket (attempt ${this.reconnectAttempts})`);
+        console.log(
+          `Reconnecting to WebSocket (attempt ${this.reconnectAttempts})`,
+        );
         this.connect();
       }, delay);
     }
@@ -67,7 +73,7 @@ class WebSocketManager {
 
   private handleMessage(message: WebSocketMessage) {
     const listeners = this.listeners.get(message.type) || [];
-    listeners.forEach(listener => listener(message.data));
+    listeners.forEach((listener) => listener(message.data));
   }
 
   subscribe(eventType: WebSocketEventType, callback: (data: any) => void) {
@@ -90,7 +96,7 @@ class WebSocketManager {
       const message: WebSocketMessage = {
         type,
         data,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
       this.ws.send(JSON.stringify(message));
     }
@@ -107,10 +113,13 @@ class WebSocketManager {
 export const webSocketManager = new WebSocketManager();
 
 // React hook for WebSocket
-export const useWebSocket = (eventType: WebSocketEventType, callback: (data: any) => void) => {
+export const useWebSocket = (
+  eventType: WebSocketEventType,
+  callback: (data: any) => void,
+) => {
   React.useEffect(() => {
     webSocketManager.subscribe(eventType, callback);
-    
+
     return () => {
       webSocketManager.unsubscribe(eventType, callback);
     };

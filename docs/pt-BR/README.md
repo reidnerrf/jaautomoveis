@@ -19,22 +19,24 @@ O objetivo é oferecer uma experiência **rápida, intuitiva e segura** tanto pa
 
 ## 🛠️ Stack Tecnológica
 
-- **Frontend**: React + TypeScript + Vite  
-- **UI/UX**: TailwindCSS, Framer Motion, Shadcn/UI  
-- **Backend**: Node.js + Express  
-- **Banco de Dados**: MongoDB  
-- **Infraestrutura**: Render / Vercel  
+- **Frontend**: React + TypeScript + Vite
+- **UI/UX**: TailwindCSS, Framer Motion, Shadcn/UI
+- **Backend**: Node.js + Express
+- **Banco de Dados**: MongoDB
+- **Infraestrutura**: Render / Vercel
 
 ---
 
 ## 🚀 Instalação Local
 
 1. Instale as dependências:
+
    ```bash
    npm install
    ```
 
 2. Configure variáveis de ambiente (`.env`):
+
    ```env
    PORT=3000
    MONGO_URI=sua_string_de_conexao
@@ -42,11 +44,12 @@ O objetivo é oferecer uma experiência **rápida, intuitiva e segura** tanto pa
    ```
 
 3. Inicie o servidor:
+
    ```bash
    npm run dev
    ```
 
-4. Acesse:  
+4. Acesse:
    ```
    http://localhost:3000
    ```
@@ -55,11 +58,11 @@ O objetivo é oferecer uma experiência **rápida, intuitiva e segura** tanto pa
 
 ## 📖 Documentação Completa
 
-- [Resumo do Projeto](./RESUMO.md)  
-- [Como Contribuir](./CONTRIBUINDO.md)  
-- [Código de Conduta](./CODIGO_DE_CONDUTA.md)  
-- [Política de Segurança](./SEGURANCA.md)  
-- [Licença](./LICENCA.md)  
+- [Resumo do Projeto](./RESUMO.md)
+- [Como Contribuir](./CONTRIBUINDO.md)
+- [Código de Conduta](./CODIGO_DE_CONDUTA.md)
+- [Política de Segurança](./SEGURANCA.md)
+- [Licença](./LICENCA.md)
 
 ---
 

@@ -1,6 +1,6 @@
-import Queue from 'bull';
-import { EventEmitter } from 'events';
-import Redis from 'ioredis';
+import Queue from "bull";
+import { EventEmitter } from "events";
+import Redis from "ioredis";
 
 // Interfaces para configuração de filas
 interface QueueConfig {
@@ -9,7 +9,7 @@ interface QueueConfig {
   priority: number;
   attempts: number;
   backoff: {
-    type: 'fixed' | 'exponential';
+    type: "fixed" | "exponential";
     delay: number;
   };
   removeOnComplete: number;
@@ -30,8 +30,6 @@ interface JobData {
   metadata?: Record<string, unknown>;
 }
 
-
-
 interface QueueStats {
   name: string;
   waiting: number;
@@ -48,69 +46,72 @@ interface QueueStats {
 // Configurações padrão das filas
 const QUEUE_CONFIGS: Record<string, QueueConfig> = {
   vehicle: {
-    name: 'vehicle',
+    name: "vehicle",
     concurrency: 5,
     priority: 1,
     attempts: 3,
-    backoff: { type: 'exponential', delay: 2000 },
+    backoff: { type: "exponential", delay: 2000 },
     removeOnComplete: 100,
-    removeOnFail: 50
+    removeOnFail: 50,
   },
   analytics: {
-    name: 'analytics',
+    name: "analytics",
     concurrency: 10,
     priority: 2,
     attempts: 2,
-    backoff: { type: 'fixed', delay: 1000 },
+    backoff: { type: "fixed", delay: 1000 },
     removeOnComplete: 1000,
-    removeOnFail: 100
+    removeOnFail: 100,
   },
   notification: {
-    name: 'notification',
+    name: "notification",
     concurrency: 3,
     priority: 1,
     attempts: 5,
-    backoff: { type: 'exponential', delay: 5000 },
+    backoff: { type: "exponential", delay: 5000 },
     removeOnComplete: 50,
-    removeOnFail: 25
+    removeOnFail: 25,
   },
   image: {
-    name: 'image',
+    name: "image",
     concurrency: 2,
     priority: 1,
     attempts: 3,
-    backoff: { type: 'exponential', delay: 3000 },
+    backoff: { type: "exponential", delay: 3000 },
     removeOnComplete: 100,
-    removeOnFail: 50
+    removeOnFail: 50,
   },
   email: {
-    name: 'email',
+    name: "email",
     concurrency: 2,
     priority: 2,
     attempts: 3,
-    backoff: { type: 'exponential', delay: 10000 },
+    backoff: { type: "exponential", delay: 10000 },
     removeOnComplete: 50,
-    removeOnFail: 25
-  }
+    removeOnFail: 25,
+  },
 };
 
 class QueueManager extends EventEmitter {
   private queues: Map<string, Queue.Queue> = new Map();
-  private processors: Map<string, (job: Queue.Job) => Promise<unknown>> = new Map();
+  private processors: Map<string, (job: Queue.Job) => Promise<unknown>> =
+    new Map();
   private redis: Redis;
   private stats: Map<string, QueueStats> = new Map();
   private isShuttingDown = false;
 
   constructor(redisUrl?: string) {
     super();
-    this.redis = new Redis(redisUrl || process.env.REDIS_URL || 'redis://localhost:6379');
+    this.redis = new Redis(
+      redisUrl || process.env.REDIS_URL || "redis://localhost:6379",
+    );
     this.initializeQueues();
     this.setupGlobalEvents();
   }
 
   // Inicializar todas as filas
   private initializeQueues(): void {
-    Object.values(QUEUE_CONFIGS).forEach(config => {
+    Object.values(QUEUE_CONFIGS).forEach((config) => {
       this.createQueue(config);
     });
   }
@@ -119,9 +120,9 @@ class QueueManager extends EventEmitter {
   private createQueue(config: QueueConfig): Queue.Queue {
     const queue = new Queue(config.name, {
       redis: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379'),
-        password: process.env.REDIS_PASSWORD
+        host: process.env.REDIS_HOST || "localhost",
+        port: parseInt(process.env.REDIS_PORT || "6379"),
+        password: process.env.REDIS_PASSWORD,
       },
       defaultJobOptions: {
         priority: config.priority,
@@ -129,8 +130,8 @@ class QueueManager extends EventEmitter {
         backoff: config.backoff,
         removeOnComplete: config.removeOnComplete,
         removeOnFail: config.removeOnFail,
-        delay: config.delay
-      }
+        delay: config.delay,
+      },
     });
 
     // Configurar processamento
@@ -142,11 +143,11 @@ class QueueManager extends EventEmitter {
     // Configurar repetição se especificado
     if (config.repeat) {
       queue.add(
-        'scheduled',
+        "scheduled",
         {},
         {
-          repeat: config.repeat
-        }
+          repeat: config.repeat,
+        },
       );
     }
 
@@ -158,62 +159,74 @@ class QueueManager extends EventEmitter {
 
   // Configurar eventos globais
   private setupGlobalEvents(): void {
-    process.on('SIGTERM', () => this.gracefulShutdown());
-    process.on('SIGINT', () => this.gracefulShutdown());
+    process.on("SIGTERM", () => this.gracefulShutdown());
+    process.on("SIGINT", () => this.gracefulShutdown());
   }
 
   // Configurar eventos de uma fila específica
   private setupQueueEvents(queue: Queue.Queue, queueName: string): void {
-    queue.on('waiting', (job: Queue.Job) => {
-      this.emit('job:waiting', { queue: queueName, jobId: job.id.toString(), data: job.data });
-      this.updateStats(queueName, 'waiting', 1);
+    queue.on("waiting", (job: Queue.Job) => {
+      this.emit("job:waiting", {
+        queue: queueName,
+        jobId: job.id.toString(),
+        data: job.data,
+      });
+      this.updateStats(queueName, "waiting", 1);
     });
 
-    queue.on('active', (job: Queue.Job) => {
-      this.emit('job:active', { queue: queueName, jobId: job.id.toString(), data: job.data });
-      this.updateStats(queueName, 'active', 1);
+    queue.on("active", (job: Queue.Job) => {
+      this.emit("job:active", {
+        queue: queueName,
+        jobId: job.id.toString(),
+        data: job.data,
+      });
+      this.updateStats(queueName, "active", 1);
     });
 
-    queue.on('completed', (job: Queue.Job, result) => {
+    queue.on("completed", (job: Queue.Job, result) => {
       const duration = Date.now() - job.timestamp;
-      this.emit('job:completed', {
+      this.emit("job:completed", {
         queue: queueName,
         jobId: job.id.toString(),
         data: job.data,
         result,
         duration,
-        attempts: job.attemptsMade
+        attempts: job.attemptsMade,
       });
-      this.updateStats(queueName, 'completed', 1, duration);
+      this.updateStats(queueName, "completed", 1, duration);
     });
 
-    queue.on('failed', (job: Queue.Job, err) => {
+    queue.on("failed", (job: Queue.Job, err) => {
       const duration = Date.now() - job.timestamp;
-      this.emit('job:failed', {
+      this.emit("job:failed", {
         queue: queueName,
         jobId: job.id.toString(),
         data: job.data,
         error: err.message,
         attempts: job.attemptsMade,
-        duration
+        duration,
       });
-      this.updateStats(queueName, 'failed', 1);
+      this.updateStats(queueName, "failed", 1);
     });
 
-    queue.on('stalled', (job: Queue.Job) => {
-      this.emit('job:stalled', { queue: queueName, jobId: job.id.toString(), data: job.data });
+    queue.on("stalled", (job: Queue.Job) => {
+      this.emit("job:stalled", {
+        queue: queueName,
+        jobId: job.id.toString(),
+        data: job.data,
+      });
     });
 
-    queue.on('error', (error) => {
-      this.emit('queue:error', { queue: queueName, error: error.message });
+    queue.on("error", (error) => {
+      this.emit("queue:error", { queue: queueName, error: error.message });
     });
 
-    queue.on('paused', () => {
-      this.emit('queue:paused', { queue: queueName });
+    queue.on("paused", () => {
+      this.emit("queue:paused", { queue: queueName });
     });
 
-    queue.on('resumed', () => {
-      this.emit('queue:resumed', { queue: queueName });
+    queue.on("resumed", () => {
+      this.emit("queue:resumed", { queue: queueName });
     });
   }
 
@@ -221,40 +234,43 @@ class QueueManager extends EventEmitter {
   private async processJob(job: Queue.Job): Promise<unknown> {
     const startTime = Date.now();
     const queueName = job.queue.name;
-    const jobType = job.data.type || 'default';
+    const jobType = job.data.type || "default";
     const processor = this.processors.get(`${queueName}:${jobType}`);
 
     if (!processor) {
-      throw new Error(`No processor registered for job type: ${jobType} in queue: ${queueName}`);
+      throw new Error(
+        `No processor registered for job type: ${jobType} in queue: ${queueName}`,
+      );
     }
 
     try {
       const result = await processor(job);
       const duration = Date.now() - startTime;
 
-      this.emit('job:processed', {
+      this.emit("job:processed", {
         queue: queueName,
         jobId: job.id,
         type: jobType,
         success: true,
         result,
         duration,
-        attempts: job.attemptsMade
+        attempts: job.attemptsMade,
       });
 
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
 
-      this.emit('job:processed', {
+      this.emit("job:processed", {
         queue: queueName,
         jobId: job.id,
         type: jobType,
         success: false,
         error: errorMessage,
         duration,
-        attempts: job.attemptsMade
+        attempts: job.attemptsMade,
       });
 
       throw error;
@@ -262,7 +278,11 @@ class QueueManager extends EventEmitter {
   }
 
   // Registrar um processador para um tipo de job
-  public registerProcessor(queueName: string, jobType: string, processor: (job: Queue.Job) => Promise<unknown>): void {
+  public registerProcessor(
+    queueName: string,
+    jobType: string,
+    processor: (job: Queue.Job) => Promise<unknown>,
+  ): void {
     const key = `${queueName}:${jobType}`;
     this.processors.set(key, processor);
   }
@@ -277,29 +297,32 @@ class QueueManager extends EventEmitter {
     const jobOptions: Queue.JobOptions = {
       priority: data.priority || QUEUE_CONFIGS[queueName]?.priority || 0,
       attempts: data.attempts || QUEUE_CONFIGS[queueName]?.attempts || 3,
-      delay: data.delay || 0
+      delay: data.delay || 0,
     };
 
     const job = await queue.add(data.type, data.payload, jobOptions);
-    
-    this.emit('job:added', {
+
+    this.emit("job:added", {
       queue: queueName,
       jobId: job.id,
       type: data.type,
-      data: data.payload
+      data: data.payload,
     });
 
     return job;
   }
 
   // Adicionar múltiplos jobs
-  public async addJobs(queueName: string, jobs: JobData[]): Promise<Queue.Job[]> {
+  public async addJobs(
+    queueName: string,
+    jobs: JobData[],
+  ): Promise<Queue.Job[]> {
     const queue = this.queues.get(queueName);
     if (!queue) {
       throw new Error(`Queue ${queueName} not found`);
     }
 
-    const jobPromises = jobs.map(data => this.addJob(queueName, data));
+    const jobPromises = jobs.map((data) => this.addJob(queueName, data));
     return Promise.all(jobPromises);
   }
 
@@ -320,11 +343,14 @@ class QueueManager extends EventEmitter {
   }
 
   // Limpar uma fila
-  public async cleanQueue(queueName: string, grace: number = 1000): Promise<void> {
+  public async cleanQueue(
+    queueName: string,
+    grace: number = 1000,
+  ): Promise<void> {
     const queue = this.queues.get(queueName);
     if (queue) {
-      await queue.clean(grace, 'completed');
-      await queue.clean(grace, 'failed');
+      await queue.clean(grace, "completed");
+      await queue.clean(grace, "failed");
     }
   }
 
@@ -335,22 +361,16 @@ class QueueManager extends EventEmitter {
       return null;
     }
 
-    const [
-      waiting,
-      active,
-      completed,
-      failed,
-      delayed
-    ] = await Promise.all([
+    const [waiting, active, completed, failed, delayed] = await Promise.all([
       queue.getWaiting(),
       queue.getActive(),
       queue.getCompleted(),
       queue.getFailed(),
-      queue.getDelayed()
+      queue.getDelayed(),
     ]);
 
     const stats = this.stats.get(queueName) || this.createEmptyStats(queueName);
-    
+
     return {
       ...stats,
       waiting: waiting.length,
@@ -358,34 +378,46 @@ class QueueManager extends EventEmitter {
       completed: completed.length,
       failed: failed.length,
       delayed: delayed.length,
-      total: waiting.length + active.length + completed.length + failed.length + delayed.length
+      total:
+        waiting.length +
+        active.length +
+        completed.length +
+        failed.length +
+        delayed.length,
     };
   }
 
   // Obter estatísticas de todas as filas
   public async getAllQueueStats(): Promise<QueueStats[]> {
-    const statsPromises = Array.from(this.queues.keys()).map(name => this.getQueueStats(name));
+    const statsPromises = Array.from(this.queues.keys()).map((name) =>
+      this.getQueueStats(name),
+    );
     const stats = await Promise.all(statsPromises);
     return stats.filter((stat): stat is QueueStats => stat !== null);
   }
 
   // Obter jobs de uma fila
-  public async getQueueJobs(queueName: string, status: string = 'waiting', start = 0, end = 100): Promise<Queue.Job[]> {
+  public async getQueueJobs(
+    queueName: string,
+    status: string = "waiting",
+    start = 0,
+    end = 100,
+  ): Promise<Queue.Job[]> {
     const queue = this.queues.get(queueName);
     if (!queue) {
       return [];
     }
 
     switch (status) {
-      case 'waiting':
+      case "waiting":
         return queue.getWaiting(start, end);
-      case 'active':
+      case "active":
         return queue.getActive(start, end);
-      case 'completed':
+      case "completed":
         return queue.getCompleted(start, end);
-      case 'failed':
+      case "failed":
         return queue.getFailed(start, end);
-      case 'delayed':
+      case "delayed":
         return queue.getDelayed(start, end);
       default:
         return queue.getWaiting(start, end);
@@ -393,7 +425,10 @@ class QueueManager extends EventEmitter {
   }
 
   // Remover um job
-  public async removeJob(queueName: string, jobId: string | number): Promise<void> {
+  public async removeJob(
+    queueName: string,
+    jobId: string | number,
+  ): Promise<void> {
     const queue = this.queues.get(queueName);
     if (queue) {
       const job = await queue.getJob(jobId);
@@ -404,7 +439,10 @@ class QueueManager extends EventEmitter {
   }
 
   // Retry um job
-  public async retryJob(queueName: string, jobId: string | number): Promise<void> {
+  public async retryJob(
+    queueName: string,
+    jobId: string | number,
+  ): Promise<void> {
     const queue = this.queues.get(queueName);
     if (queue) {
       const job = await queue.getJob(jobId);
@@ -421,51 +459,61 @@ class QueueManager extends EventEmitter {
     }
 
     this.isShuttingDown = true;
-    console.log('Starting graceful shutdown of queue manager...');
+    console.log("Starting graceful shutdown of queue manager...");
 
     // Pausar todas as filas
-    const pausePromises = Array.from(this.queues.keys()).map(name => this.pauseQueue(name));
+    const pausePromises = Array.from(this.queues.keys()).map((name) =>
+      this.pauseQueue(name),
+    );
     await Promise.all(pausePromises);
 
     // Aguardar jobs ativos terminarem
     const activeJobs = await Promise.all(
-      Array.from(this.queues.values()).map(queue => queue.getActive())
+      Array.from(this.queues.values()).map((queue) => queue.getActive()),
     );
 
-    const totalActiveJobs = activeJobs.reduce((sum, jobs) => sum + jobs.length, 0);
-    
+    const totalActiveJobs = activeJobs.reduce(
+      (sum, jobs) => sum + jobs.length,
+      0,
+    );
+
     if (totalActiveJobs > 0) {
       console.log(`Waiting for ${totalActiveJobs} active jobs to complete...`);
-      
+
       // Aguardar até 30 segundos
       let attempts = 0;
       const maxAttempts = 30;
-      
+
       while (attempts < maxAttempts) {
         const currentActiveJobs = await Promise.all(
-          Array.from(this.queues.values()).map(queue => queue.getActive())
+          Array.from(this.queues.values()).map((queue) => queue.getActive()),
         );
-        
-        const currentTotal = currentActiveJobs.reduce((sum, jobs) => sum + jobs.length, 0);
-        
+
+        const currentTotal = currentActiveJobs.reduce(
+          (sum, jobs) => sum + jobs.length,
+          0,
+        );
+
         if (currentTotal === 0) {
           break;
         }
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         attempts++;
       }
     }
 
     // Fechar todas as filas
-    const closePromises = Array.from(this.queues.values()).map(queue => queue.close());
+    const closePromises = Array.from(this.queues.values()).map((queue) =>
+      queue.close(),
+    );
     await Promise.all(closePromises);
 
     // Fechar conexão Redis
     await this.redis.quit();
 
-    console.log('Queue manager shutdown completed');
-    this.emit('shutdown:completed');
+    console.log("Queue manager shutdown completed");
+    this.emit("shutdown:completed");
   }
 
   // Funções auxiliares
@@ -480,25 +528,33 @@ class QueueManager extends EventEmitter {
       paused: 0,
       total: 0,
       throughput: 0,
-      avgProcessingTime: 0
+      avgProcessingTime: 0,
     };
   }
 
-  private updateStats(queueName: string, field: keyof QueueStats, increment: number, duration?: number): void {
+  private updateStats(
+    queueName: string,
+    field: keyof QueueStats,
+    increment: number,
+    duration?: number,
+  ): void {
     const stats = this.stats.get(queueName);
     if (stats) {
       (stats as any)[field] = (stats as any)[field] + increment;
-      
-      if (duration && field === 'completed') {
+
+      if (duration && field === "completed") {
         stats.avgProcessingTime = (stats.avgProcessingTime + duration) / 2;
       }
     }
   }
 
   // Health check
-  public async healthCheck(): Promise<{ status: string; queues: Record<string, boolean> }> {
+  public async healthCheck(): Promise<{
+    status: string;
+    queues: Record<string, boolean>;
+  }> {
     const queueStatus: Record<string, boolean> = {};
-    
+
     for (const [name, queue] of this.queues) {
       try {
         await queue.getJobCounts();
@@ -508,11 +564,11 @@ class QueueManager extends EventEmitter {
       }
     }
 
-    const allHealthy = Object.values(queueStatus).every(status => status);
-    
+    const allHealthy = Object.values(queueStatus).every((status) => status);
+
     return {
-      status: allHealthy ? 'healthy' : 'unhealthy',
-      queues: queueStatus
+      status: allHealthy ? "healthy" : "unhealthy",
+      queues: queueStatus,
     };
   }
 }
@@ -521,53 +577,53 @@ class QueueManager extends EventEmitter {
 export const queueManager = new QueueManager();
 
 // Processadores padrão
-queueManager.registerProcessor('vehicle', 'process', async (job) => {
+queueManager.registerProcessor("vehicle", "process", async (job) => {
   const { payload } = job.data;
-  console.log('Processing vehicle job:', payload);
-  
+  console.log("Processing vehicle job:", payload);
+
   // Simular processamento
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   return { processed: true, data: payload };
 });
 
-queueManager.registerProcessor('analytics', 'track', async (job) => {
+queueManager.registerProcessor("analytics", "track", async (job) => {
   const { payload } = job.data;
-  console.log('Tracking analytics:', payload);
-  
+  console.log("Tracking analytics:", payload);
+
   // Simular tracking
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
   return { tracked: true, data: payload };
 });
 
-queueManager.registerProcessor('notification', 'send', async (job) => {
+queueManager.registerProcessor("notification", "send", async (job) => {
   const { payload } = job.data;
-  console.log('Sending notification:', payload);
-  
+  console.log("Sending notification:", payload);
+
   // Simular envio de notificação
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   return { sent: true, data: payload };
 });
 
-queueManager.registerProcessor('image', 'optimize', async (job) => {
+queueManager.registerProcessor("image", "optimize", async (job) => {
   const { payload } = job.data;
-  console.log('Optimizing image:', payload);
-  
+  console.log("Optimizing image:", payload);
+
   // Simular otimização de imagem
-  await new Promise(resolve => setTimeout(resolve, 3000));
-  
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
   return { optimized: true, data: payload };
 });
 
-queueManager.registerProcessor('email', 'send', async (job) => {
+queueManager.registerProcessor("email", "send", async (job) => {
   const { payload } = job.data;
-  console.log('Sending email:', payload);
-  
+  console.log("Sending email:", payload);
+
   // Simular envio de email
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
   return { sent: true, data: payload };
 });
 

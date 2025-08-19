@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth.tsx';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { Lock, User, ArrowLeft, Loader2 } from 'lucide-react';
-import logo from '../assets/logo.png';
+import React, { useState, useMemo } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth.tsx";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { Lock, User, ArrowLeft, Loader2 } from "lucide-react";
+import logo from "../assets/logo.png";
 
 const phrases = [
   "Bem-vindo de volta 👋",
@@ -15,14 +15,14 @@ const phrases = [
 const AdminLoginPage: React.FC = () => {
   const { login, loading } = useAuth();
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   // frase aleatória a cada refresh
   const welcomeMessage = useMemo(
     () => phrases[Math.floor(Math.random() * phrases.length)],
-    []
+    [],
   );
 
   // valores para tilt 3D
@@ -49,19 +49,20 @@ const AdminLoginPage: React.FC = () => {
     setError(null);
     const ok = await login(username, password);
     if (ok) {
-      navigate('/admin');
+      navigate("/admin");
     } else {
-      setError('Usuário ou senha inválidos.');
+      setError("Usuário ou senha inválidos.");
     }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center 
+    <div
+      className="relative min-h-screen flex items-center justify-center 
       bg-gradient-to-br from-blue-100 via-white to-blue-200 
-      dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 p-6 transition-colors overflow-hidden">
-
+      dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 p-6 transition-colors overflow-hidden"
+    >
       {/* Card de login com tilt 3D */}
-      <motion.div 
+      <motion.div
         style={{ rotateX, rotateY }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -87,8 +88,10 @@ const AdminLoginPage: React.FC = () => {
 
         {/* Mensagem de erro */}
         {error && (
-          <div className="mb-4 rounded-md bg-red-100 dark:bg-red-900/50 
-            p-3 text-sm text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
+          <div
+            className="mb-4 rounded-md bg-red-100 dark:bg-red-900/50 
+            p-3 text-sm text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800"
+          >
             {error}
           </div>
         )}

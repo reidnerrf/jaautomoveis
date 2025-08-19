@@ -130,7 +130,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
   preferences: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
@@ -177,8 +177,8 @@ export interface ImageOptimizationOptions {
   width?: number;
   height?: number;
   quality?: number;
-  format?: 'jpeg' | 'png' | 'webp' | 'avif';
-  compression?: 'low' | 'medium' | 'high';
+  format?: "jpeg" | "png" | "webp" | "avif";
+  compression?: "low" | "medium" | "high";
   blur?: number;
   sharpen?: boolean;
   grayscale?: boolean;
@@ -189,8 +189,8 @@ export interface ImageOptimizationOptions {
 
 // ML interfaces
 export interface MLConfig {
-  modelType: 'collaborative' | 'content' | 'hybrid' | 'neural';
-  algorithm: 'knn' | 'svd' | 'matrix' | 'deep';
+  modelType: "collaborative" | "content" | "hybrid" | "neural";
+  algorithm: "knn" | "svd" | "matrix" | "deep";
   parameters: Record<string, unknown>;
   trainingData: unknown[];
   validationSplit: number;

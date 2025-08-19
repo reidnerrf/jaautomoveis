@@ -1,15 +1,17 @@
-import React from 'react';
-import { FaWhatsapp, FaInstagram } from 'react-icons/fa';
-import { FiArrowUp } from 'react-icons/fi';
-import RealTimeViewers from './RealTimeViewers.tsx';
+import React from "react";
+import { FaWhatsapp, FaInstagram } from "react-icons/fa";
+import { FiArrowUp } from "react-icons/fi";
+import RealTimeViewers from "./RealTimeViewers.tsx";
 
 interface FloatingSocialButtonsProps {
   page?: string;
 }
 
-const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) => {
+const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({
+  page,
+}) => {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Don't show realtime viewers here since we have a specific button on vehicle pages
@@ -28,7 +30,7 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
         onClick={() => {
           try {
             if ((window as any).trackBusinessEvent) {
-              (window as any).trackBusinessEvent('whatsapp_click', {});
+              (window as any).trackBusinessEvent("whatsapp_click", {});
             }
           } catch {
             // Ignore errors
@@ -45,7 +47,7 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
         onClick={() => {
           try {
             if ((window as any).trackBusinessEvent) {
-              (window as any).trackBusinessEvent('instagram_click', {});
+              (window as any).trackBusinessEvent("instagram_click", {});
             }
           } catch {
             // Ignore errors

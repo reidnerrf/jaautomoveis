@@ -1,7 +1,9 @@
-import React, { Suspense, lazy, Component, ReactNode } from 'react';
+import React, { Suspense, lazy, Component, ReactNode } from "react";
 
 interface LazyLoaderProps {
-  component: () => Promise<{ default: React.ComponentType<Record<string, unknown>> }>;
+  component: () => Promise<{
+    default: React.ComponentType<Record<string, unknown>>;
+  }>;
   fallback?: ReactNode;
   errorFallback?: ReactNode;
   onLoad?: () => void;
@@ -14,10 +16,18 @@ interface LazyLoaderState {
 }
 
 class ErrorBoundary extends Component<
-  { children: ReactNode; fallback: ReactNode; onError?: (error: Error) => void },
+  {
+    children: ReactNode;
+    fallback: ReactNode;
+    onError?: (error: Error) => void;
+  },
   LazyLoaderState
 > {
-  constructor(props: { children: ReactNode; fallback: ReactNode; onError?: (error: Error) => void }) {
+  constructor(props: {
+    children: ReactNode;
+    fallback: ReactNode;
+    onError?: (error: Error) => void;
+  }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -42,10 +52,18 @@ class ErrorBoundary extends Component<
 
 const LazyLoader: React.FC<LazyLoaderProps> = ({
   component,
-  fallback = <div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>,
-  errorFallback = <div className="flex items-center justify-center p-8 text-red-600">Erro ao carregar componente</div>,
+  fallback = (
+    <div className="flex items-center justify-center p-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    </div>
+  ),
+  errorFallback = (
+    <div className="flex items-center justify-center p-8 text-red-600">
+      Erro ao carregar componente
+    </div>
+  ),
   onLoad,
-  onError
+  onError,
 }) => {
   const LazyComponent = lazy(component);
 
@@ -61,22 +79,23 @@ const LazyLoader: React.FC<LazyLoaderProps> = ({
 export default LazyLoader;
 
 // Componentes lazy predefinidos
-export const LazyVehicleList = lazy(() => import('./VehicleList'));
-export const LazyVehicleDetail = lazy(() => import('./VehicleDetail'));
-export const LazyVehicleForm = lazy(() => import('./VehicleForm'));
-export const LazyDashboard = lazy(() => import('./Dashboard'));
-export const LazyAnalytics = lazy(() => import('./Analytics'));
-export const LazyCharts = lazy(() => import('./Charts'));
-export const LazyMaps = lazy(() => import('./Maps'));
-export const LazyPDF = lazy(() => import('./PDFGenerator'));
+export const LazyVehicleList = lazy(() => import("./VehicleList"));
+export const LazyVehicleDetail = lazy(() => import("./VehicleDetail"));
+export const LazyVehicleForm = lazy(() => import("./VehicleForm"));
+export const LazyDashboard = lazy(() => import("./Dashboard"));
+export const LazyAnalytics = lazy(() => import("./Analytics"));
+export const LazyCharts = lazy(() => import("./Charts"));
+export const LazyMaps = lazy(() => import("./Maps"));
+export const LazyPDF = lazy(() => import("./PDFGenerator"));
 
 // HOC para lazy loading com retry
 export function withLazyRetry<T extends object>(
   importFunc: () => Promise<{ default: React.ComponentType<T> }>,
-  retries = 3
+  retries = 3,
 ) {
   const WrappedComponent = React.forwardRef<unknown, T>((props, ref) => {
-    const [Component, setComponent] = React.useState<React.ComponentType<T> | null>(null);
+    const [Component, setComponent] =
+      React.useState<React.ComponentType<T> | null>(null);
     const [error, setError] = React.useState<Error | null>(null);
     const [retryCount, setRetryCount] = React.useState(0);
 
@@ -88,10 +107,13 @@ export function withLazyRetry<T extends object>(
       } catch (err) {
         setError(err as Error);
         if (retryCount < retries) {
-          setTimeout(() => {
-            setRetryCount(prev => prev + 1);
-            loadComponent();
-          }, 1000 * Math.pow(2, retryCount)); // Exponential backoff
+          setTimeout(
+            () => {
+              setRetryCount((prev) => prev + 1);
+              loadComponent();
+            },
+            1000 * Math.pow(2, retryCount),
+          ); // Exponential backoff
         }
       }
     }, [importFunc, retryCount, retries]);
@@ -101,7 +123,9 @@ export function withLazyRetry<T extends object>(
     }, [loadComponent]);
 
     if (error && retryCount >= retries) {
-      return <div className="text-red-600 p-4">Erro ao carregar componente</div>;
+      return (
+        <div className="text-red-600 p-4">Erro ao carregar componente</div>
+      );
     }
 
     if (!Component) {
@@ -111,14 +135,14 @@ export function withLazyRetry<T extends object>(
     return <Component {...props} ref={ref} />;
   });
 
-  WrappedComponent.displayName = 'withLazyRetry';
+  WrappedComponent.displayName = "withLazyRetry";
   return WrappedComponent;
 }
 
 // Hook para lazy loading com intersection observer
 export function useLazyLoad<T>(
   importFunc: () => Promise<T>,
-  options: IntersectionObserverInit = {}
+  options: IntersectionObserverInit = {},
 ) {
   const [data, setData] = React.useState<T | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -144,7 +168,7 @@ export function useLazyLoad<T>(
           })();
         }
       },
-      { threshold: 0.1, ...options }
+      { threshold: 0.1, ...options },
     );
 
     if (ref.current) {

@@ -7,8 +7,8 @@ export interface Vehicle {
   year: number;
   km: number;
   color: string;
-  gearbox: 'Manual' | 'Automático';
-  fuel: 'Gasolina' | 'Etanol' | 'Flex' | 'Diesel' | 'Elétrico' | 'Híbrido';
+  gearbox: "Manual" | "Automático";
+  fuel: "Gasolina" | "Etanol" | "Flex" | "Diesel" | "Elétrico" | "Híbrido";
   doors: number;
   additionalInfo: string;
   optionals: string[];

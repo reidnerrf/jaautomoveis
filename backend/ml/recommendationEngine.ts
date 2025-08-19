@@ -1,5 +1,5 @@
-import Vehicle from '../models/Vehicle';
-import ViewLog from '../models/ViewLog';
+import Vehicle from "../models/Vehicle";
+import ViewLog from "../models/ViewLog";
 
 interface UserPreferences {
   userId: string;
@@ -41,13 +41,14 @@ class RecommendationEngine {
   private async loadUserPreferences() {
     try {
       // Carregar histórico de visualizações
-      const viewLogs = await ViewLog.find({}).populate('vehicle');
-      
-      viewLogs.forEach(log => {
-        const vehicleId = (log.vehicle as any)._id?.toString?.() ?? log.vehicle.toString();
+      const viewLogs = await ViewLog.find({}).populate("vehicle");
+
+      viewLogs.forEach((log) => {
+        const vehicleId =
+          (log.vehicle as any)._id?.toString?.() ?? log.vehicle.toString();
         // Since ViewLog doesn't have userId, we'll use a default user or skip user-specific logic
-        const userId = 'default';
-        
+        const userId = "default";
+
         if (!this.userPreferences.has(userId)) {
           this.userPreferences.set(userId, {
             userId,
@@ -58,7 +59,7 @@ class RecommendationEngine {
             preferredGearbox: [],
             viewHistory: [],
             likes: [],
-            shares: []
+            shares: [],
           });
         }
 
@@ -68,15 +69,15 @@ class RecommendationEngine {
 
       console.log(`Loaded preferences for ${this.userPreferences.size} users`);
     } catch (error) {
-      console.error('Error loading user preferences:', error);
+      console.error("Error loading user preferences:", error);
     }
   }
 
   private async loadVehicleFeatures() {
     try {
       const vehicles = await Vehicle.find({});
-      
-      vehicles.forEach(vehicle => {
+
+      vehicles.forEach((vehicle) => {
         this.vehicleFeatures.set(vehicle.id, {
           id: vehicle.id,
           make: vehicle.make,
@@ -90,18 +91,21 @@ class RecommendationEngine {
           doors: vehicle.doors,
           views: vehicle.views || 0,
           likes: 0, // TODO: Implement likes count
-          shares: 0  // TODO: Implement shares count
+          shares: 0, // TODO: Implement shares count
         });
       });
 
       console.log(`Loaded features for ${this.vehicleFeatures.size} vehicles`);
     } catch (error) {
-      console.error('Error loading vehicle features:', error);
+      console.error("Error loading vehicle features:", error);
     }
   }
 
   // Algoritmo de recomendação baseado em conteúdo
-  async getContentBasedRecommendations(userId: string, limit: number = 10): Promise<string[]> {
+  async getContentBasedRecommendations(
+    userId: string,
+    limit: number = 10,
+  ): Promise<string[]> {
     const userPref = this.userPreferences.get(userId);
     if (!userPref) {
       return this.getPopularVehicles(limit);
@@ -122,8 +126,10 @@ class RecommendationEngine {
       }
 
       // Score baseado em faixa de preço
-      if (vehicle.price >= userPref.preferredPriceRange.min && 
-          vehicle.price <= userPref.preferredPriceRange.max) {
+      if (
+        vehicle.price >= userPref.preferredPriceRange.min &&
+        vehicle.price <= userPref.preferredPriceRange.max
+      ) {
         score += 2;
       }
 
@@ -153,11 +159,14 @@ class RecommendationEngine {
     return recommendations
       .sort((a, b) => b.score - a.score)
       .slice(0, limit)
-      .map(r => r.vehicleId);
+      .map((r) => r.vehicleId);
   }
 
   // Algoritmo de recomendação colaborativa
-  async getCollaborativeRecommendations(userId: string, limit: number = 10): Promise<string[]> {
+  async getCollaborativeRecommendations(
+    userId: string,
+    limit: number = 10,
+  ): Promise<string[]> {
     const userPref = this.userPreferences.get(userId);
     if (!userPref) {
       return this.getPopularVehicles(limit);
@@ -165,14 +174,14 @@ class RecommendationEngine {
 
     // Encontrar usuários similares
     const similarUsers = this.findSimilarUsers(userId);
-    
+
     // Coletar veículos vistos por usuários similares
     const vehicleScores: Map<string, number> = new Map();
-    
-    similarUsers.forEach(similarUser => {
+
+    similarUsers.forEach((similarUser) => {
       const similarUserPref = this.userPreferences.get(similarUser.userId);
       if (similarUserPref) {
-        similarUserPref.viewHistory.forEach(vehicleId => {
+        similarUserPref.viewHistory.forEach((vehicleId) => {
           if (!userPref.viewHistory.includes(vehicleId)) {
             const currentScore = vehicleScores.get(vehicleId) || 0;
             vehicleScores.set(vehicleId, currentScore + similarUser.similarity);
@@ -188,7 +197,10 @@ class RecommendationEngine {
   }
 
   // Encontrar usuários similares
-  private findSimilarUsers(userId: string, limit: number = 5): Array<{ userId: string; similarity: number }> {
+  private findSimilarUsers(
+    userId: string,
+    limit: number = 5,
+  ): Array<{ userId: string; similarity: number }> {
     const userPref = this.userPreferences.get(userId);
     if (!userPref) return [];
 
@@ -201,7 +213,7 @@ class RecommendationEngine {
       let commonItems = 0;
 
       // Calcular similaridade baseada em histórico de visualizações
-      userPref.viewHistory.forEach(vehicleId => {
+      userPref.viewHistory.forEach((vehicleId) => {
         if (otherUserPref.viewHistory.includes(vehicleId)) {
           similarity += 1;
           commonItems += 1;
@@ -209,17 +221,30 @@ class RecommendationEngine {
       });
 
       // Calcular similaridade baseada em preferências
-      if (userPref.preferredMakes.some(make => otherUserPref.preferredMakes.includes(make))) {
+      if (
+        userPref.preferredMakes.some((make) =>
+          otherUserPref.preferredMakes.includes(make),
+        )
+      ) {
         similarity += 0.5;
       }
 
-      if (Math.abs(userPref.preferredPriceRange.min - otherUserPref.preferredPriceRange.min) < 10000) {
+      if (
+        Math.abs(
+          userPref.preferredPriceRange.min -
+            otherUserPref.preferredPriceRange.min,
+        ) < 10000
+      ) {
         similarity += 0.3;
       }
 
       // Normalizar similaridade
       if (commonItems > 0) {
-        similarity = similarity / (userPref.viewHistory.length + otherUserPref.viewHistory.length - commonItems);
+        similarity =
+          similarity /
+          (userPref.viewHistory.length +
+            otherUserPref.viewHistory.length -
+            commonItems);
       }
 
       if (similarity > 0) {
@@ -235,20 +260,24 @@ class RecommendationEngine {
   // Recomendações baseadas em popularidade
   async getPopularVehicles(limit: number = 10): Promise<string[]> {
     const vehicles = Array.from(this.vehicleFeatures.values());
-    
+
     return vehicles
       .sort((a, b) => {
         // Score baseado em views, likes e shares
-        const scoreA = a.views + (a.likes * 10) + (a.shares * 5);
-        const scoreB = b.views + (b.likes * 10) + (b.shares * 5);
+        const scoreA = a.views + a.likes * 10 + a.shares * 5;
+        const scoreB = b.views + b.likes * 10 + b.shares * 5;
         return scoreB - scoreA;
       })
       .slice(0, limit)
-      .map(v => v.id);
+      .map((v) => v.id);
   }
 
   // Recomendações baseadas em contexto (localização, tempo, etc.)
-  async getContextualRecommendations(userId: string, context: any, limit: number = 10): Promise<string[]> {
+  async getContextualRecommendations(
+    userId: string,
+    context: any,
+    limit: number = 10,
+  ): Promise<string[]> {
     const recommendations: Array<{ vehicleId: string; score: number }> = [];
 
     this.vehicleFeatures.forEach((vehicle, vehicleId) => {
@@ -275,7 +304,7 @@ class RecommendationEngine {
 
       // Score baseado em contexto de dispositivo
       if (context.device) {
-        if (context.device === 'mobile' && vehicle.price < 30000) {
+        if (context.device === "mobile" && vehicle.price < 30000) {
           score += 1; // Veículos mais baratos em mobile
         }
       }
@@ -288,11 +317,15 @@ class RecommendationEngine {
     return recommendations
       .sort((a, b) => b.score - a.score)
       .slice(0, limit)
-      .map(r => r.vehicleId);
+      .map((r) => r.vehicleId);
   }
 
   // Atualizar preferências do usuário
-  async updateUserPreferences(userId: string, action: 'view' | 'like' | 'share', vehicleId: string) {
+  async updateUserPreferences(
+    userId: string,
+    action: "view" | "like" | "share",
+    vehicleId: string,
+  ) {
     if (!this.userPreferences.has(userId)) {
       this.userPreferences.set(userId, {
         userId,
@@ -303,7 +336,7 @@ class RecommendationEngine {
         preferredGearbox: [],
         viewHistory: [],
         likes: [],
-        shares: []
+        shares: [],
       });
     }
 
@@ -313,17 +346,17 @@ class RecommendationEngine {
     if (!vehicle) return;
 
     switch (action) {
-      case 'view':
+      case "view":
         if (!userPref.viewHistory.includes(vehicleId)) {
           userPref.viewHistory.push(vehicleId);
         }
         break;
-      case 'like':
+      case "like":
         if (!userPref.likes.includes(vehicleId)) {
           userPref.likes.push(vehicleId);
         }
         break;
-      case 'share':
+      case "share":
         if (!userPref.shares.includes(vehicleId)) {
           userPref.shares.push(vehicleId);
         }
@@ -345,22 +378,22 @@ class RecommendationEngine {
     const fuels = new Map<string, number>();
     const gearboxes = new Map<string, number>();
 
-    userPref.viewHistory.forEach(vehicleId => {
+    userPref.viewHistory.forEach((vehicleId) => {
       const vehicle = this.vehicleFeatures.get(vehicleId);
       if (!vehicle) return;
 
       // Contar marcas
       makes.set(vehicle.make, (makes.get(vehicle.make) || 0) + 1);
-      
+
       // Coletar preços
       prices.push(vehicle.price);
-      
+
       // Coletar anos
       years.push(vehicle.year);
-      
+
       // Contar combustíveis
       fuels.set(vehicle.fuel, (fuels.get(vehicle.fuel) || 0) + 1);
-      
+
       // Contar câmbios
       gearboxes.set(vehicle.gearbox, (gearboxes.get(vehicle.gearbox) || 0) + 1);
     });
@@ -375,11 +408,13 @@ class RecommendationEngine {
       const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
       userPref.preferredPriceRange = {
         min: Math.max(0, avgPrice * 0.7),
-        max: avgPrice * 1.3
+        max: avgPrice * 1.3,
       };
     }
 
-    userPref.preferredYears = [...new Set(years)].sort((a, b) => b - a).slice(0, 5);
+    userPref.preferredYears = [...new Set(years)]
+      .sort((a, b) => b - a)
+      .slice(0, 5);
 
     userPref.preferredFuelTypes = Array.from(fuels.entries())
       .sort((a, b) => b[1] - a[1])
@@ -393,9 +428,18 @@ class RecommendationEngine {
   }
 
   // Obter recomendações híbridas
-  async getHybridRecommendations(userId: string, limit: number = 10): Promise<string[]> {
-    const contentBased = await this.getContentBasedRecommendations(userId, limit);
-    const collaborative = await this.getCollaborativeRecommendations(userId, limit);
+  async getHybridRecommendations(
+    userId: string,
+    limit: number = 10,
+  ): Promise<string[]> {
+    const contentBased = await this.getContentBasedRecommendations(
+      userId,
+      limit,
+    );
+    const collaborative = await this.getCollaborativeRecommendations(
+      userId,
+      limit,
+    );
     const popular = await this.getPopularVehicles(limit);
 
     // Combinar recomendações com pesos

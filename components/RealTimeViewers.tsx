@@ -1,32 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { FiUsers } from 'react-icons/fi';
-import { io } from 'socket.io-client';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { FiUsers } from "react-icons/fi";
+import { io } from "socket.io-client";
 
 interface RealTimeViewersProps {
   page: string;
   vehicleId?: string;
-  variant?: 'fixed' | 'inline';
+  variant?: "fixed" | "inline";
 }
 
-const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, variant = 'fixed' }) => {
+const RealTimeViewers: React.FC<RealTimeViewersProps> = ({
+  page,
+  vehicleId,
+  variant = "fixed",
+}) => {
   const [viewers, setViewers] = useState(0);
 
   useEffect(() => {
-    const newSocket = io('', {
-      path: '/socket.io',
-      transports: ['websocket'],
+    const newSocket = io("", {
+      path: "/socket.io",
+      transports: ["websocket"],
       withCredentials: true,
     });
 
-    newSocket.on('page-viewers', (data) => {
+    newSocket.on("page-viewers", (data) => {
       if (data.page === page) {
         setViewers(data.count);
       }
     });
 
     // Ao montar, emitir um page-view para entrar na sala correta
-    newSocket.emit('page-view', { page });
+    newSocket.emit("page-view", { page });
 
     return () => {
       newSocket.close();
@@ -37,7 +41,7 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
   const shouldShow = true;
   if (!shouldShow) return null;
 
-  if (variant === 'inline') {
+  if (variant === "inline") {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
@@ -56,11 +60,10 @@ const RealTimeViewers: React.FC<RealTimeViewersProps> = ({ page, vehicleId, vari
             transition={{ repeat: Infinity, duration: 1.6 }}
           >
             {viewers === 0
-              ? 'Seja o primeiro a ver'
+              ? "Seja o primeiro a ver"
               : viewers === 1
-                ? '1 pessoa visualizando'
-                : `${viewers} pessoas visualizando agora`
-            }
+                ? "1 pessoa visualizando"
+                : `${viewers} pessoas visualizando agora`}
           </motion.span>
         </div>
       </motion.div>

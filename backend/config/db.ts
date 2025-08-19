@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-
+import mongoose from "mongoose";
 
 const connectDB = async (): Promise<void> => {
   let retryCount = 0;
@@ -11,7 +10,9 @@ const connectDB = async (): Promise<void> => {
       const mongoURI = process.env.MONGO_URI || process.env.MONGODB_URI;
 
       if (!mongoURI) {
-        throw new Error('MONGO_URI/MONGODB_URI environment variable is not defined');
+        throw new Error(
+          "MONGO_URI/MONGODB_URI environment variable is not defined",
+        );
       }
 
       await mongoose.connect(mongoURI, {
@@ -21,22 +22,25 @@ const connectDB = async (): Promise<void> => {
         bufferCommands: false, // Disable mongoose buffering
       });
 
-      console.log('MongoDB Connected Successfully');
+      console.log("MongoDB Connected Successfully");
 
       // Handle connection events
-      mongoose.connection.on('error', handleConnectionError);
-      mongoose.connection.on('disconnected', handleDisconnect);
-      mongoose.connection.on('reconnected', handleReconnect);
+      mongoose.connection.on("error", handleConnectionError);
+      mongoose.connection.on("disconnected", handleDisconnect);
+      mongoose.connection.on("reconnected", handleReconnect);
     } catch (error) {
-      console.error(`Error connecting to MongoDB (attempt ${retryCount + 1}):`, error);
+      console.error(
+        `Error connecting to MongoDB (attempt ${retryCount + 1}):`,
+        error,
+      );
 
       if (retryCount < maxRetries) {
         retryCount++;
         console.log(`Retrying connection in ${retryDelay / 1000} seconds...`);
-        await new Promise(resolve => setTimeout(resolve, retryDelay));
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
         return connect();
       } else {
-        console.error('Max connection attempts reached. Exiting...');
+        console.error("Max connection attempts reached. Exiting...");
         process.exit(1);
       }
     }
@@ -46,25 +50,25 @@ const connectDB = async (): Promise<void> => {
 };
 
 const handleConnectionError = (err: Error) => {
-  console.error('MongoDB connection error:', err);
+  console.error("MongoDB connection error:", err);
 };
 
 const handleDisconnect = () => {
-  console.log('MongoDB disconnected');
+  console.log("MongoDB disconnected");
 };
 
 const handleReconnect = () => {
-  console.log('MongoDB reconnected');
+  console.log("MongoDB reconnected");
 };
 
 // Graceful shutdown
-process.on('SIGINT', async () => {
+process.on("SIGINT", async () => {
   try {
     await mongoose.connection.close();
-    console.log('MongoDB connection closed.');
+    console.log("MongoDB connection closed.");
     process.exit(0);
   } catch (error) {
-    console.error('Error during graceful shutdown:', error);
+    console.error("Error during graceful shutdown:", error);
     process.exit(1);
   }
 });

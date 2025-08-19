@@ -1,7 +1,6 @@
-
-import React, { Component, ReactNode } from 'react';
-import { motion } from 'framer-motion';
-import { FiRefreshCw, FiHome, FiAlertTriangle } from 'react-icons/fi';
+import React, { Component, ReactNode } from "react";
+import { motion } from "framer-motion";
+import { FiRefreshCw, FiHome, FiAlertTriangle } from "react-icons/fi";
 
 interface Props {
   children: ReactNode;
@@ -25,11 +24,11 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    console.error("Error caught by boundary:", error, errorInfo);
     this.setState({ errorInfo });
-    
+
     // Log to external service in production
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       // Example: LogRocket, Sentry, etc.
       // errorLogger.log(error, errorInfo);
     }
@@ -40,7 +39,7 @@ class ErrorBoundary extends Component<Props, State> {
   };
 
   handleGoHome = () => {
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
   render() {
@@ -49,7 +48,8 @@ class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
-      const showDevError = process.env.NODE_ENV === 'development' && this.state.error;
+      const showDevError =
+        process.env.NODE_ENV === "development" && this.state.error;
 
       return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
@@ -79,22 +79,27 @@ class ErrorBoundary extends Component<Props, State> {
                 Oops! Algo deu errado
               </h2>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Ocorreu um erro inesperado. Nossa equipe foi notificada e está trabalhando para resolver o problema.
+                Ocorreu um erro inesperado. Nossa equipe foi notificada e está
+                trabalhando para resolver o problema.
               </p>
             </motion.div>
 
             {/* Error Details (Development Only) */}
-            {showDevError ? <motion.div
+            {showDevError ? (
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
                 className="mb-6 p-4 bg-red-50 rounded-lg text-left"
               >
-                <h4 className="font-semibold text-red-800 mb-2">Detalhes do Erro:</h4>
+                <h4 className="font-semibold text-red-800 mb-2">
+                  Detalhes do Erro:
+                </h4>
                 <p className="text-sm text-red-600 font-mono break-all">
                   {this.state.error.message}
                 </p>
-              </motion.div> : null}
+              </motion.div>
+            ) : null}
 
             {/* Action Buttons */}
             <motion.div

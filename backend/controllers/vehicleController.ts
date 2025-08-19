@@ -1,36 +1,49 @@
-import express from 'express';
-import Vehicle from '../models/Vehicle';
-import ViewLog from '../models/ViewLog';
-import fs from 'fs/promises';
-import path from 'path';
-import { getSocketServer } from '../socket';
+import express from "express";
+import Vehicle from "../models/Vehicle";
+import ViewLog from "../models/ViewLog";
+import fs from "fs/promises";
+import path from "path";
+import { getSocketServer } from "../socket";
 
 // Helper to delete image files from the filesystem
 const deleteImageFiles = async (imagePaths: string[]) => {
-    const uploadsRoot = path.join(process.cwd(), 'uploads');
-    for (const rawPath of imagePaths) {
-        // Only allow deletion inside the uploads folder and normalize the path
-        if (rawPath && rawPath.startsWith('/uploads/')) {
-            const relativePath = rawPath.replace(/^\/+uploads\/+/, '');
-            const filePath = path.join(uploadsRoot, relativePath);
-            try {
-                await fs.unlink(filePath);
-            } catch (err: any) {
-                // Ignore missing files; log others
-                if (err && err.code !== 'ENOENT') {
-                    console.error(`Error deleting file ${filePath}:`, err);
-                }
-            }
+  const uploadsRoot = path.join(process.cwd(), "uploads");
+  for (const rawPath of imagePaths) {
+    // Only allow deletion inside the uploads folder and normalize the path
+    if (rawPath && rawPath.startsWith("/uploads/")) {
+      const relativePath = rawPath.replace(/^\/+uploads\/+/, "");
+      const filePath = path.join(uploadsRoot, relativePath);
+      try {
+        await fs.unlink(filePath);
+      } catch (err: any) {
+        // Ignore missing files; log others
+        if (err && err.code !== "ENOENT") {
+          console.error(`Error deleting file ${filePath}:`, err);
         }
+      }
     }
+  }
 };
 
-export const getVehicles = async (req: express.Request, res: express.Response) => {
+export const getVehicles = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   try {
-    const { page = 1, limit = 12, make, model, year, minPrice, maxPrice, fuel, gearbox } = req.query;
+    const {
+      page = 1,
+      limit = 12,
+      make,
+      model,
+      year,
+      minPrice,
+      maxPrice,
+      fuel,
+      gearbox,
+    } = req.query;
     const filter: any = {
-      ...(make && { make: { $regex: make, $options: 'i' } }),
-      ...(model && { model: { $regex: model, $options: 'i' } }),
+      ...(make && { make: { $regex: make, $options: "i" } }),
+      ...(model && { model: { $regex: model, $options: "i" } }),
       ...(year && { year: +year }),
       ...(minPrice && { price: { $gte: +minPrice } }),
       ...(maxPrice && { price: { $lte: +maxPrice } }),
@@ -39,7 +52,10 @@ export const getVehicles = async (req: express.Request, res: express.Response) =
     };
     const [total, vehicles] = await Promise.all([
       Vehicle.countDocuments(filter),
-      Vehicle.find(filter).skip((+page - 1) * +limit).limit(+limit).lean(),
+      Vehicle.find(filter)
+        .skip((+page - 1) * +limit)
+        .limit(+limit)
+        .lean(),
     ]);
     res.json({
       vehicles,
@@ -53,96 +69,135 @@ export const getVehicles = async (req: express.Request, res: express.Response) =
       },
     });
   } catch (error) {
-    console.error('Error fetching vehicles:', error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error("Error fetching vehicles:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-export const getVehicleById = async (req: express.Request, res: express.Response) => {
+export const getVehicleById = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   try {
     const vehicle = await Vehicle.findById(req.params.id).lean();
     if (vehicle) {
       res.json(vehicle);
     } else {
-      res.status(404).json({ message: 'Vehicle not found' });
+      res.status(404).json({ message: "Vehicle not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-export const createVehicle = async (req: express.Request, res: express.Response) => {
+export const createVehicle = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   try {
     const vehicle = new Vehicle(req.body);
     const createdVehicle = await vehicle.save();
     // Emit real-time event for admins
-    try { getSocketServer()?.emit('vehicle-created', createdVehicle.toObject ? createdVehicle.toObject() : createdVehicle); } catch {}
+    try {
+      getSocketServer()?.emit(
+        "vehicle-created",
+        createdVehicle.toObject ? createdVehicle.toObject() : createdVehicle,
+      );
+    } catch {}
     res.status(201).json(createdVehicle);
   } catch (error) {
-    res.status(400).json({ message: 'Invalid vehicle data' });
+    res.status(400).json({ message: "Invalid vehicle data" });
   }
 };
 
-export const updateVehicle = async (req: express.Request, res: express.Response) => {
+export const updateVehicle = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   try {
     const { id } = req.params;
     const vehicle = await Vehicle.findById(id);
     if (vehicle) {
       const oldImages = vehicle.images || [];
       const newImages = req.body.images || [];
-      const imagesToDelete = oldImages.filter(p => !newImages.includes(p));
+      const imagesToDelete = oldImages.filter((p) => !newImages.includes(p));
       await deleteImageFiles(imagesToDelete);
-      const updatedVehicle = await Vehicle.findByIdAndUpdate(id, { ...req.body, updatedAt: new Date() }, { new: true }).lean();
+      const updatedVehicle = await Vehicle.findByIdAndUpdate(
+        id,
+        { ...req.body, updatedAt: new Date() },
+        { new: true },
+      ).lean();
       // Emit real-time update
-      try { getSocketServer()?.emit('vehicle-updated', updatedVehicle); } catch {}
+      try {
+        getSocketServer()?.emit("vehicle-updated", updatedVehicle);
+      } catch {}
       res.json(updatedVehicle);
     } else {
-      res.status(404).json({ message: 'Vehicle not found' });
+      res.status(404).json({ message: "Vehicle not found" });
     }
   } catch (error) {
-    res.status(400).json({ message: 'Invalid vehicle data' });
+    res.status(400).json({ message: "Invalid vehicle data" });
   }
 };
 
-export const deleteVehicle = async (req: express.Request, res: express.Response) => {
+export const deleteVehicle = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   try {
     const vehicle = await Vehicle.findById(req.params.id);
     if (vehicle) {
       await deleteImageFiles(vehicle.images);
       await vehicle.deleteOne();
-      try { getSocketServer()?.emit('vehicle-deleted', req.params.id); } catch {}
-      res.json({ message: 'Vehicle removed' });
+      try {
+        getSocketServer()?.emit("vehicle-deleted", req.params.id);
+      } catch {}
+      res.json({ message: "Vehicle removed" });
     } else {
-      res.status(404).json({ message: 'Vehicle not found' });
+      res.status(404).json({ message: "Vehicle not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-export const incrementVehicleView = async (req: express.Request, res: express.Response) => {
+export const incrementVehicleView = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   try {
     const { id } = req.params;
-    const vehicle = await Vehicle.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true }).lean();
+    const vehicle = await Vehicle.findByIdAndUpdate(
+      id,
+      { $inc: { views: 1 } },
+      { new: true },
+    ).lean();
     if (vehicle) {
       await ViewLog.create({ vehicle: vehicle._id });
-      res.status(200).json({ message: 'View count updated', views: vehicle.views });
+      res
+        .status(200)
+        .json({ message: "View count updated", views: vehicle.views });
     } else {
-      res.status(404).json({ message: 'Vehicle not found' });
+      res.status(404).json({ message: "Vehicle not found" });
     }
   } catch (error) {
-    console.error('Error incrementing vehicle view:', error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error("Error incrementing vehicle view:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-export const getMostViewedVehicles = async (req: express.Request, res: express.Response) => {
+export const getMostViewedVehicles = async (
+  req: express.Request,
+  res: express.Response,
+) => {
   try {
     const { limit = 10, periodDays = 30 } = req.query;
-    const since = new Date(Date.now() - Number(periodDays) * 24 * 60 * 60 * 1000);
+    const since = new Date(
+      Date.now() - Number(periodDays) * 24 * 60 * 60 * 1000,
+    );
     const results = await ViewLog.aggregate([
       { $match: { createdAt: { $gte: since } } },
-      { $group: { _id: '$vehicle', views: { $sum: 1 } } },
+      { $group: { _id: "$vehicle", views: { $sum: 1 } } },
       { $sort: { views: -1 } },
       { $limit: +limit },
     ]);
@@ -150,7 +205,7 @@ export const getMostViewedVehicles = async (req: express.Request, res: express.R
     const vehicles = await Vehicle.find({ _id: { $in: vehicleIds } }).lean();
     res.json(vehicles);
   } catch (error) {
-    console.error('Error fetching most viewed vehicles:', error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error("Error fetching most viewed vehicles:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };

@@ -2,22 +2,22 @@ class ApiClient {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = 'http://localhost:3000/api';
+    this.baseURL = "http://localhost:3000/api";
   }
 
   private getAuthToken(): string | null {
-    return localStorage.getItem('authToken');
+    return localStorage.getItem("authToken");
   }
 
   private async request(endpoint: string, options: RequestInit = {}) {
     const token = this.getAuthToken();
-    
+
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
-    
+
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
     }
 
     const response = await fetch(`${this.baseURL}${endpoint}`, {
@@ -27,9 +27,9 @@ class ApiClient {
 
     if (response.status === 401) {
       // Handle token expiration
-      localStorage.removeItem('authToken');
-      window.location.href = '/admin/login';
-      throw new Error('Unauthorized - Please login again');
+      localStorage.removeItem("authToken");
+      window.location.href = "/admin/login";
+      throw new Error("Unauthorized - Please login again");
     }
 
     if (!response.ok) {
@@ -40,25 +40,25 @@ class ApiClient {
   }
 
   async get(endpoint: string) {
-    return this.request(endpoint, { method: 'GET' });
+    return this.request(endpoint, { method: "GET" });
   }
 
   async post(endpoint: string, data: any) {
     return this.request(endpoint, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async put(endpoint: string, data: any) {
     return this.request(endpoint, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
   async delete(endpoint: string) {
-    return this.request(endpoint, { method: 'DELETE' });
+    return this.request(endpoint, { method: "DELETE" });
   }
 }
 

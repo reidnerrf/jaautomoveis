@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Vehicle } from '../types.ts';
-import { apiCache, createCacheKey } from '../utils/cache';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Vehicle } from "../types.ts";
+import { apiCache, createCacheKey } from "../utils/cache";
 
 interface UseTopVehiclesOptions {
   limit?: number;
@@ -17,13 +17,18 @@ interface UseTopVehiclesResult {
 
 const DEFAULT_TTL = 5 * 60 * 1000; // 5 minutos
 
-export const useTopVehicles = (options: UseTopVehiclesOptions = {}): UseTopVehiclesResult => {
+export const useTopVehicles = (
+  options: UseTopVehiclesOptions = {},
+): UseTopVehiclesResult => {
   const { limit = 10, periodDays = 30, cacheTtlMs = DEFAULT_TTL } = options;
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const cacheKey = useMemo(() => createCacheKey('top-vehicles', limit, periodDays), [limit, periodDays]);
+  const cacheKey = useMemo(
+    () => createCacheKey("top-vehicles", limit, periodDays),
+    [limit, periodDays],
+  );
 
   const fetchTop = useCallback(async () => {
     try {
@@ -40,11 +45,15 @@ export const useTopVehicles = (options: UseTopVehiclesOptions = {}): UseTopVehic
         periodDays: String(periodDays),
       });
 
-      const response = await fetch(`/api/vehicles/most-viewed?${params.toString()}`, {
-        headers: { 'Cache-Control': 'no-store', 'x-skip-cache': 'true' },
-        cache: 'no-store'
-      });
-      if (!response.ok) throw new Error('Falha ao carregar veículos mais vistos');
+      const response = await fetch(
+        `/api/vehicles/most-viewed?${params.toString()}`,
+        {
+          headers: { "Cache-Control": "no-store", "x-skip-cache": "true" },
+          cache: "no-store",
+        },
+      );
+      if (!response.ok)
+        throw new Error("Falha ao carregar veículos mais vistos");
       const data: Vehicle[] = await response.json();
 
       // 🔹 Normaliza id (garante que sempre exista)
@@ -56,7 +65,7 @@ export const useTopVehicles = (options: UseTopVehiclesOptions = {}): UseTopVehic
       setVehicles(normalized);
       apiCache.set(cacheKey, normalized, cacheTtlMs);
     } catch (err: any) {
-      setError(err.message || 'Erro desconhecido');
+      setError(err.message || "Erro desconhecido");
     } finally {
       setLoading(false);
     }

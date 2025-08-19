@@ -11,8 +11,8 @@ class PushNotificationManager {
   private subscription: PushSubscription | null = null;
 
   async initialize() {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      console.warn('Push notifications not supported');
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+      console.warn("Push notifications not supported");
       return false;
     }
 
@@ -20,7 +20,7 @@ class PushNotificationManager {
       this.registration = await navigator.serviceWorker.ready;
       return true;
     } catch (error) {
-      console.error('Failed to initialize push notifications:', error);
+      console.error("Failed to initialize push notifications:", error);
       return false;
     }
   }
@@ -32,7 +32,7 @@ class PushNotificationManager {
     }
 
     const permission = await Notification.requestPermission();
-    return permission === 'granted';
+    return permission === "granted";
   }
 
   async subscribe(): Promise<PushSubscription | null> {
@@ -43,22 +43,24 @@ class PushNotificationManager {
 
     const hasPermission = await this.requestPermission();
     if (!hasPermission) {
-      console.log('Notification permission denied');
+      console.log("Notification permission denied");
       return null;
     }
 
     try {
       this.subscription = await this.registration!.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(process.env.VAPID_PUBLIC_KEY || '')
+        applicationServerKey: this.urlBase64ToUint8Array(
+          process.env.VAPID_PUBLIC_KEY || "",
+        ),
       });
 
       // Enviar subscription para o servidor
       await this.sendSubscriptionToServer(this.subscription);
-      
+
       return this.subscription;
     } catch (error) {
-      console.error('Failed to subscribe to push notifications:', error);
+      console.error("Failed to subscribe to push notifications:", error);
       return null;
     }
   }
@@ -72,7 +74,7 @@ class PushNotificationManager {
       this.subscription = null;
       return true;
     } catch (error) {
-      console.error('Failed to unsubscribe from push notifications:', error);
+      console.error("Failed to unsubscribe from push notifications:", error);
       return false;
     }
   }
@@ -89,49 +91,49 @@ class PushNotificationManager {
 
   private async sendSubscriptionToServer(subscription: PushSubscription) {
     try {
-      const response = await fetch('/api/push/subscribe', {
-        method: 'POST',
+      const response = await fetch("/api/push/subscribe", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           endpoint: subscription.endpoint,
           keys: {
-            p256dh: this.arrayBufferToBase64(subscription.getKey('p256dh')!),
-            auth: this.arrayBufferToBase64(subscription.getKey('auth')!)
-          }
-        })
+            p256dh: this.arrayBufferToBase64(subscription.getKey("p256dh")!),
+            auth: this.arrayBufferToBase64(subscription.getKey("auth")!),
+          },
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send subscription to server');
+        throw new Error("Failed to send subscription to server");
       }
     } catch (error) {
-      console.error('Error sending subscription to server:', error);
+      console.error("Error sending subscription to server:", error);
     }
   }
 
   private async removeSubscriptionFromServer(subscription: PushSubscription) {
     try {
-      await fetch('/api/push/unsubscribe', {
-        method: 'POST',
+      await fetch("/api/push/unsubscribe", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          endpoint: subscription.endpoint
-        })
+          endpoint: subscription.endpoint,
+        }),
       });
     } catch (error) {
-      console.error('Error removing subscription from server:', error);
+      console.error("Error removing subscription from server:", error);
     }
   }
 
   private urlBase64ToUint8Array(base64String: string): Uint8Array {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
 
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);
@@ -144,7 +146,7 @@ class PushNotificationManager {
 
   private arrayBufferToBase64(buffer: ArrayBuffer): string {
     const bytes = new Uint8Array(buffer);
-    let binary = '';
+    let binary = "";
     for (let i = 0; i < bytes.byteLength; i++) {
       binary += String.fromCharCode(bytes[i]);
     }
@@ -155,21 +157,21 @@ class PushNotificationManager {
   async testNotification() {
     if (!this.registration) return;
 
-    await this.registration.showNotification('Teste JA Automóveis', {
-      body: 'Esta é uma notificação de teste!',
-      icon: '/assets/logo.png',
-      badge: '/assets/favicon-32x32.png',
+    await this.registration.showNotification("Teste JA Automóveis", {
+      body: "Esta é uma notificação de teste!",
+      icon: "/assets/logo.png",
+      badge: "/assets/favicon-32x32.png",
       vibrate: [100, 50, 100],
       data: {
-        url: '/'
+        url: "/",
       },
       actions: [
         {
-          action: 'explore',
-          title: 'Ver mais',
-          icon: '/assets/favicon-32x32.png'
-        }
-      ]
+          action: "explore",
+          title: "Ver mais",
+          icon: "/assets/favicon-32x32.png",
+        },
+      ],
     });
   }
 }

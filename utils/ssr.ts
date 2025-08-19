@@ -1,9 +1,9 @@
-import React from 'react';
-import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom/server';
-import { HelmetProvider } from 'react-helmet-async';
-import App from '../App';
-import { Vehicle } from '../types';
+import React from "react";
+import { renderToString } from "react-dom/server";
+import { StaticRouter } from "react-router-dom/server";
+import { HelmetProvider } from "react-helmet-async";
+import App from "../App";
+import { Vehicle } from "../types";
 
 interface SSRData {
   vehicles?: Vehicle[];
@@ -26,11 +26,11 @@ interface SSRResult {
 
 export const renderSSR = async (
   url: string,
-  data?: SSRData
+  data?: SSRData,
 ): Promise<SSRResult> => {
   // Simular contexto de dados para SSR
   const context: any = {
-    data: data || {}
+    data: data || {},
   };
 
   const helmetContext: any = {};
@@ -41,9 +41,9 @@ export const renderSSR = async (
       React.createElement(
         HelmetProvider,
         { context: helmetContext },
-        React.createElement(App)
-      )
-    )
+        React.createElement(App),
+      ),
+    ),
   );
 
   const helmet = helmetContext.helmet;
@@ -51,7 +51,7 @@ export const renderSSR = async (
   return {
     html: app,
     helmet,
-    data
+    data,
   };
 };
 
@@ -115,19 +115,99 @@ export const generateFullHTML = (ssrResult: SSRResult): string => {
 // Função para gerar páginas estáticas
 export const generateStaticPages = async (): Promise<void> => {
   const pages = [
-    { path: '/', data: { seo: { title: 'JA Automóveis - Seu Próximo Carro Está Aqui', description: 'Encontre seu próximo carro com as melhores ofertas e financiamento facilitado na JA Automóveis', keywords: 'carros, automóveis, financiamento, consórcio, JA Automóveis', image: '/assets/logo.png', url: '/', type: 'website' } } },
-    { path: '/inventory', data: { seo: { title: 'Estoque de Veículos - JA Automóveis', description: 'Confira nosso estoque completo de veículos com as melhores ofertas e condições de pagamento', keywords: 'estoque, veículos, carros, ofertas, JA Automóveis', image: '/assets/logo.png', url: '/inventory', type: 'website' } } },
-    { path: '/about', data: { seo: { title: 'Sobre Nós - JA Automóveis', description: 'Conheça a história e os valores da JA Automóveis, sua parceira de confiança na compra de veículos', keywords: 'sobre, história, valores, JA Automóveis', image: '/assets/logo.png', url: '/about', type: 'website' } } },
-    { path: '/contact', data: { seo: { title: 'Contato - JA Automóveis', description: 'Entre em contato com a JA Automóveis. Estamos prontos para atendê-lo e tirar suas dúvidas', keywords: 'contato, atendimento, telefone, endereço, JA Automóveis', image: '/assets/logo.png', url: '/contact', type: 'website' } } },
-    { path: '/financing', data: { seo: { title: 'Financiamento - JA Automóveis', description: 'Financiamento facilitado para seu veículo. Condições especiais e aprovação rápida na JA Automóveis', keywords: 'financiamento, crédito, aprovação, condições, JA Automóveis', image: '/assets/logo.png', url: '/financing', type: 'website' } } },
-    { path: '/consortium', data: { seo: { title: 'Consórcio - JA Automóveis', description: 'Consórcio de veículos com as melhores condições e grupos organizados na JA Automóveis', keywords: 'consórcio, grupos, veículos, JA Automóveis', image: '/assets/logo.png', url: '/consortium', type: 'website' } } }
+    {
+      path: "/",
+      data: {
+        seo: {
+          title: "JA Automóveis - Seu Próximo Carro Está Aqui",
+          description:
+            "Encontre seu próximo carro com as melhores ofertas e financiamento facilitado na JA Automóveis",
+          keywords:
+            "carros, automóveis, financiamento, consórcio, JA Automóveis",
+          image: "/assets/logo.png",
+          url: "/",
+          type: "website",
+        },
+      },
+    },
+    {
+      path: "/inventory",
+      data: {
+        seo: {
+          title: "Estoque de Veículos - JA Automóveis",
+          description:
+            "Confira nosso estoque completo de veículos com as melhores ofertas e condições de pagamento",
+          keywords: "estoque, veículos, carros, ofertas, JA Automóveis",
+          image: "/assets/logo.png",
+          url: "/inventory",
+          type: "website",
+        },
+      },
+    },
+    {
+      path: "/about",
+      data: {
+        seo: {
+          title: "Sobre Nós - JA Automóveis",
+          description:
+            "Conheça a história e os valores da JA Automóveis, sua parceira de confiança na compra de veículos",
+          keywords: "sobre, história, valores, JA Automóveis",
+          image: "/assets/logo.png",
+          url: "/about",
+          type: "website",
+        },
+      },
+    },
+    {
+      path: "/contact",
+      data: {
+        seo: {
+          title: "Contato - JA Automóveis",
+          description:
+            "Entre em contato com a JA Automóveis. Estamos prontos para atendê-lo e tirar suas dúvidas",
+          keywords: "contato, atendimento, telefone, endereço, JA Automóveis",
+          image: "/assets/logo.png",
+          url: "/contact",
+          type: "website",
+        },
+      },
+    },
+    {
+      path: "/financing",
+      data: {
+        seo: {
+          title: "Financiamento - JA Automóveis",
+          description:
+            "Financiamento facilitado para seu veículo. Condições especiais e aprovação rápida na JA Automóveis",
+          keywords:
+            "financiamento, crédito, aprovação, condições, JA Automóveis",
+          image: "/assets/logo.png",
+          url: "/financing",
+          type: "website",
+        },
+      },
+    },
+    {
+      path: "/consortium",
+      data: {
+        seo: {
+          title: "Consórcio - JA Automóveis",
+          description:
+            "Consórcio de veículos com as melhores condições e grupos organizados na JA Automóveis",
+          keywords: "consórcio, grupos, veículos, JA Automóveis",
+          image: "/assets/logo.png",
+          url: "/consortium",
+          type: "website",
+        },
+      },
+    },
   ];
 
   for (const page of pages) {
     try {
       const ssrResult = await renderSSR(page.path, page.data);
       const html = generateFullHTML(ssrResult);
-      
+
       // Em produção, salvar arquivos estáticos
       console.log(`Generated static page: ${page.path}`);
     } catch (error) {
@@ -137,17 +217,19 @@ export const generateStaticPages = async (): Promise<void> => {
 };
 
 // Função para gerar página de veículo específica
-export const generateVehiclePage = async (vehicle: Vehicle): Promise<string> => {
+export const generateVehiclePage = async (
+  vehicle: Vehicle,
+): Promise<string> => {
   const data: SSRData = {
     vehicle,
     seo: {
-      title: `${vehicle.year} ${vehicle.make} ${vehicle.model} - R$ ${vehicle.price.toLocaleString('pt-BR')} | JA Automóveis`,
-      description: `${vehicle.year} ${vehicle.make} ${vehicle.model} - ${vehicle.color} - ${vehicle.km.toLocaleString('pt-BR')} km - R$ ${vehicle.price.toLocaleString('pt-BR')}. Confira este veículo na JA Automóveis.`,
+      title: `${vehicle.year} ${vehicle.make} ${vehicle.model} - R$ ${vehicle.price.toLocaleString("pt-BR")} | JA Automóveis`,
+      description: `${vehicle.year} ${vehicle.make} ${vehicle.model} - ${vehicle.color} - ${vehicle.km.toLocaleString("pt-BR")} km - R$ ${vehicle.price.toLocaleString("pt-BR")}. Confira este veículo na JA Automóveis.`,
       keywords: `${vehicle.make}, ${vehicle.model}, ${vehicle.year}, ${vehicle.color}, carro usado, seminovo, JA Automóveis`,
       image: vehicle.images[0],
       url: `/vehicle/${vehicle.id}`,
-      type: 'product'
-    }
+      type: "product",
+    },
   };
 
   const ssrResult = await renderSSR(`/vehicle/${vehicle.id}`, data);
@@ -158,5 +240,5 @@ export default {
   renderSSR,
   generateFullHTML,
   generateStaticPages,
-  generateVehiclePage
+  generateVehiclePage,
 };

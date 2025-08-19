@@ -1,5 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Vehicle } from '../types/common';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
+import { Vehicle } from "../types/common";
 
 interface VirtualizedListProps<T> {
   items: T[];
@@ -27,15 +33,15 @@ function VirtualizedList<T>({
   renderItem,
   overscan = 5,
   onScroll,
-  className = '',
-  containerClassName = '',
+  className = "",
+  containerClassName = "",
   loading = false,
   loadingComponent,
-  emptyComponent
+  emptyComponent,
 }: VirtualizedListProps<T>) {
   const [state, setState] = useState<VirtualizedListState>({
     scrollTop: 0,
-    containerHeight: height
+    containerHeight: height,
   });
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -43,10 +49,14 @@ function VirtualizedList<T>({
 
   // Calculate visible range
   const { startIndex, endIndex, visibleItems } = useMemo(() => {
-    const startIndex = Math.max(0, Math.floor(state.scrollTop / itemHeight) - overscan);
+    const startIndex = Math.max(
+      0,
+      Math.floor(state.scrollTop / itemHeight) - overscan,
+    );
     const endIndex = Math.min(
       items.length - 1,
-      Math.ceil((state.scrollTop + state.containerHeight) / itemHeight) + overscan
+      Math.ceil((state.scrollTop + state.containerHeight) / itemHeight) +
+        overscan,
     );
 
     const visibleItems = items.slice(startIndex, endIndex + 1);
@@ -54,16 +64,19 @@ function VirtualizedList<T>({
     return {
       startIndex,
       endIndex,
-      visibleItems
+      visibleItems,
     };
   }, [items, state.scrollTop, state.containerHeight, itemHeight, overscan]);
 
   // Handle scroll events
-  const handleScroll = useCallback((event: React.UIEvent<HTMLDivElement>) => {
-    const {scrollTop} = event.currentTarget;
-    setState(prev => ({ ...prev, scrollTop }));
-    onScroll?.(scrollTop);
-  }, [onScroll]);
+  const handleScroll = useCallback(
+    (event: React.UIEvent<HTMLDivElement>) => {
+      const { scrollTop } = event.currentTarget;
+      setState((prev) => ({ ...prev, scrollTop }));
+      onScroll?.(scrollTop);
+    },
+    [onScroll],
+  );
 
   // Calculate total height and transform
   const totalHeight = items.length * itemHeight;
@@ -73,7 +86,7 @@ function VirtualizedList<T>({
   useEffect(() => {
     if (scrollElementRef.current) {
       scrollElementRef.current.scrollTop = 0;
-      setState(prev => ({ ...prev, scrollTop: 0 }));
+      setState((prev) => ({ ...prev, scrollTop: 0 }));
     }
   }, [items.length]);
 
@@ -83,9 +96,9 @@ function VirtualizedList<T>({
 
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
-          containerHeight: entry.contentRect.height
+          containerHeight: entry.contentRect.height,
         }));
       }
     });
@@ -125,33 +138,33 @@ function VirtualizedList<T>({
     <div
       ref={containerRef}
       className={`virtualized-list-container ${containerClassName}`}
-      style={{ height, overflow: 'auto' }}
+      style={{ height, overflow: "auto" }}
       onScroll={handleScroll}
     >
       <div
         ref={scrollElementRef}
         style={{
           height: totalHeight,
-          position: 'relative'
+          position: "relative",
         }}
       >
         <div
           style={{
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
             right: 0,
-            transform
+            transform,
           }}
         >
           {visibleItems.map((item, index) => (
-                    <div
-          key={`virtualized-item-${startIndex + index}`}
-          style={{
-            height: itemHeight,
-            position: 'relative'
-          }}
-        >
+            <div
+              key={`virtualized-item-${startIndex + index}`}
+              style={{
+                height: itemHeight,
+                position: "relative",
+              }}
+            >
               {renderItem(item, startIndex + index)}
             </div>
           ))}
@@ -166,15 +179,18 @@ export function useVirtualization<T>(
   items: T[],
   itemHeight: number,
   containerHeight: number,
-  overscan = 5
+  overscan = 5,
 ) {
   const [scrollTop, setScrollTop] = useState(0);
 
   const { startIndex, endIndex, visibleItems } = useMemo(() => {
-    const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
+    const startIndex = Math.max(
+      0,
+      Math.floor(scrollTop / itemHeight) - overscan,
+    );
     const endIndex = Math.min(
       items.length - 1,
-      Math.ceil((scrollTop + containerHeight) / itemHeight) + overscan
+      Math.ceil((scrollTop + containerHeight) / itemHeight) + overscan,
     );
 
     const visibleItems = items.slice(startIndex, endIndex + 1);
@@ -182,7 +198,7 @@ export function useVirtualization<T>(
     return {
       startIndex,
       endIndex,
-      visibleItems
+      visibleItems,
     };
   }, [items, scrollTop, containerHeight, itemHeight, overscan]);
 
@@ -196,7 +212,7 @@ export function useVirtualization<T>(
     endIndex,
     visibleItems,
     totalHeight,
-    transform
+    transform,
   };
 }
 
@@ -212,37 +228,44 @@ export const VirtualizedVehicleList: React.FC<VehicleListProps> = ({
   vehicles,
   height = 600,
   onVehicleClick,
-  loading = false
+  loading = false,
 }) => {
-  const renderVehicleItem = useCallback((vehicle: Vehicle, index: number) => (
-    <div
-      key={vehicle._id || index}
-      className="p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
-      onClick={() => onVehicleClick?.(vehicle)}
-    >
-      <div className="flex items-center space-x-4">
-        <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
-          {vehicle.images?.[0] ? <img
-              src={vehicle.images[0]}
-              alt={vehicle.title}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            /> : null}
-        </div>
-        <div className="flex-1">
-          <h3 className="font-semibold text-gray-900">{vehicle.title}</h3>
-          <p className="text-sm text-gray-600">{vehicle.brand} {vehicle.model}</p>
-          <p className="text-lg font-bold text-blue-600">
-            R$ {vehicle.price?.toLocaleString('pt-BR')}
-          </p>
-        </div>
-        <div className="text-right">
-          <span className="text-xs text-gray-500">{vehicle.year}</span>
-          <p className="text-sm text-gray-600">{vehicle.mileage}km</p>
+  const renderVehicleItem = useCallback(
+    (vehicle: Vehicle, index: number) => (
+      <div
+        key={vehicle._id || index}
+        className="p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
+        onClick={() => onVehicleClick?.(vehicle)}
+      >
+        <div className="flex items-center space-x-4">
+          <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+            {vehicle.images?.[0] ? (
+              <img
+                src={vehicle.images[0]}
+                alt={vehicle.title}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : null}
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-900">{vehicle.title}</h3>
+            <p className="text-sm text-gray-600">
+              {vehicle.brand} {vehicle.model}
+            </p>
+            <p className="text-lg font-bold text-blue-600">
+              R$ {vehicle.price?.toLocaleString("pt-BR")}
+            </p>
+          </div>
+          <div className="text-right">
+            <span className="text-xs text-gray-500">{vehicle.year}</span>
+            <p className="text-sm text-gray-600">{vehicle.mileage}km</p>
+          </div>
         </div>
       </div>
-    </div>
-  ), [onVehicleClick]);
+    ),
+    [onVehicleClick],
+  );
 
   return (
     <VirtualizedList
@@ -280,15 +303,25 @@ export function InfiniteVirtualizedList<T>({
   loadingMore = false,
   ...props
 }: InfiniteVirtualizedListProps<T>) {
-  const handleScroll = useCallback((scrollTop: number) => {
-    const { height, itemHeight } = props;
-    const totalHeight = items.length * itemHeight;
-    const scrollPercentage = scrollTop / (totalHeight - height);
+  const handleScroll = useCallback(
+    (scrollTop: number) => {
+      const { height, itemHeight } = props;
+      const totalHeight = items.length * itemHeight;
+      const scrollPercentage = scrollTop / (totalHeight - height);
 
-    if (scrollPercentage > 0.8 && hasMore && !loadingMore) {
-      onLoadMore();
-    }
-  }, [items.length, props.height, props.itemHeight, hasMore, loadingMore, onLoadMore]);
+      if (scrollPercentage > 0.8 && hasMore && !loadingMore) {
+        onLoadMore();
+      }
+    },
+    [
+      items.length,
+      props.height,
+      props.itemHeight,
+      hasMore,
+      loadingMore,
+      onLoadMore,
+    ],
+  );
 
   return (
     <VirtualizedList

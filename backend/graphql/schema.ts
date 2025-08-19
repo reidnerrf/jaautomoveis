@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server-express';
+import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
   type Vehicle {
@@ -113,16 +113,16 @@ export const typeDefs = gql`
       filter: VehicleFilterInput
       pagination: PaginationInput
     ): VehicleConnection!
-    
+
     vehicle(id: ID!): Vehicle
-    
+
     # Analytics
     analytics: Analytics!
-    
+
     # Users
     me: User
     users: [User!]!
-    
+
     # Push Subscriptions
     pushSubscriptions: [PushSubscription!]!
   }
@@ -133,12 +133,12 @@ export const typeDefs = gql`
     updateVehicle(id: ID!, input: VehicleInput!): Vehicle!
     deleteVehicle(id: ID!): Boolean!
     incrementVehicleViews(id: ID!): Vehicle!
-    
+
     # User mutations
     login(email: String!, password: String!): AuthPayload!
     register(email: String!, password: String!, name: String!): AuthPayload!
     logout: Boolean!
-    
+
     # Push notification mutations
     subscribeToPush(endpoint: String!, keys: PushKeysInput!): PushSubscription!
     unsubscribeFromPush(endpoint: String!): Boolean!

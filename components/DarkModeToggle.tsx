@@ -1,8 +1,7 @@
-
-import React from 'react';
-import { motion } from 'framer-motion';
-import { FiSun, FiMoon } from 'react-icons/fi';
-import { useTheme } from '../contexts/ThemeContext';
+import React from "react";
+import { motion } from "framer-motion";
+import { FiSun, FiMoon } from "react-icons/fi";
+import { useTheme } from "../contexts/ThemeContext";
 
 const DarkModeToggle: React.FC = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -17,10 +16,10 @@ const DarkModeToggle: React.FC = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
       aria-label="Alternar modo escuro"
-      title={isDarkMode ? 'Modo claro' : 'Modo escuro'}
+      title={isDarkMode ? "Modo claro" : "Modo escuro"}
     >
       <motion.div
-        key={isDarkMode ? 'dark' : 'light'}
+        key={isDarkMode ? "dark" : "light"}
         initial={{ rotate: -180, opacity: 0 }}
         animate={{ rotate: 0, opacity: 1 }}
         exit={{ rotate: 180, opacity: 0 }}

@@ -33,7 +33,7 @@ class CacheManager {
       data,
       expires,
       size,
-      lastAccessed: Date.now()
+      lastAccessed: Date.now(),
     };
 
     this.cache.set(key, item);
@@ -80,7 +80,7 @@ class CacheManager {
       size: this.currentSize,
       maxSize: this.maxSize,
       itemCount: this.cache.size,
-      usage: `${(this.currentSize / this.maxSize * 100).toFixed(2)}%`
+      usage: `${((this.currentSize / this.maxSize) * 100).toFixed(2)}%`,
     };
   }
 
@@ -92,8 +92,9 @@ class CacheManager {
     if (this.currentSize + needed <= this.maxSize) return;
 
     // Sort by last accessed time (LRU)
-    const sortedEntries = Array.from(this.cache.entries())
-      .sort(([, a], [, b]) => a.lastAccessed - b.lastAccessed);
+    const sortedEntries = Array.from(this.cache.entries()).sort(
+      ([, a], [, b]) => a.lastAccessed - b.lastAccessed,
+    );
 
     for (const [key] of sortedEntries) {
       this.delete(key);
@@ -121,5 +122,5 @@ class CacheManager {
 export const apiCache = new CacheManager();
 
 export const createCacheKey = (...parts: (string | number)[]): string => {
-  return parts.join(':');
+  return parts.join(":");
 };

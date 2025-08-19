@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 interface IPushSubscription {
   endpoint: string;
@@ -13,49 +13,55 @@ interface IPushSubscription {
   isActive: boolean;
 }
 
-const pushSubscriptionSchema = new mongoose.Schema<IPushSubscription>({
-  endpoint: {
-    type: String,
-    required: true,
-    unique: true,
-    index: true
-  },
-  keys: {
-    p256dh: {
+const pushSubscriptionSchema = new mongoose.Schema<IPushSubscription>(
+  {
+    endpoint: {
       type: String,
-      required: true
+      required: true,
+      unique: true,
+      index: true,
     },
-    auth: {
+    keys: {
+      p256dh: {
+        type: String,
+        required: true,
+      },
+      auth: {
+        type: String,
+        required: true,
+      },
+    },
+    userId: {
       type: String,
-      required: true
-    }
+      index: true,
+    },
+    userAgent: String,
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    lastUsed: {
+      type: Date,
+      default: Date.now,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
-  userId: {
-    type: String,
-    index: true
+  {
+    timestamps: true,
   },
-  userAgent: String,
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  lastUsed: {
-    type: Date,
-    default: Date.now
-  },
-  isActive: {
-    type: Boolean,
-    default: true
-  }
-}, {
-  timestamps: true
-});
+);
 
 // Índices para performance
 pushSubscriptionSchema.index({ userId: 1, isActive: 1 });
 pushSubscriptionSchema.index({ createdAt: -1 });
 pushSubscriptionSchema.index({ lastUsed: -1 });
 
-const PushSubscription = mongoose.model<IPushSubscription>('PushSubscription', pushSubscriptionSchema);
+const PushSubscription = mongoose.model<IPushSubscription>(
+  "PushSubscription",
+  pushSubscriptionSchema,
+);
 
 export default PushSubscription;

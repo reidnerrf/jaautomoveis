@@ -40,8 +40,8 @@ const Header: React.FC = () => {
        isActive
          ? "text-main-red font-semibold"
          : isTransparent
-         ? "text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
-         : "text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red"
+           ? "text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
+           : "text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red"
      }`;
 
   return (

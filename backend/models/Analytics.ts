@@ -1,5 +1,4 @@
-
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IAnalytics extends Document {
   sessionId: string;
@@ -40,15 +39,15 @@ const AnalyticsSchema: Schema = new Schema({
     type: { type: String },
     browser: { type: String },
     os: { type: String },
-    isMobile: { type: Boolean }
+    isMobile: { type: Boolean },
   },
   location: {
     country: { type: String },
     region: { type: String },
     city: { type: String },
-    ip: { type: String }
+    ip: { type: String },
   },
-  timestamp: { type: Date, default: Date.now }
+  timestamp: { type: Date, default: Date.now },
 });
 
 // Indexes for performance
@@ -58,4 +57,4 @@ AnalyticsSchema.index({ page: 1 });
 AnalyticsSchema.index({ sessionId: 1 });
 AnalyticsSchema.index({ action: 1 });
 
-export default mongoose.model<IAnalytics>('Analytics', AnalyticsSchema);
+export default mongoose.model<IAnalytics>("Analytics", AnalyticsSchema);

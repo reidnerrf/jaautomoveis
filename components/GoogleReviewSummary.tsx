@@ -1,7 +1,7 @@
-import React from 'react';
-import { FcGoogle } from 'react-icons/fc';
-import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import React from "react";
+import { FcGoogle } from "react-icons/fc";
+import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 interface GoogleReviewSummaryProps {
   rating: number;
@@ -12,7 +12,7 @@ interface GoogleReviewSummaryProps {
 const GoogleReviewSummary: React.FC<GoogleReviewSummaryProps> = ({
   rating,
   reviewCount,
-  reviewsPageUrl
+  reviewsPageUrl,
 }) => {
   const renderStars = () => {
     const stars: React.ReactNode[] = [];
@@ -45,7 +45,9 @@ const GoogleReviewSummary: React.FC<GoogleReviewSummaryProps> = ({
       </h3>
 
       <div className="flex flex-col items-center gap-1 mb-3">
-        <span className="text-3xl font-bold text-gray-900">{rating.toFixed(1)}</span>
+        <span className="text-3xl font-bold text-gray-900">
+          {rating.toFixed(1)}
+        </span>
         <div className="flex text-yellow-400 text-lg">{renderStars()}</div>
       </div>
 

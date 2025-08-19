@@ -19,22 +19,24 @@ The goal is to provide a **fast, intuitive, and secure** experience for both buy
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React + TypeScript + Vite  
-- **UI/UX**: TailwindCSS, Framer Motion, Shadcn/UI  
-- **Backend**: Node.js + Express  
-- **Database**: MongoDB  
-- **Infrastructure**: Render / Vercel  
+- **Frontend**: React + TypeScript + Vite
+- **UI/UX**: TailwindCSS, Framer Motion, Shadcn/UI
+- **Backend**: Node.js + Express
+- **Database**: MongoDB
+- **Infrastructure**: Render / Vercel
 
 ---
 
 ## 🚀 Local Installation
 
 1. Install dependencies:
+
    ```bash
    npm install
    ```
 
 2. Configure environment variables (`.env`):
+
    ```env
    PORT=3000
    MONGO_URI=your_connection_string
@@ -42,11 +44,12 @@ The goal is to provide a **fast, intuitive, and secure** experience for both buy
    ```
 
 3. Start the server:
+
    ```bash
    npm run dev
    ```
 
-4. Open:  
+4. Open:
    ```
    http://localhost:3000
    ```
@@ -55,11 +58,11 @@ The goal is to provide a **fast, intuitive, and secure** experience for both buy
 
 ## 📖 Full Documentation
 
-- [Project Summary](./SUMMARY.md)  
-- [Contributing Guide](./CONTRIBUTING.md)  
-- [Code of Conduct](./CODE_OF_CONDUCT.md)  
-- [Security Policy](./SECURITY.md)  
-- [License](./LICENSE.md)  
+- [Project Summary](./SUMMARY.md)
+- [Contributing Guide](./CONTRIBUTING.md)
+- [Code of Conduct](./CODE_OF_CONDUCT.md)
+- [Security Policy](./SECURITY.md)
+- [License](./LICENSE.md)
 
 ---
 

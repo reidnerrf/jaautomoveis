@@ -1,55 +1,54 @@
-
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 
 const ResetPasswordPage: React.FC = () => {
   const params = useParams<{ token: string }>();
   const token = params?.token;
   const navigate = useNavigate();
-  
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
-      setError('As senhas não coincidem');
+      setError("As senhas não coincidem");
       return;
     }
 
     if (password.length < 6) {
-      setError('A senha deve ter pelo menos 6 caracteres');
+      setError("A senha deve ter pelo menos 6 caracteres");
       return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
+      const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ token, password }),
       });
 
       if (response.ok) {
-        alert('Senha redefinida com sucesso!');
-        navigate('/admin/login');
+        alert("Senha redefinida com sucesso!");
+        navigate("/admin/login");
       } else {
         const data = await response.json();
-        setError(data.message || 'Erro ao redefinir senha');
+        setError(data.message || "Erro ao redefinir senha");
       }
     } catch (error) {
-      setError('Erro de conexão');
+      setError("Erro de conexão");
     } finally {
       setLoading(false);
     }
@@ -68,23 +67,25 @@ const ResetPasswordPage: React.FC = () => {
             alt="JA Automóveis Logo"
             className="h-14 w-auto mx-auto mb-3"
           />
-          <h2 className="text-2xl font-bold text-white">
-            Redefinir Senha
-          </h2>
-          <p className="text-gray-400 text-sm mt-2">
-            Digite sua nova senha
-          </p>
+          <h2 className="text-2xl font-bold text-white">Redefinir Senha</h2>
+          <p className="text-gray-400 text-sm mt-2">Digite sua nova senha</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-300 mb-2"
+            >
               Nova Senha
             </label>
             <div className="relative">
-              <FiLock className="absolute top-3.5 left-3 text-gray-400" size={18} />
+              <FiLock
+                className="absolute top-3.5 left-3 text-gray-400"
+                size={18}
+              />
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -103,13 +104,19 @@ const ResetPasswordPage: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-300 mb-2"
+            >
               Confirmar Nova Senha
             </label>
             <div className="relative">
-              <FiLock className="absolute top-3.5 left-3 text-gray-400" size={18} />
+              <FiLock
+                className="absolute top-3.5 left-3 text-gray-400"
+                size={18}
+              />
               <input
-                type={showConfirmPassword ? 'text' : 'password'}
+                type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -122,25 +129,31 @@ const ResetPasswordPage: React.FC = () => {
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute top-3.5 right-3 text-gray-400 hover:text-gray-300"
               >
-                {showConfirmPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                {showConfirmPassword ? (
+                  <FiEyeOff size={18} />
+                ) : (
+                  <FiEye size={18} />
+                )}
               </button>
             </div>
           </div>
 
-          {error ? <motion.p
+          {error ? (
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-red-400 text-sm"
             >
               {error}
-            </motion.p> : null}
+            </motion.p>
+          ) : null}
 
           <button
             type="submit"
             disabled={loading}
             className="w-full py-3 px-4 rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-red-500 disabled:opacity-50 transition-all duration-300"
           >
-            {loading ? 'Redefinindo...' : 'Redefinir Senha'}
+            {loading ? "Redefinindo..." : "Redefinir Senha"}
           </button>
         </form>
       </motion.div>

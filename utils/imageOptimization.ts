@@ -1,31 +1,35 @@
-import { useState, useEffect } from 'react';
-import type React from 'react';
+import { useState, useEffect } from "react";
+import type React from "react";
 
 export const useImageOptimization = () => {
   const [isWebPSupported, setIsWebPSupported] = useState(true);
 
   useEffect(() => {
     const checkWebPSupport = async () => {
-      if (typeof window !== 'undefined') {
-        const canvas = document.createElement('canvas');
+      if (typeof window !== "undefined") {
+        const canvas = document.createElement("canvas");
         canvas.width = 1;
         canvas.height = 1;
-        const webPData = canvas.toDataURL('image/webp');
-        setIsWebPSupported(webPData.indexOf('data:image/webp') === 0);
+        const webPData = canvas.toDataURL("image/webp");
+        setIsWebPSupported(webPData.indexOf("data:image/webp") === 0);
       }
     };
     checkWebPSupport();
   }, []);
 
-  const getOptimizedImageUrl = (src: string, width?: number, height?: number): string => {
+  const getOptimizedImageUrl = (
+    src: string,
+    width?: number,
+    height?: number,
+  ): string => {
     if (!src) return src;
 
     // Do not append params for remote avatars (e.g., Google) or data URLs
-    const isRemote = /^https?:\/\//i.test(src) || src.startsWith('data:');
+    const isRemote = /^https?:\/\//i.test(src) || src.startsWith("data:");
     if (isRemote) return src;
 
     // Respect WebP support
-    const baseSrc = !isWebPSupported ? src.replace(/\.webp$/i, '.jpg') : src;
+    const baseSrc = !isWebPSupported ? src.replace(/\.webp$/i, ".jpg") : src;
 
     if (width && height) {
       // Backend expects short param keys: w, h, f
@@ -36,9 +40,9 @@ export const useImageOptimization = () => {
   };
 
   const getResponsiveImageSet = (src: string): string => {
-    if (!src || /^https?:\/\//i.test(src) || src.startsWith('data:')) return '';
-    const clean = src.split('?')[0];
-    const baseName = clean.replace(/\.(jpg|jpeg|png|webp)$/i, '');
+    if (!src || /^https?:\/\//i.test(src) || src.startsWith("data:")) return "";
+    const clean = src.split("?")[0];
+    const baseName = clean.replace(/\.(jpg|jpeg|png|webp)$/i, "");
     return `${baseName}-320w.webp 320w, ${baseName}-640w.webp 640w, ${baseName}-1024w.webp 1024w, ${baseName}-1280w.webp 1280w`;
   };
 
@@ -60,7 +64,10 @@ export const preloadImage = (src: string): Promise<void> => {
 };
 
 // Lazy loading observer
-export const useLazyLoad = (ref: React.RefObject<HTMLImageElement>, src: string) => {
+export const useLazyLoad = (
+  ref: React.RefObject<HTMLImageElement>,
+  src: string,
+) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
 
@@ -74,7 +81,7 @@ export const useLazyLoad = (ref: React.RefObject<HTMLImageElement>, src: string)
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     observer.observe(ref.current);

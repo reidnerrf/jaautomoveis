@@ -1,4 +1,4 @@
-import Redis, { Cluster, ClusterOptions } from 'ioredis';
+import Redis, { Cluster, ClusterOptions } from "ioredis";
 
 interface CacheConfig {
   nodes: string[];
@@ -26,11 +26,11 @@ class DistributedCache {
       misses: 0,
       keys: 0,
       memory: 0,
-      connected: false
+      connected: false,
     };
 
     this.cluster = new Redis.Cluster(config.nodes, {
-      scaleReads: 'slave', // Read from slaves
+      scaleReads: "slave", // Read from slaves
       retryDelayOnFailover: 100,
       enableOfflineQueue: false,
       enableReadyCheck: true,
@@ -38,18 +38,18 @@ class DistributedCache {
         const delay = Math.min(times * 50, 2000);
         return delay;
       },
-      ...config.options
+      ...config.options,
     });
 
     this.setupEventHandlers();
   }
 
   private setupEventHandlers() {
-    this.cluster.on('connect', () => this.stats.connected = true);
-    this.cluster.on('ready', () => {});
-    this.cluster.on('error', () => this.stats.connected = false);
-    this.cluster.on('node:connect', () => {});
-    this.cluster.on('node:error', () => {});
+    this.cluster.on("connect", () => (this.stats.connected = true));
+    this.cluster.on("ready", () => {});
+    this.cluster.on("error", () => (this.stats.connected = false));
+    this.cluster.on("node:connect", () => {});
+    this.cluster.on("node:error", () => {});
   }
 
   // Basic cache operations
@@ -73,11 +73,14 @@ class DistributedCache {
     try {
       const serializedValue = JSON.stringify(value);
       const finalTTL = ttl || this.defaultTTL;
-      
-      await this.cluster.pipeline().setex(key, finalTTL, serializedValue).exec();
+
+      await this.cluster
+        .pipeline()
+        .setex(key, finalTTL, serializedValue)
+        .exec();
       await this.updateStats();
     } catch (error) {
-      console.error('Cache set error:', error);
+      console.error("Cache set error:", error);
     }
   }
 
@@ -86,7 +89,7 @@ class DistributedCache {
       await this.cluster.del(key);
       await this.updateStats();
     } catch (error) {
-      console.error('Cache del error:', error);
+      console.error("Cache del error:", error);
     }
   }
 
@@ -95,7 +98,7 @@ class DistributedCache {
       const result = await this.cluster.exists(key);
       return result === 1;
     } catch (error) {
-      console.error('Cache exists error:', error);
+      console.error("Cache exists error:", error);
       return false;
     }
   }
@@ -105,7 +108,7 @@ class DistributedCache {
     try {
       const values = await this.cluster.mget(...keys);
       const result = new Map<string, any>();
-      
+
       keys.forEach((key, index) => {
         if (values[index] !== null) {
           result.set(key, JSON.parse(values[index]));
@@ -114,10 +117,10 @@ class DistributedCache {
           this.stats.misses++;
         }
       });
-      
+
       return result;
     } catch (error) {
-      console.error('Cache mget error:', error);
+      console.error("Cache mget error:", error);
       return new Map();
     }
   }
@@ -126,16 +129,16 @@ class DistributedCache {
     try {
       const pipeline = this.cluster.pipeline();
       const finalTTL = ttl || this.defaultTTL;
-      
+
       for (const [key, value] of keyValuePairs) {
         const serializedValue = JSON.stringify(value);
         pipeline.setex(key, finalTTL, serializedValue);
       }
-      
+
       await pipeline.exec();
       await this.updateStats();
     } catch (error) {
-      console.error('Cache mset error:', error);
+      console.error("Cache mset error:", error);
     }
   }
 
@@ -143,20 +146,26 @@ class DistributedCache {
   async keys(pattern: string): Promise<string[]> {
     try {
       const keys: string[] = [];
-      
+
       // Scan all nodes in the cluster
       for (const node of this.cluster.nodes()) {
-        let cursor = '0';
+        let cursor = "0";
         do {
-          const [newCursor, nodeKeys] = await node.scan(cursor, 'MATCH', pattern, 'COUNT', '100');
+          const [newCursor, nodeKeys] = await node.scan(
+            cursor,
+            "MATCH",
+            pattern,
+            "COUNT",
+            "100",
+          );
           cursor = newCursor;
           keys.push(...nodeKeys);
-        } while (cursor !== '0');
+        } while (cursor !== "0");
       }
-      
+
       return [...new Set(keys)]; // Remove duplicates
     } catch (error) {
-      console.error('Cache keys error:', error);
+      console.error("Cache keys error:", error);
       return [];
     }
   }
@@ -171,7 +180,7 @@ class DistributedCache {
       }
       return 0;
     } catch (error) {
-      console.error('Cache delPattern error:', error);
+      console.error("Cache delPattern error:", error);
       return 0;
     }
   }
@@ -188,21 +197,26 @@ class DistributedCache {
         return null;
       }
     } catch (error) {
-      console.error('Cache hget error:', error);
+      console.error("Cache hget error:", error);
       this.stats.misses++;
       return null;
     }
   }
 
-  async hset(key: string, field: string, value: any, ttl?: number): Promise<void> {
+  async hset(
+    key: string,
+    field: string,
+    value: any,
+    ttl?: number,
+  ): Promise<void> {
     try {
       const serializedValue = JSON.stringify(value);
       const finalTTL = ttl || this.defaultTTL;
-      
+
       await this.cluster.hset(key, field, serializedValue);
       await this.cluster.expire(key, finalTTL);
     } catch (error) {
-      console.error('Cache hset error:', error);
+      console.error("Cache hset error:", error);
     }
   }
 
@@ -210,14 +224,14 @@ class DistributedCache {
     try {
       const hash = await this.cluster.hgetall(key);
       const result = new Map<string, any>();
-      
+
       for (const [field, value] of Object.entries(hash)) {
         result.set(field, JSON.parse(value as string));
       }
-      
+
       return result;
     } catch (error) {
-      console.error('Cache hgetall error:', error);
+      console.error("Cache hgetall error:", error);
       return new Map();
     }
   }
@@ -227,11 +241,11 @@ class DistributedCache {
     try {
       const serializedValue = JSON.stringify(value);
       const finalTTL = ttl || this.defaultTTL;
-      
+
       await this.cluster.lpush(key, serializedValue);
       await this.cluster.expire(key, finalTTL);
     } catch (error) {
-      console.error('Cache lpush error:', error);
+      console.error("Cache lpush error:", error);
     }
   }
 
@@ -240,7 +254,7 @@ class DistributedCache {
       const values = await this.cluster.lrange(key, start, stop);
       return values.map((value: string) => JSON.parse(value));
     } catch (error) {
-      console.error('Cache lrange error:', error);
+      console.error("Cache lrange error:", error);
       return [];
     }
   }
@@ -250,11 +264,11 @@ class DistributedCache {
     try {
       const serializedValue = JSON.stringify(value);
       const finalTTL = ttl || this.defaultTTL;
-      
+
       await this.cluster.sadd(key, serializedValue);
       await this.cluster.expire(key, finalTTL);
     } catch (error) {
-      console.error('Cache sadd error:', error);
+      console.error("Cache sadd error:", error);
     }
   }
 
@@ -263,7 +277,7 @@ class DistributedCache {
       const values = await this.cluster.smembers(key);
       return values.map((value: string) => JSON.parse(value));
     } catch (error) {
-      console.error('Cache smembers error:', error);
+      console.error("Cache smembers error:", error);
       return [];
     }
   }
@@ -275,18 +289,18 @@ class DistributedCache {
 
   async invalidateByTags(tags: string[]): Promise<number> {
     let totalDeleted = 0;
-    
+
     for (const tag of tags) {
       const tagKey = `tag:${tag}`;
       const keys = await this.smembers(tagKey);
-      
+
       if (keys.length > 0) {
         await this.cluster.del(...keys);
         await this.cluster.del(tagKey);
         totalDeleted += keys.length + 1;
       }
     }
-    
+
     await this.updateStats();
     return totalDeleted;
   }
@@ -298,7 +312,7 @@ class DistributedCache {
         await this.sadd(tagKey, key);
       }
     } catch (error) {
-      console.error('Cache addTags error:', error);
+      console.error("Cache addTags error:", error);
     }
   }
 
@@ -308,7 +322,7 @@ class DistributedCache {
       await this.mset(data, ttl);
       console.log(`Warmed cache with ${data.size} items`);
     } catch (error) {
-      console.error('Cache warming error:', error);
+      console.error("Cache warming error:", error);
     }
   }
 
@@ -322,28 +336,28 @@ class DistributedCache {
     try {
       let totalKeys = 0;
       let totalMemory = 0;
-      
+
       for (const node of this.cluster.nodes()) {
-        const info = await node.info('memory');
-        const keyspace = await node.info('keyspace');
-        
+        const info = await node.info("memory");
+        const keyspace = await node.info("keyspace");
+
         // Parse memory info
         const memoryMatch = info.match(/used_memory_human:(\d+)/);
         if (memoryMatch) {
           totalMemory += parseInt(memoryMatch[1]);
         }
-        
+
         // Parse keyspace info
         const keysMatch = keyspace.match(/keys=(\d+)/);
         if (keysMatch) {
           totalKeys += parseInt(keysMatch[1]);
         }
       }
-      
+
       this.stats.keys = totalKeys;
       this.stats.memory = totalMemory;
     } catch (error) {
-      console.error('Error updating cache stats:', error);
+      console.error("Error updating cache stats:", error);
     }
   }
 
@@ -353,7 +367,7 @@ class DistributedCache {
       await this.cluster.ping();
       return true;
     } catch (error) {
-      console.error('Cache health check failed:', error);
+      console.error("Cache health check failed:", error);
       return false;
     }
   }
@@ -362,9 +376,9 @@ class DistributedCache {
   async disconnect(): Promise<void> {
     try {
       await this.cluster.disconnect();
-      console.log('Redis cluster disconnected');
+      console.log("Redis cluster disconnected");
     } catch (error) {
-      console.error('Error disconnecting from Redis cluster:', error);
+      console.error("Error disconnecting from Redis cluster:", error);
     }
   }
 
@@ -372,25 +386,25 @@ class DistributedCache {
   cacheMiddleware(ttl?: number) {
     return async (req: any, res: any, next: any) => {
       const key = `api:${req.method}:${req.originalUrl}`;
-      
+
       try {
         const cachedResponse = await this.get(key);
         if (cachedResponse) {
           return res.json(cachedResponse);
         }
-        
+
         // Store original send method
         const originalSend = res.json;
-        
+
         // Override send method to cache response
         res.json = (data: any) => {
           this.set(key, data, ttl);
           return originalSend.call(res, data);
         };
-        
+
         next();
       } catch (error) {
-        console.error('Cache middleware error:', error);
+        console.error("Cache middleware error:", error);
         next();
       }
     };
@@ -405,11 +419,11 @@ export function createDistributedCache(config: CacheConfig): DistributedCache {
 // Default cache instance
 export const distributedCache = new DistributedCache({
   nodes: [
-    process.env.REDIS_NODE_1 || 'redis://localhost:7000',
-    process.env.REDIS_NODE_2 || 'redis://localhost:7001',
-    process.env.REDIS_NODE_3 || 'redis://localhost:7002'
+    process.env.REDIS_NODE_1 || "redis://localhost:7000",
+    process.env.REDIS_NODE_2 || "redis://localhost:7001",
+    process.env.REDIS_NODE_3 || "redis://localhost:7002",
   ],
-  defaultTTL: 3600
+  defaultTTL: 3600,
 });
 
 export default distributedCache;

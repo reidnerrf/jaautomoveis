@@ -26,17 +26,17 @@ class PerformanceMonitor {
 
   private initObservers() {
     // First Contentful Paint
-    if ('PerformanceObserver' in window) {
+    if ("PerformanceObserver" in window) {
       const paintObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         entries.forEach((entry) => {
-          if (entry.name === 'first-contentful-paint') {
+          if (entry.name === "first-contentful-paint") {
             this.metrics.firstContentfulPaint = entry.startTime;
-            this.logMetric('First Contentful Paint', entry.startTime);
+            this.logMetric("First Contentful Paint", entry.startTime);
           }
         });
       });
-      paintObserver.observe({ entryTypes: ['paint'] });
+      paintObserver.observe({ entryTypes: ["paint"] });
       this.observers.push(paintObserver);
 
       // Largest Contentful Paint
@@ -45,10 +45,10 @@ class PerformanceMonitor {
         const lastEntry = entries[entries.length - 1];
         if (lastEntry) {
           this.metrics.largestContentfulPaint = lastEntry.startTime;
-          this.logMetric('Largest Contentful Paint', lastEntry.startTime);
+          this.logMetric("Largest Contentful Paint", lastEntry.startTime);
         }
       });
-      lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+      lcpObserver.observe({ entryTypes: ["largest-contentful-paint"] });
       this.observers.push(lcpObserver);
 
       // Cumulative Layout Shift
@@ -60,34 +60,35 @@ class PerformanceMonitor {
           }
         }
         this.metrics.cumulativeLayoutShift = clsValue;
-        this.logMetric('Cumulative Layout Shift', clsValue);
+        this.logMetric("Cumulative Layout Shift", clsValue);
       });
-      clsObserver.observe({ entryTypes: ['layout-shift'] });
+      clsObserver.observe({ entryTypes: ["layout-shift"] });
       this.observers.push(clsObserver);
 
       // First Input Delay
       const fidObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         entries.forEach((entry) => {
-          this.metrics.firstInputDelay = entry.processingStart - entry.startTime;
-          this.logMetric('First Input Delay', this.metrics.firstInputDelay);
+          this.metrics.firstInputDelay =
+            entry.processingStart - entry.startTime;
+          this.logMetric("First Input Delay", this.metrics.firstInputDelay);
         });
       });
-      fidObserver.observe({ entryTypes: ['first-input'] });
+      fidObserver.observe({ entryTypes: ["first-input"] });
       this.observers.push(fidObserver);
     }
   }
 
   private measureLoadTime() {
-    window.addEventListener('load', () => {
+    window.addEventListener("load", () => {
       const loadTime = performance.now();
       this.metrics.loadTime = loadTime;
-      this.logMetric('Page Load Time', loadTime);
+      this.logMetric("Page Load Time", loadTime);
     });
   }
 
   private logMetric(name: string, value: number) {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       console.log(`🚀 ${name}: ${value.toFixed(2)}ms`);
     }
     // No-op external send to reduce data volume
@@ -101,7 +102,10 @@ class PerformanceMonitor {
     return { ...this.metrics };
   }
 
-  public measureAsyncOperation<T>(name: string, operation: () => Promise<T>): Promise<T> {
+  public measureAsyncOperation<T>(
+    name: string,
+    operation: () => Promise<T>,
+  ): Promise<T> {
     const startTime = performance.now();
     return operation().finally(() => {
       const duration = performance.now() - startTime;
@@ -120,7 +124,7 @@ class PerformanceMonitor {
   }
 
   public destroy() {
-    this.observers.forEach(observer => observer.disconnect());
+    this.observers.forEach((observer) => observer.disconnect());
     this.observers = [];
   }
 }
@@ -131,25 +135,25 @@ export const performanceMonitor = new PerformanceMonitor();
 // React hook for measuring component render time
 export const usePerformanceMeasure = (componentName: string) => {
   const startTime = performance.now();
-  
+
   return () => {
     const duration = performance.now() - startTime;
-    performanceMonitor.logMetric(`Component Render: ${componentName}`, duration);
+    performanceMonitor.logMetric(
+      `Component Render: ${componentName}`,
+      duration,
+    );
   };
 };
 
 // Utility for measuring API calls
 export const measureApiCall = async <T>(
   name: string,
-  apiCall: () => Promise<T>
+  apiCall: () => Promise<T>,
 ): Promise<T> => {
   return performanceMonitor.measureAsyncOperation(name, apiCall);
 };
 
 // Utility for measuring expensive operations
-export const measureOperation = <T>(
-  name: string,
-  operation: () => T
-): T => {
+export const measureOperation = <T>(name: string, operation: () => T): T => {
   return performanceMonitor.measureSyncOperation(name, operation);
 };

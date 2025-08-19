@@ -47,8 +47,8 @@ const PrivacyPolicyPage: React.FC = () => {
 
           <p className={textStyles}>
             Nosso site pode conter links para sites externos. Não temos controle
-            sobre o conteúdo e políticas desses sites e não nos responsabilizamos
-            por suas práticas.
+            sobre o conteúdo e políticas desses sites e não nos
+            responsabilizamos por suas práticas.
           </p>
 
           <p className={textStyles}>

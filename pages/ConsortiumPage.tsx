@@ -15,14 +15,17 @@ const ConsortiumPage: React.FC = () => {
   } | null>(null);
 
   const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+    new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
 
   const handleSimulate = (e: React.FormEvent) => {
     e.preventDefault();
 
     const adminTotal = (adminFee / 100) * creditAmount;
     const reserveTotal = (reserveFund / 100) * creditAmount;
-    const insuranceTotal = ((insurance / 100) * creditAmount) * (term / 12); // seguro anual
+    const insuranceTotal = (insurance / 100) * creditAmount * (term / 12); // seguro anual
 
     const totalCost = creditAmount + adminTotal + reserveTotal + insuranceTotal;
     const installmentValue = totalCost / term;
@@ -39,7 +42,6 @@ const ConsortiumPage: React.FC = () => {
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-
           {/* Simulador */}
           <div className="lg:col-span-2">
             <motion.div
@@ -48,14 +50,21 @@ const ConsortiumPage: React.FC = () => {
               transition={{ duration: 0.5 }}
               className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg sticky top-24"
             >
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">📊 Simulação de Consórcio</h1>
-              <p className="text-gray-500 dark:text-gray-300 mb-6">Planeje sua compra sem juros bancários.</p>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+                📊 Simulação de Consórcio
+              </h1>
+              <p className="text-gray-500 dark:text-gray-300 mb-6">
+                Planeje sua compra sem juros bancários.
+              </p>
 
               <form onSubmit={handleSimulate} className="space-y-6">
                 {/* Valor de crédito */}
                 <div>
                   <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Valor do Crédito: <span className="font-bold">{formatCurrency(creditAmount)}</span>
+                    Valor do Crédito:{" "}
+                    <span className="font-bold">
+                      {formatCurrency(creditAmount)}
+                    </span>
                   </label>
                   <input
                     type="range"
@@ -87,7 +96,8 @@ const ConsortiumPage: React.FC = () => {
                 {/* Taxa de administração */}
                 <div>
                   <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Taxa de Administração (%): <span className="font-bold">{adminFee.toFixed(2)}%</span>
+                    Taxa de Administração (%):{" "}
+                    <span className="font-bold">{adminFee.toFixed(2)}%</span>
                   </label>
                   <input
                     type="range"
@@ -103,7 +113,8 @@ const ConsortiumPage: React.FC = () => {
                 {/* Fundo de reserva */}
                 <div>
                   <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Fundo de Reserva (%): <span className="font-bold">{reserveFund.toFixed(2)}%</span>
+                    Fundo de Reserva (%):{" "}
+                    <span className="font-bold">{reserveFund.toFixed(2)}%</span>
                   </label>
                   <input
                     type="range"
@@ -119,7 +130,8 @@ const ConsortiumPage: React.FC = () => {
                 {/* Seguro */}
                 <div>
                   <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Seguro Anual (%): <span className="font-bold">{insurance.toFixed(2)}%</span>
+                    Seguro Anual (%):{" "}
+                    <span className="font-bold">{insurance.toFixed(2)}%</span>
                   </label>
                   <input
                     type="range"
@@ -140,18 +152,32 @@ const ConsortiumPage: React.FC = () => {
                 </button>
               </form>
 
-              {simulation ? <motion.div
+              {simulation ? (
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-8 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-700 text-center"
                 >
-                  <h2 className="text-xl font-bold text-blue-900 dark:text-blue-300 mb-3">Resultado da Simulação</h2>
-                  <p className="text-gray-700 dark:text-gray-300">💳 Parcelas de:</p>
-                  <p className="text-3xl font-extrabold text-blue-800 dark:text-blue-400">{formatCurrency(simulation.installment)}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Total a pagar: {formatCurrency(simulation.total)}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Custo adicional: {formatCurrency(simulation.extra)}</p>
-                  <p className="text-xs text-gray-400 mt-3">*Valores aproximados. Sujeitos à formação de grupo.</p>
-                </motion.div> : null}
+                  <h2 className="text-xl font-bold text-blue-900 dark:text-blue-300 mb-3">
+                    Resultado da Simulação
+                  </h2>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    💳 Parcelas de:
+                  </p>
+                  <p className="text-3xl font-extrabold text-blue-800 dark:text-blue-400">
+                    {formatCurrency(simulation.installment)}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    Total a pagar: {formatCurrency(simulation.total)}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Custo adicional: {formatCurrency(simulation.extra)}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-3">
+                    *Valores aproximados. Sujeitos à formação de grupo.
+                  </p>
+                </motion.div>
+              ) : null}
             </motion.div>
           </div>
 
@@ -167,15 +193,20 @@ const ConsortiumPage: React.FC = () => {
                 Consórcio – Conquiste seu sonho sem pagar juros 🚀
               </h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                O consórcio é a forma planejada de adquirir bens de alto valor, sem juros bancários e com taxas reduzidas.
+                O consórcio é a forma planejada de adquirir bens de alto valor,
+                sem juros bancários e com taxas reduzidas.
               </p>
               <p className="text-gray-600 dark:text-gray-300 mb-8">
-                Na JA Automóveis, você participa de um grupo, contribui mensalmente e pode ser contemplado por sorteio ou lance, recebendo sua carta de crédito para comprar à vista.
+                Na JA Automóveis, você participa de um grupo, contribui
+                mensalmente e pode ser contemplado por sorteio ou lance,
+                recebendo sua carta de crédito para comprar à vista.
               </p>
 
               <div className="grid md:grid-cols-2 gap-6 mb-8">
                 <div>
-                  <h3 className="text-xl font-bold mb-3">Vantagens do consórcio</h3>
+                  <h3 className="text-xl font-bold mb-3">
+                    Vantagens do consórcio
+                  </h3>
                   <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                     <li>✔ Sem juros, só taxa de administração</li>
                     <li>✔ Flexibilidade de prazo e valor</li>
@@ -184,7 +215,9 @@ const ConsortiumPage: React.FC = () => {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-3">Por que fazer conosco</h3>
+                  <h3 className="text-xl font-bold mb-3">
+                    Por que fazer conosco
+                  </h3>
                   <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                     <li>➡ Atendimento personalizado</li>
                     <li>➡ Simulação sob medida</li>
@@ -201,27 +234,32 @@ const ConsortiumPage: React.FC = () => {
                   className="h-10 mt-1"
                 />
                 <div>
-                  <h3 className="text-lg font-bold text-blue-900 dark:text-blue-300">Parceria com a Rodobens</h3>
+                  <h3 className="text-lg font-bold text-blue-900 dark:text-blue-300">
+                    Parceria com a Rodobens
+                  </h3>
                   <p className="text-gray-700 dark:text-gray-300 text-sm">
-                    Representante autorizado Rodobens, garantindo credibilidade e segurança para sua compra.
+                    Representante autorizado Rodobens, garantindo credibilidade
+                    e segurança para sua compra.
                   </p>
                 </div>
               </div>
 
               <div className="text-center border-t pt-6">
-                <p className="text-lg font-semibold mb-4">📞 Fale com nossa equipe agora mesmo</p>
+                <p className="text-lg font-semibold mb-4">
+                  📞 Fale com nossa equipe agora mesmo
+                </p>
                 <a
                   href="https://wa.me/5524999037716?text=Olá,%20gostaria%20de%20simular%20um%20consórcio"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center bg-green-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600 shadow-md"
                 >
-                  <FaWhatsapp className="mr-3" size={24} /> WhatsApp: (24) 99903-7716
+                  <FaWhatsapp className="mr-3" size={24} /> WhatsApp: (24)
+                  99903-7716
                 </a>
               </div>
             </motion.div>
           </div>
-
         </div>
       </div>
     </div>

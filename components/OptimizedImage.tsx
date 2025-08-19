@@ -1,7 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useImageOptimization, useLazyLoad } from '../utils/imageOptimization';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useImageOptimization, useLazyLoad } from "../utils/imageOptimization";
 
-type BaseImgProps = Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt' | 'loading' | 'ref'>;
+type BaseImgProps = Omit<
+  React.ImgHTMLAttributes<HTMLImageElement>,
+  "src" | "alt" | "loading" | "ref"
+>;
 
 export interface OptimizedImageProps extends BaseImgProps {
   src: string;
@@ -24,10 +27,11 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   ...rest
 }) => {
   const imageRef = useRef<HTMLImageElement>(null);
-  const { getOptimizedImageUrl, getResponsiveImageSet } = useImageOptimization();
+  const { getOptimizedImageUrl, getResponsiveImageSet } =
+    useImageOptimization();
   const { isInView } = useLazyLoad(imageRef, src);
 
-  const [currentSrc, setCurrentSrc] = useState<string>('');
+  const [currentSrc, setCurrentSrc] = useState<string>("");
   const [hasError, setHasError] = useState<boolean>(false);
 
   // Tiny inline SVG placeholder (neutral gray)
@@ -46,11 +50,11 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const handleError = () => {
     if (hasError) return;
     setHasError(true);
-    const fallback = src.replace(/\.(webp|avif)$/i, '.jpg');
+    const fallback = src.replace(/\.(webp|avif)$/i, ".jpg");
     setCurrentSrc(getOptimizedImageUrl(fallback, width, height));
   };
 
-  const loadingAttr: 'eager' | 'lazy' = priority ? 'eager' : 'lazy';
+  const loadingAttr: "eager" | "lazy" = priority ? "eager" : "lazy";
 
   return (
     <img
@@ -72,4 +76,3 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 };
 
 export default OptimizedImage;
-

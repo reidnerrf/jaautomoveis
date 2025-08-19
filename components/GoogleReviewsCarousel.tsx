@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { GoogleReview } from '../types.ts';
-import { FaStar, FaGoogle } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from "react";
+import { GoogleReview } from "../types.ts";
+import { FaStar, FaGoogle } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface GoogleReviewsCarouselProps {
   reviews: GoogleReview[];
 }
 
-const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }) => {
+const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({
+  reviews,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextReview = useCallback(() => {
@@ -27,11 +29,13 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
     <div className="w-full max-w-3xl mx-auto text-center">
       <AnimatePresence mode="wait">
         <motion.div
-          key={currentReview.id || `${currentReview.reviewerName}-${currentIndex}`}
+          key={
+            currentReview.id || `${currentReview.reviewerName}-${currentIndex}`
+          }
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
           className="relative bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center"
         >
           {/* Logo Google */}
@@ -48,15 +52,19 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
             transition={{ duration: 0.3 }}
             onError={(e) => {
               const target = e.currentTarget as HTMLImageElement;
-              if (target.src !== 'data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2236%22 fill=%22%239ca3af%22%3F%3E%F0%9F%8C%9F%3C/text%3E%3C/svg%3E') {
-                target.src = 'data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2236%22 fill=%22%239ca3af%22%3F%3E%F0%9F%8C%9F%3C/text%3E%3C/svg%3E';
+              if (
+                target.src !==
+                "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2236%22 fill=%22%239ca3af%22%3F%3E%F0%9F%8C%9F%3C/text%3E%3C/svg%3E"
+              ) {
+                target.src =
+                  "data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2255%25%22 text-anchor=%22middle%22 font-size=%2236%22 fill=%22%239ca3af%22%3F%3E%F0%9F%8C%9F%3C/text%3E%3C/svg%3E";
               }
             }}
           />
 
           {/* Estrelas */}
           <div className="flex text-yellow-400 mb-4">
-            {['s1','s2','s3','s4','s5'].map((key, idx) => (
+            {["s1", "s2", "s3", "s4", "s5"].map((key, idx) => (
               <motion.div
                 key={`star-${key}`}
                 initial={{ opacity: 0, y: -5 }}
@@ -78,7 +86,9 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
             <h4 className="font-semibold text-gray-900 text-xl">
               {currentReview.reviewerName}
             </h4>
-            <p className="text-sm text-gray-500 mt-1">{currentReview.timeAgo}</p>
+            <p className="text-sm text-gray-500 mt-1">
+              {currentReview.timeAgo}
+            </p>
           </div>
         </motion.div>
       </AnimatePresence>
@@ -90,7 +100,9 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
             key={`indicator-${review.id || review.reviewerName}`}
             onClick={() => setCurrentIndex(index)}
             className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-              currentIndex === index ? 'bg-red-500 scale-110' : 'bg-gray-300 hover:bg-gray-400'
+              currentIndex === index
+                ? "bg-red-500 scale-110"
+                : "bg-gray-300 hover:bg-gray-400"
             }`}
             aria-label={`Ir para avaliação ${index + 1}`}
             whileHover={{ scale: 1.2 }}
