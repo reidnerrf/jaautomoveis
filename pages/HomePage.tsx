@@ -33,7 +33,7 @@ const HomePage: React.FC = () => {
     vehicles: mostViewedVehicles,
     loading: loadingMostViewed,
     refresh: refreshMostViewed,
-  } = useTopVehicles({ limit: 4, periodDays: 30 });
+  } = useTopVehicles({ limit: 5, periodDays: 30 });
   const { trackAction, trackBusinessEvent } = useAnalytics("HomePage");
   //const { isDarkMode } = useTheme();
   const { scrollY } = useScroll();
