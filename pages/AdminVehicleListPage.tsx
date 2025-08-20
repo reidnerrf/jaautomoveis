@@ -76,8 +76,8 @@ const AdminVehicleListPage: React.FC = () => {
       averageKm: Math.round(averageKm),
       makeDistribution,
       priceRanges,
-      mostExpensive: vehicles.reduce((max, v) => ((v.price || 0) > (max.price || 0) ? v : max), vehicles[0]),
-      cheapest: vehicles.reduce((min, v) => ((v.price || 0) < (min.price || 0) ? v : min), vehicles[0]),
+      mostExpensive: vehicles.length > 0 ? vehicles.reduce((max, v) => ((v.price || 0) > (max.price || 0) ? v : max)) : null,
+      cheapest: vehicles.length > 0 ? vehicles.reduce((min, v) => ((v.price || 0) < (min.price || 0) ? v : min)) : null,
     };
   }, [vehicles]);
 
