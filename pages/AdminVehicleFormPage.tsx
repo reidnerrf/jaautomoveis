@@ -133,13 +133,32 @@ const AdminVehicleFormPage: React.FC = () => {
     }
   };
 
-  const handleDeleteImage = (imageUrl: string) => {
+  const handleDeleteImage = async (imageUrl: string) => {
     const confirmed = window && typeof window !== 'undefined' ? window.confirm("Tem certeza que deseja remover esta imagem?") : true;
     if (!confirmed) return;
+
+    // Optimistically update UI
     setVehicle((prev) => ({
       ...prev,
       images: prev.images.filter((url) => url !== imageUrl),
     }));
+
+    // Persist deletion on backend and filesystem if editing existing vehicle
+    try {
+      if (isEditing && id) {
+        await fetch(`/api/vehicles/${id}/images`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ path: imageUrl }),
+        });
+      }
+    } catch (e) {
+      // Non-blocking; UI already updated
+      console.warn('Falha ao remover imagem no servidor', e);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
