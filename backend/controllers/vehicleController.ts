@@ -216,12 +216,29 @@ export const getMostViewedVehicles = async (
           as: "vehicle"
         }
       },
-      { $unwind: { path: "$vehicle", preserveNullAndEmptyArrays: true } },
+      // Keep only entries that still have a corresponding vehicle
+      { $unwind: { path: "$vehicle", preserveNullAndEmptyArrays: false } },
+      // Return only the fields needed by the frontend to avoid over-fetching
       {
-        $replaceRoot: {
-          newRoot: {
-            $mergeObjects: [{ views: "$views" }, { $ifNull: ["$vehicle", {}] }]
-          }
+        $project: {
+          _id: "$vehicle._id",
+          name: "$vehicle.name",
+          price: "$vehicle.price",
+          make: "$vehicle.make",
+          model: "$vehicle.model",
+          year: "$vehicle.year",
+          km: "$vehicle.km",
+          color: "$vehicle.color",
+          gearbox: "$vehicle.gearbox",
+          fuel: "$vehicle.fuel",
+          doors: "$vehicle.doors",
+          additionalInfo: "$vehicle.additionalInfo",
+          optionals: "$vehicle.optionals",
+          images: "$vehicle.images",
+          description: "$vehicle.description",
+          createdAt: "$vehicle.createdAt",
+          updatedAt: "$vehicle.updatedAt",
+          views: "$views"
         }
       }
     ], {

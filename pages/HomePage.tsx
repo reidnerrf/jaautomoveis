@@ -33,7 +33,7 @@ const HomePage: React.FC = () => {
     vehicles: mostViewedVehicles,
     loading: loadingMostViewed,
     refresh: refreshMostViewed,
-  } = useTopVehicles({ limit: 8, periodDays: 30 });
+  } = useTopVehicles({ limit: 4, periodDays: 30 });
   const { trackAction, trackBusinessEvent } = useAnalytics("HomePage");
   //const { isDarkMode } = useTheme();
   const { scrollY } = useScroll();
@@ -71,16 +71,20 @@ const HomePage: React.FC = () => {
           "/api/place-details?place_id=ChIJBfuB6mR_ngARsAmwbVRKdto",
         );
         const data = await response.json();
-        const reviews = (data?.result?.reviews || []).map(
-          (review: any, index: number) => ({
-            id: review.id || `${review.author_name}-${index}`,
-            reviewerName: review.author_name,
-            comment: review.text,
-            avatarUrl: review.profile_photo_url,
-            rating: review.rating,
-            timeAgo: review.relative_time_description,
-          }),
-        );
+        const raw: any[] = data?.result?.reviews || [];
+        const filteredSorted = raw
+          .filter(
+            (r: any) => Number(r?.rating) >= 4 && String(r?.text || "").trim().length > 0,
+          )
+          .sort((a: any, b: any) => (b?.time || 0) - (a?.time || 0));
+        const reviews = filteredSorted.map((review: any, index: number) => ({
+          id: review.id || `${review.author_name}-${index}`,
+          reviewerName: review.author_name,
+          comment: review.text,
+          avatarUrl: review.profile_photo_url,
+          rating: review.rating,
+          timeAgo: review.relative_time_description,
+        }));
         setGoogleReviews(reviews);
       } catch (error) {
         console.error("Error fetching Google reviews:", error);

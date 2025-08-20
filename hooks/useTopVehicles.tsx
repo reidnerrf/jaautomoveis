@@ -79,7 +79,13 @@ export const useTopVehicles = (
     vehicles,
     loading,
     error,
-    refresh: fetchTop,
+    refresh: useCallback(async () => {
+      // Bust in-memory cache and refetch to ensure latest data (e.g., updated images)
+      try {
+        apiCache.delete(cacheKey);
+      } catch {}
+      await fetchTop();
+    }, [cacheKey, fetchTop]),
   };
 };
 
