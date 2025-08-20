@@ -320,12 +320,7 @@ app.use(
 const clientDistPath = path.join(process.cwd(), "dist");
 app.use(express.static(clientDistPath));
 
-// fallback para React Router SPA (apenas em produção)
-if (isProduction) {
-  app.get("*", (_, res) => {
-    res.sendFile(path.join(clientDistPath, "index.html"));
-  });
-}
+// (moved SPA fallback below static routes)
 
 // Expose PWA files at root for proper scope
 app.get("/manifest.json", (req: Request, res: Response) => {
@@ -463,6 +458,17 @@ app.use(
   }),
 );
 
+// Ensure built asset folder is also served at /dist/assets if referenced directly
+app.use(
+  "/dist/assets",
+  express.static(path.join(process.cwd(), "dist", "assets"), {
+    maxAge: isProduction ? "1y" : 0,
+    etag: true,
+    lastModified: true,
+    immutable: isProduction,
+  }),
+);
+
 app.use(
   express.static(__dirname, {
     maxAge: isProduction ? "1h" : 0,
@@ -483,7 +489,7 @@ app.use(
 // 4. Fallback for Single-Page Application (SPA) - only in production (dist)
 if (isProduction) {
   app.get("*", (req: Request, res: Response) => {
-    res.sendFile(path.resolve(__dirname, "index.html"));
+    res.sendFile(path.join(clientDistPath, "index.html"));
   });
 }
 
