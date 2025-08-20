@@ -146,9 +146,9 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(
     }
 
     return (
-      <div className="relative w-full px-2 md:px-4" ref={containerRef}>
+      <div className="relative w-full px-2 md:px-4 overflow-hidden" ref={containerRef}>
         {/* Lista de veículos */}
-        <div className="overflow-visible -mx-2 md:-mx-3">
+        <div className="overflow-hidden">
           <motion.div
             className="flex"
             animate={{ x: `-${currentIndex * (100 / visibleSlides)}%` }}
