@@ -9,6 +9,7 @@ import {
   FiArrowRight,
   FiActivity,
   FiHeart,
+  FiTrash2,
 } from "react-icons/fi";
 import {
   AreaChart,
@@ -38,17 +39,22 @@ const AdminDashboardPage: React.FC = () => {
     likedVehicles: 0,
     totalLikes: 0,
   });
+  const [dailyViews, setDailyViews] = useState<Array<{ date: string; views: number }>>([]);
+  const [purging, setPurging] = useState(false);
 
   useEffect(() => {
     const fetchAnalyticsData = async () => {
       if (!token) return;
 
       try {
-        const [monthlyRes, dashboardRes] = await Promise.all([
+        const [monthlyRes, dashboardRes, dailyRes] = await Promise.all([
           fetch("/api/analytics/monthly-views", {
             headers: { Authorization: `Bearer ${token}` },
           }),
           fetch("/api/analytics/dashboard-stats", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/analytics/views/last-30-days", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -83,6 +89,16 @@ const AdminDashboardPage: React.FC = () => {
         } else {
           // Mantém valores seguros (zero) em caso de 401/erro para evitar NaN
           setDashboardStats((prev) => ({ ...prev }));
+        }
+
+        if (dailyRes.ok) {
+          const daily = await dailyRes.json();
+          const normalized = Array.isArray(daily)
+            ? daily.map((d: any) => ({ date: String(d.date), views: Number(d.views || 0) }))
+            : [];
+          setDailyViews(normalized);
+        } else {
+          setDailyViews([]);
         }
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -173,6 +189,25 @@ const AdminDashboardPage: React.FC = () => {
     0,
     Math.floor((dashboardStats.whatsappClicks || 0) * 0.2),
   );
+
+  const handlePurgeOld = async () => {
+    if (!token) return;
+    try {
+      setPurging(true);
+      const res = await fetch("/api/analytics/purge-old", {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        console.log("Analytics purged:", data);
+      }
+    } catch (e) {
+      console.error("Falha ao limpar analytics:", e);
+    } finally {
+      setPurging(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -273,9 +308,19 @@ const AdminDashboardPage: React.FC = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-          Visualizações Mensais (Últimos 6 Meses)
-        </h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
+            Visualizações Mensais (Últimos 6 Meses)
+          </h3>
+          <button
+            onClick={handlePurgeOld}
+            disabled={purging}
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium bg-red-600 hover:bg-red-700 text-white disabled:opacity-60"
+            title="Limpar analytics anteriores a 3 meses"
+          >
+            <FiTrash2 /> {purging ? "Limpando..." : "Limpar analytics > 3 meses"}
+          </button>
+        </div>
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
@@ -311,6 +356,35 @@ const AdminDashboardPage: React.FC = () => {
                 fill="url(#colorViews)"
                 strokeWidth={3}
               />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </motion.div>
+
+      {/* Daily Views (Last 30 Days) */}
+      <motion.div
+        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.25 }}
+      >
+        <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+          Visualizações Diárias (Últimos 30 Dias)
+        </h3>
+        <div className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={dailyViews} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorDaily" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis dataKey="date" tick={{ fill: "#6B7280" }} />
+              <YAxis tick={{ fill: "#6B7280" }} />
+              <Tooltip contentStyle={{ backgroundColor: "#1F2937", border: "none", borderRadius: "8px", color: "white" }} />
+              <Area type="monotone" dataKey="views" stroke="#10B981" fillOpacity={1} fill="url(#colorDaily)" strokeWidth={3} />
             </AreaChart>
           </ResponsiveContainer>
         </div>

@@ -4,6 +4,8 @@ import {
   getDashboardStats,
   getRealtimeStats,
   getLikesByVehicle,
+  getDailyViewsLast30Days,
+  purgeOldAnalytics,
 } from "../controllers/analyticsController";
 import { protect } from "../middleware/authMiddleware";
 
@@ -45,5 +47,9 @@ router.get("/dashboard-stats", protect, getDashboardStats);
 router.get("/realtime-stats", protect, getRealtimeStats);
 // Público: apenas contagem agregada
 router.get("/likes/by-vehicle", getLikesByVehicle);
+// Últimos 30 dias (protegido)
+router.get("/views/last-30-days", protect, getDailyViewsLast30Days);
+// Limpeza de analytics > 3 meses (protegido)
+router.delete("/purge-old", protect, purgeOldAnalytics);
 
 export default router;

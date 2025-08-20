@@ -192,3 +192,53 @@ export const getRealtimeStats = async (
     res.status(500).json({ message: "Erro ao buscar dados em tempo real" });
   }
 };
+
+export const getDailyViewsLast30Days = async (
+  req: express.Request,
+  res: express.Response,
+) => {
+  try {
+    const since = new Date();
+    since.setDate(since.getDate() - 30);
+
+    const daily = await ViewLog.aggregate([
+      { $match: { createdAt: { $gte: since } } },
+      {
+        $group: {
+          _id: {
+            date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          },
+          views: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.date": 1 } },
+      {
+        $project: {
+          _id: 0,
+          date: "$_id.date",
+          views: 1,
+        },
+      },
+    ]);
+
+    res.json(daily);
+  } catch (error) {
+    console.error("Error fetching daily views:", error);
+    res.status(500).json({ message: "Erro ao buscar visualizações diárias" });
+  }
+};
+
+export const purgeOldAnalytics = async (
+  req: express.Request,
+  res: express.Response,
+) => {
+  try {
+    const cutoff = new Date();
+    cutoff.setMonth(cutoff.getMonth() - 3);
+    const result = await Analytics.deleteMany({ timestamp: { $lt: cutoff } });
+    res.json({ deleted: result?.deletedCount || 0, before: cutoff.toISOString() });
+  } catch (error) {
+    console.error("Error purging analytics:", error);
+    res.status(500).json({ message: "Erro ao limpar analytics antigos" });
+  }
+};

@@ -13,7 +13,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { setSocketServer } from "./backend/socket";
 import UAParser from "ua-parser-js";
-// geoip removed as it's unused
+import cron from "node-cron";
 import connectDB from "./backend/config/db";
 import vehicleRoutes from "./backend/routes/vehicleRoutes";
 import authRoutes from "./backend/routes/authRoutes";
@@ -21,8 +21,7 @@ import uploadRoutes from "./backend/routes/uploadRoutes";
 import analyticsRoutes from "./backend/routes/analyticsRoutes";
 import Analytics from "./backend/models/Analytics";
 import Vehicle from "./backend/models/Vehicle";
-
-// Performance and optimization middlewares
+import ViewLog from "./backend/models/ViewLog";
 import performanceMiddleware, {
   memoryMetricsMiddleware,
   getPerformanceMetrics,
@@ -44,25 +43,17 @@ import {
   clearImageCache,
 } from "./backend/middleware/imageOptimization";
 
-// Load environment variables
 dotenv.config();
 
-// Define PORT variable - handle port conflicts
 const getAvailablePort = (preferredPort: number): number => {
-  const envPort = process.env.PORT
-    ? parseInt(process.env.PORT, 10)
-    : preferredPort;
-  // se for 3000 (porta do frontend), troca para 5000
+  const envPort = process.env.PORT ? parseInt(process.env.PORT, 10) : preferredPort;
   if (envPort === 3000) return 5000;
   return envPort;
 };
 
 const PORT = getAvailablePort(5000);
 
-// Defer DB connection until just before starting the server so queries don't run before connecting
-
 const app = express();
-// Hide framework signature
 app.disable("x-powered-by");
 const server = createServer(app);
 const io = new Server(server, {
@@ -82,10 +73,7 @@ const io = new Server(server, {
   },
   path: "/socket.io",
 });
-// make io accessible to controllers
 setSocketServer(io);
-
-// trust proxy for correct client IP and ws upgrades via reverse proxy
 app.set("trust proxy", 1);
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -99,21 +87,23 @@ const scriptSrcDirectives = [
 if (!isProduction) {
   scriptSrcDirectives.push("data:");
 }
+scriptSrcDirectives.push(
+  "https://www.googletagmanager.com",
+  "https://www.google-analytics.com",
+);
 
-// Create uploads directories if they don't exist (both runtime and project root)
 const uploadsDirBuild = path.join(__dirname, "uploads");
 const uploadsDirRoot = path.join(process.cwd(), "uploads");
 fs.access(uploadsDirBuild).catch(() => fs.mkdir(uploadsDirBuild));
 fs.access(uploadsDirRoot).catch(() => fs.mkdir(uploadsDirRoot));
 
-// Rate limiting - Fixed IPv6 handling
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"), // ✅ corrige undefined
+  keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"),
 });
 
 const authLimiter = rateLimit({
@@ -121,10 +111,9 @@ const authLimiter = rateLimit({
   max: 5,
   message: "Too many authentication attempts, please try again later.",
   skipSuccessfulRequests: true,
-  keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"), // ✅ idem
+  keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"),
 });
-// Middleware to handle cache invalidation for vehicle detail pages
-// Security Middleware
+
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -137,13 +126,11 @@ app.use(
           "data:",
           "https:",
           "https://lh3.googleusercontent.com",
-          // Google Maps images
           "https://maps.gstatic.com",
           "https://maps.googleapis.com",
           "https://maps.google.com",
         ],
         scriptSrc: scriptSrcDirectives,
-        // Allow external connections for fonts, Tailwind CDN, and Google avatars/images
         connectSrc: [
           "'self'",
           "ws:",
@@ -152,10 +139,9 @@ app.use(
           "https://fonts.gstatic.com",
           "https://cdn.tailwindcss.com",
           "https://lh3.googleusercontent.com",
-          // Google Maps APIs
           "https://maps.googleapis.com",
+          "https://www.google-analytics.com",
         ],
-        // Allow Google Maps embeds
         frameSrc: [
           "'self'",
           "https://www.google.com",
@@ -169,12 +155,10 @@ app.use(
   }),
 );
 
-// health check endpoints
 app.get("/socket.io/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "ok" });
 });
 
-// Health check endpoint (must come before SPA fallback)
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "ok",
@@ -183,13 +167,9 @@ app.get("/health", (req, res) => {
   });
 });
 
-// Data sanitization against NoSQL injection
 app.use(mongoSanitize());
-
-// Prevent HTTP Parameter Pollution
 app.use(hpp());
 
-// Compression middleware with better options
 app.use(
   compression({
     level: 6,
@@ -203,10 +183,8 @@ app.use(
   }),
 );
 
-// Apply rate limiting only to API routes to avoid throttling static assets and websockets
 app.use("/api", limiter);
 
-// CORS configuration
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -231,25 +209,20 @@ app.use(
   }),
 );
 
-// Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Performance monitoring middleware
 app.use(performanceMiddleware);
 app.use(memoryMetricsMiddleware);
 
-// Image optimization middleware
 app.use("/uploads", vehicleImageOptimization);
 app.use("/assets", vehicleImageOptimization);
 
-// 1. API Routes
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/vehicles", vehicleListCacheMiddleware, vehicleRoutes);
 app.use("/api/upload", autoImageOptimization, uploadRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
-// Proxy para Google Places para evitar CORS no frontend
 app.get("/api/place-details", async (req: Request, res: Response) => {
   try {
     const placeId = (req.query.place_id as string) || "";
@@ -258,23 +231,20 @@ app.get("/api/place-details", async (req: Request, res: Response) => {
     }
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     if (!apiKey) {
-      // Fail gracefully so frontend can continue rendering
       return res.status(200).json({ result: { reviews: [] } });
     }
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=reviews&key=${encodeURIComponent(apiKey)}`;
-    const response = await fetch(url);
-    if (!response.ok) {
+    const response = await fetch(url as any);
+    if (!(response as any).ok) {
       return res.status(200).json({ result: { reviews: [] } });
     }
-    const data = await response.json();
+    const data = await (response as any).json();
     res.json(data);
   } catch (error) {
-    // Do not break page if Google service fails
     res.status(200).json({ result: { reviews: [] } });
   }
 });
 
-// Performance metrics endpoints
 app.get("/api/performance/metrics", getPerformanceMetrics);
 app.get("/api/performance/health", (req: Request, res: Response) => {
   res.json(getSystemHealth());
@@ -287,7 +257,6 @@ app.get("/api/performance/alerts", (req: Request, res: Response) => {
 });
 app.delete("/api/performance/metrics", clearPerformanceMetrics);
 
-// Cache management endpoints
 app.get("/api/cache/metrics", (req: Request, res: Response) => {
   res.json(getCacheMetrics());
 });
@@ -300,7 +269,6 @@ app.post("/api/cache/warmup", async (req: Request, res: Response) => {
   res.json({ message: "Cache warm-up completed" });
 });
 
-// Image optimization endpoints
 app.get("/api/images/stats", async (req: Request, res: Response) => {
   const stats = await getImageOptimizationStats();
   res.json(stats);
@@ -310,14 +278,12 @@ app.post("/api/images/clear-cache", async (req: Request, res: Response) => {
   res.json({ message: "Image cache cleared" });
 });
 
-// serve public folder at /public for manifest/sw/favicon
 app.use(
   "/public",
   express.static(path.join(__dirname, "public"), {
     maxAge: isProduction ? "1h" : 0,
   }),
 );
-// Also serve from project root in case __dirname points to dist without a copied public folder
 app.use(
   "/public",
   express.static(path.join(process.cwd(), "public"), {
@@ -325,18 +291,9 @@ app.use(
   }),
 );
 
-// servir build do React (ajuste o caminho conforme sua estrutura)
 const clientDistPath = path.join(process.cwd(), "dist");
 app.use(express.static(clientDistPath));
 
-// fallback para React Router SPA (apenas em produção)
-if (isProduction) {
-  app.get("*", (_, res) => {
-    res.sendFile(path.join(clientDistPath, "index.html"));
-  });
-}
-
-// Expose PWA files at root for proper scope
 app.get("/manifest.json", (req: Request, res: Response) => {
   res.sendFile(path.join(process.cwd(), "public", "manifest.json"));
 });
@@ -345,9 +302,6 @@ app.get("/sw.js", (req: Request, res: Response) => {
   res.sendFile(path.join(process.cwd(), "public", "sw.js"));
 });
 
-// (moved earlier)
-
-// Sitemap generation
 app.get("/sitemap.xml", async (req, res) => {
   try {
     const vehicles = await Vehicle.find({}).select("id updatedAt").lean();
@@ -356,7 +310,6 @@ app.get("/sitemap.xml", async (req, res) => {
     let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
     sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
-    // Static pages
     const staticPages = [
       { url: "/", priority: "1.0", changefreq: "daily" },
       { url: "/inventory", priority: "0.9", changefreq: "daily" },
@@ -374,8 +327,7 @@ app.get("/sitemap.xml", async (req, res) => {
       sitemap += `  </url>\n`;
     });
 
-    // Vehicle pages
-    vehicles.forEach((vehicle) => {
+    vehicles.forEach((vehicle: any) => {
       sitemap += `  <url>\n`;
       sitemap += `    <loc>${baseUrl}/vehicle/${vehicle._id}</loc>\n`;
       sitemap += `    <lastmod>${(vehicle as any).updatedAt?.toISOString() || new Date().toISOString()}</lastmod>\n`;
@@ -387,7 +339,7 @@ app.get("/sitemap.xml", async (req, res) => {
     sitemap += "</urlset>";
 
     res.setHeader("Content-Type", "application/xml");
-    res.setHeader("Cache-Control", "public, max-age=3600"); // Cache for 1 hour
+    res.setHeader("Cache-Control", "public, max-age=3600");
     res.send(sitemap);
   } catch (error) {
     console.error("Error generating sitemap:", error);
@@ -395,7 +347,6 @@ app.get("/sitemap.xml", async (req, res) => {
   }
 });
 
-// 2. Development-only TSX/TS Transpilation
 if (!isProduction) {
   app.use(async (req: Request, res: Response, next: NextFunction) => {
     if (req.path.endsWith(".tsx") || req.path.endsWith(".ts")) {
@@ -412,14 +363,11 @@ if (!isProduction) {
         res.setHeader("Content-Type", "application/javascript; charset=utf-8");
         res.setHeader("Cache-Control", "no-cache");
         res.send(code);
-      } catch (error) {
+      } catch (error: any) {
         if ((error as { code: string }).code === "ENOENT") {
           return next();
         }
-        console.error(
-          `[ESBuild Middleware] Error processing ${req.path}:`,
-          error,
-        );
+        console.error(`[ESBuild Middleware] Error processing ${req.path}:`, error);
         res.status(500).send("Internal Server Error");
       }
     } else {
@@ -428,12 +376,10 @@ if (!isProduction) {
   });
 }
 
-// API 404 fallback to avoid serving index.html for unknown API routes
 app.all(["/api/*"], (req: Request, res: Response) => {
   res.status(404).json({ success: false, message: "Not Found" });
 });
 
-// 3. Serve Static Assets with Caching
 app.use(
   "/uploads",
   express.static(path.join(__dirname, "uploads"), {
@@ -443,7 +389,6 @@ app.use(
   }),
 );
 
-// Also serve uploads from project root (when images are saved outside dist in production)
 app.use(
   "/uploads",
   express.static(path.join(process.cwd(), "uploads"), {
@@ -473,94 +418,101 @@ app.use(
 );
 
 app.use(
+  "/dist/assets",
+  express.static(path.join(process.cwd(), "dist", "assets"), {
+    maxAge: isProduction ? "1y" : 0,
+    etag: true,
+    lastModified: true,
+    immutable: isProduction,
+  }),
+);
+
+app.use(
   express.static(__dirname, {
     maxAge: isProduction ? "1h" : 0,
     etag: true,
     lastModified: true,
-    setHeaders: (res, path) => {
-      if (path.endsWith(".html")) {
+    setHeaders: (res, p) => {
+      if (p.endsWith(".html")) {
         res.setHeader("Cache-Control", "no-cache");
       } else if (
-        path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$/)
+        p.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$/)
       ) {
-        res.setHeader("Cache-Control", "public, max-age=31536000"); // 1 year
+        res.setHeader("Cache-Control", "public, max-age=31536000");
       }
     },
   }),
 );
 
-// 4. Fallback for Single-Page Application (SPA) - only in production (dist)
 if (isProduction) {
   app.get("*", (req: Request, res: Response) => {
-    res.sendFile(path.resolve(__dirname, "index.html"));
+    res.sendFile(path.join(clientDistPath, "index.html"));
   });
 }
 
-// Socket.IO real-time analytics
-const activeUsers = new Map();
-const pageViews = new Map();
-
-// Helper to parse user-agent across different ua-parser-js export styles
-const getUAResult = (uaInput: unknown) => {
-  const uaString = Array.isArray(uaInput)
-    ? uaInput[0]
-    : (uaInput as string | undefined) || "";
-  try {
-    const ParserAny: any = UAParser as unknown as any;
-    const instance =
-      typeof ParserAny === "function"
-        ? ParserAny(uaString)
-        : new ParserAny(uaString);
-    if (instance && typeof instance.getResult === "function") {
-      return instance.getResult();
-    }
-  } catch {
-    // ignore and fall through to empty result
-  }
-  return { device: {}, browser: {}, os: {} } as any;
-};
+const activeUsers = new Map<string, { page: string; joinTime: number }>();
+const pageViews = new Map<string, Set<string>>();
 
 io.on("connection", (socket) => {
   if (!isProduction) {
-    // Useful during development; avoid noisy logs in production
     console.log("User connected:", socket.id);
   }
 
   socket.on("page-view", async (data) => {
-    const { page } = data;
+    const { page } = data || {};
+    const pagePath = String(page || "");
 
-    // If socket was previously on another page, remove it from that set
     const previous = activeUsers.get(socket.id)?.page;
-    if (previous && previous !== page && pageViews.has(previous)) {
-      pageViews.get(previous).delete(socket.id);
+    if (previous && previous !== pagePath && pageViews.has(previous)) {
+      pageViews.get(previous)!.delete(socket.id);
       io.emit("page-viewers", {
         page: previous,
-        count: pageViews.get(previous).size,
+        count: pageViews.get(previous)!.size,
       });
     }
 
-    if (!pageViews.has(page)) {
-      pageViews.set(page, new Set());
+    if (!pageViews.has(pagePath)) {
+      pageViews.set(pagePath, new Set());
     }
-    pageViews.get(page).add(socket.id);
+    pageViews.get(pagePath)!.add(socket.id);
 
     activeUsers.set(socket.id, {
-      page,
+      page: pagePath,
       joinTime: Date.now(),
     });
 
     io.emit("page-viewers", {
-      page,
-      count: pageViews.get(page).size,
+      page: pagePath,
+      count: pageViews.get(pagePath)!.size,
     });
 
-    // Do NOT persist generic page views to the database to reduce data volume
+    // Persist view logs only for home and vehicle detail, and dedupe by minute
+    if (pagePath === "/" || pagePath.startsWith("/vehicle/")) {
+      try {
+        // Extract vehicle id if present
+        const match = pagePath.match(/^\/vehicle\/(.+)$/);
+        if (match && match[1]) {
+          // Throttle inserts: only insert a view per vehicle per minute
+          const now = new Date();
+          const minuteWindow = new Date(now);
+          minuteWindow.setSeconds(0, 0);
+          const exists = await ViewLog.findOne({
+            vehicle: match[1],
+            createdAt: { $gte: minuteWindow },
+          }).lean();
+          if (!exists) {
+            await ViewLog.create({ vehicle: match[1] });
+          }
+        }
+      } catch (e) {
+        // swallow logging errors
+      }
+    }
   });
 
   socket.on("user-action", async (data) => {
-    const { action, category, label, page } = data;
+    const { action, category, label, page } = data || {};
 
-    // Only persist essential business events
     const essentialActions = new Set([
       "like_vehicle",
       "whatsapp_click",
@@ -569,7 +521,6 @@ io.on("connection", (socket) => {
     ]);
 
     if (!essentialActions.has(action)) {
-      // Still broadcast live for dashboard UX, but skip DB write
       io.emit("user-action-live", {
         action,
         category,
@@ -577,6 +528,14 @@ io.on("connection", (socket) => {
         timestamp: Date.now(),
       });
       return;
+    }
+
+    // Only persist vehicle_view for allowed pages
+    if (action === "vehicle_view") {
+      const pagePath = String(page || "");
+      if (!(pagePath === "/" || pagePath.startsWith("/vehicle/"))) {
+        return;
+      }
     }
 
     try {
@@ -598,7 +557,6 @@ io.on("connection", (socket) => {
         timestamp: Date.now(),
       });
 
-      // Broadcast a dedicated event for likes with parsed payload
       if (action === "like_vehicle") {
         try {
           const parsed = label ? JSON.parse(label) : {};
@@ -607,9 +565,7 @@ io.on("connection", (socket) => {
           if (vehicleId) {
             io.emit("like-updated", { vehicleId, name });
           }
-        } catch (e) {
-          // ignore JSON parse errors in like payloads
-        }
+        } catch (e) {}
       }
     } catch (error) {
       console.error("Analytics save error:", error);
@@ -621,10 +577,10 @@ io.on("connection", (socket) => {
     if (user) {
       const { page } = user;
       if (pageViews.has(page)) {
-        pageViews.get(page).delete(socket.id);
+        pageViews.get(page)!.delete(socket.id);
         io.emit("page-viewers", {
           page,
-          count: pageViews.get(page).size,
+          count: pageViews.get(page)!.size,
         });
       }
       activeUsers.delete(socket.id);
@@ -634,13 +590,11 @@ io.on("connection", (socket) => {
     }
   });
 
-  // allow admin dashboard to join a room for concise broadcasts
   socket.on("join-admin", () => {
     socket.join("admin-room");
   });
 });
 
-// Error handling middleware
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   const statusCode = (res.statusCode && res.statusCode !== 200) ? res.statusCode : 500;
   console.error("Unhandled error:", err.message);
@@ -650,13 +604,30 @@ app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   res.status(statusCode).json({ message: "Internal Server Error" });
 });
 
-// Start Server (after DB is connected unless SKIP_DB=true)
 if (process.env.NODE_ENV !== "test") {
   const startServer = () =>
     server.listen(PORT, "0.0.0.0", () => {
       console.log(
         `Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`,
       );
+      // Monthly purges at 03:00 on day 1 (GMT-3)
+      try {
+        cron.schedule("0 3 1 * *", async () => {
+          try {
+            const cutoff = new Date();
+            cutoff.setMonth(cutoff.getMonth() - 3);
+            const a = await Analytics.deleteMany({ timestamp: { $lt: cutoff } });
+            const v = await ViewLog.deleteMany({ createdAt: { $lt: cutoff } });
+            console.log(
+              `[CRON] Purged analytics older than ${cutoff.toISOString()}: analytics=${a?.deletedCount || 0}, viewlogs=${v?.deletedCount || 0}`,
+            );
+          } catch (err) {
+            console.error("[CRON] Failed to purge analytics:", err);
+          }
+        }, { timezone: "Etc/GMT+3" });
+      } catch (err) {
+        console.error("Failed to schedule cron job:", err);
+      }
     });
 
   if (process.env.SKIP_DB === "true") {
@@ -676,3 +647,4 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 export { app, server };
+

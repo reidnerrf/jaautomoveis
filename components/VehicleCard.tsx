@@ -325,9 +325,10 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
               to={`/vehicle/${vehicle.id}`}
               onClick={(e) => e.stopPropagation()}
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors duration-300 text-xs font-medium w-full sm:w-auto justify-center"
+              aria-label={`Ver detalhes do ${vehicle.make} ${vehicle.model} ${vehicle.year}`}
             >
               <FiEye className="w-3 h-3" />
-              Ver Detalhes
+              Ver detalhes do {vehicle.model} {vehicle.year}
             </Link>
           </div>
         </div>
