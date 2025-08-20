@@ -29,8 +29,9 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     : `${siteUrl}${image || "/assets/logo.png"}`;
 
   return (
-    <Helmet>
+    <Helmet prioritizeSeoTags>
       <html lang="pt-BR" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>{title}</title>
       <meta name="description" content={description} />
       {Boolean(keywords) && <meta name="keywords" content={keywords} />}
