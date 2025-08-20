@@ -1,6 +1,6 @@
 import React, { memo, useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiEye, FiHeart, FiCalendar, FiSettings, FiStar } from "react-icons/fi";
+import { FiEye, FiHeart, FiCalendar, FiSettings, FiStar, FiCheckCircle } from "react-icons/fi";
 import { BsFuelPump, BsSpeedometer2 } from "react-icons/bs";
 import OptimizedImage from "./OptimizedImage";
 import { FaWhatsapp } from "react-icons/fa";
@@ -132,114 +132,136 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
     // removed unused helpers
 
     if (viewMode === "list") {
-      return (
-        <motion.div
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 cursor-pointer"
-          whileHover={{ scale: 1.01 }}
-          onClick={handleCardClick}
-        >
-          <div className="flex flex-col md:flex-row">
-            <div className="md:w-80 h-48 md:h-auto relative overflow-hidden flex-shrink-0">
-              <OptimizedImage
-                src={imageSrc}
-                alt={vehicle.name}
-                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute top-3 left-3">
-                <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md">
-                  Disponível
-                </span>
-              </div>
-              {Boolean(vehicle.featured) && (
-                <div className="absolute top-3 right-3 z-10">
-                  <span className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
-                    <FiStar className="fill-current w-3 h-3" />
-                    Destaque
-                  </span>
-                </div>
-              )}
-              <button
-                onClick={handleFavoriteClick}
-                className={`absolute top-3 right-14 z-10 p-2 rounded-full transition-all duration-300 ${
-                  favorite
-                    ? "bg-red-500 text-white shadow-lg"
-                    : "bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white"
-                } backdrop-blur-sm`}
-              >
-                <FiHeart
-                  className={`w-4 h-4 ${favorite ? "fill-current" : ""}`}
-                />
-              </button>
+  return (
+    <motion.div
+      className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 cursor-pointer group"
+      whileHover={{ scale: 1.01 }}
+      onClick={handleCardClick}
+    >
+      <div className="flex flex-col md:flex-row">
+        {/* Imagem */}
+        <div className="md:w-80 h-48 md:h-auto relative overflow-hidden flex-shrink-0">
+          <OptimizedImage
+            src={imageSrc}
+            alt={`${vehicle.make} ${vehicle.model}`}
+            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+          />
+
+          {/* Disponível */}
+          <div className="absolute top-3 left-3">
+            <span className="bg-red-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md flex items-center gap-1">
+              <FiCheckCircle className="w-3 h-3" />
+              Disponível
+            </span>
+          </div>
+
+          {/* Destaque */}
+          {vehicle.featured && (
+            <div className="absolute top-3 right-3 z-10">
+              <span className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
+                <FiStar className="w-3 h-3" />
+                Destaque
+              </span>
             </div>
+          )}
 
-            <div className="flex-1 p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 transition-colors duration-300">
-                    {vehicle.make} {vehicle.model}
-                  </h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {vehicle.year}{" "}
-                    {vehicle.description && vehicle.description.length > 60
-                      ? `${vehicle.description.substring(0, 60)}...`
-                      : vehicle.description}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-center justify-end gap-1">
-                    <span className="text-sm text-gray-500">R$</span>
-                    <p className="text-3xl font-black text-green-600 dark:text-green-400">
-                      {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
-                    </p>
-                  </div>
-                </div>
-              </div>
+          {/* Favoritar */}
+          <button
+            onClick={handleFavoriteClick}
+            aria-label={
+              favorite
+                ? "Remover dos favoritos"
+                : "Adicionar aos favoritos"
+            }
+            className={`absolute top-3 right-14 z-10 p-2 rounded-full transition-all duration-300 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              favorite
+                ? "bg-red-500 text-white shadow-lg scale-110"
+                : "bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white"
+            }`}
+          >
+            <FiHeart
+              className={`w-4 h-4 transition-transform ${
+                favorite ? "fill-current scale-110" : ""
+              }`}
+            />
+          </button>
+        </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <FiCalendar className="w-4 h-4 text-blue-500" />
-                  <span>{vehicle.year}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <BsSpeedometer2 className="w-4 h-4 text-green-500" />
-                  <span>{formatMileage(vehicle.km)} km</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <BsFuelPump className="w-4 h-4 text-orange-500" />
-                  <span>{vehicle.fuel}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <FiSettings className="w-4 h-4 text-purple-500" />
-                  <span>{vehicle.gearbox}</span>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
-                <Link
-                  to={`/vehicle/${vehicle.id}`}
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg text-center transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm"
-                >
-                  <FiEye className="w-4 h-4" />
-                  Ver Detalhes
-                </Link>
-                <div className="flex gap-3">
-                  <a
-                    href={`https://wa.me/5524999037716?text=${encodeURIComponent(
-                      `Olá! Tenho interesse no ${vehicle.make} ${vehicle.model} ${vehicle.year}`,
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-                  >
-                    <FaWhatsapp className="w-5 h-5" />
-                  </a>
-                </div>
+        {/* Conteúdo */}
+        <div className="flex-1 p-6">
+          {/* Header */}
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 transition-colors duration-300">
+                {vehicle.make} {vehicle.model}
+              </h3>
+              <p className="text-sm text-gray-500">
+                {vehicle.year}{" "}
+                {vehicle.description && vehicle.description.length > 60
+                  ? `${vehicle.description.substring(0, 60)}...`
+                  : vehicle.description}
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="flex items-baseline gap-1">
+                <span className="text-sm text-gray-500">R$</span>
+                <p className="text-3xl font-extrabold text-green-600 dark:text-green-400 drop-shadow-sm">
+                  {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
+                </p>
               </div>
             </div>
           </div>
-        </motion.div>
-      );
-    }
+
+          {/* Informações */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <FiCalendar className="w-4 h-4 text-blue-500" />
+              <span>{vehicle.year}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <BsSpeedometer2 className="w-4 h-4 text-green-500" />
+              <span>{formatMileage(vehicle.km)} km</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <BsFuelPump className="w-4 h-4 text-orange-500" />
+              <span>{vehicle.fuel}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <FiSettings className="w-4 h-4 text-purple-500" />
+              <span>{vehicle.gearbox}</span>
+            </div>
+          </div>
+
+          {/* Ações */}
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+            <Link
+              to={`/vehicle/${vehicle.id}`}
+              aria-label={`Ver detalhes do ${vehicle.make} ${vehicle.model} ${vehicle.year}`}
+              className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 focus:ring-2 focus:ring-blue-400"
+            >
+              <FiEye className="w-4 h-4" />
+              Ver Detalhes
+            </Link>
+
+            <a
+              href={`https://wa.me/5524999037716?text=${encodeURIComponent(
+                `Olá! Tenho interesse no ${vehicle.make} ${vehicle.model} ${vehicle.year}`,
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Conversar no WhatsApp sobre ${vehicle.make} ${vehicle.model}`}
+              className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 focus:ring-2 focus:ring-green-400"
+            >
+              <FaWhatsapp className="w-5 h-5" />
+              WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 
     return (
       <motion.div
@@ -257,17 +279,28 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
           </div>
         )}
 
-        {/* Favorite Button */}
-        <button
-          onClick={handleFavoriteClick}
-          className={`absolute top-4 right-4 z-10 p-2 rounded-full transition-all duration-300 md:top-4 md:right-4 top-2 right-2 ${
-            favorite
-              ? "bg-red-500 text-white shadow-lg"
-              : "bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white"
-          } backdrop-blur-sm`}
-        >
-          <FiHeart className={`w-4 h-4 ${favorite ? "fill-current" : ""}`} />
-        </button>
+        <div className="absolute top-3 left-3 z-10">
+          <span className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md">
+            <FiCheckCircle className="w-3 h-3" />
+            Disponível
+          </span>
+        </div>
+
+        {/* Favorite + WhatsApp Buttons */}
+        <div className="absolute top-4 right-4 z-10 flex gap-2">
+          
+          {/* Botão de Like */}
+          <button
+            onClick={handleFavoriteClick}
+            className={`p-2 rounded-full transition-all duration-300 backdrop-blur-sm ${
+              favorite
+                ? "bg-red-500 text-white shadow-lg"
+                : "bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white"
+            }`}
+          >
+            <FiHeart className={`w-4 h-4 ${favorite ? "fill-current" : ""}`} />
+          </button>
+        </div>
 
         {/* Image Container */}
         <div className="relative h-48 overflow-hidden">
@@ -314,21 +347,20 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
           </div>
 
           {/* Price and Action */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-4 border-t border-gray-100 gap-3">
-            <div className="flex items-center gap-1">
+          <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-gray-100 gap-3">
+            <div className="flex items-baseline gap-1">
               <span className="text-sm text-gray-500">R$</span>
-              <span className="text-2xl font-bold text-green-600">
+              <span className="text-xl font-bold text-green-600">
                 {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
               </span>
             </div>
+
             <Link
               to={`/vehicle/${vehicle.id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors duration-300 text-xs font-medium w-full sm:w-auto justify-center"
-              aria-label={`Ver detalhes do ${vehicle.make} ${vehicle.model} ${vehicle.year}`}
+              className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md text-sm"
             >
-              <FiEye className="w-3 h-3" />
-              Ver detalhes do {vehicle.model} {vehicle.year}
+              <FiEye className="w-4 h-4" />
+              Ver detalhes
             </Link>
           </div>
         </div>
