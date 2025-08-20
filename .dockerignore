@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log
+Dockerfile
+.dockerignore
+.git
+.gitignore
+playwright-report
+test-results
+coverage
+dist
+.env
+.env.*
+**/*.md
+**/*.test.*
+**/__tests__/**
+**/.vscode/**
+**/.idea/**

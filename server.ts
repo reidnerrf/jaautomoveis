@@ -67,15 +67,17 @@ app.disable("x-powered-by");
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin:
-      process.env.NODE_ENV === "production"
-        ? false
-        : [
-            "http://localhost:3000",
-            "http://127.0.0.1:3000",
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-          ],
+    origin: (origin, callback) => {
+      const allowed = (process.env.ALLOWED_ORIGINS ||
+        (process.env.NODE_ENV === "production"
+          ? ""
+          : "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173"))
+        .split(",")
+        .map((o) => o.trim())
+        .filter(Boolean);
+      if (!origin || allowed.includes(origin)) return callback(null, true);
+      return callback(new Error("Not allowed by CORS"));
+    },
     methods: ["GET", "POST"],
   },
   path: "/socket.io",
@@ -207,11 +209,25 @@ app.use("/api", limiter);
 // CORS configuration
 app.use(
   cors({
-    origin: process.env.ALLOWED_ORIGINS?.split(",") || [
-      "http://localhost:3000",
-      "http://localhost:5001",
+    origin: (origin, callback) => {
+      const allowed = (process.env.ALLOWED_ORIGINS || "http://localhost:3000,http://localhost:5001")
+        .split(",")
+        .map((o) => o.trim())
+        .filter(Boolean);
+      if (!origin || allowed.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Accept",
+      "X-Requested-With",
     ],
     credentials: true,
+    optionsSuccessStatus: 204,
   }),
 );
 
@@ -626,8 +642,12 @@ io.on("connection", (socket) => {
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
+  const statusCode = (res.statusCode && res.statusCode !== 200) ? res.statusCode : 500;
+  console.error("Unhandled error:", err.message);
+  if (!isProduction) {
+    console.error(err.stack);
+  }
+  res.status(statusCode).json({ message: "Internal Server Error" });
 });
 
 // Start Server (after DB is connected unless SKIP_DB=true)
@@ -640,6 +660,10 @@ if (process.env.NODE_ENV !== "test") {
     });
 
   if (process.env.SKIP_DB === "true") {
+    if (process.env.NODE_ENV === "production" && (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim() === "")) {
+      console.error("JWT_SECRET must be set in production");
+      process.exit(1);
+    }
     startServer();
   } else {
     connectDB()

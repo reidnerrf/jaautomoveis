@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import multer from "multer";
 import sharp from "sharp";
-import { protect } from "../middleware/authMiddleware";
+import { protect, requireAdmin } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
@@ -38,6 +38,7 @@ const upload = multer({
 router.post(
   "/",
   protect,
+  requireAdmin,
   upload.array("images", 10),
   async (req: express.Request, res: express.Response) => {
     if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
