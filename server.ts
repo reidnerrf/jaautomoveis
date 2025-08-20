@@ -65,17 +65,48 @@ const app = express();
 // Hide framework signature
 app.disable("x-powered-by");
 const server = createServer(app);
+// Centralized CORS allow-list
+const defaultAllowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:5000",
+  "http://127.0.0.1:5000",
+  "http://localhost:5001",
+  "http://127.0.0.1:5001",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:4173",
+  "http://127.0.0.1:4173",
+];
+const envAllowed = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+const allowedOrigins = new Set([
+  ...defaultAllowedOrigins,
+  ...envAllowed,
+]);
+
+const isOriginAllowed = (origin?: string | null) => {
+  if (!origin) return true; // same-origin or non-CORS requests
+  try {
+    const url = new URL(origin);
+    // Allow any of the explicit origins
+    if (allowedOrigins.has(origin)) return true;
+    // Also allow same host:port as server
+    // Note: when behind a proxy, this should be set via ALLOWED_ORIGINS
+    return url.hostname === "localhost" || url.hostname === "127.0.0.1";
+  } catch {
+    return false;
+  }
+};
+
 const io = new Server(server, {
   cors: {
-    origin:
-      process.env.NODE_ENV === "production"
-        ? false
-        : [
-            "http://localhost:3000",
-            "http://127.0.0.1:3000",
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-          ],
+    origin: (origin, callback) => {
+      // Avoid throwing errors to prevent unhandled exceptions
+      return callback(null, isOriginAllowed(origin));
+    },
     methods: ["GET", "POST"],
   },
   path: "/socket.io",
@@ -207,10 +238,10 @@ app.use("/api", limiter);
 // CORS configuration
 app.use(
   cors({
-    origin: process.env.ALLOWED_ORIGINS?.split(",") || [
-      "http://localhost:3000",
-      "http://localhost:5001",
-    ],
+    origin: (origin, callback) => {
+      // For disallowed origins, respond without CORS headers instead of erroring
+      return callback(null, isOriginAllowed(origin));
+    },
     credentials: true,
   }),
 );
