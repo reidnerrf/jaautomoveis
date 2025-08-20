@@ -8,11 +8,11 @@ export const getMonthlyViews = async (
   res: express.Response,
 ) => {
   try {
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 
     const monthlyViews = await ViewLog.aggregate([
-      { $match: { createdAt: { $gte: sixMonthsAgo } } },
+      { $match: { createdAt: { $gte: threeMonthsAgo } } },
       {
         $group: {
           _id: {

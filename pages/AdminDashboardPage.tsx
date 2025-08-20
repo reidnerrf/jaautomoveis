@@ -149,6 +149,8 @@ const AdminDashboardPage: React.FC = () => {
     };
   }, [refreshVehicles]);
 
+  const monthlyViewsLast3 = useMemo(() => monthlyViews.slice(-3), [monthlyViews]);
+
   const vehicleStats = useMemo(() => {
     if (!vehicles || vehicles.length === 0) {
       return {
@@ -310,7 +312,7 @@ const AdminDashboardPage: React.FC = () => {
       >
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
-            Visualizações Mensais (Últimos 6 Meses)
+            Visualizações Mensais (Últimos 3 Meses)
           </h3>
           <button
             onClick={handlePurgeOld}
@@ -324,7 +326,7 @@ const AdminDashboardPage: React.FC = () => {
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={monthlyViews}
+              data={monthlyViewsLast3}
               margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
             >
               <defs>
