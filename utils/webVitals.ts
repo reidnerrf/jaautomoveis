@@ -153,8 +153,10 @@ class WebVitalsMonitor {
     // Enviar para analytics
     this.sendToAnalytics(metric);
 
-    // Log em desenvolvimento
-    if (process.env.NODE_ENV === "development") {
+    // Logging opcional controlado por env (desativado por padrão)
+    const shouldLog = ((import.meta as any) && (import.meta as any).env && (import.meta as any).env.VITE_LOG_WEB_VITALS) === "true";
+    if (shouldLog) {
+      // eslint-disable-next-line no-console
       console.log(`Web Vital: ${name} = ${value.toFixed(2)}ms`);
     }
   }
