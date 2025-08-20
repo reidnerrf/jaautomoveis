@@ -317,7 +317,11 @@ const VehicleDetailPage: React.FC = () => {
 
               {/* Selos de confiança + Compartilhar */}
               <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none]">
+                  {/* hide scrollbar in webkit */}
+                  <style>
+                    {`.scrollbar-none::-webkit-scrollbar{display:none;}`}
+                  </style>
                   <div className="flex items-center text-gray-700 dark:text-gray-300">
                     <FiAward className="mr-2 text-main-red" /> Revisado
                   </div>

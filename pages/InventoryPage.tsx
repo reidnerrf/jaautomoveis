@@ -29,6 +29,18 @@ const InventoryPage: React.FC = () => {
 
   const itemsPerPage = 12;
 
+  // Force grid view on mobile screens and hide list toggle there
+  useEffect(() => {
+    const enforceGridOnMobile = () => {
+      if (typeof window !== "undefined" && window.innerWidth < 640) {
+        setViewMode("grid");
+      }
+    };
+    enforceGridOnMobile();
+    window.addEventListener("resize", enforceGridOnMobile, { passive: true } as any);
+    return () => window.removeEventListener("resize", enforceGridOnMobile as any);
+  }, []);
+
   const uniqueMakes = useMemo(
     () => [...new Set(safeVehicles.map((v) => v.make))].sort(),
     [safeVehicles],
@@ -341,7 +353,7 @@ const InventoryPage: React.FC = () => {
             </button>
 
             {/* View Mode Toggle */}
-            <div className="flex bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-1 shadow-lg">
+            <div className="hidden sm:flex bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-1 shadow-lg">
               <button
                 onClick={() => setViewMode("grid")}
                 className={`p-3 rounded-xl transition-all duration-300 ${
