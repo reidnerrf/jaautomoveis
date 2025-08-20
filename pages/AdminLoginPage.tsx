@@ -10,6 +10,9 @@ const phrases = [
   "Pronto para mais um dia de conquistas 🚀",
   "Sua jornada começa aqui ✨",
   "Acesso restrito, mas cheio de possibilidades 🔐",
+  "Um ótimo dia para gerenciar tudo! ☀️",
+  "Vamos fazer acontecer! 💪",
+  "Sua administração, sua maneira! 🛠️",
 ];
 
 const AdminLoginPage: React.FC = () => {
