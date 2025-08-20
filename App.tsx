@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from "react";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { VehicleProvider } from "./hooks/useVehicleData.tsx";
 import { AuthProvider } from "./hooks/useAuth.tsx";
 import { ThemeProvider } from "./contexts/ThemeContext.tsx";
@@ -44,7 +44,7 @@ const App: React.FC = () => {
         <ThemeProvider>
           <AuthProvider>
             <VehicleProvider>
-              <HashRouter>
+              <BrowserRouter>
                 <Suspense fallback={<LoadingSpinner />}>
                   <Routes>
                     {/* Public routes with MainLayout */}
@@ -98,7 +98,7 @@ const App: React.FC = () => {
                     </Route>
                   </Routes>
                 </Suspense>
-              </HashRouter>
+              </BrowserRouter>
             </VehicleProvider>
           </AuthProvider>
         </ThemeProvider>

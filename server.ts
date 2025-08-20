@@ -56,18 +56,46 @@ const PORT = getAvailablePort(5000);
 const app = express();
 app.disable("x-powered-by");
 const server = createServer(app);
+// Centralized CORS allow-list
+const defaultAllowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:5000",
+  "http://127.0.0.1:5000",
+  "http://localhost:5001",
+  "http://127.0.0.1:5001",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:4173",
+  "http://127.0.0.1:4173",
+];
+const envAllowed = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+const allowedOrigins = new Set([
+  ...defaultAllowedOrigins,
+  ...envAllowed,
+]);
+
+const isOriginAllowed = (origin?: string | null) => {
+  if (!origin) return true; // same-origin or non-CORS requests
+  try {
+    const url = new URL(origin);
+    // Allow any of the explicit origins
+    if (allowedOrigins.has(origin)) return true;
+    // Also allow same host:port as server
+    // Note: when behind a proxy, this should be set via ALLOWED_ORIGINS
+    return url.hostname === "localhost" || url.hostname === "127.0.0.1";
+  } catch {
+    return false;
+  }
+};
+
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
-      const allowed = (process.env.ALLOWED_ORIGINS ||
-        (process.env.NODE_ENV === "production"
-          ? ""
-          : "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173"))
-        .split(",")
-        .map((o) => o.trim())
-        .filter(Boolean);
-      if (!origin || allowed.includes(origin)) return callback(null, true);
-      return callback(new Error("Not allowed by CORS"));
+    return callback(null, isOriginAllowed(origin));
     },
     methods: ["GET", "POST"],
   },
@@ -188,22 +216,8 @@ app.use("/api", limiter);
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowed = (process.env.ALLOWED_ORIGINS || "http://localhost:3000,http://localhost:5001")
-        .split(",")
-        .map((o) => o.trim())
-        .filter(Boolean);
-      if (!origin || allowed.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS"));
+      return callback(null, isOriginAllowed(origin));
     },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Accept",
-      "X-Requested-With",
-    ],
     credentials: true,
     optionsSuccessStatus: 204,
   }),
