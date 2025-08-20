@@ -3,13 +3,15 @@ import { motion } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
 
 const FinancingPage: React.FC = () => {
-  const [amount, setAmount] = useState(50000);
+  const [amount, setAmount] = useState(50000); // Valor do veículo
+  const [downPayment, setDownPayment] = useState(10000); // Entrada
   const [installments, setInstallments] = useState(48);
   const [rate, setRate] = useState(1.39); // taxa ao mês (%)
   const [simulation, setSimulation] = useState<{
     monthly: number;
     total: number;
     interest: number;
+    financedAmount: number;
     consortium?: {
       monthly: number;
       total: number;
@@ -26,25 +28,33 @@ const FinancingPage: React.FC = () => {
   const handleSimulate = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const financedAmount = Math.max(0, amount - downPayment);
+
     // Fórmula de juros compostos com PMT (prestação)
     const monthlyRate = rate / 100;
     const monthlyPayment =
-      (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -installments));
+      financedAmount === 0
+        ? 0
+        : (financedAmount * monthlyRate) /
+          (1 - Math.pow(1 + monthlyRate, -installments));
     const totalPayment = monthlyPayment * installments;
-    const totalInterest = totalPayment - amount;
+    const totalInterest = Math.max(0, totalPayment - financedAmount);
 
     // Simulação de consórcio (sem juros, apenas taxa administrativa)
     const consortiumMonthlyRate = 0.5 / 100; // 0.5% taxa administrativa
     const consortiumMonthlyPayment =
-      (amount * consortiumMonthlyRate) /
-      (1 - Math.pow(1 + consortiumMonthlyRate, -installments));
+      financedAmount === 0
+        ? 0
+        : (financedAmount * consortiumMonthlyRate) /
+          (1 - Math.pow(1 + consortiumMonthlyRate, -installments));
     const consortiumTotalPayment = consortiumMonthlyPayment * installments;
-    const consortiumSavings = totalPayment - consortiumTotalPayment;
+    const consortiumSavings = Math.max(0, totalPayment - consortiumTotalPayment);
 
     setSimulation({
       monthly: monthlyPayment,
       total: totalPayment,
       interest: totalInterest,
+      financedAmount,
       consortium: {
         monthly: consortiumMonthlyPayment,
         total: consortiumTotalPayment,
@@ -79,7 +89,7 @@ const FinancingPage: React.FC = () => {
                     htmlFor="amount"
                     className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >
-                    Valor a Financiar:{" "}
+                    Valor do Veículo:{" "}
                     <span className="font-bold">{formatCurrency(amount)}</span>
                   </label>
                   <input
@@ -92,6 +102,28 @@ const FinancingPage: React.FC = () => {
                     onChange={(e) => setAmount(Number(e.target.value))}
                     className="w-full accent-red-500"
                   />
+                </div>
+
+                {/* Entrada */}
+                <div>
+                  <label
+                    htmlFor="downPayment"
+                    className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
+                    Entrada:{" "}
+                    <span className="font-bold">{formatCurrency(downPayment)}</span>
+                  </label>
+                  <input
+                    type="range"
+                    id="downPayment"
+                    min="0"
+                    max={amount}
+                    step="1000"
+                    value={Math.min(downPayment, amount)}
+                    onChange={(e) => setDownPayment(Math.min(Number(e.target.value), amount))}
+                    className="w-full accent-red-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Financiado: <span className="font-semibold">{formatCurrency(Math.max(0, amount - Math.min(downPayment, amount)))}</span></p>
                 </div>
 
                 {/* Parcelas */}
@@ -154,6 +186,9 @@ const FinancingPage: React.FC = () => {
                     <h2 className="text-xl font-bold text-blue-900 dark:text-blue-300 mb-3">
                       💰 Financiamento
                     </h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                      Valor financiado: <span className="font-semibold">{formatCurrency(simulation.financedAmount)}</span>
+                    </p>
                     <p className="text-gray-700 dark:text-gray-300">
                       💳 {installments} parcelas de
                     </p>
