@@ -236,11 +236,38 @@ const InventoryPage: React.FC = () => {
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen transition-colors duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <SEOHead
-          title={`JA Automóveis`}
-          description={`A melhor plataforma de vendas de carros usados e seminovos do Brasil.`}
-          keywords={`carros, veículos, usados, seminovos, compra e venda de carros, JA Automóveis`}
+          title={`Estoque de Veículos | JA Automóveis`}
+          description={`Confira o estoque atualizado de carros seminovos e usados na JA Automóveis. Modelos selecionados com garantia e ótimos preços.`}
+          keywords={`estoque de carros, veículos usados, seminovos, comprar carro, JA Automóveis`}
           image={`/assets/logo.png`}
-        ></SEOHead>
+        >
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              "name": "Estoque de veículos",
+              "itemListElement": filteredAndSortedVehicles.slice(0, 30).map((v, idx) => ({
+                "@type": "ListItem",
+                "position": idx + 1,
+                "url": (typeof window !== 'undefined' ? window.location.origin : 'https://jaautomoveis.onrender.com') + `/vehicle/${v.id}`,
+                "item": {
+                  "@type": "Car",
+                  "name": v.name,
+                  "brand": v.make,
+                  "model": v.model,
+                  "vehicleModelDate": String(v.year),
+                  "image": v.images?.[0] || undefined,
+                  "offers": {
+                    "@type": "Offer",
+                    "price": v.price,
+                    "priceCurrency": "BRL",
+                    "availability": "https://schema.org/InStock"
+                  }
+                }
+              }))
+            })}
+          </script>
+        </SEOHead>
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}

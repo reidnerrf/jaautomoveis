@@ -30,6 +30,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
 
   return (
     <Helmet>
+      <html lang="pt-BR" />
       <title>{title}</title>
       <meta name="description" content={description} />
       {Boolean(keywords) && <meta name="keywords" content={keywords} />}
@@ -52,6 +53,13 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       <meta name="robots" content="index, follow" />
       <meta name="author" content="JA Automóveis" />
       <link rel="canonical" href={fullUrl} />
+
+      {/* Open Graph defaults */}
+      <meta property="og:locale" content="pt_BR" />
+      <meta property="og:site_name" content="JA Automóveis" />
+
+      {/* Twitter defaults */}
+      <meta name="twitter:site" content="@jaautomoveis" />
 
       {children}
     </Helmet>

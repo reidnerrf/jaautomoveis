@@ -97,6 +97,11 @@ const scriptSrcDirectives = [
 if (!isProduction) {
   scriptSrcDirectives.push("data:");
 }
+// Allow Google Analytics
+scriptSrcDirectives.push(
+  "https://www.googletagmanager.com",
+  "https://www.google-analytics.com",
+);
 
 // Create uploads directories if they don't exist (both runtime and project root)
 const uploadsDirBuild = path.join(__dirname, "uploads");
@@ -152,6 +157,8 @@ app.use(
           "https://lh3.googleusercontent.com",
           // Google Maps APIs
           "https://maps.googleapis.com",
+          // Google Analytics endpoints
+          "https://www.google-analytics.com",
         ],
         // Allow Google Maps embeds
         frameSrc: [

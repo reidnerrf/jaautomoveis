@@ -155,7 +155,32 @@ const HomePage: React.FC = () => {
         title="JA Automóveis - Seu Próximo Carro Está Aqui"
         description="Encontre seu próximo carro com as melhores ofertas e financiamento facilitado na JA Automóveis"
         image="/assets/logo.png"
-      />
+      >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "AutoDealer",
+            "name": "JA Automóveis",
+            "url": typeof window !== 'undefined' ? window.location.origin : 'https://jaautomoveis.onrender.com',
+            "logo": (typeof window !== 'undefined' ? window.location.origin : '') + '/assets/logo.png',
+            "image": (typeof window !== 'undefined' ? window.location.origin : '') + '/assets/logo.png',
+            "telephone": "+55 24 99903-7716",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Av. Brasília, n°35 - Vila Julieta",
+              "addressLocality": "Resende",
+              "addressRegion": "RJ",
+              "postalCode": "27511-110",
+              "addressCountry": "BR"
+            },
+            "sameAs": [
+              "https://www.instagram.com/_jaautomoveis/",
+              "https://wa.me/5524999037716"
+            ]
+          })}
+        </script>
+        <link rel="alternate" hrefLang="pt-BR" href={`${typeof window !== 'undefined' ? window.location.href : ''}`} />
+      </SEOHead>
       {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden ">
         {/* Background media: video on desktop, image on mobile for performance */}
@@ -193,7 +218,7 @@ const HomePage: React.FC = () => {
           <div className="block sm:hidden h-full w-full">
             <img
               src="/assets/homepageabout.webp"
-              alt="JA Automóveis"
+              alt="Showroom da JA Automóveis"
               className="absolute inset-0 w-full h-full object-cover"
               loading="eager"
               decoding="async"
