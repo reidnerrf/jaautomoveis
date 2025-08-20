@@ -68,7 +68,7 @@ const LazyLoader: React.FC<LazyLoaderProps> = ({
   const LazyComponent = lazy(component);
 
   return (
-    <ErrorBoundary fallback={errorFallback}>
+    <ErrorBoundary fallback={errorFallback} onError={onError}>
       <Suspense fallback={fallback}>
         <LazyComponent {...(onLoad ? { onLoad } : {})} />
       </Suspense>
