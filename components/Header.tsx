@@ -39,7 +39,6 @@ const Header: React.FC = () => {
     if (!isOpen) return;
     const onClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Fecha apenas se clicar fora do nav
       if (target.closest("nav") == null) {
         setIsOpen(false);
       }
@@ -49,24 +48,27 @@ const Header: React.FC = () => {
   }, [isOpen]);
 
   const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `relative block py-2 px-3 transition-all duration-300 font-medium group
+    `relative block py-2 px-3 transition-colors duration-300 font-medium group
      ${
        isActive
          ? "text-main-red font-semibold"
          : isTransparent
-           ? "text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
-           : "text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red"
+         ? "text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
+         : "text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red"
      }`;
 
   return (
     <motion.header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
         isTransparent
-          ? "bg-gradient-to-b from-black/30 to-transparent dark:from-black/40 backdrop-blur-sm"
-          : "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md"
+          ? "bg-gradient-to-b from-black/40 to-transparent dark:from-black/50 backdrop-blur-sm"
+          : "bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg"
       }`}
     >
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8" onClick={(e) => e.stopPropagation()}>
+      <nav
+        className="container mx-auto px-4 sm:px-6 lg:px-8"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div
           className={`flex items-center justify-between ${
             isScrolled ? "h-16" : "h-20"
@@ -77,17 +79,16 @@ const Header: React.FC = () => {
             <motion.img
               src="/assets/logo.png"
               alt="JA Automóveis Logo"
-              className="h-16 w-auto transition-transform group-hover:scale-105 drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]"
+              className="h-14 w-auto transition-transform group-hover:scale-105 drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
               whileHover={{ rotate: -2, scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             />
           </Link>
 
           {/* Menu Desktop */}
           <div
             className={`hidden lg:flex items-center space-x-8 ${
-              isTransparent
-                ? "text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]"
-                : ""
+              isTransparent ? "text-white" : ""
             }`}
           >
             {navLinks.map((link) => (
@@ -104,10 +105,6 @@ const Header: React.FC = () => {
                 </span>
               </NavLink>
             ))}
-
-            {/* Botão de Ação removido conforme solicitação */}
-
-            {/* DarkMode */}
             <DarkModeToggle />
           </div>
 
@@ -120,13 +117,13 @@ const Header: React.FC = () => {
                 setIsOpen(!isOpen);
               }}
               aria-label="Toggle menu"
-              className={`focus:outline-none ${
+              className={`focus:outline-none transition-colors ${
                 isTransparent
                   ? "text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
                   : "text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red"
               }`}
             >
-              {isOpen ? <FiX size={26} /> : <FiMenu size={26} />}
+              {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
             </button>
           </div>
         </div>
@@ -134,12 +131,13 @@ const Header: React.FC = () => {
 
       {/* Menu Mobile */}
       <AnimatePresence>
-        {Boolean(isOpen) && (
+        {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: -15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            className="lg:hidden bg-white dark:bg-gray-900 shadow-lg border-t border-gray-200 dark:border-gray-700"
+            transition={{ duration: 0.25 }}
+            className="lg:hidden bg-white dark:bg-gray-900 shadow-xl border-t border-gray-200 dark:border-gray-700"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-4 pt-4 pb-6 space-y-3">
@@ -149,10 +147,10 @@ const Header: React.FC = () => {
                   to={link.path}
                   end={link.path === "/"}
                   className={({ isActive }) =>
-                    `block py-2 px-3 rounded-md transition-all duration-300 ${
+                    `block py-2 px-3 rounded-lg transition-all duration-300 ${
                       isActive
-                        ? "text-main-red font-semibold"
-                        : "text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red"
+                        ? "text-main-red font-semibold bg-red-50 dark:bg-red-900/30"
+                        : "text-gray-700 hover:text-main-red hover:bg-gray-100 dark:text-gray-300 dark:hover:text-main-red dark:hover:bg-gray-800/40"
                     }`
                   }
                   onMouseEnter={() => prefetchRoute(link.path)}
@@ -161,8 +159,6 @@ const Header: React.FC = () => {
                   {link.name}
                 </NavLink>
               ))}
-
-              {/* Botão de Ação no Mobile removido */}
             </div>
           </motion.div>
         )}
