@@ -5,6 +5,7 @@ import { AuthProvider } from "./hooks/useAuth.tsx";
 import { ThemeProvider } from "./contexts/ThemeContext.tsx";
 import { HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { Toaster } from "react-hot-toast";
 
 // Lazy load all pages for better performance
 const HomePage = lazy(() => import("./pages/HomePage.tsx"));
@@ -98,6 +99,27 @@ const App: React.FC = () => {
                     </Route>
                   </Routes>
                 </Suspense>
+                {/* 🔔 Toaster global para mensagens */}
+                <Toaster
+                  position="bottom-center"
+                  toastOptions={{
+                    style: {
+                      background: "#1f2937", // cinza escuro
+                      color: "#fff",
+                      borderRadius: "12px",
+                      padding: "12px 16px",
+                      fontSize: "14px",
+                    },
+                    success: {
+                      style: { background: "#16a34a", color: "#fff" },
+                      iconTheme: { primary: "#fff", secondary: "#16a34a" },
+                    },
+                    error: {
+                      style: { background: "#dc2626", color: "#fff" },
+                      iconTheme: { primary: "#fff", secondary: "#dc2626" },
+                    },
+                  }}
+                />
               </BrowserRouter>
             </VehicleProvider>
           </AuthProvider>

@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useVehicleData } from "../hooks/useVehicleData.tsx";
 import StatCard from "../components/StatCard.tsx";
+import toast from "react-hot-toast";
 import {
   FiEye,
   FiDollarSign,
@@ -101,7 +102,7 @@ const AdminDashboardPage: React.FC = () => {
           setDailyViews([]);
         }
       } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        toast.error("Erro ao buscar dados:");
       }
     };
 
@@ -205,7 +206,7 @@ const AdminDashboardPage: React.FC = () => {
         console.log("Analytics purged:", data);
       }
     } catch (e) {
-      console.error("Falha ao limpar analytics:", e);
+      toast.error("Falha ao limpar analytics:");
     } finally {
       setPurging(false);
     }
