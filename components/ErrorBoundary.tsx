@@ -91,7 +91,7 @@ class ErrorBoundary extends Component<Props, State> {
               >
                 <h4 className="font-semibold text-red-800 mb-2">Detalhes do Erro:</h4>
                 <p className="text-sm text-red-600 font-mono break-all">
-                  {this.state.error.message}
+                  {this.state.error?.message ?? "Unknown error"}
                 </p>
               </motion.div>
             ) : null}

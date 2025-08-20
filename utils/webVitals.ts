@@ -159,8 +159,10 @@ class WebVitalsMonitor {
 
   private sendToAnalytics(metric: any) {
     // Enviar para Google Analytics 4
-    if (typeof gtag !== "undefined") {
-      gtag("event", "web_vitals", {
+    // @ts-ignore - gtag may not be defined in all environments
+    if (typeof (window as any).gtag !== "undefined") {
+      // @ts-ignore
+      (window as any).gtag("event", "web_vitals", {
         event_category: "Web Vitals",
         event_label: metric.name,
         value: Math.round(metric.value),

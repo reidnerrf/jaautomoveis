@@ -1,11 +1,4 @@
-import React, { Suspense, lazy } from "react";
-
-// Lazy load framer-motion components
-const LazyMotion = lazy(() =>
-  import("framer-motion").then((module) => ({
-    default: module.motion,
-  }))
-);
+import React, { Suspense } from "react";
 
 interface LazyMotionProps {
   children: React.ReactNode;
@@ -16,11 +9,7 @@ const LazyMotionWrapper: React.FC<LazyMotionProps> = ({
   children,
   fallback = <div className="animate-pulse bg-gray-200 rounded" />,
 }) => {
-  return (
-    <Suspense fallback={fallback}>
-      <LazyMotion>{children}</LazyMotion>
-    </Suspense>
-  );
+  return <Suspense fallback={fallback}>{children}</Suspense>;
 };
 
 export default LazyMotionWrapper;

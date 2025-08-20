@@ -152,6 +152,8 @@ class MonitoringService {
 // Create singleton instance
 export const monitoring = new MonitoringService();
 
+import React from "react";
+
 // React hook for component performance tracking
 export const usePerformanceTracking = (componentName: string) => {
   const startTime = React.useRef(performance.now());

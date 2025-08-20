@@ -187,7 +187,7 @@ class CDNManager {
       return imageUrl;
     }
 
-    return provider.optimizeImage(imageUrl, transformations);
+    return provider.optimizeImage ? provider.optimizeImage(imageUrl, transformations) : imageUrl;
   }
 
   // Invalidar cache

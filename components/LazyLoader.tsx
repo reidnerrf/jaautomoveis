@@ -70,7 +70,7 @@ const LazyLoader: React.FC<LazyLoaderProps> = ({
   return (
     <ErrorBoundary fallback={errorFallback} onError={onError}>
       <Suspense fallback={fallback}>
-        <LazyComponent onLoad={onLoad} />
+        <LazyComponent {...(onLoad ? { onLoad } : {})} />
       </Suspense>
     </ErrorBoundary>
   );
@@ -79,21 +79,24 @@ const LazyLoader: React.FC<LazyLoaderProps> = ({
 export default LazyLoader;
 
 // Componentes lazy predefinidos
-export const LazyVehicleList = lazy(() => import("./VehicleList"));
-export const LazyVehicleDetail = lazy(() => import("./VehicleDetail"));
-export const LazyVehicleForm = lazy(() => import("./VehicleForm"));
-export const LazyDashboard = lazy(() => import("./Dashboard"));
-export const LazyAnalytics = lazy(() => import("./Analytics"));
-export const LazyCharts = lazy(() => import("./Charts"));
-export const LazyMaps = lazy(() => import("./Maps"));
-export const LazyPDF = lazy(() => import("./PDFGenerator"));
+// The following components may not exist in this project structure.
+// They were causing module-not-found errors during type checking, so they are disabled.
+// If needed in the future, re-enable with correct paths or implementations.
+// export const LazyVehicleList = lazy(() => import("./VehicleList"));
+// export const LazyVehicleDetail = lazy(() => import("./VehicleDetail"));
+// export const LazyVehicleForm = lazy(() => import("./VehicleForm"));
+// export const LazyDashboard = lazy(() => import("./Dashboard"));
+// export const LazyAnalytics = lazy(() => import("./Analytics"));
+// export const LazyCharts = lazy(() => import("./Charts"));
+// export const LazyMaps = lazy(() => import("./Maps"));
+// export const LazyPDF = lazy(() => import("./PDFGenerator"));
 
 // HOC para lazy loading com retry
 export function withLazyRetry<T extends object>(
   importFunc: () => Promise<{ default: React.ComponentType<T> }>,
   retries = 3
 ) {
-  const WrappedComponent = React.forwardRef<unknown, T>((props, ref) => {
+  const WrappedComponent: React.FC<T> = (props) => {
     const [Component, setComponent] = React.useState<React.ComponentType<T> | null>(null);
     const [error, setError] = React.useState<Error | null>(null);
     const [retryCount, setRetryCount] = React.useState(0);
@@ -129,8 +132,8 @@ export function withLazyRetry<T extends object>(
       return <div className="animate-pulse bg-gray-200 h-32 rounded"></div>;
     }
 
-    return <Component {...props} ref={ref} />;
-  });
+    return <Component {...(props as T)} />;
+  };
 
   WrappedComponent.displayName = "withLazyRetry";
   return WrappedComponent;

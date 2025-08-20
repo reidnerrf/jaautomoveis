@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaCarSide, FaCalendarAlt } from "react-icons/fa";
 
 const AdminVehicleListPage: React.FC = () => {
-  const { vehicles, deleteVehicle, loading } = useVehicleData();
+  const { vehicles = [], deleteVehicle, loading } = useVehicleData();
   const { token } = useAuth();
 
   const [nameFilter, setNameFilter] = useState("");
@@ -39,7 +39,7 @@ const AdminVehicleListPage: React.FC = () => {
   const itemsPerPage = 10;
 
   const uniqueYears = useMemo(
-    () => [...new Set(vehicles.map((v) => v.year))].sort((a, b) => b - a),
+    () => [...new Set(vehicles.map((v) => v.year || 0))].sort((a, b) => b - a),
     [vehicles]
   );
   const uniqueColors = useMemo(() => [...new Set(vehicles.map((v) => v.color))].sort(), [vehicles]);
@@ -47,24 +47,25 @@ const AdminVehicleListPage: React.FC = () => {
 
   // Advanced statistics
   const vehicleStats = useMemo(() => {
-    const totalValue = vehicles.reduce((sum, v) => sum + v.price, 0);
-    const averagePrice = totalValue / vehicles.length || 0;
-    const averageYear = vehicles.reduce((sum, v) => sum + v.year, 0) / vehicles.length || 0;
-    const averageKm = vehicles.reduce((sum, v) => sum + v.km, 0) / vehicles.length || 0;
+    const totalValue = vehicles.reduce((sum, v) => sum + (v.price || 0), 0);
+    const averagePrice = vehicles.length ? totalValue / vehicles.length : 0;
+    const averageYear = vehicles.reduce((sum, v) => sum + (v.year || 0), 0) / (vehicles.length || 1);
+    const averageKm = vehicles.reduce((sum, v) => sum + (v.km || 0), 0) / (vehicles.length || 1);
 
     const makeDistribution = vehicles.reduce(
       (acc, v) => {
-        acc[v.make] = (acc[v.make] || 0) + 1;
+        const make = v.make || "";
+        acc[make] = (acc[make] || 0) + 1;
         return acc;
       },
       {} as Record<string, number>
     );
 
     const priceRanges = {
-      "até 30k": vehicles.filter((v) => v.price <= 30000).length,
-      "30k-60k": vehicles.filter((v) => v.price > 30000 && v.price <= 60000).length,
-      "60k-100k": vehicles.filter((v) => v.price > 60000 && v.price <= 100000).length,
-      "100k+": vehicles.filter((v) => v.price > 100000).length,
+      "até 30k": vehicles.filter((v) => (v.price || 0) <= 30000).length,
+      "30k-60k": vehicles.filter((v) => (v.price || 0) > 30000 && (v.price || 0) <= 60000).length,
+      "60k-100k": vehicles.filter((v) => (v.price || 0) > 60000 && (v.price || 0) <= 100000).length,
+      "100k+": vehicles.filter((v) => (v.price || 0) > 100000).length,
     };
 
     return {
@@ -75,8 +76,8 @@ const AdminVehicleListPage: React.FC = () => {
       averageKm: Math.round(averageKm),
       makeDistribution,
       priceRanges,
-      mostExpensive: vehicles.reduce((max, v) => (v.price > max.price ? v : max), vehicles[0]),
-      cheapest: vehicles.reduce((min, v) => (v.price < min.price ? v : min), vehicles[0]),
+      mostExpensive: vehicles.length > 0 ? vehicles.reduce((max, v) => ((v.price || 0) > (max.price || 0) ? v : max)) : null,
+      cheapest: vehicles.length > 0 ? vehicles.reduce((min, v) => ((v.price || 0) < (min.price || 0) ? v : min)) : null,
     };
   }, [vehicles]);
 
@@ -84,39 +85,39 @@ const AdminVehicleListPage: React.FC = () => {
     return vehicles
       .filter((vehicle) => {
         const nameMatch =
-          vehicle.name.toLowerCase().includes(nameFilter.toLowerCase()) ||
-          vehicle.make.toLowerCase().includes(nameFilter.toLowerCase()) ||
-          vehicle.model.toLowerCase().includes(nameFilter.toLowerCase());
-        const yearMatch = !yearFilter || vehicle.year === parseInt(yearFilter, 10);
+          (vehicle.name || vehicle.title || "").toLowerCase().includes(nameFilter.toLowerCase()) ||
+          (vehicle.make || "").toLowerCase().includes(nameFilter.toLowerCase()) ||
+          (vehicle.model || "").toLowerCase().includes(nameFilter.toLowerCase());
+        const yearMatch = !yearFilter || (vehicle.year || 0) === parseInt(yearFilter, 10);
         const colorMatch = !colorFilter || vehicle.color === colorFilter;
-        const makeMatch = !makeFilter || vehicle.make === makeFilter;
+        const makeMatch = !makeFilter || (vehicle.make || "") === makeFilter;
         const priceMatch =
           !priceRangeFilter ||
-          (priceRangeFilter === "30000" && vehicle.price <= 30000) ||
-          (priceRangeFilter === "30000-60000" && vehicle.price > 30000 && vehicle.price <= 60000) ||
+          (priceRangeFilter === "30000" && (vehicle.price || 0) <= 30000) ||
+          (priceRangeFilter === "30000-60000" && (vehicle.price || 0) > 30000 && (vehicle.price || 0) <= 60000) ||
           (priceRangeFilter === "60000-100000" &&
-            vehicle.price > 60000 &&
-            vehicle.price <= 100000) ||
-          (priceRangeFilter === "100000" && vehicle.price > 100000);
+            (vehicle.price || 0) > 60000 &&
+            (vehicle.price || 0) <= 100000) ||
+          (priceRangeFilter === "100000" && (vehicle.price || 0) > 100000);
 
         return nameMatch && yearMatch && colorMatch && makeMatch && priceMatch;
       })
       .sort((a, b) => {
         switch (sortBy) {
           case "name":
-            return a.name.localeCompare(b.name);
+            return (a.name || a.title || "").localeCompare(b.name || b.title || "");
           case "price-asc":
-            return a.price - b.price;
+            return (a.price || 0) - (b.price || 0);
           case "price-desc":
-            return b.price - a.price;
+            return (b.price || 0) - (a.price || 0);
           case "year-desc":
-            return b.year - a.year;
+            return (b.year || 0) - (a.year || 0);
           case "year-asc":
-            return a.year - b.year;
+            return (a.year || 0) - (b.year || 0);
           case "km-asc":
-            return a.km - b.km;
+            return (a.km || 0) - (b.km || 0);
           case "km-desc":
-            return b.km - a.km;
+            return (b.km || 0) - (a.km || 0);
           default:
             return 0;
         }

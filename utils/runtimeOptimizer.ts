@@ -73,11 +73,12 @@ class RuntimeOptimizer {
 
     // Optimize requestAnimationFrame usage
     let rafId: number | null = null;
-    const optimizedRaf = (callback: FrameRequestCallback) => {
+    const optimizedRaf = (callback: FrameRequestCallback): number => {
       if (rafId !== null) {
         cancelAnimationFrame(rafId);
       }
       rafId = requestAnimationFrame(callback);
+      return rafId;
     };
 
     // Override native raf for optimization
@@ -91,8 +92,8 @@ class RuntimeOptimizer {
     if (!this.config.enableNetworkOptimization) return;
 
     // Optimize fetch requests
-    const originalFetch = window.fetch;
-    window.fetch = async (...args) => {
+    const originalFetch = window.fetch.bind(window);
+    window.fetch = (async (...args: Parameters<typeof fetch>) => {
       const startTime = performance.now();
       try {
         const response = await originalFetch(...args);
@@ -100,7 +101,7 @@ class RuntimeOptimizer {
         this.metrics.apiResponseTime = endTime - startTime;
 
         // Implement request deduplication
-        const url = typeof args[0] === "string" ? args[0] : args[0].url;
+        const url = typeof args[0] === "string" ? args[0] : (args[0] as Request).url;
         this.deduplicateRequest(url, response.clone());
 
         return response;
@@ -108,7 +109,7 @@ class RuntimeOptimizer {
         console.error("Network request failed:", error);
         throw error;
       }
-    };
+    }) as typeof window.fetch;
   }
 
   private setupCacheOptimization() {
@@ -260,7 +261,7 @@ class RuntimeOptimizer {
         ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
 
         const optimizedBlob = await new Promise<Blob>((resolve) => {
-          canvas.toBlob(resolve, "image/webp", 0.8);
+          canvas.toBlob((blob) => resolve(blob as Blob), "image/webp", 0.8);
         });
 
         const optimizedUrl = URL.createObjectURL(optimizedBlob);
@@ -326,7 +327,9 @@ export function useRuntimeOptimizer(config?: Partial<OptimizationConfig>) {
         setMetrics(optimizerRef.current!.getMetrics());
       });
 
-      return unsubscribe;
+      return () => {
+        if (typeof unsubscribe === "function") unsubscribe();
+      };
     }
   }, [config]);
 
@@ -368,8 +371,8 @@ export function useMemoryOptimization() {
 }
 
 export function useNetworkOptimization() {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [connection, setConnection] = useState(navigator.connection);
+  const [isOnline, setIsOnline] = useState<boolean>(typeof navigator !== "undefined" ? navigator.onLine : true);
+  const [connection, setConnection] = useState<any>(typeof (navigator as any) !== "undefined" ? (navigator as any).connection : null);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -379,16 +382,16 @@ export function useNetworkOptimization() {
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
-    if ("connection" in navigator) {
-      navigator.connection.addEventListener("change", handleConnectionChange);
+    if (typeof (navigator as any).connection !== "undefined") {
+      (navigator as any).connection.addEventListener("change", handleConnectionChange);
     }
 
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
 
-      if ("connection" in navigator) {
-        navigator.connection.removeEventListener("change", handleConnectionChange);
+      if (typeof (navigator as any).connection !== "undefined") {
+        (navigator as any).connection.removeEventListener("change", handleConnectionChange);
       }
     };
   }, []);

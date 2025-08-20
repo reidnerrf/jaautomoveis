@@ -136,7 +136,9 @@ export const deleteVehicle = async (req: express.Request, res: express.Response)
   try {
     const vehicle = await Vehicle.findById(req.params.id);
     if (vehicle) {
-      await deleteImageFiles(vehicle.images);
+      if (Array.isArray((vehicle as any).images) && (vehicle as any).images.length > 0) {
+        await deleteImageFiles((vehicle as any).images as string[]);
+      }
       await vehicle.deleteOne();
       try {
         getSocketServer()?.emit("vehicle-deleted", req.params.id);

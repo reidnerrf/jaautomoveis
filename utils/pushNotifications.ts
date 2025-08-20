@@ -50,7 +50,7 @@ class PushNotificationManager {
     try {
       this.subscription = await this.registration!.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(process.env.VAPID_PUBLIC_KEY || ""),
+        applicationServerKey: (this.urlBase64ToUint8Array(process.env.VAPID_PUBLIC_KEY || "") as unknown) as BufferSource,
       });
 
       // Enviar subscription para o servidor
@@ -157,7 +157,7 @@ class PushNotificationManager {
       body: "Esta é uma notificação de teste!",
       icon: "/assets/logo.png",
       badge: "/assets/favicon-32x32.png",
-      vibrate: [100, 50, 100],
+      // vibrate is not part of standard NotificationOptions in TS lib; omit for type compatibility
       data: {
         url: "/",
       },
