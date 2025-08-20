@@ -267,3 +267,45 @@ export const getMostViewedVehicles = async (
     }
   }
 };
+
+// Remove a single image from a vehicle and delete its file from /uploads
+export const deleteVehicleImage = async (
+  req: express.Request,
+  res: express.Response,
+) => {
+  try {
+    const { id } = req.params;
+    const { path: imagePath } = req.body as { path?: string };
+
+    if (!imagePath || !imagePath.startsWith("/uploads/")) {
+      return res.status(400).json({ message: "Parâmetro 'path' inválido" });
+    }
+
+    const vehicle = await Vehicle.findById(id);
+    if (!vehicle) {
+      return res.status(404).json({ message: "Vehicle not found" });
+    }
+
+    // Remove from DB array
+    const images = vehicle.images || [];
+    if (!images.includes(imagePath)) {
+      return res.status(404).json({ message: "Imagem não encontrada no veículo" });
+    }
+
+    vehicle.images = images.filter((p: string) => p !== imagePath) as any;
+    await vehicle.save();
+
+    // Delete from filesystem
+    await deleteImageFiles([imagePath]);
+
+    // Emit update event
+    try {
+      getSocketServer()?.emit("vehicle-updated", vehicle.toObject());
+    } catch {}
+
+    return res.json({ success: true, images: vehicle.images });
+  } catch (error) {
+    console.error("Error deleting vehicle image:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};

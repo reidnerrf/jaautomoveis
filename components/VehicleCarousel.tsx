@@ -150,7 +150,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(
         {/* Lista de veículos */}
         <div className="overflow-hidden">
           <motion.div
-            className="flex"
+            className="flex justify-center"
             animate={{ x: `-${currentIndex * (100 / visibleSlides)}%` }}
             transition={{ type: "spring", stiffness: 80, damping: 20 }}
           >

@@ -7,6 +7,7 @@ import {
   deleteVehicle,
   incrementVehicleView,
   getMostViewedVehicles,
+  deleteVehicleImage,
 } from "../controllers/vehicleController";
 import {
   invalidateVehicleCacheMiddleware,
@@ -27,5 +28,8 @@ router
   .put(protect, invalidateVehicleCacheMiddleware, updateVehicle)
   .delete(protect, invalidateVehicleCacheMiddleware, deleteVehicle);
 router.route("/:id/view").post(incrementVehicleView);
+router
+  .route("/:id/images")
+  .delete(protect, invalidateVehicleCacheMiddleware, deleteVehicleImage);
 
 export default router;

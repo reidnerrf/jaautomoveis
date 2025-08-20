@@ -42,10 +42,18 @@ export const useImageOptimization = () => {
 
   const getResponsiveImageSet = (src: string): string => {
     if (!src || /^https?:\/\//i.test(src) || src.startsWith("data:")) return "";
-    const parts = src.split("?");
-    const clean = parts[0];
-    const baseName = clean.replace(/\.(jpg|jpeg|png|webp)$/i, "");
-    return `${baseName}-320w.webp 320w, ${baseName}-640w.webp 640w, ${baseName}-1024w.webp 1024w, ${baseName}-1280w.webp 1280w`;
+
+    const [clean, existingQuery] = src.split("?");
+    const formatParam = isWebPSupported ? "webp" : "jpg";
+    const widths = [320, 640, 1024, 1280];
+
+    return widths
+      .map((w) => {
+        const sep = clean.includes("?") ? "&" : "?";
+        const versionSuffix = existingQuery ? `&${existingQuery}` : "";
+        return `${clean}${sep}w=${w}&f=${formatParam}${versionSuffix} ${w}w`;
+      })
+      .join(", ");
   };
 
   return {
