@@ -4,7 +4,9 @@ import User from "../models/User";
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: Number(process.env.SMTP_PORT || 465),
+  secure: (process.env.SMTP_SECURE || "true") === "true",
   auth: {
     user: process.env.EMAIL_USERNAME,
     pass: process.env.EMAIL_PASSWORD,
@@ -27,11 +29,15 @@ export const forgotPassword = async (
         .json({ message: "If the email exists, a reset link will be sent" });
     }
 
-    // Generate reset token
-    const resetToken = crypto.randomBytes(20).toString("hex");
+    // Generate reset token and store hashed value
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenHash = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
     const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
 
-    user.resetPasswordToken = resetToken;
+    user.resetPasswordToken = resetTokenHash;
     user.resetPasswordExpiry = resetTokenExpiry;
     await user.save();
 
@@ -59,8 +65,9 @@ export const resetPassword = async (
   const { token, password } = req.body;
 
   try {
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
     const user = await User.findOne({
-      resetPasswordToken: token,
+      resetPasswordToken: tokenHash,
       resetPasswordExpiry: { $gt: Date.now() },
     });
 

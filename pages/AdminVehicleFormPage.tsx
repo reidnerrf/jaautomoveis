@@ -425,37 +425,40 @@ const AdminVehicleFormPage: React.FC = () => {
               ></textarea>
             </div>
 
-            {/* Botões de ação */}
-            <div className="flex justify-end gap-4">
+           {/* Botões de ação premium */}
+            <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:gap-4">
+              {/* Cancelar */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={() => navigate(-1)}
-                className="rounded-lg bg-gray-500 py-3 px-8 font-medium text-white shadow hover:bg-gray-600"
+                className="w-full sm:w-auto rounded-lg bg-gradient-to-r from-gray-400 to-gray-600 py-3 px-6 font-medium text-white shadow-lg hover:from-gray-500 hover:to-gray-700 transition-all duration-300"
               >
                 Cancelar
               </motion.button>
 
+              {/* Deletar */}
               {isEditing && (
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   type="button"
                   onClick={() => handleDeleteVehicle()}
-                  className="rounded-lg bg-red-600 py-3 px-8 font-medium text-white shadow hover:bg-red-700"
+                  className="w-full sm:w-auto rounded-lg bg-gradient-to-r from-red-500 to-red-700 py-3 px-6 font-medium text-white shadow-lg hover:from-red-600 hover:to-red-800 transition-all duration-300 flex items-center justify-center"
                 >
                   <FiTrash2 className="inline mr-2" />
                   Deletar Veículo
                 </motion.button>
               )}
 
+              {/* Adicionar / Atualizar */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 type="submit"
                 disabled={isUploading}
-                className="rounded-lg bg-blue-600 py-3 px-8 font-medium text-white shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 py-3 px-6 font-medium text-white shadow-lg hover:from-blue-600 hover:to-blue-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isUploading
                   ? "Enviando..."

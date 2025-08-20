@@ -224,6 +224,7 @@ const VehicleDetailPage: React.FC = () => {
         <script type="application/ld+json">
           {JSON.stringify(generateStructuredData())}
         </script>
+        <link rel="alternate" hrefLang="pt-BR" href={`${typeof window !== 'undefined' ? window.location.href : ''}`} />
       </SEOHead>
 
       <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -244,7 +245,7 @@ const VehicleDetailPage: React.FC = () => {
                 <motion.img
                   whileHover={{ scale: 1.02 }}
                   src={`${vehicle.images[currentImageIndex]}${vehicle.images[currentImageIndex].includes("?") ? "&" : "?"}v=${encodeURIComponent(vehicle.updatedAt || "")}`}
-                  alt={`${vehicle.name} - ${currentImageIndex + 1}`}
+                  alt={`${vehicle.make} ${vehicle.model} ${vehicle.year} imagem ${currentImageIndex + 1}`}
                   className="w-full h-[26rem] object-cover cursor-pointer transition-all"
                   onClick={() => setIsLightboxOpen(true)}
                 />

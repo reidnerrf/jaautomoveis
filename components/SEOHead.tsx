@@ -28,8 +28,15 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     ? image
     : `${siteUrl}${image || "/assets/logo.png"}`;
 
+  const alternateLocales: Array<{ hrefLang: string; href: string }> = [
+    { hrefLang: "pt-BR", href: fullUrl },
+    { hrefLang: "x-default", href: fullUrl },
+  ];
+
   return (
-    <Helmet>
+    <Helmet prioritizeSeoTags>
+      <html lang="pt-BR" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>{title}</title>
       <meta name="description" content={description} />
       {Boolean(keywords) && <meta name="keywords" content={keywords} />}
@@ -52,6 +59,16 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       <meta name="robots" content="index, follow" />
       <meta name="author" content="JA Automóveis" />
       <link rel="canonical" href={fullUrl} />
+      {alternateLocales.map((alt, idx) => (
+        <link key={idx} rel="alternate" hrefLang={alt.hrefLang} href={alt.href} />
+      ))}
+
+      {/* Open Graph defaults */}
+      <meta property="og:locale" content="pt_BR" />
+      <meta property="og:site_name" content="JA Automóveis" />
+
+      {/* Twitter defaults */}
+      <meta name="twitter:site" content="@jaautomoveis" />
 
       {children}
     </Helmet>

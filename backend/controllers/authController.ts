@@ -15,6 +15,9 @@ interface DecodedToken extends JwtPayload {
 }
 
 const generateToken = (id: string) => {
+  if (process.env.NODE_ENV === "production" && (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim() === "")) {
+    throw new Error("JWT_SECRET must be set in production");
+  }
   return jwt.sign({ id }, getJwtSecret(), {
     expiresIn: "30d",
   });
@@ -40,6 +43,9 @@ export const loginUser = async (
   res: express.Response,
 ) => {
   const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password are required" });
+  }
   console.log(`[AUTH] Login attempt for user: "${username}"`);
 
   try {
@@ -60,6 +66,7 @@ export const loginUser = async (
       res.json({
         _id: user._id,
         username: user.username,
+        role: user.role,
         token,
       });
     } else {

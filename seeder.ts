@@ -188,6 +188,7 @@ const importData = async () => {
       username: "admin",
       email: "reidner.red@gmail.com",
       password: hashedPassword,
+      role: "admin",
     });
 
     console.log(

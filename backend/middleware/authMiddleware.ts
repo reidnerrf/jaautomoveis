@@ -1,12 +1,16 @@
 import express from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import User from "../models/User";
 
 const getJwtSecret = (): string => {
-  if (process.env.JWT_SECRET && process.env.JWT_SECRET.trim() !== "") {
-    // Sempre trim para evitar erro de assinatura
-    return process.env.JWT_SECRET.trim();
+  const secret = process.env.JWT_SECRET?.trim();
+  if (process.env.NODE_ENV === "production") {
+    if (!secret) {
+      throw new Error("JWT_SECRET must be set in production");
+    }
+    return secret;
   }
-  return "dev-insecure-secret-change-me";
+  return secret || "dev-insecure-secret-change-me";
 };
 
 interface DecodedToken extends JwtPayload {
@@ -63,17 +67,29 @@ export const protect = (
   }
 };
 
-// Middleware de admin (placeholder)
-export const requireAdmin = (
+// Middleware de admin com checagem real
+export const requireAdmin = async (
   req: express.Request,
   res: express.Response,
   next: express.NextFunction,
 ) => {
   try {
-    // Aqui você faria a checagem real de papel do usuário
-    next();
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authorized" });
+    }
+    const user = await User.findById(userId).select("role").lean();
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied - Admin role required",
+      });
+    }
+    return next();
   } catch {
-    res.status(403).json({
+    return res.status(403).json({
       success: false,
       message: "Access denied - Admin role required",
     });
