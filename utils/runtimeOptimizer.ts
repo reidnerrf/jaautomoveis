@@ -27,7 +27,7 @@ class RuntimeOptimizer {
       enableRenderOptimization: true,
       enableNetworkOptimization: true,
       enableCacheOptimization: true,
-    },
+    }
   ) {
     this.config = config;
     this.metrics = {
@@ -50,11 +50,10 @@ class RuntimeOptimizer {
   }
 
   private setupMemoryMonitoring() {
-    if (!this.config.enableMemoryOptimization || !("memory" in performance))
-      return;
+    if (!this.config.enableMemoryOptimization || !("memory" in performance)) return;
 
     const checkMemory = () => {
-      const memory = (performance as any).memory;
+      const { memory } = performance as any;
       this.metrics.memoryUsage = memory.usedJSHeapSize;
       this.metrics.jsHeapSize = memory.totalJSHeapSize;
 
@@ -150,11 +149,7 @@ class RuntimeOptimizer {
   }
 
   private async warmCache() {
-    const criticalResources = [
-      "/api/vehicles?limit=10",
-      "/api/categories",
-      "/api/vehicles/stats",
-    ];
+    const criticalResources = ["/api/vehicles?limit=10", "/api/categories", "/api/vehicles/stats"];
 
     try {
       const cache = await caches.open("runtime-cache");
@@ -168,7 +163,7 @@ class RuntimeOptimizer {
           } catch (error) {
             console.warn("Failed to warm cache for:", url);
           }
-        }),
+        })
       );
     } catch (error) {
       console.error("Cache warming failed:", error);
@@ -183,7 +178,7 @@ class RuntimeOptimizer {
       JSON.stringify({
         response: response.clone(),
         timestamp: Date.now(),
-      }),
+      })
     );
   }
 
@@ -358,7 +353,7 @@ export function useMemoryOptimization() {
     if (!("memory" in performance)) return;
 
     const interval = setInterval(() => {
-      const memory = (performance as any).memory;
+      const { memory } = performance as any;
       setMemoryUsage(memory.usedJSHeapSize);
 
       if (memory.usedJSHeapSize > 100 * 1024 * 1024) {
@@ -393,10 +388,7 @@ export function useNetworkOptimization() {
       window.removeEventListener("offline", handleOffline);
 
       if ("connection" in navigator) {
-        navigator.connection.removeEventListener(
-          "change",
-          handleConnectionChange,
-        );
+        navigator.connection.removeEventListener("change", handleConnectionChange);
       }
     };
   }, []);

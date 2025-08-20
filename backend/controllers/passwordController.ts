@@ -13,10 +13,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const forgotPassword = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const forgotPassword = async (req: express.Request, res: express.Response) => {
   const { email } = req.body;
 
   try {
@@ -24,17 +21,12 @@ export const forgotPassword = async (
 
     if (!user) {
       // Don't reveal if user exists or not for security
-      return res
-        .status(200)
-        .json({ message: "If the email exists, a reset link will be sent" });
+      return res.status(200).json({ message: "If the email exists, a reset link will be sent" });
     }
 
     // Generate reset token and store hashed value
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetTokenHash = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
+    const resetTokenHash = crypto.createHash("sha256").update(resetToken).digest("hex");
     const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
 
     user.resetPasswordToken = resetTokenHash;
@@ -58,10 +50,7 @@ export const forgotPassword = async (
   }
 };
 
-export const resetPassword = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const resetPassword = async (req: express.Request, res: express.Response) => {
   const { token, password } = req.body;
 
   try {

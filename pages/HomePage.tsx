@@ -67,15 +67,11 @@ const HomePage: React.FC = () => {
     // Buscar avaliações do Google via backend (evita CORS e expõe menos a API key)
     const fetchGoogleReviews = async () => {
       try {
-        const response = await fetch(
-          "/api/place-details?place_id=ChIJBfuB6mR_ngARsAmwbVRKdto",
-        );
+        const response = await fetch("/api/place-details?place_id=ChIJBfuB6mR_ngARsAmwbVRKdto");
         const data = await response.json();
         const raw: any[] = data?.result?.reviews || [];
         const filteredSorted = raw
-          .filter(
-            (r: any) => Number(r?.rating) >= 4 && String(r?.text || "").trim().length > 0,
-          )
+          .filter((r: any) => Number(r?.rating) >= 4 && String(r?.text || "").trim().length > 0)
           .sort((a: any, b: any) => (b?.time || 0) - (a?.time || 0));
         const reviews = filteredSorted.map((review: any, index: number) => ({
           id: review.id || `${review.author_name}-${index}`,
@@ -100,15 +96,13 @@ const HomePage: React.FC = () => {
     {
       icon: <FaCar size={32} />,
       title: "Venda",
-      description:
-        "Os melhores veículos novos e seminovos do mercado com garantia de procedência.",
+      description: "Os melhores veículos novos e seminovos do mercado com garantia de procedência.",
       gradient: "from-blue-500 to-blue-600",
     },
     {
       icon: <FaHandshake size={32} />,
       title: "Compra",
-      description:
-        "Compramos seu carro com avaliação justa, rápida e sem burocracia.",
+      description: "Compramos seu carro com avaliação justa, rápida e sem burocracia.",
       gradient: "from-green-500 to-green-600",
     },
     {
@@ -160,26 +154,30 @@ const HomePage: React.FC = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "AutoDealer",
-            "name": "JA Automóveis",
-            "url": typeof window !== 'undefined' ? window.location.origin : 'https://jaautomoveis.onrender.com',
-            "logo": (typeof window !== 'undefined' ? window.location.origin : '') + '/assets/logo.png',
-            "image": (typeof window !== 'undefined' ? window.location.origin : '') + '/assets/logo.png',
-            "telephone": "+55 24 99903-7716",
-            "address": {
+            name: "JA Automóveis",
+            url:
+              typeof window !== "undefined"
+                ? window.location.origin
+                : "https://jaautomoveis.onrender.com",
+            logo: `${typeof window !== "undefined" ? window.location.origin : ""}/assets/logo.png`,
+            image: `${typeof window !== "undefined" ? window.location.origin : ""}/assets/logo.png`,
+            telephone: "+55 24 99903-7716",
+            address: {
               "@type": "PostalAddress",
-              "streetAddress": "Av. Brasília, n°35 - Vila Julieta",
-              "addressLocality": "Resende",
-              "addressRegion": "RJ",
-              "postalCode": "27511-110",
-              "addressCountry": "BR"
+              streetAddress: "Av. Brasília, n°35 - Vila Julieta",
+              addressLocality: "Resende",
+              addressRegion: "RJ",
+              postalCode: "27511-110",
+              addressCountry: "BR",
             },
-            "sameAs": [
-              "https://www.instagram.com/_jaautomoveis/",
-              "https://wa.me/5524999037716"
-            ]
+            sameAs: ["https://www.instagram.com/_jaautomoveis/", "https://wa.me/5524999037716"],
           })}
         </script>
-        <link rel="alternate" hrefLang="pt-BR" href={`${typeof window !== 'undefined' ? window.location.href : ''}`} />
+        <link
+          rel="alternate"
+          hrefLang="pt-BR"
+          href={`${typeof window !== "undefined" ? window.location.href : ""}`}
+        />
       </SEOHead>
       {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden ">
@@ -207,7 +205,7 @@ const HomePage: React.FC = () => {
                       }
                     });
                   },
-                  { threshold: 0.1 },
+                  { threshold: 0.1 }
                 );
                 observer.observe(document.querySelector("video") as Element);
               }}
@@ -250,9 +248,8 @@ const HomePage: React.FC = () => {
               </span>
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-100 font-light max-w-4xl mx-auto leading-relaxed drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
-              Na <span className="font-bold text-red-400">JA Automóveis</span>,
-              ofertas exclusivas, financiamento facilitado e garantia total de
-              procedência.
+              Na <span className="font-bold text-red-400">JA Automóveis</span>, ofertas exclusivas,
+              financiamento facilitado e garantia total de procedência.
             </p>
           </motion.div>
 
@@ -312,15 +309,9 @@ const HomePage: React.FC = () => {
                 transition={{ delay: 0.7 + index * 0.1, duration: 0.6 }}
                 whileHover={{ scale: 1.05 }}
               >
-                <div className="text-red-400 flex justify-center mb-2">
-                  {stat.icon}
-                </div>
-                <div className="text-3xl font-black text-white mb-1">
-                  {stat.number}
-                </div>
-                <div className="text-gray-300 text-sm font-medium">
-                  {stat.label}
-                </div>
+                <div className="text-red-400 flex justify-center mb-2">{stat.icon}</div>
+                <div className="text-3xl font-black text-white mb-1">{stat.number}</div>
+                <div className="text-gray-300 text-sm font-medium">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -344,8 +335,7 @@ const HomePage: React.FC = () => {
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-red-500 to-rose-500 mx-auto rounded-full mb-6"></div>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Selecionamos os melhores veículos com condições especiais para
-              você
+              Selecionamos os melhores veículos com condições especiais para você
             </p>
           </motion.div>
 
@@ -427,8 +417,8 @@ const HomePage: React.FC = () => {
             <VehicleCarousel vehicles={mostViewedVehicles} />
           ) : (
             <div className="text-center text-gray-600 dark:text-gray-300 py-12">
-              Ainda não há dados suficientes para exibir os mais visitados.
-              Confira nossos destaques acima!
+              Ainda não há dados suficientes para exibir os mais visitados. Confira nossos destaques
+              acima!
             </div>
           )}
         </div>
@@ -482,27 +472,24 @@ const HomePage: React.FC = () => {
                   <strong className="text-gray-900 dark:text-white">
                     agência de veículos premium
                   </strong>{" "}
-                  que oferece uma experiência completa em serviços automotivos.
-                  Com mais de 15 anos no mercado, nos especializamos na venda e
-                  troca de veículos novos, seminovos e usados.
+                  que oferece uma experiência completa em serviços automotivos. Com mais de 15 anos
+                  no mercado, nos especializamos na venda e troca de veículos novos, seminovos e
+                  usados.
                 </p>
                 <p>
                   Nossa missão é proporcionar{" "}
                   <strong className="text-gray-900 dark:text-white">
                     transparência, qualidade e confiança
                   </strong>
-                  em cada negociação. Todos os nossos veículos passam por
-                  rigorosa inspeção técnica e oferecemos garantia de
-                  procedência.
+                  em cada negociação. Todos os nossos veículos passam por rigorosa inspeção técnica
+                  e oferecemos garantia de procedência.
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-6 my-8">
                 <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl">
                   <FaShieldAlt className="text-red-500 text-2xl mb-3" />
-                  <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                    Garantia Total
-                  </h3>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-2">Garantia Total</h3>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">
                     Todos os veículos com garantia e procedência verificada
                   </p>
@@ -691,9 +678,7 @@ const HomePage: React.FC = () => {
                       <FaMapMarkerAlt size={20} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900 dark:text-white mb-1">
-                        Endereço
-                      </h4>
+                      <h4 className="font-bold text-gray-900 dark:text-white mb-1">Endereço</h4>
                       <p className="text-gray-600 dark:text-gray-300">
                         Rua Principal, 123
                         <br />
@@ -707,12 +692,8 @@ const HomePage: React.FC = () => {
                       <FaPhone size={18} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900 dark:text-white mb-1">
-                        Telefone
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        (24) 99903-7716
-                      </p>
+                      <h4 className="font-bold text-gray-900 dark:text-white mb-1">Telefone</h4>
+                      <p className="text-gray-600 dark:text-gray-300">(24) 99903-7716</p>
                     </div>
                   </div>
 
@@ -721,9 +702,7 @@ const HomePage: React.FC = () => {
                       <FaClock size={18} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900 dark:text-white mb-1">
-                        Horário
-                      </h4>
+                      <h4 className="font-bold text-gray-900 dark:text-white mb-1">Horário</h4>
                       <p className="text-gray-600 dark:text-gray-300">
                         Seg-Sex: 8h às 18h
                         <br />
@@ -748,9 +727,7 @@ const HomePage: React.FC = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl font-black mb-6">
-              Pronto para encontrar seu carro ideal?
-            </h2>
+            <h2 className="text-5xl font-black mb-6">Pronto para encontrar seu carro ideal?</h2>
             <p className="text-2xl mb-12 text-red-100 max-w-3xl mx-auto">
               Entre em contato conosco e faça parte da família JA Automóveis!
             </p>

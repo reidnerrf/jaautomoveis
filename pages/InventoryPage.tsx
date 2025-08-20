@@ -2,17 +2,23 @@ import React, { useState, useMemo, useEffect } from "react";
 import { useVehicleData } from "../hooks/useVehicleData";
 import VehicleCard from "../components/VehicleCard.tsx";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiFilter, FiX, FiSearch, FiGrid, FiList, FiChevronDown, FiTag, FiTrendingUp } from "react-icons/fi";
+import {
+  FiFilter,
+  FiX,
+  FiSearch,
+  FiGrid,
+  FiList,
+  FiChevronDown,
+  FiTag,
+  FiTrendingUp,
+} from "react-icons/fi";
 import { FaCarSide, FaGasPump, FaCog, FaCalendarAlt } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
 import { analytics } from "../utils/analytics";
 
 const InventoryPage: React.FC = () => {
   const { vehicles, loading } = useVehicleData();
-  const safeVehicles = React.useMemo(
-    () => (Array.isArray(vehicles) ? vehicles : []),
-    [vehicles],
-  );
+  const safeVehicles = React.useMemo(() => (Array.isArray(vehicles) ? vehicles : []), [vehicles]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [makeFilter, setMakeFilter] = useState("");
@@ -43,23 +49,23 @@ const InventoryPage: React.FC = () => {
 
   const uniqueMakes = useMemo(
     () => [...new Set(safeVehicles.map((v) => v.make))].sort(),
-    [safeVehicles],
+    [safeVehicles]
   );
   const uniqueYears = useMemo(
     () => [...new Set(safeVehicles.map((v) => v.year))].sort((a, b) => b - a),
-    [safeVehicles],
+    [safeVehicles]
   );
   const uniqueColors = useMemo(
     () => [...new Set(safeVehicles.map((v) => v.color))].sort(),
-    [safeVehicles],
+    [safeVehicles]
   );
   const uniqueFuels = useMemo(
     () => [...new Set(safeVehicles.map((v) => v.fuel || "Flex"))],
-    [safeVehicles],
+    [safeVehicles]
   );
   const uniqueTransmissions = useMemo(
     () => [...new Set(safeVehicles.map((v) => v.gearbox || "Manual"))],
-    [safeVehicles],
+    [safeVehicles]
   );
 
   // Load like counts to enable sorting by most liked
@@ -117,22 +123,16 @@ const InventoryPage: React.FC = () => {
         vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
         vehicle.model.toLowerCase().includes(searchTerm.toLowerCase());
       const passesMake = !makeFilter || vehicle.make === makeFilter;
-      const passesYear =
-        !yearFilter || vehicle.year === parseInt(yearFilter, 10);
+      const passesYear = !yearFilter || vehicle.year === parseInt(yearFilter, 10);
       const passesColor = !colorFilter || vehicle.color === colorFilter;
       const passesFuel = !fuelFilter || (vehicle.fuel || "Flex") === fuelFilter;
       const passesTransmission =
-        !transmissionFilter ||
-        (vehicle.gearbox || "Manual") === transmissionFilter;
+        !transmissionFilter || (vehicle.gearbox || "Manual") === transmissionFilter;
       const passesPrice =
         !priceFilter ||
         (priceFilter === "30000" && vehicle.price < 30000) ||
-        (priceFilter === "30000-60000" &&
-          vehicle.price >= 30000 &&
-          vehicle.price <= 60000) ||
-        (priceFilter === "60000-100000" &&
-          vehicle.price >= 60000 &&
-          vehicle.price <= 100000) ||
+        (priceFilter === "30000-60000" && vehicle.price >= 30000 && vehicle.price <= 60000) ||
+        (priceFilter === "60000-100000" && vehicle.price >= 60000 && vehicle.price <= 100000) ||
         (priceFilter === "100000" && vehicle.price > 100000);
 
       return (
@@ -149,9 +149,7 @@ const InventoryPage: React.FC = () => {
     // Sorting
     switch (sortBy) {
       case "likes-desc":
-        tempVehicles.sort(
-          (a, b) => (likeCounts[b.id] || 0) - (likeCounts[a.id] || 0),
-        );
+        tempVehicles.sort((a, b) => (likeCounts[b.id] || 0) - (likeCounts[a.id] || 0));
         break;
       case "price-asc":
         tempVehicles.sort((a, b) => a.price - b.price);
@@ -192,11 +190,10 @@ const InventoryPage: React.FC = () => {
     likeCounts,
   ]);
 
-  const totalPages =
-    Math.ceil(filteredAndSortedVehicles.length / itemsPerPage) || 1;
+  const totalPages = Math.ceil(filteredAndSortedVehicles.length / itemsPerPage) || 1;
   const currentVehicles = filteredAndSortedVehicles.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   const resetFilters = () => {
@@ -257,26 +254,30 @@ const InventoryPage: React.FC = () => {
             {JSON.stringify({
               "@context": "https://schema.org",
               "@type": "ItemList",
-              "name": "Estoque de veículos",
-              "itemListElement": filteredAndSortedVehicles.slice(0, 30).map((v, idx) => ({
+              name: "Estoque de veículos",
+              itemListElement: filteredAndSortedVehicles.slice(0, 30).map((v, idx) => ({
                 "@type": "ListItem",
-                "position": idx + 1,
-                "url": (typeof window !== 'undefined' ? window.location.origin : 'https://jaautomoveis.onrender.com') + `/vehicle/${v.id}`,
-                "item": {
+                position: idx + 1,
+                url: `${
+                  typeof window !== "undefined"
+                    ? window.location.origin
+                    : "https://jaautomoveis.onrender.com"
+                }/vehicle/${v.id}`,
+                item: {
                   "@type": "Car",
-                  "name": v.name,
-                  "brand": v.make,
-                  "model": v.model,
-                  "vehicleModelDate": String(v.year),
-                  "image": v.images?.[0] || undefined,
-                  "offers": {
+                  name: v.name,
+                  brand: v.make,
+                  model: v.model,
+                  vehicleModelDate: String(v.year),
+                  image: v.images?.[0] || undefined,
+                  offers: {
                     "@type": "Offer",
-                    "price": v.price,
-                    "priceCurrency": "BRL",
-                    "availability": "https://schema.org/InStock"
-                  }
-                }
-              }))
+                    price: v.price,
+                    priceCurrency: "BRL",
+                    availability: "https://schema.org/InStock",
+                  },
+                },
+              })),
             })}
           </script>
         </SEOHead>
@@ -295,8 +296,8 @@ const InventoryPage: React.FC = () => {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mb-8 leading-relaxed">
-              {filteredAndSortedVehicles.length} veículos selecionados com
-              qualidade garantida e preços imperdíveis
+              {filteredAndSortedVehicles.length} veículos selecionados com qualidade garantida e
+              preços imperdíveis
             </p>
             <div className="flex flex-wrap justify-center items-center gap-6 text-gray-200">
               <div className="flex items-center gap-2">
@@ -443,9 +444,7 @@ const InventoryPage: React.FC = () => {
                       <option value="">Qualquer Valor</option>
                       <option value="30000">Até R$ 30.000</option>
                       <option value="30000-60000">R$ 30.000 - R$ 60.000</option>
-                      <option value="60000-100000">
-                        R$ 60.000 - R$ 100.000
-                      </option>
+                      <option value="60000-100000">R$ 60.000 - R$ 100.000</option>
                       <option value="100000">Acima de R$ 100.000</option>
                     </select>
                   </div>
@@ -556,9 +555,7 @@ const InventoryPage: React.FC = () => {
             <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
               {filteredAndSortedVehicles.length}
             </span>{" "}
-            {filteredAndSortedVehicles.length === 1
-              ? "veículo encontrado"
-              : "veículos encontrados"}
+            {filteredAndSortedVehicles.length === 1 ? "veículo encontrado" : "veículos encontrados"}
           </div>
 
           {totalPages > 1 && (
@@ -622,8 +619,7 @@ const InventoryPage: React.FC = () => {
               Nenhum veículo encontrado
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
-              Tente ajustar seus filtros ou faça uma nova busca para encontrar o
-              carro ideal.
+              Tente ajustar seus filtros ou faça uma nova busca para encontrar o carro ideal.
             </p>
             <button onClick={resetFilters} className="btn-primary">
               Ver Todos os Veículos
@@ -649,8 +645,7 @@ const InventoryPage: React.FC = () => {
               </button>
 
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                const page =
-                  i + Math.max(1, Math.min(currentPage - 2, totalPages - 4));
+                const page = i + Math.max(1, Math.min(currentPage - 2, totalPages - 4));
                 return (
                   <button
                     key={page}
@@ -667,9 +662,7 @@ const InventoryPage: React.FC = () => {
               })}
 
               <button
-                onClick={() =>
-                  setCurrentPage(Math.min(totalPages, currentPage + 1))
-                }
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
                 className="px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >

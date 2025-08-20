@@ -7,24 +7,19 @@ export interface SEOData {
   type?: string;
 }
 
-export const generateSEOTitle = (
-  title: string,
-  siteName: string = "JA Automóveis",
-): string => {
+export const generateSEOTitle = (title: string, siteName: string = "JA Automóveis"): string => {
   return `${title} | ${siteName}`;
 };
 
 export const generateVehicleSEO = (vehicle: any): SEOData => {
   return {
-    title: generateSEOTitle(
-      `${vehicle.brand} ${vehicle.model} ${vehicle.year}`,
-    ),
+    title: generateSEOTitle(`${vehicle.brand} ${vehicle.model} ${vehicle.year}`),
     description: `${vehicle.brand} ${vehicle.model} ${vehicle.year} - ${vehicle.fuelType} - ${new Intl.NumberFormat(
       "pt-BR",
       {
         style: "currency",
         currency: "BRL",
-      },
+      }
     ).format(vehicle.price)}. Compre na JA Automóveis com qualidade garantida.`,
     keywords: `${vehicle.brand}, ${vehicle.model}, ${vehicle.year}, ${vehicle.fuelType}, carro usado, automóvel`,
     image: vehicle.images?.[0] || "/assets/logo.png",
@@ -38,8 +33,7 @@ export const generatePageSEO = (page: string): SEOData => {
       title: generateSEOTitle("Carros Usados de Qualidade"),
       description:
         "JA Automóveis - Encontre o carro usado perfeito para você. Qualidade garantida, melhores preços e financiamento facilitado.",
-      keywords:
-        "carros usados, automóveis, veículos, compra, venda, financiamento",
+      keywords: "carros usados, automóveis, veículos, compra, venda, financiamento",
     },
     inventory: {
       title: generateSEOTitle("Estoque de Veículos"),

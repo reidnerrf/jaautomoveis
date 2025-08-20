@@ -109,10 +109,7 @@ export const typeDefs = gql`
 
   type Query {
     # Vehicles
-    vehicles(
-      filter: VehicleFilterInput
-      pagination: PaginationInput
-    ): VehicleConnection!
+    vehicles(filter: VehicleFilterInput, pagination: PaginationInput): VehicleConnection!
 
     vehicle(id: ID!): Vehicle
 

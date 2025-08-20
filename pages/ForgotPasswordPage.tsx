@@ -49,8 +49,8 @@ const ForgotPasswordPage: React.FC = () => {
 
           <h2 className="text-2xl font-bold text-white mb-4">Email Enviado!</h2>
           <p className="text-gray-300 mb-8">
-            Se o email {email} estiver cadastrado, você receberá instruções para
-            redefinir sua senha.
+            Se o email {email} estiver cadastrado, você receberá instruções para redefinir sua
+            senha.
           </p>
 
           <Link
@@ -86,17 +86,11 @@ const ForgotPasswordPage: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-300 mb-2"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
               Email
             </label>
             <div className="relative">
-              <FiMail
-                className="absolute top-3.5 left-3 text-gray-400"
-                size={18}
-              />
+              <FiMail className="absolute top-3.5 left-3 text-gray-400" size={18} />
               <input
                 type="email"
                 id="email"

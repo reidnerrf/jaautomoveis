@@ -4,7 +4,7 @@ import React, { Suspense, lazy } from "react";
 const LazyMotion = lazy(() =>
   import("framer-motion").then((module) => ({
     default: module.motion,
-  })),
+  }))
 );
 
 interface LazyMotionProps {

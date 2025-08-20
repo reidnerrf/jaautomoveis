@@ -125,7 +125,7 @@ class CDNManager {
       quality?: number;
       compression?: boolean;
       cache?: boolean;
-    } = {},
+    } = {}
   ): string {
     // Verificar cache
     const cacheKey = this.generateCacheKey(originalUrl, options);
@@ -180,7 +180,7 @@ class CDNManager {
       sharpen?: number;
       grayscale?: boolean;
       sepia?: boolean;
-    } = {},
+    } = {}
   ): string {
     const provider = this.providers.get(this.config.provider);
     if (!provider) {
@@ -274,10 +274,7 @@ class CloudflareProvider implements CDNProvider {
     }
 
     const urlObj = new URL(url);
-    const cdnUrl = new URL(
-      urlObj.pathname + urlObj.search,
-      `https://${this.config.domain}`,
-    );
+    const cdnUrl = new URL(urlObj.pathname + urlObj.search, `https://${this.config.domain}`);
 
     // Adicionar parâmetros de otimização
     if (options.format) {
@@ -356,7 +353,7 @@ class CloudflareProvider implements CDNProvider {
           body: JSON.stringify({
             files: urls,
           }),
-        },
+        }
       );
 
       if (!response.ok) {
@@ -375,9 +372,7 @@ class CloudflareProvider implements CDNProvider {
 
   async healthCheck(): Promise<boolean> {
     try {
-      const response = await fetch(
-        `https://${this.config.domain}/cdn-cgi/trace`,
-      );
+      const response = await fetch(`https://${this.config.domain}/cdn-cgi/trace`);
       return response.ok;
     } catch (error) {
       return false;
@@ -399,10 +394,7 @@ class AWSProvider implements CDNProvider {
     }
 
     const urlObj = new URL(url);
-    const cdnUrl = new URL(
-      urlObj.pathname + urlObj.search,
-      `https://${this.config.domain}`,
-    );
+    const cdnUrl = new URL(urlObj.pathname + urlObj.search, `https://${this.config.domain}`);
 
     // Adicionar parâmetros de otimização
     if (options.format) {
@@ -445,10 +437,7 @@ class AzureProvider implements CDNProvider {
     }
 
     const urlObj = new URL(url);
-    const cdnUrl = new URL(
-      urlObj.pathname + urlObj.search,
-      `https://${this.config.domain}`,
-    );
+    const cdnUrl = new URL(urlObj.pathname + urlObj.search, `https://${this.config.domain}`);
 
     // Adicionar parâmetros de otimização
     if (options.format) {
@@ -488,10 +477,7 @@ class GoogleProvider implements CDNProvider {
     }
 
     const urlObj = new URL(url);
-    const cdnUrl = new URL(
-      urlObj.pathname + urlObj.search,
-      `https://${this.config.domain}`,
-    );
+    const cdnUrl = new URL(urlObj.pathname + urlObj.search, `https://${this.config.domain}`);
 
     // Adicionar parâmetros de otimização
     if (options.format) {

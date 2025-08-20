@@ -23,8 +23,7 @@ interface QueueConfig {
 
 class DistributedQueue extends EventEmitter {
   private queues: Map<string, Queue.Queue> = new Map();
-  private processors: Map<string, (job: Queue.Job) => Promise<unknown>> =
-    new Map();
+  private processors: Map<string, (job: Queue.Job) => Promise<unknown>> = new Map();
   private config: QueueConfig;
 
   constructor(config: QueueConfig) {
@@ -153,7 +152,7 @@ class DistributedQueue extends EventEmitter {
   registerProcessor(
     queueName: string,
     jobType: string,
-    processor: (job: Queue.Job) => Promise<unknown>,
+    processor: (job: Queue.Job) => Promise<unknown>
   ): void {
     const key = `${queueName}:${jobType}`;
     this.processors.set(key, processor);
@@ -229,12 +228,7 @@ class DistributedQueue extends EventEmitter {
       completed: completed.length,
       failed: failed.length,
       delayed: delayed.length,
-      total:
-        waiting.length +
-        active.length +
-        completed.length +
-        failed.length +
-        delayed.length,
+      total: waiting.length + active.length + completed.length + failed.length + delayed.length,
     };
   }
 
@@ -255,10 +249,7 @@ class DistributedQueue extends EventEmitter {
   }
 
   // Clean completed jobs
-  async cleanQueue(
-    queueName: string,
-    grace: number = 1000 * 60 * 60 * 24,
-  ): Promise<void> {
+  async cleanQueue(queueName: string, grace: number = 1000 * 60 * 60 * 24): Promise<void> {
     const queue = this.queues.get(queueName);
     if (!queue) {
       throw new Error(`Queue ${queueName} not found`);
@@ -315,10 +306,7 @@ class DistributedQueue extends EventEmitter {
   }
 
   // Get job details
-  async getJob(
-    queueName: string,
-    jobId: string | number,
-  ): Promise<Queue.Job | null> {
+  async getJob(queueName: string, jobId: string | number): Promise<Queue.Job | null> {
     const queue = this.queues.get(queueName);
     if (!queue) {
       throw new Error(`Queue ${queueName} not found`);
@@ -329,9 +317,7 @@ class DistributedQueue extends EventEmitter {
 
   // Close all queues
   async close(): Promise<void> {
-    const closePromises = Array.from(this.queues.values()).map((queue) =>
-      queue.close(),
-    );
+    const closePromises = Array.from(this.queues.values()).map((queue) => queue.close());
     await Promise.all(closePromises);
     this.queues.clear();
   }
@@ -355,47 +341,32 @@ export class VehicleQueue extends DistributedQueue {
 
   private setupVehicleProcessors() {
     // Image processing
-    this.registerProcessor(
-      "vehicle-processing",
-      "process-images",
-      async (payload: any) => {
-        // Process vehicle images
-        console.log("Processing images for vehicle:", payload.vehicleId);
-        // Implementation would include image optimization, resizing, etc.
-        return { processed: true, images: payload.images };
-      },
-    );
+    this.registerProcessor("vehicle-processing", "process-images", async (payload: any) => {
+      // Process vehicle images
+      console.log("Processing images for vehicle:", payload.vehicleId);
+      // Implementation would include image optimization, resizing, etc.
+      return { processed: true, images: payload.images };
+    });
 
     // Data indexing
-    this.registerProcessor(
-      "vehicle-processing",
-      "index-data",
-      async (payload: any) => {
-        // Index vehicle data for search
-        console.log("Indexing data for vehicle:", payload.vehicleId);
-        // Implementation would include search indexing
-        return { indexed: true };
-      },
-    );
+    this.registerProcessor("vehicle-processing", "index-data", async (payload: any) => {
+      // Index vehicle data for search
+      console.log("Indexing data for vehicle:", payload.vehicleId);
+      // Implementation would include search indexing
+      return { indexed: true };
+    });
 
     // Notification sending
-    this.registerProcessor(
-      "vehicle-processing",
-      "send-notifications",
-      async (payload: any) => {
-        // Send notifications about new vehicles
-        console.log("Sending notifications for vehicle:", payload.vehicleId);
-        // Implementation would include push notifications, emails, etc.
-        return { notificationsSent: true };
-      },
-    );
+    this.registerProcessor("vehicle-processing", "send-notifications", async (payload: any) => {
+      // Send notifications about new vehicles
+      console.log("Sending notifications for vehicle:", payload.vehicleId);
+      // Implementation would include push notifications, emails, etc.
+      return { notificationsSent: true };
+    });
   }
 
   // Convenience methods for vehicle-specific jobs
-  async processVehicleImages(
-    vehicleId: string,
-    images: string[],
-  ): Promise<Queue.Job> {
+  async processVehicleImages(vehicleId: string, images: string[]): Promise<Queue.Job> {
     return await this.addJob("vehicle-processing", {
       type: "process-images",
       payload: { vehicleId, images },
@@ -411,10 +382,7 @@ export class VehicleQueue extends DistributedQueue {
     });
   }
 
-  async sendVehicleNotifications(
-    vehicleId: string,
-    subscribers: string[],
-  ): Promise<Queue.Job> {
+  async sendVehicleNotifications(vehicleId: string, subscribers: string[]): Promise<Queue.Job> {
     return await this.addJob("vehicle-processing", {
       type: "send-notifications",
       payload: { vehicleId, subscribers },
@@ -441,45 +409,29 @@ export class AnalyticsQueue extends DistributedQueue {
 
   private setupAnalyticsProcessors() {
     // Track page views
-    this.registerProcessor(
-      "analytics-processing",
-      "track-pageview",
-      async (payload: any) => {
-        console.log("Tracking pageview:", payload);
-        // Implementation would include analytics tracking
-        return { tracked: true };
-      },
-    );
+    this.registerProcessor("analytics-processing", "track-pageview", async (payload: any) => {
+      console.log("Tracking pageview:", payload);
+      // Implementation would include analytics tracking
+      return { tracked: true };
+    });
 
     // Generate reports
-    this.registerProcessor(
-      "analytics-processing",
-      "generate-report",
-      async (payload: any) => {
-        console.log("Generating report:", payload);
-        // Implementation would include report generation
-        return { reportGenerated: true };
-      },
-    );
+    this.registerProcessor("analytics-processing", "generate-report", async (payload: any) => {
+      console.log("Generating report:", payload);
+      // Implementation would include report generation
+      return { reportGenerated: true };
+    });
 
     // Process user behavior
-    this.registerProcessor(
-      "analytics-processing",
-      "process-behavior",
-      async (payload: any) => {
-        console.log("Processing user behavior:", payload);
-        // Implementation would include behavior analysis
-        return { behaviorProcessed: true };
-      },
-    );
+    this.registerProcessor("analytics-processing", "process-behavior", async (payload: any) => {
+      console.log("Processing user behavior:", payload);
+      // Implementation would include behavior analysis
+      return { behaviorProcessed: true };
+    });
   }
 
   // Convenience methods for analytics jobs
-  async trackPageView(
-    page: string,
-    userId?: string,
-    metadata?: any,
-  ): Promise<Queue.Job> {
+  async trackPageView(page: string, userId?: string, metadata?: any): Promise<Queue.Job> {
     return await this.addJob("analytics-processing", {
       type: "track-pageview",
       payload: { page, userId, metadata, timestamp: Date.now() },

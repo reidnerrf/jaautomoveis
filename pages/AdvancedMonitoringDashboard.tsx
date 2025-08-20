@@ -204,23 +204,15 @@ const AdvancedMonitoringDashboard: React.FC = () => {
     }
   }, [autoRefresh, timeRange]);
 
-  const getStatusColor = (
-    value: number,
-    thresholds: { warning: number; critical: number },
-  ) => {
+  const getStatusColor = (value: number, thresholds: { warning: number; critical: number }) => {
     if (value >= thresholds.critical) return "text-red-500";
     if (value >= thresholds.warning) return "text-yellow-500";
     return "text-green-500";
   };
 
-  const getStatusIcon = (
-    value: number,
-    thresholds: { warning: number; critical: number },
-  ) => {
-    if (value >= thresholds.critical)
-      return <FiAlertTriangle className="text-red-500" />;
-    if (value >= thresholds.warning)
-      return <FiClock className="text-yellow-500" />;
+  const getStatusIcon = (value: number, thresholds: { warning: number; critical: number }) => {
+    if (value >= thresholds.critical) return <FiAlertTriangle className="text-red-500" />;
+    if (value >= thresholds.warning) return <FiClock className="text-yellow-500" />;
     return <FiCheckCircle className="text-green-500" />;
   };
 
@@ -229,13 +221,9 @@ const AdvancedMonitoringDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Advanced Monitoring Dashboard
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Advanced Monitoring Dashboard</h1>
           <div className="flex items-center justify-between">
-            <p className="text-gray-600">
-              Real-time system monitoring and performance analytics
-            </p>
+            <p className="text-gray-600">Real-time system monitoring and performance analytics</p>
             <div className="flex items-center space-x-4">
               <select
                 value={timeRange}
@@ -296,9 +284,7 @@ const AdvancedMonitoringDashboard: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Memory Usage
-                </p>
+                <p className="text-sm font-medium text-gray-600">Memory Usage</p>
                 <p
                   className={`text-2xl font-bold ${getStatusColor(systemMetrics.memory, { warning: 80, critical: 95 })}`}
                 >
@@ -328,9 +314,7 @@ const AdvancedMonitoringDashboard: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Response Time
-                </p>
+                <p className="text-sm font-medium text-gray-600">Response Time</p>
                 <p
                   className={`text-2xl font-bold ${getStatusColor(systemMetrics.responseTime, { warning: 500, critical: 1000 })}`}
                 >
@@ -387,9 +371,7 @@ const AdvancedMonitoringDashboard: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             className="bg-white rounded-lg shadow p-6"
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              System Performance
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">System Performance</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={performanceData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -397,24 +379,9 @@ const AdvancedMonitoringDashboard: React.FC = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="cpu"
-                  stroke="#3B82F6"
-                  strokeWidth={2}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="memory"
-                  stroke="#10B981"
-                  strokeWidth={2}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="responseTime"
-                  stroke="#8B5CF6"
-                  strokeWidth={2}
-                />
+                <Line type="monotone" dataKey="cpu" stroke="#3B82F6" strokeWidth={2} />
+                <Line type="monotone" dataKey="memory" stroke="#10B981" strokeWidth={2} />
+                <Line type="monotone" dataKey="responseTime" stroke="#8B5CF6" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </motion.div>
@@ -425,9 +392,7 @@ const AdvancedMonitoringDashboard: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             className="bg-white rounded-lg shadow p-6"
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Traffic Overview
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Traffic Overview</h3>
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={trafficData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -471,27 +436,19 @@ const AdvancedMonitoringDashboard: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-gray-600">Active Connections</p>
-                <p className="text-xl font-bold text-blue-600">
-                  {databaseMetrics.connections}
-                </p>
+                <p className="text-xl font-bold text-blue-600">{databaseMetrics.connections}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Queries/sec</p>
-                <p className="text-xl font-bold text-green-600">
-                  {databaseMetrics.queries}
-                </p>
+                <p className="text-xl font-bold text-green-600">{databaseMetrics.queries}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Cache Hit Rate</p>
-                <p className="text-xl font-bold text-purple-600">
-                  {databaseMetrics.cacheHitRate}%
-                </p>
+                <p className="text-xl font-bold text-purple-600">{databaseMetrics.cacheHitRate}%</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Replica Lag</p>
-                <p className="text-xl font-bold text-orange-600">
-                  {databaseMetrics.replicaLag}ms
-                </p>
+                <p className="text-xl font-bold text-orange-600">{databaseMetrics.replicaLag}ms</p>
               </div>
             </div>
           </motion.div>
@@ -513,9 +470,7 @@ const AdvancedMonitoringDashboard: React.FC = () => {
                 <p className="text-xl font-bold text-green-600">
                   {cacheMetrics.hits > 0
                     ? Math.round(
-                        (cacheMetrics.hits /
-                          (cacheMetrics.hits + cacheMetrics.misses)) *
-                          100,
+                        (cacheMetrics.hits / (cacheMetrics.hits + cacheMetrics.misses)) * 100
                       )
                     : 0}
                   %
@@ -535,9 +490,7 @@ const AdvancedMonitoringDashboard: React.FC = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Nodes</p>
-                <p className="text-xl font-bold text-orange-600">
-                  {cacheMetrics.nodes}
-                </p>
+                <p className="text-xl font-bold text-orange-600">{cacheMetrics.nodes}</p>
               </div>
             </div>
             <div className="mt-4">
@@ -575,27 +528,19 @@ const AdvancedMonitoringDashboard: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-gray-600">Waiting</p>
-                <p className="text-xl font-bold text-yellow-600">
-                  {queueMetrics.waiting}
-                </p>
+                <p className="text-xl font-bold text-yellow-600">{queueMetrics.waiting}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Active</p>
-                <p className="text-xl font-bold text-blue-600">
-                  {queueMetrics.active}
-                </p>
+                <p className="text-xl font-bold text-blue-600">{queueMetrics.active}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Completed</p>
-                <p className="text-xl font-bold text-green-600">
-                  {queueMetrics.completed}
-                </p>
+                <p className="text-xl font-bold text-green-600">{queueMetrics.completed}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Failed</p>
-                <p className="text-xl font-bold text-red-600">
-                  {queueMetrics.failed}
-                </p>
+                <p className="text-xl font-bold text-red-600">{queueMetrics.failed}</p>
               </div>
             </div>
             <div className="mt-4">
@@ -626,9 +571,7 @@ const AdvancedMonitoringDashboard: React.FC = () => {
             <div className="text-center">
               <FiUsers className="text-3xl text-blue-500 mx-auto mb-2" />
               <p className="text-sm text-gray-600">Active Users</p>
-              <p className="text-2xl font-bold text-blue-600">
-                {businessMetrics.activeUsers}
-              </p>
+              <p className="text-2xl font-bold text-blue-600">{businessMetrics.activeUsers}</p>
             </div>
             <div className="text-center">
               <FiEye className="text-3xl text-green-500 mx-auto mb-2" />
@@ -640,9 +583,7 @@ const AdvancedMonitoringDashboard: React.FC = () => {
             <div className="text-center">
               <FiShoppingCart className="text-3xl text-purple-500 mx-auto mb-2" />
               <p className="text-sm text-gray-600">Conversions</p>
-              <p className="text-2xl font-bold text-purple-600">
-                {businessMetrics.conversions}
-              </p>
+              <p className="text-2xl font-bold text-purple-600">{businessMetrics.conversions}</p>
             </div>
             <div className="text-center">
               <FiDollarSign className="text-3xl text-orange-500 mx-auto mb-2" />

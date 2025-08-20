@@ -1,11 +1,6 @@
 import React, { useMemo } from "react";
 import { Vehicle } from "../types.ts";
-import {
-  FiCheckCircle,
-  FiTrendingUp,
-  FiTrendingDown,
-  FiInfo,
-} from "react-icons/fi";
+import { FiCheckCircle, FiTrendingUp, FiTrendingDown, FiInfo } from "react-icons/fi";
 import { motion } from "framer-motion";
 
 interface PriceComparisonProps {
@@ -19,51 +14,48 @@ const PriceComparison: React.FC<PriceComparisonProps> = ({ vehicle }) => {
       currency: "BRL",
     }).format(value);
 
-  const { advertisedPrice, fipePrice, iCarrosPrice, status, maxPrice, tag } =
-    useMemo(() => {
-      const advertised = vehicle.price;
-      const fipe = advertised * 0.98;
-      const iCarros = advertised * 1.015;
+  const { advertisedPrice, fipePrice, iCarrosPrice, status, maxPrice, tag } = useMemo(() => {
+    const advertised = vehicle.price;
+    const fipe = advertised * 0.98;
+    const iCarros = advertised * 1.015;
 
-      let tagLabel = "";
-      let statusElement: React.ReactNode;
-      if (advertised <= fipe) {
-        tagLabel = "Oferta Imperdível";
-        statusElement = (
-          <p className="text-green-700 font-medium">
-            <span className="font-bold">Abaixo da Tabela FIPE</span> — Excelente
-            negócio!
-          </p>
-        );
-      } else if (advertised <= iCarros) {
-        tagLabel = "Preço Justo";
-        statusElement = (
-          <p className="text-yellow-600 font-medium">
-            <span className="font-bold">Na média do mercado</span> — Ótima
-            opção.
-          </p>
-        );
-      } else {
-        tagLabel = "Pode Negociar";
-        statusElement = (
-          <p className="text-red-600 font-medium">
-            <span className="font-bold">Acima da média</span> — Vale conversar.
-          </p>
-        );
-      }
+    let tagLabel = "";
+    let statusElement: React.ReactNode;
+    if (advertised <= fipe) {
+      tagLabel = "Oferta Imperdível";
+      statusElement = (
+        <p className="text-green-700 font-medium">
+          <span className="font-bold">Abaixo da Tabela FIPE</span> — Excelente negócio!
+        </p>
+      );
+    } else if (advertised <= iCarros) {
+      tagLabel = "Preço Justo";
+      statusElement = (
+        <p className="text-yellow-600 font-medium">
+          <span className="font-bold">Na média do mercado</span> — Ótima opção.
+        </p>
+      );
+    } else {
+      tagLabel = "Pode Negociar";
+      statusElement = (
+        <p className="text-red-600 font-medium">
+          <span className="font-bold">Acima da média</span> — Vale conversar.
+        </p>
+      );
+    }
 
-      const maxValue = Math.max(advertised, fipe, iCarros);
-      const maxPriceWithPadding = maxValue * 1.05;
+    const maxValue = Math.max(advertised, fipe, iCarros);
+    const maxPriceWithPadding = maxValue * 1.05;
 
-      return {
-        advertisedPrice: advertised,
-        fipePrice: fipe,
-        iCarrosPrice: iCarros,
-        status: statusElement,
-        tag: tagLabel,
-        maxPrice: maxPriceWithPadding,
-      };
-    }, [vehicle.price]);
+    return {
+      advertisedPrice: advertised,
+      fipePrice: fipe,
+      iCarrosPrice: iCarros,
+      status: statusElement,
+      tag: tagLabel,
+      maxPrice: maxPriceWithPadding,
+    };
+  }, [vehicle.price]);
 
   const getBarWidth = (value: number) => `${(value / maxPrice) * 100}%`;
 
@@ -96,9 +88,7 @@ const PriceComparison: React.FC<PriceComparisonProps> = ({ vehicle }) => {
             <span className="text-gray-600 flex items-center gap-1 font-medium">
               <FiTrendingUp /> Valor anunciado
             </span>
-            <span className="font-bold text-green-600">
-              {formatCurrency(advertisedPrice)}
-            </span>
+            <span className="font-bold text-green-600">{formatCurrency(advertisedPrice)}</span>
           </div>
           <motion.div
             initial={{ width: 0 }}
@@ -114,9 +104,7 @@ const PriceComparison: React.FC<PriceComparisonProps> = ({ vehicle }) => {
             <span className="text-gray-600 flex items-center gap-1 font-medium">
               <FiTrendingUp /> iCarros
             </span>
-            <span className="font-semibold text-gray-700">
-              {formatCurrency(iCarrosPrice)}
-            </span>
+            <span className="font-semibold text-gray-700">{formatCurrency(iCarrosPrice)}</span>
           </div>
           <motion.div
             initial={{ width: 0 }}
@@ -132,9 +120,7 @@ const PriceComparison: React.FC<PriceComparisonProps> = ({ vehicle }) => {
             <span className="text-gray-600 flex items-center gap-1 font-medium">
               <FiTrendingDown /> Tabela FIPE
             </span>
-            <span className="font-semibold text-gray-700">
-              {formatCurrency(fipePrice)}
-            </span>
+            <span className="font-semibold text-gray-700">{formatCurrency(fipePrice)}</span>
           </div>
           <motion.div
             initial={{ width: 0 }}

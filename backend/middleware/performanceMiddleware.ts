@@ -123,8 +123,7 @@ function checkAlerts(metrics: PerformanceMetrics): void {
   }
 
   // Alertas de uso de memória
-  const memoryUsagePercent =
-    metrics.memoryUsage.heapUsed / metrics.memoryUsage.heapTotal;
+  const memoryUsagePercent = metrics.memoryUsage.heapUsed / metrics.memoryUsage.heapTotal;
   if (memoryUsagePercent > PERFORMANCE_CONFIG.MEMORY_USAGE_THRESHOLD) {
     alerts.push({
       type: "memory_usage",
@@ -155,11 +154,7 @@ function checkAlerts(metrics: PerformanceMetrics): void {
 }
 
 // Middleware principal de performance
-export function performanceMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function performanceMiddleware(req: Request, res: Response, next: NextFunction) {
   // Amostragem para reduzir overhead
   if (Math.random() > PERFORMANCE_CONFIG.SAMPLE_RATE) {
     return next();
@@ -192,7 +187,7 @@ function recordMetrics(
   res: Response,
   startTime: number,
   startCpu: NodeJS.CpuUsage,
-  _startMemory: NodeJS.MemoryUsage,
+  _startMemory: NodeJS.MemoryUsage
 ) {
   const endTime = performance.now();
   const responseTime = endTime - startTime;
@@ -268,11 +263,7 @@ function cleanupOldMetrics(): void {
 }
 
 // Middleware para métricas de memória
-export function memoryMetricsMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function memoryMetricsMiddleware(req: Request, res: Response, next: NextFunction) {
   const memoryUsage = getMemoryUsage();
 
   res.set({
@@ -307,13 +298,12 @@ export function getPerformanceMetrics(): {
   };
 } {
   const recentMetrics = metrics.filter(
-    (m) => m.timestamp > Date.now() - 60 * 60 * 1000, // Última hora
+    (m) => m.timestamp > Date.now() - 60 * 60 * 1000 // Última hora
   );
 
   const avgResponseTime =
     recentMetrics.length > 0
-      ? recentMetrics.reduce((sum, m) => sum + m.responseTime, 0) /
-        recentMetrics.length
+      ? recentMetrics.reduce((sum, m) => sum + m.responseTime, 0) / recentMetrics.length
       : 0;
 
   const errorRate = totalRequests > 0 ? totalErrors / totalRequests : 0;
@@ -362,7 +352,7 @@ export function getRouteStats(): Map<string, any> {
 // Função para obter alertas ativos
 export function getActiveAlerts(): PerformanceAlert[] {
   return alerts.filter(
-    (alert) => alert.timestamp > Date.now() - 60 * 60 * 1000, // Última hora
+    (alert) => alert.timestamp > Date.now() - 60 * 60 * 1000 // Última hora
   );
 }
 
@@ -379,32 +369,23 @@ export function getSystemHealth(): {
 } {
   const health = getPerformanceMetrics();
   const checks = {
-    responseTime:
-      health.summary.avgResponseTime <
-      PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD,
+    responseTime: health.summary.avgResponseTime < PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD,
     memoryUsage:
-      health.summary.memoryUsage.heapUsed /
-        health.summary.memoryUsage.heapTotal <
+      health.summary.memoryUsage.heapUsed / health.summary.memoryUsage.heapTotal <
       PERFORMANCE_CONFIG.MEMORY_USAGE_THRESHOLD,
-    errorRate:
-      health.summary.errorRate < PERFORMANCE_CONFIG.ERROR_RATE_THRESHOLD,
+    errorRate: health.summary.errorRate < PERFORMANCE_CONFIG.ERROR_RATE_THRESHOLD,
     cpuUsage: true, // Implementar verificação de CPU
   };
 
   const failedChecks = Object.values(checks).filter((check) => !check).length;
-  const status =
-    failedChecks === 0 ? "healthy" : failedChecks <= 2 ? "warning" : "critical";
+  const status = failedChecks === 0 ? "healthy" : failedChecks <= 2 ? "warning" : "critical";
 
   const recommendations = [];
   if (!checks.responseTime) {
-    recommendations.push(
-      "Consider implementing caching or database optimization",
-    );
+    recommendations.push("Consider implementing caching or database optimization");
   }
   if (!checks.memoryUsage) {
-    recommendations.push(
-      "Consider increasing memory or optimizing memory usage",
-    );
+    recommendations.push("Consider increasing memory or optimizing memory usage");
   }
   if (!checks.errorRate) {
     recommendations.push("Investigate and fix error sources");
@@ -414,8 +395,8 @@ export function getSystemHealth(): {
 }
 
 // Limpeza automática de métricas (desabilitar em ambiente de teste para evitar handles abertos)
-if (process.env.NODE_ENV !== 'test') {
-	setInterval(cleanupOldMetrics, 60 * 1000); // A cada minuto
+if (process.env.NODE_ENV !== "test") {
+  setInterval(cleanupOldMetrics, 60 * 1000); // A cada minuto
 }
 
 export default performanceMiddleware;

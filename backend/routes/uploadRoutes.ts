@@ -16,18 +16,12 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     const filetypes = /jpe?g|png|webp/i;
     const mimetype = filetypes.test((file as Express.Multer.File).mimetype);
-    const extname = filetypes.test(
-      path.extname((file as Express.Multer.File).originalname),
-    );
+    const extname = filetypes.test(path.extname((file as Express.Multer.File).originalname));
 
     if (mimetype && extname) {
       return cb(null, true);
     }
-    cb(
-      new Error(
-        `Error: Apenas são permitidos arquivos de imagem (jpeg, png, webp)!`,
-      ),
-    );
+    cb(new Error(`Error: Apenas são permitidos arquivos de imagem (jpeg, png, webp)!`));
   },
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB file size limit
 });
@@ -81,7 +75,7 @@ router.post(
       console.error("Image upload error:", error);
       res.status(500).json({ message: "Erro ao processar as imagens" });
     }
-  },
+  }
 );
 
 export default router;

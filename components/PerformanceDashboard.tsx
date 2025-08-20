@@ -400,7 +400,13 @@ const PerformanceDashboard: React.FC = () => {
               <XAxis dataKey="time" />
               <YAxis />
               <Tooltip />
-              <Line type="monotone" dataKey="responseTime" stroke={colors.primary} strokeWidth={2} dot={false} />
+              <Line
+                type="monotone"
+                dataKey="responseTime"
+                stroke={colors.primary}
+                strokeWidth={2}
+                dot={false}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -413,8 +419,22 @@ const PerformanceDashboard: React.FC = () => {
               <XAxis dataKey="time" />
               <YAxis />
               <Tooltip />
-              <Area type="monotone" dataKey="heapUsed" stackId="1" stroke={colors.warning} fill={colors.warning} fillOpacity={0.6} />
-              <Area type="monotone" dataKey="heapTotal" stackId="1" stroke={colors.danger} fill={colors.danger} fillOpacity={0.6} />
+              <Area
+                type="monotone"
+                dataKey="heapUsed"
+                stackId="1"
+                stroke={colors.warning}
+                fill={colors.warning}
+                fillOpacity={0.6}
+              />
+              <Area
+                type="monotone"
+                dataKey="heapTotal"
+                stackId="1"
+                stroke={colors.danger}
+                fill={colors.danger}
+                fillOpacity={0.6}
+              />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -467,11 +487,16 @@ const PerformanceDashboard: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Alerts</h3>
             <div className="space-y-3">
               {(summary?.alerts || []).slice(0, 5).map((alert) => (
-                <div key={`${alert.message}-${alert.timestamp}`} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                <div
+                  key={`${alert.message}-${alert.timestamp}`}
+                  className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg"
+                >
                   <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5" />
                   <div>
                     <p className="text-sm font-medium text-gray-900">{alert.message}</p>
-                    <p className="text-xs text-gray-500">{new Date(alert.timestamp).toLocaleString()}</p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(alert.timestamp).toLocaleString()}
+                    </p>
                   </div>
                 </div>
               ))}

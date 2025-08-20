@@ -19,12 +19,8 @@ const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage.tsx"));
 const TermsOfServicePage = lazy(() => import("./pages/TermsOfServicePage.tsx"));
 const AdminLoginPage = lazy(() => import("./pages/AdminLoginPage.tsx"));
 const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage.tsx"));
-const AdminVehicleListPage = lazy(
-  () => import("./pages/AdminVehicleListPage.tsx"),
-);
-const AdminVehicleFormPage = lazy(
-  () => import("./pages/AdminVehicleFormPage.tsx"),
-);
+const AdminVehicleListPage = lazy(() => import("./pages/AdminVehicleListPage.tsx"));
+const AdminVehicleFormPage = lazy(() => import("./pages/AdminVehicleFormPage.tsx"));
 const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage.tsx"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage.tsx"));
 const MainLayout = lazy(() => import("./components/MainLayout.tsx"));
@@ -52,49 +48,25 @@ const App: React.FC = () => {
                     <Route path="/" element={<MainLayout />}>
                       <Route index element={<HomePage />} />
                       <Route path="inventory" element={<InventoryPage />} />
-                      <Route
-                        path="vehicle/:id"
-                        element={<VehicleDetailPage />}
-                      />
+                      <Route path="vehicle/:id" element={<VehicleDetailPage />} />
                       <Route path="financing" element={<FinancingPage />} />
                       <Route path="consortium" element={<ConsortiumPage />} />
                       <Route path="about" element={<AboutPage />} />
                       <Route path="contact" element={<ContactPage />} />
-                      <Route
-                        path="privacy-policy"
-                        element={<PrivacyPolicyPage />}
-                      />
-                      <Route
-                        path="terms-of-service"
-                        element={<TermsOfServicePage />}
-                      />
+                      <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+                      <Route path="terms-of-service" element={<TermsOfServicePage />} />
                     </Route>
 
                     {/* Admin routes */}
                     <Route path="/admin/login" element={<AdminLoginPage />} />
-                    <Route
-                      path="/admin/forgot-password"
-                      element={<ForgotPasswordPage />}
-                    />
-                    <Route
-                      path="/admin/reset-password/:token"
-                      element={<ResetPasswordPage />}
-                    />
+                    <Route path="/admin/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/admin/reset-password/:token" element={<ResetPasswordPage />} />
                     <Route element={<PrivateRoute />}>
                       <Route path="/admin" element={<AdminLayout />}>
                         <Route index element={<AdminDashboardPage />} />
-                        <Route
-                          path="vehicles"
-                          element={<AdminVehicleListPage />}
-                        />
-                        <Route
-                          path="vehicles/new"
-                          element={<AdminVehicleFormPage />}
-                        />
-                        <Route
-                          path="vehicles/edit/:id"
-                          element={<AdminVehicleFormPage />}
-                        />
+                        <Route path="vehicles" element={<AdminVehicleListPage />} />
+                        <Route path="vehicles/new" element={<AdminVehicleFormPage />} />
+                        <Route path="vehicles/edit/:id" element={<AdminVehicleFormPage />} />
                       </Route>
                     </Route>
                   </Routes>

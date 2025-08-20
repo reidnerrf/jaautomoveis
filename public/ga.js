@@ -1,8 +1,8 @@
+/* global dataLayer */
 window.dataLayer = window.dataLayer || [];
-function gtag(){
+function gtag() {
   // eslint-disable-next-line prefer-rest-params
   dataLayer.push(arguments);
 }
-gtag('js', new Date());
-gtag('config', 'G-P8BNCWX706');
-
+gtag("js", new Date());
+gtag("config", "G-P8BNCWX706");

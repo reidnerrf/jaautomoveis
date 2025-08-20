@@ -15,7 +15,7 @@ const ViewLogSchema: Schema = new Schema(
   },
   {
     timestamps: { createdAt: true, updatedAt: false }, // We only care about when the view was created
-  },
+  }
 );
 
 // Create indexes for better query performance

@@ -73,10 +73,7 @@ const envAllowed = (process.env.ALLOWED_ORIGINS || "")
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
-const allowedOrigins = new Set([
-  ...defaultAllowedOrigins,
-  ...envAllowed,
-]);
+const allowedOrigins = new Set([...defaultAllowedOrigins, ...envAllowed]);
 
 const isOriginAllowed = (origin?: string | null) => {
   if (!origin) return true; // same-origin or non-CORS requests
@@ -95,7 +92,7 @@ const isOriginAllowed = (origin?: string | null) => {
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
-    return callback(null, isOriginAllowed(origin));
+      return callback(null, isOriginAllowed(origin));
     },
     methods: ["GET", "POST"],
   },
@@ -115,10 +112,7 @@ const scriptSrcDirectives = [
 if (!isProduction) {
   scriptSrcDirectives.push("data:");
 }
-scriptSrcDirectives.push(
-  "https://www.googletagmanager.com",
-  "https://www.google-analytics.com",
-);
+scriptSrcDirectives.push("https://www.googletagmanager.com", "https://www.google-analytics.com");
 
 const uploadsDirBuild = path.join(__dirname, "uploads");
 const uploadsDirRoot = path.join(process.cwd(), "uploads");
@@ -180,7 +174,7 @@ app.use(
       },
     },
     crossOriginEmbedderPolicy: false,
-  }),
+  })
 );
 
 app.get("/socket.io/health", (req: Request, res: Response) => {
@@ -208,7 +202,7 @@ app.use(
       }
       return compression.filter(req, res);
     },
-  }),
+  })
 );
 
 app.use("/api", limiter);
@@ -220,7 +214,7 @@ app.use(
     },
     credentials: true,
     optionsSuccessStatus: 204,
-  }),
+  })
 );
 
 app.use(express.json({ limit: "10mb" }));
@@ -296,13 +290,13 @@ app.use(
   "/public",
   express.static(path.join(__dirname, "public"), {
     maxAge: isProduction ? "1h" : 0,
-  }),
+  })
 );
 app.use(
   "/public",
   express.static(path.join(process.cwd(), "public"), {
     maxAge: isProduction ? "1h" : 0,
-  }),
+  })
 );
 
 const clientDistPath = path.join(process.cwd(), "dist");
@@ -400,7 +394,7 @@ app.use(
     maxAge: isProduction ? "1d" : 0,
     etag: true,
     lastModified: true,
-  }),
+  })
 );
 
 app.use(
@@ -409,7 +403,7 @@ app.use(
     maxAge: isProduction ? "1d" : 0,
     etag: true,
     lastModified: true,
-  }),
+  })
 );
 
 app.use(
@@ -419,7 +413,7 @@ app.use(
     etag: true,
     lastModified: true,
     immutable: isProduction,
-  }),
+  })
 );
 app.use(
   "/assets",
@@ -428,7 +422,7 @@ app.use(
     etag: true,
     lastModified: true,
     immutable: isProduction,
-  }),
+  })
 );
 
 app.use(
@@ -438,7 +432,7 @@ app.use(
     etag: true,
     lastModified: true,
     immutable: isProduction,
-  }),
+  })
 );
 
 app.use(
@@ -449,13 +443,11 @@ app.use(
     setHeaders: (res, p) => {
       if (p.endsWith(".html")) {
         res.setHeader("Cache-Control", "no-cache");
-      } else if (
-        p.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$/)
-      ) {
+      } else if (p.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$/)) {
         res.setHeader("Cache-Control", "public, max-age=31536000");
       }
     },
-  }),
+  })
 );
 
 if (isProduction) {
@@ -610,7 +602,7 @@ io.on("connection", (socket) => {
 });
 
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-  const statusCode = (res.statusCode && res.statusCode !== 200) ? res.statusCode : 500;
+  const statusCode = res.statusCode && res.statusCode !== 200 ? res.statusCode : 500;
   console.error("Unhandled error:", err.message);
   if (!isProduction) {
     console.error(err.stack);
@@ -622,30 +614,37 @@ if (process.env.NODE_ENV !== "test") {
   const startServer = () =>
     server.listen(PORT, "0.0.0.0", () => {
       console.log(
-        `Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`,
+        `Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`
       );
       // Monthly purges at 03:00 on day 1 (GMT-3)
       try {
-        cron.schedule("0 3 1 * *", async () => {
-          try {
-            const cutoff = new Date();
-            cutoff.setMonth(cutoff.getMonth() - 3);
-            const a = await Analytics.deleteMany({ timestamp: { $lt: cutoff } });
-            const v = await ViewLog.deleteMany({ createdAt: { $lt: cutoff } });
-            console.log(
-              `[CRON] Purged analytics older than ${cutoff.toISOString()}: analytics=${a?.deletedCount || 0}, viewlogs=${v?.deletedCount || 0}`,
-            );
-          } catch (err) {
-            console.error("[CRON] Failed to purge analytics:", err);
-          }
-        }, { timezone: "Etc/GMT+3" });
+        cron.schedule(
+          "0 3 1 * *",
+          async () => {
+            try {
+              const cutoff = new Date();
+              cutoff.setMonth(cutoff.getMonth() - 3);
+              const a = await Analytics.deleteMany({ timestamp: { $lt: cutoff } });
+              const v = await ViewLog.deleteMany({ createdAt: { $lt: cutoff } });
+              console.log(
+                `[CRON] Purged analytics older than ${cutoff.toISOString()}: analytics=${a?.deletedCount || 0}, viewlogs=${v?.deletedCount || 0}`
+              );
+            } catch (err) {
+              console.error("[CRON] Failed to purge analytics:", err);
+            }
+          },
+          { timezone: "Etc/GMT+3" }
+        );
       } catch (err) {
         console.error("Failed to schedule cron job:", err);
       }
     });
 
   if (process.env.SKIP_DB === "true") {
-    if (process.env.NODE_ENV === "production" && (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim() === "")) {
+    if (
+      process.env.NODE_ENV === "production" &&
+      (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim() === "")
+    ) {
       console.error("JWT_SECRET must be set in production");
       process.exit(1);
     }
@@ -661,4 +660,3 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 export { app, server };
-

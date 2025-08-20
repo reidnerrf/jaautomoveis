@@ -28,25 +28,19 @@ class DatabaseSharding {
     const shardConfigs: ShardConfig[] = [
       {
         name: "shard-1",
-        url:
-          process.env.MONGODB_SHARD_1 ||
-          "mongodb://localhost:27017/ja_automoveis_shard1",
+        url: process.env.MONGODB_SHARD_1 || "mongodb://localhost:27017/ja_automoveis_shard1",
         weight: 1,
         isReadOnly: false,
       },
       {
         name: "shard-2",
-        url:
-          process.env.MONGODB_SHARD_2 ||
-          "mongodb://localhost:27018/ja_automoveis_shard2",
+        url: process.env.MONGODB_SHARD_2 || "mongodb://localhost:27018/ja_automoveis_shard2",
         weight: 1,
         isReadOnly: false,
       },
       {
         name: "shard-3",
-        url:
-          process.env.MONGODB_SHARD_3 ||
-          "mongodb://localhost:27019/ja_automoveis_shard3",
+        url: process.env.MONGODB_SHARD_3 || "mongodb://localhost:27019/ja_automoveis_shard3",
         weight: 1,
         isReadOnly: false,
       },
@@ -73,14 +67,10 @@ class DatabaseSharding {
   private async initializeReplicas() {
     const replicaConfigs: ReplicaConfig[] = [
       {
-        primary:
-          process.env.MONGODB_PRIMARY ||
-          "mongodb://localhost:27017/ja_automoveis",
+        primary: process.env.MONGODB_PRIMARY || "mongodb://localhost:27017/ja_automoveis",
         secondaries: [
-          process.env.MONGODB_SECONDARY_1 ||
-            "mongodb://localhost:27020/ja_automoveis",
-          process.env.MONGODB_SECONDARY_2 ||
-            "mongodb://localhost:27021/ja_automoveis",
+          process.env.MONGODB_SECONDARY_1 || "mongodb://localhost:27020/ja_automoveis",
+          process.env.MONGODB_SECONDARY_2 || "mongodb://localhost:27021/ja_automoveis",
         ],
         readPreference: "nearest",
       },
@@ -117,10 +107,7 @@ class DatabaseSharding {
     const shardNames = Array.from(this.shards.keys());
     if (shardNames.length === 0) return null;
 
-    const totalWeight = this.shardWeights.reduce(
-      (sum, weight) => sum + weight,
-      0,
-    );
+    const totalWeight = this.shardWeights.reduce((sum, weight) => sum + weight, 0);
     let random = Math.random() * totalWeight;
 
     for (let i = 0; i < shardNames.length; i++) {
@@ -136,7 +123,7 @@ class DatabaseSharding {
   // Get shard based on strategy
   public getShard(
     strategy: "hash" | "roundRobin" | "weight",
-    key?: string,
+    key?: string
   ): mongoose.Connection | null {
     switch (strategy) {
       case "hash":
@@ -152,20 +139,17 @@ class DatabaseSharding {
 
   // Get replica connection
   public async getReplicaConnection(
-    replicaName: string = "main",
+    replicaName: string = "main"
   ): Promise<mongoose.Connection | null> {
     const replicaConfig = this.replicas.get(replicaName);
     if (!replicaConfig) return null;
 
     try {
-      const connection = await mongoose.createConnection(
-        replicaConfig.primary,
-        {
-          maxPoolSize: 10,
-          readPreference: replicaConfig.readPreference,
-          replicaSet: "rs0",
-        },
-      );
+      const connection = await mongoose.createConnection(replicaConfig.primary, {
+        maxPoolSize: 10,
+        readPreference: replicaConfig.readPreference,
+        replicaSet: "rs0",
+      });
 
       return connection;
     } catch (error) {
@@ -177,12 +161,9 @@ class DatabaseSharding {
   // Shard-specific operations
   public async createVehicle(
     vehicleData: any,
-    shardStrategy: "hash" | "roundRobin" | "weight" = "hash",
+    shardStrategy: "hash" | "roundRobin" | "weight" = "hash"
   ): Promise<any> {
-    const shard = this.getShard(
-      shardStrategy,
-      vehicleData.id || vehicleData._id,
-    );
+    const shard = this.getShard(shardStrategy, vehicleData.id || vehicleData._id);
     if (!shard) {
       throw new Error("No available shard");
     }
@@ -194,7 +175,7 @@ class DatabaseSharding {
 
   public async findVehicle(
     vehicleId: string,
-    shardStrategy: "hash" | "roundRobin" | "weight" = "hash",
+    shardStrategy: "hash" | "roundRobin" | "weight" = "hash"
   ): Promise<any> {
     const shard = this.getShard(shardStrategy, vehicleId);
     if (!shard) {
@@ -206,10 +187,7 @@ class DatabaseSharding {
   }
 
   // Cross-shard operations
-  public async findVehiclesAcrossShards(
-    query: any,
-    limit: number = 100,
-  ): Promise<any[]> {
+  public async findVehiclesAcrossShards(query: any, limit: number = 100): Promise<any[]> {
     const results: any[] = [];
     const promises: Promise<any[]>[] = [];
 
@@ -228,8 +206,7 @@ class DatabaseSharding {
 
     // Sort by creation date (newest first)
     return results.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }
 
@@ -269,10 +246,7 @@ class DatabaseSharding {
     return backupPath;
   }
 
-  public async restoreShard(
-    shardName: string,
-    backupPath: string,
-  ): Promise<void> {
+  public async restoreShard(shardName: string, backupPath: string): Promise<void> {
     const shard = this.shards.get(shardName);
     if (!shard) {
       throw new Error(`Shard ${shardName} not found`);
@@ -368,11 +342,11 @@ class DatabaseSharding {
   }
 
   private calculateOptimalDistribution(
-    currentDistribution: Map<string, number>,
+    currentDistribution: Map<string, number>
   ): Map<string, number> {
     const totalDocuments = Array.from(currentDistribution.values()).reduce(
       (sum, count) => sum + count,
-      0,
+      0
     );
     const shardCount = currentDistribution.size;
     const optimalPerShard = Math.ceil(totalDocuments / shardCount);
@@ -387,7 +361,7 @@ class DatabaseSharding {
 
   private async executeRebalancing(
     _currentDistribution: Map<string, number>,
-    _optimalDistribution: Map<string, number>,
+    _optimalDistribution: Map<string, number>
   ): Promise<void> {
     // Implement actual rebalancing logic
     // This would involve moving documents between shards

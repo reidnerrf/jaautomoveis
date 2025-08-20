@@ -53,8 +53,8 @@ const Header: React.FC = () => {
        isActive
          ? "text-main-red font-semibold"
          : isTransparent
-         ? "text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
-         : "text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red"
+           ? "text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
+           : "text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red"
      }`;
 
   return (
@@ -65,10 +65,7 @@ const Header: React.FC = () => {
           : "bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg shadow-lg"
       }`}
     >
-      <nav
-        className="container mx-auto px-4 sm:px-6 lg:px-8"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <nav className="container mx-auto px-4 sm:px-6 lg:px-8" onClick={(e) => e.stopPropagation()}>
         <div
           className={`flex items-center justify-between ${
             isScrolled ? "h-16" : "h-20"
@@ -87,9 +84,7 @@ const Header: React.FC = () => {
 
           {/* Menu Desktop */}
           <div
-            className={`hidden lg:flex items-center space-x-8 ${
-              isTransparent ? "text-white" : ""
-            }`}
+            className={`hidden lg:flex items-center space-x-8 ${isTransparent ? "text-white" : ""}`}
           >
             {navLinks.map((link) => (
               <NavLink
@@ -131,7 +126,7 @@ const Header: React.FC = () => {
 
       {/* Menu Mobile */}
       <AnimatePresence>
-        {isOpen && (
+        {isOpen ? (
           <motion.div
             initial={{ opacity: 0, y: -15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -161,7 +156,7 @@ const Header: React.FC = () => {
               ))}
             </div>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
     </motion.header>
   );

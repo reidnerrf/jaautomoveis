@@ -7,9 +7,7 @@ interface GoogleReviewsCarouselProps {
   reviews: GoogleReview[];
 }
 
-const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({
-  reviews,
-}) => {
+const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextReview = useCallback(() => {
@@ -29,9 +27,7 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({
     <div className="w-full max-w-3xl mx-auto text-center">
       <AnimatePresence mode="wait">
         <motion.div
-          key={
-            currentReview.id || `${currentReview.reviewerName}-${currentIndex}`
-          }
+          key={currentReview.id || `${currentReview.reviewerName}-${currentIndex}`}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
@@ -79,12 +75,8 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({
 
           {/* Nome e tempo */}
           <div>
-            <h4 className="font-semibold text-gray-900 text-xl">
-              {currentReview.reviewerName}
-            </h4>
-            <p className="text-sm text-gray-500 mt-1">
-              {currentReview.timeAgo}
-            </p>
+            <h4 className="font-semibold text-gray-900 text-xl">{currentReview.reviewerName}</h4>
+            <p className="text-sm text-gray-500 mt-1">{currentReview.timeAgo}</p>
           </div>
         </motion.div>
       </AnimatePresence>
@@ -96,9 +88,7 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({
             key={`indicator-${review.id || review.reviewerName}`}
             onClick={() => setCurrentIndex(index)}
             className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-              currentIndex === index
-                ? "bg-red-500 scale-110"
-                : "bg-gray-300 hover:bg-gray-400"
+              currentIndex === index ? "bg-red-500 scale-110" : "bg-gray-300 hover:bg-gray-400"
             }`}
             aria-label={`Ir para avaliação ${index + 1}`}
             whileHover={{ scale: 1.2 }}

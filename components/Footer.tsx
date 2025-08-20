@@ -52,8 +52,7 @@ const Footer: React.FC = () => {
               />
             </Link>
             <p className="text-gray-400 leading-relaxed text-sm">
-              Seu próximo carro está aqui. Qualidade e confiança em cada
-              negociação.
+              Seu próximo carro está aqui. Qualidade e confiança em cada negociação.
             </p>
           </div>
 
@@ -67,9 +66,7 @@ const Footer: React.FC = () => {
                     <Disclosure.Button className="flex justify-between items-center w-full text-left font-semibold text-lg py-2 border-b border-gray-800">
                       Links Rápidos
                       <ChevronDownIcon
-                        className={`w-5 h-5 transition-transform ${
-                          open ? "rotate-180" : ""
-                        }`}
+                        className={`w-5 h-5 transition-transform ${open ? "rotate-180" : ""}`}
                       />
                     </Disclosure.Button>
                     <Disclosure.Panel className="mt-2 space-y-2">
@@ -117,15 +114,12 @@ const Footer: React.FC = () => {
                     <Disclosure.Button className="flex justify-between items-center w-full text-left font-semibold text-lg py-2 border-b border-gray-800">
                       Contato
                       <ChevronDownIcon
-                        className={`w-5 h-5 transition-transform ${
-                          open ? "rotate-180" : ""
-                        }`}
+                        className={`w-5 h-5 transition-transform ${open ? "rotate-180" : ""}`}
                       />
                     </Disclosure.Button>
                     <Disclosure.Panel className="mt-2 space-y-2 text-gray-400 text-sm">
                       <p className="flex items-center gap-2">
-                        <FaMapMarkerAlt /> Av. Brasília, n°35 - Vila Julieta,
-                        Resende - RJ
+                        <FaMapMarkerAlt /> Av. Brasília, n°35 - Vila Julieta, Resende - RJ
                       </p>
                       <p className="flex items-center gap-2">
                         <FaEnvelope /> contato@jaautomoveis.com
@@ -144,8 +138,7 @@ const Footer: React.FC = () => {
               <h4 className="font-semibold text-lg mb-4">Contato</h4>
               <div className="space-y-2 text-gray-400 text-sm">
                 <p className="flex items-center gap-2">
-                  <FaMapMarkerAlt /> Av. Brasília, n°35 - Vila Julieta, Resende
-                  - RJ
+                  <FaMapMarkerAlt /> Av. Brasília, n°35 - Vila Julieta, Resende - RJ
                 </p>
                 <p className="flex items-center gap-2">
                   <FaEnvelope /> contato@jaautomoveis.com
@@ -167,9 +160,7 @@ const Footer: React.FC = () => {
                     <Disclosure.Button className="flex justify-between items-center w-full text-left font-semibold text-lg py-2 border-b border-gray-800">
                       Siga-nos
                       <ChevronDownIcon
-                        className={`w-5 h-5 transition-transform ${
-                          open ? "rotate-180" : ""
-                        }`}
+                        className={`w-5 h-5 transition-transform ${open ? "rotate-180" : ""}`}
                       />
                     </Disclosure.Button>
                     <Disclosure.Panel className="mt-3">
@@ -214,29 +205,17 @@ const Footer: React.FC = () => {
 
         {/* Linha de direitos */}
         <div className="mt-10 pt-6 border-t border-gray-800 text-center text-gray-500 text-xs">
-          <p>
-            &copy; {new Date().getFullYear()} JA Automóveis. Todos os direitos
-            reservados.
-          </p>
+          <p>&copy; {new Date().getFullYear()} JA Automóveis. Todos os direitos reservados.</p>
           <div className="mt-2 flex justify-center gap-3 text-gray-500">
-            <Link
-              to="/admin/login"
-              className="hover:text-white transition-colors"
-            >
+            <Link to="/admin/login" className="hover:text-white transition-colors">
               Admin
             </Link>
             <span>•</span>
-            <Link
-              to="/privacy-policy"
-              className="hover:text-white transition-colors"
-            >
+            <Link to="/privacy-policy" className="hover:text-white transition-colors">
               Política de Privacidade
             </Link>
             <span>•</span>
-            <Link
-              to="/terms-of-service"
-              className="hover:text-white transition-colors"
-            >
+            <Link to="/terms-of-service" className="hover:text-white transition-colors">
               Termos de Serviço
             </Link>
           </div>

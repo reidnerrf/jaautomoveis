@@ -17,11 +17,7 @@ export const useImageOptimization = () => {
     checkWebPSupport();
   }, []);
 
-  const getOptimizedImageUrl = (
-    src: string,
-    width?: number,
-    height?: number,
-  ): string => {
+  const getOptimizedImageUrl = (src: string, width?: number, height?: number): string => {
     if (!src) return src;
 
     // Do not append params for remote avatars (e.g., Google) or data URLs
@@ -34,7 +30,7 @@ export const useImageOptimization = () => {
     if (width && height) {
       // Backend expects short param keys: w, h, f
       const separator = baseSrc.includes("?") ? "&" : "?";
-      return `${baseSrc}${separator}w=${width}&h=${height}&f=${isWebPSupported ? 'webp' : 'jpg'}`;
+      return `${baseSrc}${separator}w=${width}&h=${height}&f=${isWebPSupported ? "webp" : "jpg"}`;
     }
 
     return baseSrc;
@@ -74,10 +70,7 @@ export const preloadImage = (src: string): Promise<void> => {
 };
 
 // Lazy loading observer
-export const useLazyLoad = (
-  ref: React.RefObject<HTMLImageElement>,
-  src: string,
-) => {
+export const useLazyLoad = (ref: React.RefObject<HTMLImageElement>, src: string) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
 
@@ -91,7 +84,7 @@ export const useLazyLoad = (
           observer.disconnect();
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0.1 }
     );
 
     observer.observe(ref.current);

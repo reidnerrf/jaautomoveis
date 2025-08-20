@@ -55,12 +55,7 @@ class AnalyticsService {
   }
 
   // Track user interactions (filtered server-side)
-  trackUserAction(
-    action: string,
-    category: string,
-    label?: string,
-    page?: string,
-  ) {
+  trackUserAction(action: string, category: string, label?: string, page?: string) {
     const payload: AnalyticsEventPayload = {
       event: "user_action",
       category,
@@ -82,7 +77,7 @@ class AnalyticsService {
       | "instagram_click"
       | "like_vehicle",
     data: any,
-    page?: string,
+    page?: string
   ) {
     const payload: AnalyticsEventPayload = {
       event: eventType,
@@ -127,7 +122,7 @@ export const useAnalytics = (componentName: string) => {
       analytics.trackUserAction(
         "component_render",
         "performance",
-        `${componentName}:${renderTime}ms`,
+        `${componentName}:${renderTime}ms`
       );
     };
   }, [componentName]);

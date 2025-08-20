@@ -48,8 +48,7 @@ class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
-      const showDevError =
-        process.env.NODE_ENV === "development" && this.state.error;
+      const showDevError = process.env.NODE_ENV === "development" && this.state.error;
 
       return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
@@ -75,12 +74,10 @@ class ErrorBoundary extends Component<Props, State> {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                Oops! Algo deu errado
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">Oops! Algo deu errado</h2>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Ocorreu um erro inesperado. Nossa equipe foi notificada e está
-                trabalhando para resolver o problema.
+                Ocorreu um erro inesperado. Nossa equipe foi notificada e está trabalhando para
+                resolver o problema.
               </p>
             </motion.div>
 
@@ -92,9 +89,7 @@ class ErrorBoundary extends Component<Props, State> {
                 transition={{ delay: 0.4 }}
                 className="mb-6 p-4 bg-red-50 rounded-lg text-left"
               >
-                <h4 className="font-semibold text-red-800 mb-2">
-                  Detalhes do Erro:
-                </h4>
+                <h4 className="font-semibold text-red-800 mb-2">Detalhes do Erro:</h4>
                 <p className="text-sm text-red-600 font-mono break-all">
                   {this.state.error.message}
                 </p>

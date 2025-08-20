@@ -24,11 +24,7 @@ class Logger {
     this.level = this.isDevelopment ? LogLevel.DEBUG : LogLevel.INFO;
   }
 
-  private formatMessage(
-    level: string,
-    message: string,
-    context?: LogContext,
-  ): string {
+  private formatMessage(level: string, message: string, context?: LogContext): string {
     const timestamp = new Date().toISOString();
     const contextStr = context ? ` | ${JSON.stringify(context)}` : "";
     return `[${timestamp}] ${level}: ${message}${contextStr}`;
@@ -42,11 +38,7 @@ class Logger {
     if (!this.shouldLog(LogLevel.ERROR)) return;
 
     const errorDetails = error ? ` | ${error.message} | ${error.stack}` : "";
-    const logMessage = this.formatMessage(
-      "ERROR",
-      message + errorDetails,
-      context,
-    );
+    const logMessage = this.formatMessage("ERROR", message + errorDetails, context);
 
     if (this.isDevelopment) {
       console.error(logMessage);
@@ -114,12 +106,7 @@ class Logger {
   }
 
   // Database logging
-  dbQuery(
-    operation: string,
-    collection: string,
-    duration: number,
-    context?: LogContext,
-  ): void {
+  dbQuery(operation: string, collection: string, duration: number, context?: LogContext): void {
     this.debug(`DB ${operation} on ${collection} took ${duration}ms`, {
       ...context,
       operation,
@@ -134,7 +121,7 @@ class Logger {
     url: string,
     statusCode: number,
     duration: number,
-    context?: LogContext,
+    context?: LogContext
   ): void {
     const level = statusCode >= 400 ? LogLevel.WARN : LogLevel.INFO;
     const message = `${method} ${url} - ${statusCode} (${duration}ms)`;
@@ -147,11 +134,7 @@ class Logger {
   }
 
   // Security logging
-  security(
-    event: string,
-    details: Record<string, unknown>,
-    context?: LogContext,
-  ): void {
+  security(event: string, details: Record<string, unknown>, context?: LogContext): void {
     this.warn(`Security event: ${event}`, {
       ...context,
       securityEvent: event,
@@ -164,7 +147,7 @@ class Logger {
     userId: string,
     action: string,
     details?: Record<string, unknown>,
-    context?: LogContext,
+    context?: LogContext
   ): void {
     this.info(`User activity: ${action}`, {
       ...context,
@@ -179,38 +162,27 @@ class Logger {
 export const logger = new Logger();
 
 // Convenience functions
-export const logError = (
-  message: string,
-  error?: Error,
-  context?: LogContext,
-) => logger.error(message, error, context);
+export const logError = (message: string, error?: Error, context?: LogContext) =>
+  logger.error(message, error, context);
 
-export const logWarn = (message: string, context?: LogContext) =>
-  logger.warn(message, context);
+export const logWarn = (message: string, context?: LogContext) => logger.warn(message, context);
 
-export const logInfo = (message: string, context?: LogContext) =>
-  logger.info(message, context);
+export const logInfo = (message: string, context?: LogContext) => logger.info(message, context);
 
-export const logDebug = (message: string, context?: LogContext) =>
-  logger.debug(message, context);
+export const logDebug = (message: string, context?: LogContext) => logger.debug(message, context);
 
-export const logPerformance = (
-  operation: string,
-  duration: number,
-  context?: LogContext,
-) => logger.performance(operation, duration, context);
+export const logPerformance = (operation: string, duration: number, context?: LogContext) =>
+  logger.performance(operation, duration, context);
 
-export const logCacheHit = (key: string, context?: LogContext) =>
-  logger.cacheHit(key, context);
+export const logCacheHit = (key: string, context?: LogContext) => logger.cacheHit(key, context);
 
-export const logCacheMiss = (key: string, context?: LogContext) =>
-  logger.cacheMiss(key, context);
+export const logCacheMiss = (key: string, context?: LogContext) => logger.cacheMiss(key, context);
 
 export const logDbQuery = (
   operation: string,
   collection: string,
   duration: number,
-  context?: LogContext,
+  context?: LogContext
 ) => logger.dbQuery(operation, collection, duration, context);
 
 export const logApiRequest = (
@@ -218,18 +190,18 @@ export const logApiRequest = (
   url: string,
   statusCode: number,
   duration: number,
-  context?: LogContext,
+  context?: LogContext
 ) => logger.apiRequest(method, url, statusCode, duration, context);
 
 export const logSecurity = (
   event: string,
   details: Record<string, unknown>,
-  context?: LogContext,
+  context?: LogContext
 ) => logger.security(event, details, context);
 
 export const logUserActivity = (
   userId: string,
   action: string,
   details?: Record<string, unknown>,
-  context?: LogContext,
+  context?: LogContext
 ) => logger.userActivity(userId, action, details, context);

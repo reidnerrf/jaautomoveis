@@ -20,12 +20,7 @@ const SEED_VEHICLES: Omit<VehicleType, "id">[] = [
     fuel: "Flex",
     doors: 4,
     additionalInfo: "Veículo impecável, único dono, revisões em dia.",
-    optionals: [
-      "Ar Condicionado",
-      "Direção Hidráulica",
-      "Vidros Elétricos",
-      "Sistema Multimídia",
-    ],
+    optionals: ["Ar Condicionado", "Direção Hidráulica", "Vidros Elétricos", "Sistema Multimídia"],
     images: [
       "https://picsum.photos/seed/car1/800/600",
       "https://picsum.photos/seed/car1-2/800/600",
@@ -115,12 +110,7 @@ const SEED_VEHICLES: Omit<VehicleType, "id">[] = [
     fuel: "Diesel",
     doors: 4,
     additionalInfo: "Versão 4x4 Diesel, pronto para qualquer aventura.",
-    optionals: [
-      "Tração 4x4",
-      "Controle de Descida",
-      "Rack de Teto",
-      "Sistema Multimídia",
-    ],
+    optionals: ["Tração 4x4", "Controle de Descida", "Rack de Teto", "Sistema Multimídia"],
     images: [
       "https://picsum.photos/seed/car5/800/600",
       "https://picsum.photos/seed/car5-2/800/600",
@@ -139,12 +129,7 @@ const SEED_VEHICLES: Omit<VehicleType, "id">[] = [
     fuel: "Flex",
     doors: 4,
     additionalInfo: "Como novo, baixa quilometragem. Versão Highline.",
-    optionals: [
-      "Painel Digital",
-      "Piloto Automático Adaptativo",
-      "Faróis Full LED",
-      "VW Play",
-    ],
+    optionals: ["Painel Digital", "Piloto Automático Adaptativo", "Faróis Full LED", "VW Play"],
     images: [
       "https://picsum.photos/seed/car6/800/600",
       "https://picsum.photos/seed/car6-2/800/600",
@@ -170,10 +155,7 @@ const importData = async () => {
     // Drop collections to ensure a clean state and remove old indexes
     const collections = await mongoose.connection.db!.collections();
     for (const collection of collections) {
-      if (
-        collection.collectionName === "vehicles" ||
-        collection.collectionName === "users"
-      ) {
+      if (collection.collectionName === "vehicles" || collection.collectionName === "users") {
         await collection.drop();
         console.log(`Dropped ${collection.collectionName} collection.`);
       }
@@ -191,9 +173,7 @@ const importData = async () => {
       role: "admin",
     });
 
-    console.log(
-      "Data Imported! Collections recreated and seeded successfully.",
-    );
+    console.log("Data Imported! Collections recreated and seeded successfully.");
     (process as any).exit();
   } catch (error) {
     console.error(`${error}`);
@@ -205,10 +185,7 @@ const destroyData = async () => {
   try {
     const collections = await mongoose.connection.db!.collections();
     for (const collection of collections) {
-      if (
-        collection.collectionName === "vehicles" ||
-        collection.collectionName === "users"
-      ) {
+      if (collection.collectionName === "vehicles" || collection.collectionName === "users") {
         await collection.drop();
         console.log(`Dropped ${collection.collectionName} collection.`);
       }

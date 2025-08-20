@@ -91,11 +91,10 @@ export const LazyPDF = lazy(() => import("./PDFGenerator"));
 // HOC para lazy loading com retry
 export function withLazyRetry<T extends object>(
   importFunc: () => Promise<{ default: React.ComponentType<T> }>,
-  retries = 3,
+  retries = 3
 ) {
   const WrappedComponent = React.forwardRef<unknown, T>((props, ref) => {
-    const [Component, setComponent] =
-      React.useState<React.ComponentType<T> | null>(null);
+    const [Component, setComponent] = React.useState<React.ComponentType<T> | null>(null);
     const [error, setError] = React.useState<Error | null>(null);
     const [retryCount, setRetryCount] = React.useState(0);
 
@@ -112,7 +111,7 @@ export function withLazyRetry<T extends object>(
               setRetryCount((prev) => prev + 1);
               loadComponent();
             },
-            1000 * Math.pow(2, retryCount),
+            1000 * Math.pow(2, retryCount)
           ); // Exponential backoff
         }
       }
@@ -123,9 +122,7 @@ export function withLazyRetry<T extends object>(
     }, [loadComponent]);
 
     if (error && retryCount >= retries) {
-      return (
-        <div className="text-red-600 p-4">Erro ao carregar componente</div>
-      );
+      return <div className="text-red-600 p-4">Erro ao carregar componente</div>;
     }
 
     if (!Component) {
@@ -142,7 +139,7 @@ export function withLazyRetry<T extends object>(
 // Hook para lazy loading com intersection observer
 export function useLazyLoad<T>(
   importFunc: () => Promise<T>,
-  options: IntersectionObserverInit = {},
+  options: IntersectionObserverInit = {}
 ) {
   const [data, setData] = React.useState<T | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -168,7 +165,7 @@ export function useLazyLoad<T>(
           })();
         }
       },
-      { threshold: 0.1, ...options },
+      { threshold: 0.1, ...options }
     );
 
     if (ref.current) {

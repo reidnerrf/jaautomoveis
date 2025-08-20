@@ -12,8 +12,7 @@ export const prefetchRoute = (path: string) => {
   };
 
   try {
-    const normalized =
-      path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
+    const normalized = path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
     const prefetcher = map[normalized];
     if (prefetcher) {
       prefetcher();

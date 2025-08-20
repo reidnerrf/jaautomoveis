@@ -23,10 +23,7 @@ const AdminLoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // frase aleatória a cada refresh
-  const welcomeMessage = useMemo(
-    () => phrases[Math.floor(Math.random() * phrases.length)],
-    [],
-  );
+  const welcomeMessage = useMemo(() => phrases[Math.floor(Math.random() * phrases.length)], []);
 
   // valores para tilt 3D
   const x = useMotionValue(0);
@@ -85,19 +82,17 @@ const AdminLoginPage: React.FC = () => {
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 text-center mb-2">
           Área Administrativa
         </h1>
-        <p className="text-center text-gray-500 dark:text-gray-400 mb-6 italic">
-          {welcomeMessage}
-        </p>
+        <p className="text-center text-gray-500 dark:text-gray-400 mb-6 italic">{welcomeMessage}</p>
 
         {/* Mensagem de erro */}
-        {error && (
+        {error ? (
           <div
             className="mb-4 rounded-md bg-red-100 dark:bg-red-900/50 
             p-3 text-sm text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800"
           >
             {error}
           </div>
-        )}
+        ) : null}
 
         {/* Formulário */}
         <form onSubmit={handleSubmit} className="space-y-5">

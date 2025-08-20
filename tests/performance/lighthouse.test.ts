@@ -44,10 +44,7 @@ class PerformanceTester {
 
   private baseUrl = process.env.TEST_BASE_URL || "http://localhost:3000";
 
-  async runLighthouseTest(
-    url: string,
-    device: "desktop" | "mobile" = "desktop",
-  ) {
+  async runLighthouseTest(url: string, device: "desktop" | "mobile" = "desktop") {
     const chrome = await chromeLauncher.launch({
       chromeFlags: ["--headless", "--no-sandbox", "--disable-gpu"],
     });
@@ -55,12 +52,7 @@ class PerformanceTester {
     const config: LighthouseConfig = {
       extends: "lighthouse:default",
       settings: {
-        onlyCategories: [
-          "performance",
-          "accessibility",
-          "best-practices",
-          "seo",
-        ],
+        onlyCategories: ["performance", "accessibility", "best-practices", "seo"],
         formFactor: device,
         throttling:
           device === "mobile"
@@ -91,7 +83,7 @@ class PerformanceTester {
           output: "json",
           logLevel: "info",
         },
-        config,
+        config
       );
 
       const report = runnerResult.lhr;
@@ -109,21 +101,14 @@ class PerformanceTester {
         device,
         scores: {
           performance: Math.round(report.categories.performance.score * 100),
-          accessibility: Math.round(
-            report.categories.accessibility.score * 100,
-          ),
-          bestPractices: Math.round(
-            report.categories["best-practices"].score * 100,
-          ),
+          accessibility: Math.round(report.categories.accessibility.score * 100),
+          bestPractices: Math.round(report.categories["best-practices"].score * 100),
           seo: Math.round(report.categories.seo.score * 100),
         },
         metrics: {
-          firstContentfulPaint:
-            report.audits["first-contentful-paint"].numericValue,
-          largestContentfulPaint:
-            report.audits["largest-contentful-paint"].numericValue,
-          cumulativeLayoutShift:
-            report.audits["cumulative-layout-shift"].numericValue,
+          firstContentfulPaint: report.audits["first-contentful-paint"].numericValue,
+          largestContentfulPaint: report.audits["largest-contentful-paint"].numericValue,
+          cumulativeLayoutShift: report.audits["cumulative-layout-shift"].numericValue,
           firstInputDelay: report.audits["max-potential-fid"].numericValue,
         },
         passed: results.every((r) => r.passed),
@@ -139,16 +124,10 @@ class PerformanceTester {
     const results = [];
 
     // Validar scores
-    const categories = [
-      "performance",
-      "accessibility",
-      "best-practices",
-      "seo",
-    ];
+    const categories = ["performance", "accessibility", "best-practices", "seo"];
     categories.forEach((category) => {
       const score = Math.round(report.categories[category].score * 100);
-      const threshold =
-        this.thresholds[category as keyof PerformanceThresholds];
+      const threshold = this.thresholds[category as keyof PerformanceThresholds];
       results.push({
         metric: `${category} score`,
         value: score,
@@ -208,14 +187,7 @@ class PerformanceTester {
   }
 
   async runFullPerformanceTest() {
-    const pages = [
-      "/",
-      "/inventory",
-      "/about",
-      "/contact",
-      "/financing",
-      "/consortium",
-    ];
+    const pages = ["/", "/inventory", "/about", "/contact", "/financing", "/consortium"];
 
     const results = [];
 
@@ -264,9 +236,7 @@ export const runPerformanceTests = async () => {
         allPassed = false;
         console.log("❌ FAILED - Thresholds not met:");
         result.failures.forEach((failure) => {
-          console.log(
-            `  - ${failure.metric}: ${failure.value} (threshold: ${failure.threshold})`,
-          );
+          console.log(`  - ${failure.metric}: ${failure.value} (threshold: ${failure.threshold})`);
         });
       } else {
         console.log("✅ PASSED");
@@ -276,9 +246,7 @@ export const runPerformanceTests = async () => {
     if (allPassed) {
       console.log("\n🎉 All performance tests passed!");
     } else {
-      console.log(
-        "\n⚠️  Some performance tests failed. Check the results above.",
-      );
+      console.log("\n⚠️  Some performance tests failed. Check the results above.");
       process.exit(1);
     }
 

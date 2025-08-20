@@ -67,9 +67,7 @@ const VehicleDetailPage: React.FC = () => {
   useEffect(() => {
     if (vehicle) {
       try {
-        const likedVehicles = JSON.parse(
-          localStorage.getItem("likedVehicles") || "[]",
-        );
+        const likedVehicles = JSON.parse(localStorage.getItem("likedVehicles") || "[]");
         setIsFavorite(likedVehicles.includes(vehicle.id));
       } catch (error) {
         console.warn("Failed to load favorite state:", error);
@@ -136,9 +134,7 @@ const VehicleDetailPage: React.FC = () => {
   };
 
   const prevImage = () => {
-    setCurrentImageIndex(
-      (prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length,
-    );
+    setCurrentImageIndex((prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length);
   };
 
   const details = [
@@ -221,10 +217,12 @@ const VehicleDetailPage: React.FC = () => {
         url={`/vehicle/${vehicle.id}`}
         type="product"
       >
-        <script type="application/ld+json">
-          {JSON.stringify(generateStructuredData())}
-        </script>
-        <link rel="alternate" hrefLang="pt-BR" href={`${typeof window !== 'undefined' ? window.location.href : ''}`} />
+        <script type="application/ld+json">{JSON.stringify(generateStructuredData())}</script>
+        <link
+          rel="alternate"
+          hrefLang="pt-BR"
+          href={`${typeof window !== "undefined" ? window.location.href : ""}`}
+        />
       </SEOHead>
 
       <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -292,18 +290,11 @@ const VehicleDetailPage: React.FC = () => {
                   aria-label="Curtir"
                   title="Curtir"
                 >
-                  <FiHeart
-                    size={18}
-                    className={isFavorite ? "fill-current" : ""}
-                  />
+                  <FiHeart size={18} className={isFavorite ? "fill-current" : ""} />
                 </button>
               </div>
               <div className="mb-4">
-                <RealTimeViewers
-                  page={`/vehicle/${id}`}
-                  vehicleId={id}
-                  variant="inline"
-                />
+                <RealTimeViewers page={`/vehicle/${id}`} vehicleId={id} variant="inline" />
               </div>
               <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
                 {vehicle.name}
@@ -319,9 +310,7 @@ const VehicleDetailPage: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none]">
                   {/* hide scrollbar in webkit */}
-                  <style>
-                    {`.scrollbar-none::-webkit-scrollbar{display:none;}`}
-                  </style>
+                  <style>{`.scrollbar-none::-webkit-scrollbar{display:none;}`}</style>
                   <div className="flex items-center text-gray-700 dark:text-gray-300">
                     <FiAward className="mr-2 text-main-red" /> Revisado
                   </div>
@@ -340,15 +329,10 @@ const VehicleDetailPage: React.FC = () => {
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {details.map((detail) => (
-                    <div
-                      key={detail.label}
-                      className="flex items-center space-x-2"
-                    >
+                    <div key={detail.label} className="flex items-center space-x-2">
                       {detail.icon}
                       <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {detail.label}
-                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{detail.label}</p>
                         <p className="font-semibold text-gray-800 dark:text-gray-200">
                           {detail.value}
                         </p>
@@ -362,7 +346,7 @@ const VehicleDetailPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
                   href={`https://api.whatsapp.com/send?phone=5524999037716&text=${encodeURIComponent(
-                    `Tenho interesse no ${vehicle.name} ${vehicle.year}`,
+                    `Tenho interesse no ${vehicle.name} ${vehicle.year}`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -394,9 +378,7 @@ const VehicleDetailPage: React.FC = () => {
           <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
             {vehicle.optionals?.length > 0 && vehicle.optionals[0] !== "" && (
               <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-                  Opcionais
-                </h2>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Opcionais</h2>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-600 dark:text-gray-300">
                   {vehicle.optionals.map((opt) => (
                     <li key={opt} className="flex items-center">

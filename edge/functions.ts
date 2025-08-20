@@ -41,16 +41,13 @@ const EDGE_CONFIG: EdgeConfig = {
 };
 
 // Cache de edge functions
-const edgeCache = new Map<
-  string,
-  { data: unknown; timestamp: number; ttl: number }
->();
+const edgeCache = new Map<string, { data: unknown; timestamp: number; ttl: number }>();
 
 // Função para otimização de imagens no edge
 export async function edgeImageOptimization(
   req: Request,
   res: Response,
-  options: Partial<EdgeConfig["imageOptimization"]> = {},
+  options: Partial<EdgeConfig["imageOptimization"]> = {}
 ): Promise<void> {
   try {
     const config = { ...EDGE_CONFIG.imageOptimization, ...options };
@@ -137,17 +134,14 @@ export async function edgeImageOptimization(
 export function edgeRateLimiting(
   req: Request,
   res: Response,
-  options: Partial<EdgeConfig["security"]> = {},
+  options: Partial<EdgeConfig["security"]> = {}
 ): boolean {
   const config = { ...EDGE_CONFIG.security, ...options };
   const clientIP = req.ip || req.connection.remoteAddress || "unknown";
   const userAgent = req.get("User-Agent") || "";
 
   // Gerar chave única para o cliente
-  const clientKey = crypto
-    .createHash("md5")
-    .update(`${clientIP}:${userAgent}`)
-    .digest("hex");
+  const clientKey = crypto.createHash("md5").update(`${clientIP}:${userAgent}`).digest("hex");
 
   // Verificar rate limit
   const now = Date.now();
@@ -155,9 +149,7 @@ export function edgeRateLimiting(
   const maxRequests = config.rateLimit;
 
   const clientRequests = getClientRequests(clientKey);
-  const recentRequests = clientRequests.filter(
-    (timestamp) => now - timestamp < windowMs,
-  );
+  const recentRequests = clientRequests.filter((timestamp) => now - timestamp < windowMs);
 
   if (recentRequests.length >= maxRequests) {
     res.status(429).json({ error: "Rate limit exceeded" });
@@ -227,7 +219,7 @@ export function edgeGeolocation(req: Request): {
 export function edgeCacheMiddleware(
   req: Request,
   res: Response,
-  options: Partial<EdgeConfig["cache"]> = {},
+  options: Partial<EdgeConfig["cache"]> = {}
 ): boolean {
   const config = { ...EDGE_CONFIG.cache, ...options };
   const cacheKey = generateCacheKey(req);
@@ -256,10 +248,7 @@ export function edgeABTesting(req: Request): {
   const ip = req.ip || req.connection.remoteAddress || "";
 
   // Gerar ID de usuário consistente
-  const userId = crypto
-    .createHash("md5")
-    .update(`${ip}:${userAgent}`)
-    .digest("hex");
+  const userId = crypto.createHash("md5").update(`${ip}:${userAgent}`).digest("hex");
 
   // Determinar variante baseada no ID do usuário
   const hash = parseInt(userId.substring(0, 8), 16);
@@ -333,10 +322,7 @@ function generateCacheKey(req: Request): string {
   const params = JSON.stringify(req.params);
   const userAgent = req.get("User-Agent") || "";
 
-  return crypto
-    .createHash("md5")
-    .update(`${url}:${query}:${params}:${userAgent}`)
-    .digest("hex");
+  return crypto.createHash("md5").update(`${url}:${query}:${params}:${userAgent}`).digest("hex");
 }
 
 function getClientRequests(_clientKey: string): number[] {
@@ -352,13 +338,7 @@ function checkSuspiciousBehavior(req: Request): boolean {
   const userAgent = req.get("User-Agent") || "";
 
   // Verificar padrões suspeitos
-  const suspiciousPatterns = [
-    /sqlmap/i,
-    /nikto/i,
-    /nmap/i,
-    /masscan/i,
-    /dirb/i,
-  ];
+  const suspiciousPatterns = [/sqlmap/i, /nikto/i, /nmap/i, /masscan/i, /dirb/i];
 
   return suspiciousPatterns.some((pattern) => pattern.test(userAgent));
 }
@@ -368,7 +348,7 @@ export function edgeMiddleware(
   req: Request,
   res: Response,
   next: () => void,
-  options: Partial<EdgeConfig> = {},
+  options: Partial<EdgeConfig> = {}
 ): void {
   const config = { ...EDGE_CONFIG, ...options };
 

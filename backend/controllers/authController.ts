@@ -15,7 +15,10 @@ interface DecodedToken extends JwtPayload {
 }
 
 const generateToken = (id: string) => {
-  if (process.env.NODE_ENV === "production" && (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim() === "")) {
+  if (
+    process.env.NODE_ENV === "production" &&
+    (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim() === "")
+  ) {
     throw new Error("JWT_SECRET must be set in production");
   }
   return jwt.sign({ id }, getJwtSecret(), {
@@ -38,10 +41,7 @@ const getUserIdFromAuthHeader = (req: express.Request): string | null => {
   }
 };
 
-export const loginUser = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const loginUser = async (req: express.Request, res: express.Response) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({ message: "Username and password are required" });
@@ -70,9 +70,7 @@ export const loginUser = async (
         token,
       });
     } else {
-      console.log(
-        `[AUTH] Failure: Password for user "${username}" does not match.`,
-      );
+      console.log(`[AUTH] Failure: Password for user "${username}" does not match.`);
       res.status(401).json({ message: "Invalid Credentials" });
     }
   } catch (error) {
@@ -81,10 +79,7 @@ export const loginUser = async (
   }
 };
 
-export const openSession = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const openSession = async (req: express.Request, res: express.Response) => {
   const userId = getUserIdFromAuthHeader(req);
   if (!userId) return res.status(401).json({ message: "Not authorized" });
 
@@ -93,10 +88,7 @@ export const openSession = async (
   return res.status(200).json({ sessionId: newSessionId });
 };
 
-export const closeSession = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const closeSession = async (req: express.Request, res: express.Response) => {
   const userId = getUserIdFromAuthHeader(req);
   if (!userId) return res.status(401).json({ message: "Not authorized" });
 

@@ -41,7 +41,7 @@ const vehicleSchema = new mongoose.Schema<Omit<IVehicle, "id">>(
         delete ret.__v;
       },
     },
-  },
+  }
 );
 
 // Create indexes for better query performance

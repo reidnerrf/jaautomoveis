@@ -93,7 +93,7 @@ class CacheManager {
 
     // Sort by last accessed time (LRU)
     const sortedEntries = Array.from(this.cache.entries()).sort(
-      ([, a], [, b]) => a.lastAccessed - b.lastAccessed,
+      ([, a], [, b]) => a.lastAccessed - b.lastAccessed
     );
 
     for (const [key] of sortedEntries) {

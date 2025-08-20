@@ -194,7 +194,7 @@ app.use(
     maxAge: isProduction ? "1h" : 0,
     etag: true,
     lastModified: true,
-  }),
+  })
 );
 ```
 

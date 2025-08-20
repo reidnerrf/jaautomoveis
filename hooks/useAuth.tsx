@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-} from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -24,9 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  * @param {Object} children - React component(s) to be rendered.
  * @returns {JSX.Element} React Provider component for authentication context.
  */
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -70,10 +62,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
    * @param {string} password - The password of the user attempting to log in.
    * @returns {Promise<boolean>} A promise that resolves to true if login is successful, otherwise false.
    **/
-  const login = async (
-    username: string,
-    password: string,
-  ): Promise<boolean> => {
+  const login = async (username: string, password: string): Promise<boolean> => {
     setLoading(true);
     try {
       const response = await fetch("/api/auth/login", {
@@ -109,9 +98,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, token, loading, login, logout }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, token, loading, login, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   );

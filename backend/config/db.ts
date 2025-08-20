@@ -10,9 +10,7 @@ const connectDB = async (): Promise<void> => {
       const mongoURI = process.env.MONGO_URI || process.env.MONGODB_URI;
 
       if (!mongoURI) {
-        throw new Error(
-          "MONGO_URI/MONGODB_URI environment variable is not defined",
-        );
+        throw new Error("MONGO_URI/MONGODB_URI environment variable is not defined");
       }
 
       await mongoose.connect(mongoURI, {
@@ -30,10 +28,7 @@ const connectDB = async (): Promise<void> => {
       mongoose.connection.on("disconnected", handleDisconnect);
       mongoose.connection.on("reconnected", handleReconnect);
     } catch (error) {
-      console.error(
-        `Error connecting to MongoDB (attempt ${retryCount + 1}):`,
-        error,
-      );
+      console.error(`Error connecting to MongoDB (attempt ${retryCount + 1}):`, error);
 
       if (retryCount < maxRetries) {
         retryCount++;

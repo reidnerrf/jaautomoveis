@@ -35,8 +35,7 @@ const FinancingPage: React.FC = () => {
     const monthlyPayment =
       financedAmount === 0
         ? 0
-        : (financedAmount * monthlyRate) /
-          (1 - Math.pow(1 + monthlyRate, -installments));
+        : (financedAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -installments));
     const totalPayment = monthlyPayment * installments;
     const totalInterest = Math.max(0, totalPayment - financedAmount);
 
@@ -89,8 +88,7 @@ const FinancingPage: React.FC = () => {
                     htmlFor="amount"
                     className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >
-                    Valor do Veículo:{" "}
-                    <span className="font-bold">{formatCurrency(amount)}</span>
+                    Valor do Veículo: <span className="font-bold">{formatCurrency(amount)}</span>
                   </label>
                   <input
                     type="range"
@@ -110,8 +108,7 @@ const FinancingPage: React.FC = () => {
                     htmlFor="downPayment"
                     className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >
-                    Entrada:{" "}
-                    <span className="font-bold">{formatCurrency(downPayment)}</span>
+                    Entrada: <span className="font-bold">{formatCurrency(downPayment)}</span>
                   </label>
                   <input
                     type="range"
@@ -123,7 +120,12 @@ const FinancingPage: React.FC = () => {
                     onChange={(e) => setDownPayment(Math.min(Number(e.target.value), amount))}
                     className="w-full accent-red-500"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Financiado: <span className="font-semibold">{formatCurrency(Math.max(0, amount - Math.min(downPayment, amount)))}</span></p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Financiado:{" "}
+                    <span className="font-semibold">
+                      {formatCurrency(Math.max(0, amount - Math.min(downPayment, amount)))}
+                    </span>
+                  </p>
                 </div>
 
                 {/* Parcelas */}
@@ -152,8 +154,7 @@ const FinancingPage: React.FC = () => {
                     htmlFor="rate"
                     className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >
-                    Taxa de Juros (% ao mês):{" "}
-                    <span className="font-bold">{rate.toFixed(2)}%</span>
+                    Taxa de Juros (% ao mês): <span className="font-bold">{rate.toFixed(2)}%</span>
                   </label>
                   <input
                     type="range"
@@ -187,7 +188,10 @@ const FinancingPage: React.FC = () => {
                       💰 Financiamento
                     </h2>
                     <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
-                      Valor financiado: <span className="font-semibold">{formatCurrency(simulation.financedAmount)}</span>
+                      Valor financiado:{" "}
+                      <span className="font-semibold">
+                        {formatCurrency(simulation.financedAmount)}
+                      </span>
                     </p>
                     <p className="text-gray-700 dark:text-gray-300">
                       💳 {installments} parcelas de
@@ -219,8 +223,7 @@ const FinancingPage: React.FC = () => {
                         Total: {formatCurrency(simulation.consortium.total)}
                       </p>
                       <p className="text-sm text-green-600 dark:text-green-400 font-semibold">
-                        Economia:{" "}
-                        {formatCurrency(simulation.consortium.savings)}
+                        Economia: {formatCurrency(simulation.consortium.savings)}
                       </p>
                     </div>
                   ) : null}
@@ -245,8 +248,8 @@ const FinancingPage: React.FC = () => {
                 Financie seu carro com segurança
               </h2>
               <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                Trabalhamos com as principais instituições financeiras,
-                oferecendo planos sob medida para o seu orçamento.
+                Trabalhamos com as principais instituições financeiras, oferecendo planos sob medida
+                para o seu orçamento.
               </p>
 
               <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -272,22 +275,19 @@ const FinancingPage: React.FC = () => {
               </div>
 
               <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4 rounded-lg mb-8">
-                💡 <span className="font-bold">Dica:</span> Quanto maior a
-                entrada, menores as parcelas.
+                💡 <span className="font-bold">Dica:</span> Quanto maior a entrada, menores as
+                parcelas.
               </div>
 
               <div className="text-center border-t pt-6">
-                <p className="text-lg font-semibold mb-4">
-                  📞 Fale com nossa equipe agora mesmo
-                </p>
+                <p className="text-lg font-semibold mb-4">📞 Fale com nossa equipe agora mesmo</p>
                 <a
                   href="https://wa.me/5524999037716?text=Olá,%20gostaria%20de%20simular%20um%20financiamento"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center bg-green-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600 shadow-md"
                 >
-                  <FaWhatsapp className="mr-3" size={24} /> WhatsApp: (24)
-                  99903-7716
+                  <FaWhatsapp className="mr-3" size={24} /> WhatsApp: (24) 99903-7716
                 </a>
               </div>
             </motion.div>

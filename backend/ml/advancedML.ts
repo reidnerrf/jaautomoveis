@@ -158,10 +158,7 @@ class AdvancedML extends EventEmitter {
   }
 
   // Treinar modelo
-  public async trainModel(
-    modelType: string,
-    config: Partial<MLConfig> = {},
-  ): Promise<void> {
+  public async trainModel(modelType: string, config: Partial<MLConfig> = {}): Promise<void> {
     if (this.isTraining) {
       throw new Error("Another training session is already in progress");
     }
@@ -185,17 +182,13 @@ class AdvancedML extends EventEmitter {
 
       // Preparar dados de treinamento
       const { trainingData, validationData } = this.prepareTrainingData(
-        trainingConfig.validationSplit,
+        trainingConfig.validationSplit
       );
 
       // Treinar modelo específico
       switch (modelType) {
         case "collaborative":
-          await this.trainCollaborativeModel(
-            model,
-            trainingData,
-            trainingConfig,
-          );
+          await this.trainCollaborativeModel(model, trainingData, trainingConfig);
           break;
         case "content":
           await this.trainContentModel(model, trainingData, trainingConfig);
@@ -204,12 +197,7 @@ class AdvancedML extends EventEmitter {
           await this.trainHybridModel(model, trainingData, trainingConfig);
           break;
         case "neural":
-          await this.trainNeuralModel(
-            model,
-            trainingData,
-            validationData,
-            trainingConfig,
-          );
+          await this.trainNeuralModel(model, trainingData, validationData, trainingConfig);
           break;
         default:
           throw new Error(`Unknown model type: ${modelType}`);
@@ -235,7 +223,7 @@ class AdvancedML extends EventEmitter {
   private async trainCollaborativeModel(
     _model: unknown,
     _trainingData: unknown[],
-    _config: any,
+    _config: any
   ): Promise<void> {
     console.log("Training collaborative model...");
 
@@ -261,7 +249,7 @@ class AdvancedML extends EventEmitter {
   private async trainContentModel(
     model: unknown,
     trainingData: unknown[],
-    _config: any,
+    _config: any
   ): Promise<void> {
     console.log("Training content-based model...");
 
@@ -278,25 +266,17 @@ class AdvancedML extends EventEmitter {
   private async trainHybridModel(
     model: unknown,
     trainingData: unknown[],
-    config: any,
+    config: any
   ): Promise<void> {
     console.log("Training hybrid model...");
 
     const hybridModel = model as any;
 
     // Treinar modelo colaborativo
-    await this.trainCollaborativeModel(
-      hybridModel.collaborativeModel,
-      trainingData,
-      config,
-    );
+    await this.trainCollaborativeModel(hybridModel.collaborativeModel, trainingData, config);
 
     // Treinar modelo de conteúdo
-    await this.trainContentModel(
-      hybridModel.contentModel,
-      trainingData,
-      config,
-    );
+    await this.trainContentModel(hybridModel.contentModel, trainingData, config);
 
     // Otimizar pesos
     hybridModel.collaborativeWeight = 0.6;
@@ -308,7 +288,7 @@ class AdvancedML extends EventEmitter {
     model: unknown,
     trainingData: unknown[],
     validationData: unknown[],
-    config: any,
+    config: any
   ): Promise<void> {
     console.log("Training neural model...");
 
@@ -318,15 +298,8 @@ class AdvancedML extends EventEmitter {
     this.initializeNeuralWeights(neuralModel, config);
 
     for (let epoch = 0; epoch < config.epochs; epoch++) {
-      const trainingLoss = this.trainNeuralEpoch(
-        neuralModel,
-        trainingData,
-        config,
-      );
-      const validationLoss = this.calculateNeuralLoss(
-        neuralModel,
-        validationData,
-      );
+      const trainingLoss = this.trainNeuralEpoch(neuralModel, trainingData, config);
+      const validationLoss = this.calculateNeuralLoss(neuralModel, validationData);
 
       if (epoch % 10 === 0) {
         this.emit("training:progress", {
@@ -344,7 +317,7 @@ class AdvancedML extends EventEmitter {
   public async getRecommendations(
     userId: string,
     limit: number = 10,
-    modelType: string = "hybrid",
+    modelType: string = "hybrid"
   ): Promise<Recommendation[]> {
     const userProfile = this.userProfiles.get(userId);
     if (!userProfile) {
@@ -360,32 +333,16 @@ class AdvancedML extends EventEmitter {
 
     switch (modelType) {
       case "collaborative":
-        recommendations = await this.getCollaborativeRecommendations(
-          userId,
-          limit,
-          model,
-        );
+        recommendations = await this.getCollaborativeRecommendations(userId, limit, model);
         break;
       case "content":
-        recommendations = await this.getContentRecommendations(
-          userId,
-          limit,
-          model,
-        );
+        recommendations = await this.getContentRecommendations(userId, limit, model);
         break;
       case "hybrid":
-        recommendations = await this.getHybridRecommendations(
-          userId,
-          limit,
-          model,
-        );
+        recommendations = await this.getHybridRecommendations(userId, limit, model);
         break;
       case "neural":
-        recommendations = await this.getNeuralRecommendations(
-          userId,
-          limit,
-          model,
-        );
+        recommendations = await this.getNeuralRecommendations(userId, limit, model);
         break;
       default:
         throw new Error(`Unknown model type: ${modelType}`);
@@ -404,7 +361,7 @@ class AdvancedML extends EventEmitter {
   private async getCollaborativeRecommendations(
     userId: string,
     limit: number,
-    model: unknown,
+    model: unknown
   ): Promise<Recommendation[]> {
     const collaborativeModel = model as any;
     const userFactors = collaborativeModel.userFactors.get(userId);
@@ -433,7 +390,7 @@ class AdvancedML extends EventEmitter {
   private async getContentRecommendations(
     userId: string,
     limit: number,
-    model: unknown,
+    model: unknown
   ): Promise<Recommendation[]> {
     const userProfile = this.userProfiles.get(userId);
     const contentModel = model as any;
@@ -446,10 +403,7 @@ class AdvancedML extends EventEmitter {
     const recommendations: Recommendation[] = [];
 
     for (const [vehicleId, vehicleVector] of contentModel.featureVectors) {
-      const similarity = this.calculateCosineSimilarity(
-        userVector,
-        vehicleVector,
-      );
+      const similarity = this.calculateCosineSimilarity(userVector, vehicleVector);
       recommendations.push({
         vehicleId,
         score: similarity,
@@ -466,20 +420,20 @@ class AdvancedML extends EventEmitter {
   private async getHybridRecommendations(
     userId: string,
     limit: number,
-    model: unknown,
+    model: unknown
   ): Promise<Recommendation[]> {
     const hybridModel = model as any;
 
     const collaborativeRecs = await this.getCollaborativeRecommendations(
       userId,
       limit,
-      hybridModel.collaborativeModel,
+      hybridModel.collaborativeModel
     );
 
     const contentRecs = await this.getContentRecommendations(
       userId,
       limit,
-      hybridModel.contentModel,
+      hybridModel.contentModel
     );
 
     // Combinar recomendações
@@ -513,7 +467,7 @@ class AdvancedML extends EventEmitter {
   private async getNeuralRecommendations(
     userId: string,
     limit: number,
-    model: unknown,
+    model: unknown
   ): Promise<Recommendation[]> {
     const userProfile = this.userProfiles.get(userId);
     const neuralModel = model as any;
@@ -541,9 +495,7 @@ class AdvancedML extends EventEmitter {
   }
 
   // Predição de preço
-  public async predictPrice(
-    vehicleFeatures: Partial<VehicleFeatures>,
-  ): Promise<PredictionResult> {
+  public async predictPrice(vehicleFeatures: Partial<VehicleFeatures>): Promise<PredictionResult> {
     const model = this.models.get("neural");
     if (!model) {
       throw new Error("Neural model not available");
@@ -567,7 +519,7 @@ class AdvancedML extends EventEmitter {
   // Predição de demanda
   public async predictDemand(
     vehicleId: string,
-    timeframe: string = "30d",
+    timeframe: string = "30d"
   ): Promise<PredictionResult> {
     const vehicle = this.vehicleFeatures.get(vehicleId);
     if (!vehicle) {
@@ -592,9 +544,7 @@ class AdvancedML extends EventEmitter {
   }
 
   // Detecção de anomalias
-  public async detectAnomalies(
-    data: unknown[],
-  ): Promise<{ anomalies: unknown[]; score: number }> {
+  public async detectAnomalies(data: unknown[]): Promise<{ anomalies: unknown[]; score: number }> {
     const anomalies: unknown[] = [];
     let totalScore = 0;
 
@@ -656,10 +606,7 @@ class AdvancedML extends EventEmitter {
   }
 
   // Adicionar dados de veículo
-  public addVehicleFeatures(
-    vehicleId: string,
-    features: VehicleFeatures,
-  ): void {
+  public addVehicleFeatures(vehicleId: string, features: VehicleFeatures): void {
     this.vehicleFeatures.set(vehicleId, features);
     this.emit("vehicle:added", { vehicleId, features });
   }
@@ -678,10 +625,7 @@ class AdvancedML extends EventEmitter {
     };
   }
 
-  private calculateCollaborativeLoss(
-    _model: unknown,
-    _data: unknown[],
-  ): number {
+  private calculateCollaborativeLoss(_model: unknown, _data: unknown[]): number {
     // Simular cálculo de loss
     return Math.random() * 0.5;
   }
@@ -692,7 +636,7 @@ class AdvancedML extends EventEmitter {
   }
 
   private calculateSimilarityMatrix(
-    _vectors: Map<string, number[]>,
+    _vectors: Map<string, number[]>
   ): Map<string, Map<string, number>> {
     // Simular matriz de similaridade
     return new Map();
@@ -702,11 +646,7 @@ class AdvancedML extends EventEmitter {
     // Simular inicialização de pesos
   }
 
-  private trainNeuralEpoch(
-    _model: unknown,
-    _data: unknown[],
-    _config: any,
-  ): number {
+  private trainNeuralEpoch(_model: unknown, _data: unknown[], _config: any): number {
     // Simular treinamento de época
     return Math.random() * 0.3;
   }
@@ -748,7 +688,7 @@ class AdvancedML extends EventEmitter {
 
   private createNeuralInput(
     _userProfile: UserProfile,
-    _vehicleFeatures: VehicleFeatures,
+    _vehicleFeatures: VehicleFeatures
   ): number[] {
     // Simular entrada neural
     return [1, 0, 1, 0, 1, 0, 1, 0];
@@ -765,9 +705,7 @@ class AdvancedML extends EventEmitter {
 
   private calculateSeasonalFactor(_timeframe: string): number {
     const month = new Date().getMonth();
-    const seasonalFactors = [
-      0.8, 0.9, 1.0, 1.1, 1.2, 1.1, 1.0, 0.9, 0.8, 0.7, 0.8, 0.9,
-    ];
+    const seasonalFactors = [0.8, 0.9, 1.0, 1.1, 1.2, 1.1, 1.0, 0.9, 0.8, 0.7, 0.8, 0.9];
     return seasonalFactors[month];
   }
 

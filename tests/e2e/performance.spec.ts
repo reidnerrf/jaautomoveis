@@ -19,9 +19,7 @@ test.describe("Performance Tests", () => {
       return new Promise((resolve) => {
         new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          const fcpEntry = entries.find(
-            (entry) => entry.name === "first-contentful-paint",
-          );
+          const fcpEntry = entries.find((entry) => entry.name === "first-contentful-paint");
           resolve(fcpEntry?.startTime || 0);
         }).observe({ entryTypes: ["paint"] });
       });
@@ -98,9 +96,7 @@ test.describe("Performance Tests", () => {
       expect(loadTime).toBeLessThan(4000); // 4 segundos para página de detalhes
 
       // Verificar se imagens da galeria carregam corretamente
-      const galleryImages = await page.$$(
-        '[data-testid="vehicle-gallery"] img',
-      );
+      const galleryImages = await page.$$('[data-testid="vehicle-gallery"] img');
       expect(galleryImages.length).toBeGreaterThan(0);
 
       // Verificar se não há erros de carregamento de imagem
@@ -138,8 +134,7 @@ test.describe("Performance Tests", () => {
     }
 
     // Verificar consistência de performance
-    const avgLoadTime =
-      navigationTimes.reduce((a, b) => a + b, 0) / navigationTimes.length;
+    const avgLoadTime = navigationTimes.reduce((a, b) => a + b, 0) / navigationTimes.length;
     expect(avgLoadTime).toBeLessThan(2500); // Média menor que 2.5 segundos
   });
 
@@ -171,10 +166,7 @@ test.describe("Performance Tests", () => {
     await page.waitForSelector('[data-testid="vehicle-card"]');
 
     // Contar veículos iniciais
-    const initialCount = await page.$$eval(
-      '[data-testid="vehicle-card"]',
-      (cards) => cards.length,
-    );
+    const initialCount = await page.$$eval('[data-testid="vehicle-card"]', (cards) => cards.length);
 
     // Realizar busca
     const searchInput = await page.$('[data-testid="search-input"]');
@@ -221,10 +213,7 @@ test.describe("Performance Tests", () => {
     }
   });
 
-  test("should handle service worker functionality", async ({
-    page,
-    context,
-  }) => {
+  test("should handle service worker functionality", async ({ page, context }) => {
     await page.goto("/");
 
     // Verificar se service worker está registrado

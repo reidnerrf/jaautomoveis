@@ -50,9 +50,7 @@ class PushNotificationManager {
     try {
       this.subscription = await this.registration!.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(
-          process.env.VAPID_PUBLIC_KEY || "",
-        ),
+        applicationServerKey: this.urlBase64ToUint8Array(process.env.VAPID_PUBLIC_KEY || ""),
       });
 
       // Enviar subscription para o servidor
@@ -131,9 +129,7 @@ class PushNotificationManager {
 
   private urlBase64ToUint8Array(base64String: string): Uint8Array {
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding)
-      .replace(/-/g, "+")
-      .replace(/_/g, "/");
+    const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
 
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);

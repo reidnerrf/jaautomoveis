@@ -90,9 +90,7 @@ const InventoryPage = lazy(() => import("./pages/InventoryPage.tsx"));
 import { performanceMonitor, measureApiCall } from "./utils/performance";
 
 // Monitor API calls
-const data = await measureApiCall("fetchVehicles", () =>
-  fetch("/api/vehicles"),
-);
+const data = await measureApiCall("fetchVehicles", () => fetch("/api/vehicles"));
 ```
 
 #### Code Quality

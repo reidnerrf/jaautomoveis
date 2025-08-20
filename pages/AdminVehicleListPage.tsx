@@ -40,40 +40,30 @@ const AdminVehicleListPage: React.FC = () => {
 
   const uniqueYears = useMemo(
     () => [...new Set(vehicles.map((v) => v.year))].sort((a, b) => b - a),
-    [vehicles],
+    [vehicles]
   );
-  const uniqueColors = useMemo(
-    () => [...new Set(vehicles.map((v) => v.color))].sort(),
-    [vehicles],
-  );
-  const uniqueMakes = useMemo(
-    () => [...new Set(vehicles.map((v) => v.make))].sort(),
-    [vehicles],
-  );
+  const uniqueColors = useMemo(() => [...new Set(vehicles.map((v) => v.color))].sort(), [vehicles]);
+  const uniqueMakes = useMemo(() => [...new Set(vehicles.map((v) => v.make))].sort(), [vehicles]);
 
   // Advanced statistics
   const vehicleStats = useMemo(() => {
     const totalValue = vehicles.reduce((sum, v) => sum + v.price, 0);
     const averagePrice = totalValue / vehicles.length || 0;
-    const averageYear =
-      vehicles.reduce((sum, v) => sum + v.year, 0) / vehicles.length || 0;
-    const averageKm =
-      vehicles.reduce((sum, v) => sum + v.km, 0) / vehicles.length || 0;
+    const averageYear = vehicles.reduce((sum, v) => sum + v.year, 0) / vehicles.length || 0;
+    const averageKm = vehicles.reduce((sum, v) => sum + v.km, 0) / vehicles.length || 0;
 
     const makeDistribution = vehicles.reduce(
       (acc, v) => {
         acc[v.make] = (acc[v.make] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>,
+      {} as Record<string, number>
     );
 
     const priceRanges = {
       "até 30k": vehicles.filter((v) => v.price <= 30000).length,
-      "30k-60k": vehicles.filter((v) => v.price > 30000 && v.price <= 60000)
-        .length,
-      "60k-100k": vehicles.filter((v) => v.price > 60000 && v.price <= 100000)
-        .length,
+      "30k-60k": vehicles.filter((v) => v.price > 30000 && v.price <= 60000).length,
+      "60k-100k": vehicles.filter((v) => v.price > 60000 && v.price <= 100000).length,
       "100k+": vehicles.filter((v) => v.price > 100000).length,
     };
 
@@ -85,14 +75,8 @@ const AdminVehicleListPage: React.FC = () => {
       averageKm: Math.round(averageKm),
       makeDistribution,
       priceRanges,
-      mostExpensive: vehicles.reduce(
-        (max, v) => (v.price > max.price ? v : max),
-        vehicles[0],
-      ),
-      cheapest: vehicles.reduce(
-        (min, v) => (v.price < min.price ? v : min),
-        vehicles[0],
-      ),
+      mostExpensive: vehicles.reduce((max, v) => (v.price > max.price ? v : max), vehicles[0]),
+      cheapest: vehicles.reduce((min, v) => (v.price < min.price ? v : min), vehicles[0]),
     };
   }, [vehicles]);
 
@@ -103,16 +87,13 @@ const AdminVehicleListPage: React.FC = () => {
           vehicle.name.toLowerCase().includes(nameFilter.toLowerCase()) ||
           vehicle.make.toLowerCase().includes(nameFilter.toLowerCase()) ||
           vehicle.model.toLowerCase().includes(nameFilter.toLowerCase());
-        const yearMatch =
-          !yearFilter || vehicle.year === parseInt(yearFilter, 10);
+        const yearMatch = !yearFilter || vehicle.year === parseInt(yearFilter, 10);
         const colorMatch = !colorFilter || vehicle.color === colorFilter;
         const makeMatch = !makeFilter || vehicle.make === makeFilter;
         const priceMatch =
           !priceRangeFilter ||
           (priceRangeFilter === "30000" && vehicle.price <= 30000) ||
-          (priceRangeFilter === "30000-60000" &&
-            vehicle.price > 30000 &&
-            vehicle.price <= 60000) ||
+          (priceRangeFilter === "30000-60000" && vehicle.price > 30000 && vehicle.price <= 60000) ||
           (priceRangeFilter === "60000-100000" &&
             vehicle.price > 60000 &&
             vehicle.price <= 100000) ||
@@ -140,20 +121,12 @@ const AdminVehicleListPage: React.FC = () => {
             return 0;
         }
       });
-  }, [
-    vehicles,
-    nameFilter,
-    yearFilter,
-    colorFilter,
-    makeFilter,
-    priceRangeFilter,
-    sortBy,
-  ]);
+  }, [vehicles, nameFilter, yearFilter, colorFilter, makeFilter, priceRangeFilter, sortBy]);
 
   const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
   const currentVehicles = filteredVehicles.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   const clearFilters = () => {
@@ -177,7 +150,7 @@ const AdminVehicleListPage: React.FC = () => {
     if (selectedVehicles.length === 0) return;
     if (
       window.confirm(
-        `Tem certeza que deseja excluir ${selectedVehicles.length} veículos selecionados?`,
+        `Tem certeza que deseja excluir ${selectedVehicles.length} veículos selecionados?`
       )
     ) {
       selectedVehicles.forEach((id) => {
@@ -189,16 +162,7 @@ const AdminVehicleListPage: React.FC = () => {
   };
 
   const exportToCSV = () => {
-    const headers = [
-      "Nome",
-      "Marca",
-      "Modelo",
-      "Ano",
-      "Preço",
-      "KM",
-      "Cor",
-      "Combustível",
-    ];
+    const headers = ["Nome", "Marca", "Modelo", "Ano", "Preço", "KM", "Cor", "Combustível"];
     const csvData = filteredVehicles.map((vehicle) => [
       vehicle.name,
       vehicle.make,
@@ -210,17 +174,12 @@ const AdminVehicleListPage: React.FC = () => {
       vehicle.fuel || "Flex",
     ]);
 
-    const csvContent = [headers, ...csvData]
-      .map((row) => row.join(","))
-      .join("\n");
+    const csvContent = [headers, ...csvData].map((row) => row.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      `estoque_${new Date().toISOString().split("T")[0]}.csv`,
-    );
+    link.setAttribute("download", `estoque_${new Date().toISOString().split("T")[0]}.csv`);
     link.click();
   };
 
@@ -236,11 +195,7 @@ const AdminVehicleListPage: React.FC = () => {
   return (
     <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10 space-y-8">
       {/* Header with Statistics */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
-      >
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
           <div>
             <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">
@@ -288,9 +243,7 @@ const AdminVehicleListPage: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm font-medium">
-                  Total de Veículos
-                </p>
+                <p className="text-blue-100 text-sm font-medium">Total de Veículos</p>
                 <p className="text-3xl font-black">{vehicleStats.total}</p>
               </div>
               <FaCarSide className="text-4xl text-blue-200" />
@@ -303,9 +256,7 @@ const AdminVehicleListPage: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm font-medium">
-                  Valor Total
-                </p>
+                <p className="text-green-100 text-sm font-medium">Valor Total</p>
                 <p className="text-2xl font-black">
                   {new Intl.NumberFormat("pt-BR", {
                     style: "currency",
@@ -324,9 +275,7 @@ const AdminVehicleListPage: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm font-medium">
-                  Preço Médio
-                </p>
+                <p className="text-purple-100 text-sm font-medium">Preço Médio</p>
                 <p className="text-2xl font-black">
                   {new Intl.NumberFormat("pt-BR", {
                     style: "currency",
@@ -346,9 +295,7 @@ const AdminVehicleListPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-yellow-100 text-sm font-medium">Ano Médio</p>
-                <p className="text-3xl font-black">
-                  {vehicleStats.averageYear}
-                </p>
+                <p className="text-3xl font-black">{vehicleStats.averageYear}</p>
               </div>
               <FaCalendarAlt className="text-4xl text-yellow-200" />
             </div>
@@ -387,11 +334,7 @@ const AdminVehicleListPage: React.FC = () => {
       </motion.div>
 
       {/* Search and Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
           {/* Search and View Controls */}
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-6">
@@ -503,9 +446,7 @@ const AdminVehicleListPage: React.FC = () => {
                       <option value="">Todas as Faixas</option>
                       <option value="30000">Até R$ 30.000</option>
                       <option value="30000-60000">R$ 30.000 - R$ 60.000</option>
-                      <option value="60000-100000">
-                        R$ 60.000 - R$ 100.000
-                      </option>
+                      <option value="60000-100000">R$ 60.000 - R$ 100.000</option>
                       <option value="100000">Acima de R$ 100.000</option>
                     </select>
 
@@ -574,19 +515,14 @@ const AdminVehicleListPage: React.FC = () => {
                   <th className="py-4 px-6 font-semibold">Veículo</th>
                   <th className="py-4 px-6 font-semibold">Detalhes</th>
                   <th className="py-4 px-6 font-semibold">Preço</th>
-                  <th className="py-4 px-6 font-semibold hidden lg:table-cell">
-                    Status
-                  </th>
+                  <th className="py-4 px-6 font-semibold hidden lg:table-cell">Status</th>
                   <th className="py-4 px-6 font-semibold">Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {currentVehicles.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan={6}
-                      className="text-center py-12 text-gray-500 dark:text-gray-400"
-                    >
+                    <td colSpan={6} className="text-center py-12 text-gray-500 dark:text-gray-400">
                       Nenhum veículo encontrado.
                     </td>
                   </tr>
@@ -605,15 +541,10 @@ const AdminVehicleListPage: React.FC = () => {
                           checked={selectedVehicles.includes(vehicle.id)}
                           onChange={(e) => {
                             if (e.target.checked) {
-                              setSelectedVehicles([
-                                ...selectedVehicles,
-                                vehicle.id,
-                              ]);
+                              setSelectedVehicles([...selectedVehicles, vehicle.id]);
                             } else {
                               setSelectedVehicles(
-                                selectedVehicles.filter(
-                                  (id) => id !== vehicle.id,
-                                ),
+                                selectedVehicles.filter((id) => id !== vehicle.id)
                               );
                             }
                           }}
@@ -640,16 +571,13 @@ const AdminVehicleListPage: React.FC = () => {
                       <td className="py-4 px-6">
                         <div className="space-y-1 text-sm">
                           <p>
-                            <span className="font-semibold">Ano:</span>{" "}
-                            {vehicle.year}
+                            <span className="font-semibold">Ano:</span> {vehicle.year}
                           </p>
                           <p>
-                            <span className="font-semibold">KM:</span>{" "}
-                            {vehicle.km.toLocaleString()}
+                            <span className="font-semibold">KM:</span> {vehicle.km.toLocaleString()}
                           </p>
                           <p>
-                            <span className="font-semibold">Cor:</span>{" "}
-                            {vehicle.color}
+                            <span className="font-semibold">Cor:</span> {vehicle.color}
                           </p>
                         </div>
                       </td>
@@ -683,9 +611,7 @@ const AdminVehicleListPage: React.FC = () => {
                             <FiEdit size={18} />
                           </Link>
                           <button
-                            onClick={() =>
-                              handleDelete(vehicle.id, vehicle.name)
-                            }
+                            onClick={() => handleDelete(vehicle.id, vehicle.name)}
                             className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 transition-colors"
                             title="Excluir"
                           >
@@ -728,9 +654,7 @@ const AdminVehicleListPage: React.FC = () => {
                       if (e.target.checked) {
                         setSelectedVehicles([...selectedVehicles, vehicle.id]);
                       } else {
-                        setSelectedVehicles(
-                          selectedVehicles.filter((id) => id !== vehicle.id),
-                        );
+                        setSelectedVehicles(selectedVehicles.filter((id) => id !== vehicle.id));
                       }
                     }}
                     className="rounded w-5 h-5"
@@ -798,8 +722,7 @@ const AdminVehicleListPage: React.FC = () => {
             </button>
 
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const page =
-                i + Math.max(1, Math.min(currentPage - 2, totalPages - 4));
+              const page = i + Math.max(1, Math.min(currentPage - 2, totalPages - 4));
               return (
                 <button
                   key={page}
@@ -816,9 +739,7 @@ const AdminVehicleListPage: React.FC = () => {
             })}
 
             <button
-              onClick={() =>
-                setCurrentPage(Math.min(totalPages, currentPage + 1))
-              }
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
               className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >

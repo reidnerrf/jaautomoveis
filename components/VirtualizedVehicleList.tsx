@@ -22,7 +22,7 @@ const VirtualizedVehicleList: React.FC<VirtualizedVehicleListProps> = ({
   const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
   const endIndex = Math.min(
     vehicles.length - 1,
-    Math.floor((scrollTop + containerHeight) / itemHeight) + overscan,
+    Math.floor((scrollTop + containerHeight) / itemHeight) + overscan
   );
 
   // Itens visíveis
@@ -56,7 +56,7 @@ const VirtualizedVehicleList: React.FC<VirtualizedVehicleListProps> = ({
       {
         rootMargin: "50px 0px",
         threshold: 0.1,
-      },
+      }
     );
 
     const images = containerRef.current?.querySelectorAll("img[data-src]");
@@ -86,11 +86,7 @@ const VirtualizedVehicleList: React.FC<VirtualizedVehicleListProps> = ({
           }}
         >
           {visibleItems.map((vehicle) => (
-            <div
-              key={vehicle.id}
-              style={{ height: itemHeight }}
-              className="mb-4"
-            >
+            <div key={vehicle.id} style={{ height: itemHeight }} className="mb-4">
               <VehicleCard vehicle={vehicle} />
             </div>
           ))}
@@ -104,9 +100,7 @@ const VirtualizedVehicleList: React.FC<VirtualizedVehicleListProps> = ({
 export const useVirtualizedList = (vehicles: Vehicle[]) => {
   const [filteredVehicles, setFilteredVehicles] = useState(vehicles);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState<"price" | "year" | "km" | "name">(
-    "name",
-  );
+  const [sortBy, setSortBy] = useState<"price" | "year" | "km" | "name">("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   // Memoizar filtros e ordenação
@@ -119,7 +113,7 @@ export const useVirtualizedList = (vehicles: Vehicle[]) => {
         (vehicle) =>
           vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          vehicle.model.toLowerCase().includes(searchTerm.toLowerCase()),
+          vehicle.model.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 

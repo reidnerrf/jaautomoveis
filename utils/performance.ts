@@ -69,8 +69,7 @@ class PerformanceMonitor {
       const fidObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         entries.forEach((entry) => {
-          this.metrics.firstInputDelay =
-            entry.processingStart - entry.startTime;
+          this.metrics.firstInputDelay = entry.processingStart - entry.startTime;
           this.logMetric("First Input Delay", this.metrics.firstInputDelay);
         });
       });
@@ -102,10 +101,7 @@ class PerformanceMonitor {
     return { ...this.metrics };
   }
 
-  public measureAsyncOperation<T>(
-    name: string,
-    operation: () => Promise<T>,
-  ): Promise<T> {
+  public measureAsyncOperation<T>(name: string, operation: () => Promise<T>): Promise<T> {
     const startTime = performance.now();
     return operation().finally(() => {
       const duration = performance.now() - startTime;
@@ -138,18 +134,12 @@ export const usePerformanceMeasure = (componentName: string) => {
 
   return () => {
     const duration = performance.now() - startTime;
-    performanceMonitor.logMetric(
-      `Component Render: ${componentName}`,
-      duration,
-    );
+    performanceMonitor.logMetric(`Component Render: ${componentName}`, duration);
   };
 };
 
 // Utility for measuring API calls
-export const measureApiCall = async <T>(
-  name: string,
-  apiCall: () => Promise<T>,
-): Promise<T> => {
+export const measureApiCall = async <T>(name: string, apiCall: () => Promise<T>): Promise<T> => {
   return performanceMonitor.measureAsyncOperation(name, apiCall);
 };
 

@@ -25,10 +25,7 @@ const deleteImageFiles = async (imagePaths: string[]) => {
   }
 };
 
-export const getVehicles = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const getVehicles = async (req: express.Request, res: express.Response) => {
   try {
     const {
       page = 1,
@@ -74,10 +71,7 @@ export const getVehicles = async (
   }
 };
 
-export const getVehicleById = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const getVehicleById = async (req: express.Request, res: express.Response) => {
   try {
     const vehicle = await Vehicle.findById(req.params.id).lean();
     if (vehicle) {
@@ -90,10 +84,7 @@ export const getVehicleById = async (
   }
 };
 
-export const createVehicle = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const createVehicle = async (req: express.Request, res: express.Response) => {
   try {
     const vehicle = new Vehicle(req.body);
     const createdVehicle = await vehicle.save();
@@ -101,7 +92,7 @@ export const createVehicle = async (
     try {
       getSocketServer()?.emit(
         "vehicle-created",
-        createdVehicle.toObject ? createdVehicle.toObject() : createdVehicle,
+        createdVehicle.toObject ? createdVehicle.toObject() : createdVehicle
       );
     } catch (e) {
       // ignore socket broadcast errors in API response path
@@ -112,10 +103,7 @@ export const createVehicle = async (
   }
 };
 
-export const updateVehicle = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const updateVehicle = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
     const vehicle = await Vehicle.findById(id);
@@ -127,7 +115,7 @@ export const updateVehicle = async (
       const updatedVehicle = await Vehicle.findByIdAndUpdate(
         id,
         { ...req.body, updatedAt: new Date() },
-        { new: true },
+        { new: true }
       ).lean();
       // Emit real-time update
       try {
@@ -144,10 +132,7 @@ export const updateVehicle = async (
   }
 };
 
-export const deleteVehicle = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const deleteVehicle = async (req: express.Request, res: express.Response) => {
   try {
     const vehicle = await Vehicle.findById(req.params.id);
     if (vehicle) {
@@ -167,22 +152,17 @@ export const deleteVehicle = async (
   }
 };
 
-export const incrementVehicleView = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const incrementVehicleView = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
     const vehicle = await Vehicle.findByIdAndUpdate(
       id,
       { $inc: { views: 1 } },
-      { new: true },
+      { new: true }
     ).lean();
     if (vehicle) {
       await ViewLog.create({ vehicle: vehicle._id });
-      res
-        .status(200)
-        .json({ message: "View count updated", views: vehicle.views });
+      res.status(200).json({ message: "View count updated", views: vehicle.views });
     } else {
       res.status(404).json({ message: "Vehicle not found" });
     }
@@ -192,75 +172,73 @@ export const incrementVehicleView = async (
   }
 };
 
-export const getMostViewedVehicles = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const getMostViewedVehicles = async (req: express.Request, res: express.Response) => {
   try {
     const { limit = 10, periodDays = 30 } = req.query;
-    const since = new Date(
-      Date.now() - Number(periodDays) * 24 * 60 * 60 * 1000,
-    );
-    
+    const since = new Date(Date.now() - Number(periodDays) * 24 * 60 * 60 * 1000);
+
     // Optimized aggregation using $lookup to join with Vehicle collection
-    const results = await ViewLog.aggregate([
-      { $match: { createdAt: { $gte: since } } },
-      { $group: { _id: "$vehicle", views: { $sum: 1 } } },
-      { $sort: { views: -1 } },
-      { $limit: +limit },
+    const results = await ViewLog.aggregate(
+      [
+        { $match: { createdAt: { $gte: since } } },
+        { $group: { _id: "$vehicle", views: { $sum: 1 } } },
+        { $sort: { views: -1 } },
+        { $limit: +limit },
+        {
+          $lookup: {
+            from: "vehicles",
+            localField: "_id",
+            foreignField: "_id",
+            as: "vehicle",
+          },
+        },
+        // Keep only entries that still have a corresponding vehicle
+        { $unwind: { path: "$vehicle", preserveNullAndEmptyArrays: false } },
+        // Return only the fields needed by the frontend to avoid over-fetching
+        {
+          $project: {
+            _id: "$vehicle._id",
+            name: "$vehicle.name",
+            price: "$vehicle.price",
+            make: "$vehicle.make",
+            model: "$vehicle.model",
+            year: "$vehicle.year",
+            km: "$vehicle.km",
+            color: "$vehicle.color",
+            gearbox: "$vehicle.gearbox",
+            fuel: "$vehicle.fuel",
+            doors: "$vehicle.doors",
+            additionalInfo: "$vehicle.additionalInfo",
+            optionals: "$vehicle.optionals",
+            images: "$vehicle.images",
+            description: "$vehicle.description",
+            createdAt: "$vehicle.createdAt",
+            updatedAt: "$vehicle.updatedAt",
+            views: "$views",
+          },
+        },
+      ],
       {
-        $lookup: {
-          from: "vehicles",
-          localField: "_id",
-          foreignField: "_id",
-          as: "vehicle"
-        }
-      },
-      // Keep only entries that still have a corresponding vehicle
-      { $unwind: { path: "$vehicle", preserveNullAndEmptyArrays: false } },
-      // Return only the fields needed by the frontend to avoid over-fetching
-      {
-        $project: {
-          _id: "$vehicle._id",
-          name: "$vehicle.name",
-          price: "$vehicle.price",
-          make: "$vehicle.make",
-          model: "$vehicle.model",
-          year: "$vehicle.year",
-          km: "$vehicle.km",
-          color: "$vehicle.color",
-          gearbox: "$vehicle.gearbox",
-          fuel: "$vehicle.fuel",
-          doors: "$vehicle.doors",
-          additionalInfo: "$vehicle.additionalInfo",
-          optionals: "$vehicle.optionals",
-          images: "$vehicle.images",
-          description: "$vehicle.description",
-          createdAt: "$vehicle.createdAt",
-          updatedAt: "$vehicle.updatedAt",
-          views: "$views"
-        }
+        maxTimeMS: 30000, // 30 seconds timeout
+        allowDiskUse: true, // Allow disk usage for large aggregations
       }
-    ], {
-      maxTimeMS: 30000, // 30 seconds timeout
-      allowDiskUse: true, // Allow disk usage for large aggregations
-    });
-    
+    );
+
     if (!Array.isArray(results)) {
-      throw new Error('Most viewed vehicles aggregation did not return an array');
+      throw new Error("Most viewed vehicles aggregation did not return an array");
     }
-    
+
     res.json(results);
   } catch (error) {
     console.error("Error fetching most viewed vehicles:", error);
-    
+
     // Provide more specific error messages
     const err = error as Error;
-    if (err.name === 'MongoServerSelectionError') {
+    if (err.name === "MongoServerSelectionError") {
       res.status(503).json({ message: "Database connection error. Please try again later." });
-    } else if (err.name === 'MongooseError' && err.message.includes('buffering timed out')) {
+    } else if (err.name === "MongooseError" && err.message.includes("buffering timed out")) {
       res.status(504).json({ message: "Query timeout. The operation took too long to complete." });
-    } else if (err.name === 'TypeError' && err.message.includes('Cannot read property')) {
+    } else if (err.name === "TypeError" && err.message.includes("Cannot read property")) {
       res.status(500).json({ message: "Server Error" });
     } else {
       res.status(500).json({ message: "Server Error" });
@@ -269,10 +247,7 @@ export const getMostViewedVehicles = async (
 };
 
 // Remove a single image from a vehicle and delete its file from /uploads
-export const deleteVehicleImage = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const deleteVehicleImage = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
     const { path: imagePath } = req.body as { path?: string };

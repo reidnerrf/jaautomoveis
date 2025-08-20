@@ -24,9 +24,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
           : `${siteUrl}${url}`
         : window.location.href
       : url || "";
-  const imageUrl = image?.startsWith("http")
-    ? image
-    : `${siteUrl}${image || "/assets/logo.png"}`;
+  const imageUrl = image?.startsWith("http") ? image : `${siteUrl}${image || "/assets/logo.png"}`;
 
   const alternateLocales: Array<{ hrefLang: string; href: string }> = [
     { hrefLang: "pt-BR", href: fullUrl },

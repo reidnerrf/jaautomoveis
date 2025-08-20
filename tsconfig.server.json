@@ -16,18 +16,6 @@
     "types": ["node"],
     "lib": ["ES2020"]
   },
-  "include": [
-    "server.ts",
-    "backend/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.tsx",
-    "components",
-    "pages",
-    "utils"
-  ]
+  "include": ["server.ts", "backend/**/*.ts"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.tsx", "components", "pages", "utils"]
 }
-

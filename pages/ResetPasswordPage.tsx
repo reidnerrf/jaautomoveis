@@ -73,17 +73,11 @@ const ResetPasswordPage: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-300 mb-2"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
               Nova Senha
             </label>
             <div className="relative">
-              <FiLock
-                className="absolute top-3.5 left-3 text-gray-400"
-                size={18}
-              />
+              <FiLock className="absolute top-3.5 left-3 text-gray-400" size={18} />
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
@@ -111,10 +105,7 @@ const ResetPasswordPage: React.FC = () => {
               Confirmar Nova Senha
             </label>
             <div className="relative">
-              <FiLock
-                className="absolute top-3.5 left-3 text-gray-400"
-                size={18}
-              />
+              <FiLock className="absolute top-3.5 left-3 text-gray-400" size={18} />
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
@@ -129,11 +120,7 @@ const ResetPasswordPage: React.FC = () => {
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute top-3.5 right-3 text-gray-400 hover:text-gray-300"
               >
-                {showConfirmPassword ? (
-                  <FiEyeOff size={18} />
-                ) : (
-                  <FiEye size={18} />
-                )}
+                {showConfirmPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
               </button>
             </div>
           </div>

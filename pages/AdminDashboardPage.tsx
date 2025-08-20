@@ -166,9 +166,7 @@ const AdminDashboardPage: React.FC = () => {
     const totalValue = vehicles.reduce((sum, v) => sum + v.price, 0);
     const totalViews = vehicles.reduce((sum, v) => sum + (v.views || 0), 0);
 
-    const topVehicles = [...vehicles]
-      .sort((a, b) => (b.views || 0) - (a.views || 0))
-      .slice(0, 5);
+    const topVehicles = [...vehicles].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
 
     return {
       totalViews,
@@ -185,13 +183,9 @@ const AdminDashboardPage: React.FC = () => {
       currency: "BRL",
     }).format(value);
 
-  const formatNumber = (value: number) =>
-    new Intl.NumberFormat("pt-BR").format(value);
+  const formatNumber = (value: number) => new Intl.NumberFormat("pt-BR").format(value);
 
-  const estimatedSales = Math.max(
-    0,
-    Math.floor((dashboardStats.whatsappClicks || 0) * 0.2),
-  );
+  const estimatedSales = Math.max(0, Math.floor((dashboardStats.whatsappClicks || 0) * 0.2));
 
   const handlePurgeOld = async () => {
     if (!token) return;
@@ -223,17 +217,11 @@ const AdminDashboardPage: React.FC = () => {
   return (
     <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10 space-y-8">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Dashboard Administrativo
         </h1>
-        <p className="text-gray-600 dark:text-gray-300">
-          Visão geral do desempenho
-        </p>
+        <p className="text-gray-600 dark:text-gray-300">Visão geral do desempenho</p>
       </motion.div>
 
       {/* Main Stats Cards */}
@@ -326,21 +314,14 @@ const AdminDashboardPage: React.FC = () => {
         </div>
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={monthlyViewsLast3}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-            >
+            <AreaChart data={monthlyViewsLast3} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3C50E0" stopOpacity={0.8} />
                   <stop offset="95%" stopColor="#3C50E0" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="#E5E7EB"
-              />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
               <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
               <YAxis tick={{ fill: "#6B7280" }} />
               <Tooltip
@@ -386,8 +367,22 @@ const AdminDashboardPage: React.FC = () => {
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
               <XAxis dataKey="date" tick={{ fill: "#6B7280" }} />
               <YAxis tick={{ fill: "#6B7280" }} />
-              <Tooltip contentStyle={{ backgroundColor: "#1F2937", border: "none", borderRadius: "8px", color: "white" }} />
-              <Area type="monotone" dataKey="views" stroke="#10B981" fillOpacity={1} fill="url(#colorDaily)" strokeWidth={3} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#1F2937",
+                  border: "none",
+                  borderRadius: "8px",
+                  color: "white",
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="views"
+                stroke="#10B981"
+                fillOpacity={1}
+                fill="url(#colorDaily)"
+                strokeWidth={3}
+              />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -422,16 +417,12 @@ const AdminDashboardPage: React.FC = () => {
                   <h4 className="font-medium text-gray-800 dark:text-white group-hover:text-primary transition-colors">
                     {vehicle.name}
                   </h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {vehicle.make}
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{vehicle.make}</p>
                 </div>
               </div>
               <div className="flex items-center text-gray-600 dark:text-gray-300">
                 <FiEye className="mr-2" />
-                <span className="font-medium">
-                  {formatNumber(vehicle.views || 0)}
-                </span>
+                <span className="font-medium">{formatNumber(vehicle.views || 0)}</span>
               </div>
             </Link>
           ))}
@@ -463,12 +454,8 @@ const AdminDashboardPage: React.FC = () => {
               </span>
             </div>
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-b-lg">
-              <h4 className="font-semibold text-blue-700 dark:text-blue-400">
-                Visualizações
-              </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Total de acessos
-              </p>
+              <h4 className="font-semibold text-blue-700 dark:text-blue-400">Visualizações</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Total de acessos</p>
             </div>
           </div>
           <div className="text-center">
@@ -478,12 +465,8 @@ const AdminDashboardPage: React.FC = () => {
               </span>
             </div>
             <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-b-lg">
-              <h4 className="font-semibold text-green-700 dark:text-green-400">
-                Interesse
-              </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Clicaram em veículos
-              </p>
+              <h4 className="font-semibold text-green-700 dark:text-green-400">Interesse</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Clicaram em veículos</p>
             </div>
           </div>
           <div className="text-center">
@@ -493,27 +476,17 @@ const AdminDashboardPage: React.FC = () => {
               </span>
             </div>
             <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-b-lg">
-              <h4 className="font-semibold text-yellow-700 dark:text-yellow-400">
-                Contato
-              </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                WhatsApp clicks
-              </p>
+              <h4 className="font-semibold text-yellow-700 dark:text-yellow-400">Contato</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">WhatsApp clicks</p>
             </div>
           </div>
           <div className="text-center">
             <div className="w-full h-20 bg-gradient-to-t from-red-500 to-red-400 rounded-t-lg flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">
-                {estimatedSales}
-              </span>
+              <span className="text-white font-bold text-2xl">{estimatedSales}</span>
             </div>
             <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-b-lg">
-              <h4 className="font-semibold text-red-700 dark:text-red-400">
-                Conversão
-              </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Vendas estimadas
-              </p>
+              <h4 className="font-semibold text-red-700 dark:text-red-400">Conversão</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Vendas estimadas</p>
             </div>
           </div>
         </div>

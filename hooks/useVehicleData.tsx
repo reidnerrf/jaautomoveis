@@ -28,9 +28,7 @@ const VehicleContext = createContext<VehicleContextType | undefined>(undefined);
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-export const VehicleProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [vehicles, setVehicles] = useState<Vehicle[]>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -145,7 +143,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({
         return undefined;
       }
     },
-    [token],
+    [token]
   );
 
   const addVehicle = useCallback(
@@ -176,7 +174,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({
         return undefined;
       }
     },
-    [token],
+    [token]
   );
 
   const updateVehicle = useCallback(
@@ -193,16 +191,12 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({
 
         if (!response.ok) {
           const msg = await response.text().catch(() => "");
-          throw new Error(
-            `Failed to update vehicle ${response.status}: ${msg}`,
-          );
+          throw new Error(`Failed to update vehicle ${response.status}: ${msg}`);
         }
 
         const saved = await response.json();
         setVehicles((prev) => {
-          const index = (prev || []).findIndex(
-            (v) => v.id === updatedVehicle.id,
-          );
+          const index = (prev || []).findIndex((v) => v.id === updatedVehicle.id);
           if (index !== -1) {
             const updatedVehicles = [...(prev || [])];
             updatedVehicles[index] = { ...updatedVehicle, ...saved } as Vehicle;
@@ -220,7 +214,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({
         return undefined;
       }
     },
-    [token],
+    [token]
   );
 
   const deleteVehicle = useCallback(
@@ -251,7 +245,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({
         return false;
       }
     },
-    [token],
+    [token]
   );
 
   const contextValue = useMemo(
@@ -276,14 +270,10 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({
       error,
       refreshVehicles,
       clearError,
-    ],
+    ]
   );
 
-  return (
-    <VehicleContext.Provider value={contextValue}>
-      {children}
-    </VehicleContext.Provider>
-  );
+  return <VehicleContext.Provider value={contextValue}>{children}</VehicleContext.Provider>;
 };
 
 export const useVehicleData = (): VehicleContextType => {

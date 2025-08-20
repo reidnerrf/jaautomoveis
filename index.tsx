@@ -44,11 +44,8 @@ root.render(
   <React.StrictMode>
     <AuthProvider>
       <VehicleProvider>
-        <ThemeProvider>
-          {typeof window !== "undefined" && <SafeApp />}
-        </ThemeProvider>
+        <ThemeProvider>{typeof window !== "undefined" && <SafeApp />}</ThemeProvider>
       </VehicleProvider>
     </AuthProvider>
   </React.StrictMode>
 );
-

@@ -128,4 +128,3 @@ const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = "" }) =>
 };
 
 export default ShareButton;
-

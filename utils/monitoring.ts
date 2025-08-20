@@ -21,11 +21,7 @@ class MonitoringService {
   private maxErrors = 50;
 
   // Track performance metrics
-  trackPerformance(
-    name: string,
-    value: number,
-    metadata?: Record<string, any>,
-  ) {
+  trackPerformance(name: string, value: number, metadata?: Record<string, any>) {
     const metric: PerformanceMetric = {
       name,
       value,
@@ -52,8 +48,7 @@ class MonitoringService {
       message: error.message,
       stack: error.stack,
       timestamp: Date.now(),
-      userAgent:
-        typeof window !== "undefined" ? window.navigator.userAgent : "server",
+      userAgent: typeof window !== "undefined" ? window.navigator.userAgent : "server",
       url: typeof window !== "undefined" ? window.location.href : metadata?.url,
       userId: metadata?.userId,
     };
@@ -110,7 +105,7 @@ class MonitoringService {
         acc[metric.name].push(metric.value);
         return acc;
       },
-      {} as Record<string, number[]>,
+      {} as Record<string, number[]>
     );
 
     return Object.entries(groupedMetrics).map(([name, values]) => ({
@@ -124,10 +119,7 @@ class MonitoringService {
   }
 
   // Send data to external monitoring service
-  private async sendToExternalService(
-    type: "error" | "performance",
-    data: any,
-  ) {
+  private async sendToExternalService(type: "error" | "performance", data: any) {
     try {
       await fetch("/api/monitoring", {
         method: "POST",
@@ -151,7 +143,7 @@ class MonitoringService {
           acc[type] = (acc[type] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>,
+        {} as Record<string, number>
       ),
     };
   }
@@ -175,7 +167,7 @@ export const usePerformanceTracking = (componentName: string) => {
 // Utility for measuring operations
 export const measureOperation = async <T>(
   name: string,
-  operation: () => Promise<T>,
+  operation: () => Promise<T>
 ): Promise<T> => {
   return monitoring.trackApiCall(name, operation);
 };

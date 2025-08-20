@@ -8,7 +8,7 @@ const vapidKeys = webpush.generateVAPIDKeys();
 webpush.setVapidDetails(
   "mailto:contato@jaautomoveis.com.br",
   process.env.VAPID_PUBLIC_KEY || vapidKeys.publicKey,
-  process.env.VAPID_PRIVATE_KEY || vapidKeys.privateKey,
+  process.env.VAPID_PRIVATE_KEY || vapidKeys.privateKey
 );
 
 // @desc    Subscribe to push notifications
@@ -69,9 +69,7 @@ export const unsubscribeFromPush = async (req: Request, res: Response) => {
       await subscription.save();
     }
 
-    res
-      .status(200)
-      .json({ message: "Successfully unsubscribed from push notifications" });
+    res.status(200).json({ message: "Successfully unsubscribed from push notifications" });
   } catch (error) {
     console.error("Error unsubscribing from push notifications:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -135,7 +133,7 @@ export const sendPushNotification = async (req: Request, res: Response) => {
               endpoint: subscription.endpoint,
               keys: subscription.keys,
             },
-            payload,
+            payload
           );
 
           // Atualizar lastUsed
@@ -155,11 +153,11 @@ export const sendPushNotification = async (req: Request, res: Response) => {
             error: error.message,
           };
         }
-      }),
+      })
     );
 
     const successful = results.filter(
-      (result) => result.status === "fulfilled" && result.value.success,
+      (result) => result.status === "fulfilled" && result.value.success
     ).length;
 
     const failed = results.length - successful;

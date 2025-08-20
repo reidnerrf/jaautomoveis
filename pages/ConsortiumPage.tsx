@@ -62,9 +62,7 @@ const ConsortiumPage: React.FC = () => {
                 <div>
                   <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Valor do Crédito:{" "}
-                    <span className="font-bold">
-                      {formatCurrency(creditAmount)}
-                    </span>
+                    <span className="font-bold">{formatCurrency(creditAmount)}</span>
                   </label>
                   <input
                     type="range"
@@ -130,8 +128,7 @@ const ConsortiumPage: React.FC = () => {
                 {/* Seguro */}
                 <div>
                   <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Seguro Anual (%):{" "}
-                    <span className="font-bold">{insurance.toFixed(2)}%</span>
+                    Seguro Anual (%): <span className="font-bold">{insurance.toFixed(2)}%</span>
                   </label>
                   <input
                     type="range"
@@ -161,9 +158,7 @@ const ConsortiumPage: React.FC = () => {
                   <h2 className="text-xl font-bold text-blue-900 dark:text-blue-300 mb-3">
                     Resultado da Simulação
                   </h2>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    💳 Parcelas de:
-                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">💳 Parcelas de:</p>
                   <p className="text-3xl font-extrabold text-blue-800 dark:text-blue-400">
                     {formatCurrency(simulation.installment)}
                   </p>
@@ -193,20 +188,18 @@ const ConsortiumPage: React.FC = () => {
                 Consórcio – Conquiste seu sonho sem pagar juros 🚀
               </h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                O consórcio é a forma planejada de adquirir bens de alto valor,
-                sem juros bancários e com taxas reduzidas.
+                O consórcio é a forma planejada de adquirir bens de alto valor, sem juros bancários
+                e com taxas reduzidas.
               </p>
               <p className="text-gray-600 dark:text-gray-300 mb-8">
-                Na JA Automóveis, você participa de um grupo, contribui
-                mensalmente e pode ser contemplado por sorteio ou lance,
-                recebendo sua carta de crédito para comprar à vista.
+                Na JA Automóveis, você participa de um grupo, contribui mensalmente e pode ser
+                contemplado por sorteio ou lance, recebendo sua carta de crédito para comprar à
+                vista.
               </p>
 
               <div className="grid md:grid-cols-2 gap-6 mb-8">
                 <div>
-                  <h3 className="text-xl font-bold mb-3">
-                    Vantagens do consórcio
-                  </h3>
+                  <h3 className="text-xl font-bold mb-3">Vantagens do consórcio</h3>
                   <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                     <li>✔ Sem juros, só taxa de administração</li>
                     <li>✔ Flexibilidade de prazo e valor</li>
@@ -215,9 +208,7 @@ const ConsortiumPage: React.FC = () => {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-3">
-                    Por que fazer conosco
-                  </h3>
+                  <h3 className="text-xl font-bold mb-3">Por que fazer conosco</h3>
                   <ul className="space-y-2 text-gray-600 dark:text-gray-300">
                     <li>➡ Atendimento personalizado</li>
                     <li>➡ Simulação sob medida</li>
@@ -238,24 +229,21 @@ const ConsortiumPage: React.FC = () => {
                     Parceria com a Rodobens
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300 text-sm">
-                    Representante autorizado Rodobens, garantindo credibilidade
-                    e segurança para sua compra.
+                    Representante autorizado Rodobens, garantindo credibilidade e segurança para sua
+                    compra.
                   </p>
                 </div>
               </div>
 
               <div className="text-center border-t pt-6">
-                <p className="text-lg font-semibold mb-4">
-                  📞 Fale com nossa equipe agora mesmo
-                </p>
+                <p className="text-lg font-semibold mb-4">📞 Fale com nossa equipe agora mesmo</p>
                 <a
                   href="https://wa.me/5524999037716?text=Olá,%20gostaria%20de%20simular%20um%20consórcio"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center bg-green-500 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-600 shadow-md"
                 >
-                  <FaWhatsapp className="mr-3" size={24} /> WhatsApp: (24)
-                  99903-7716
+                  <FaWhatsapp className="mr-3" size={24} /> WhatsApp: (24) 99903-7716
                 </a>
               </div>
             </motion.div>

@@ -74,12 +74,10 @@ class DistributedCache {
       const serializedValue = JSON.stringify(value);
       const finalTTL = ttl || this.defaultTTL;
 
-      await this.cluster
-        .pipeline()
-        .setex(key, finalTTL, serializedValue)
-        .exec();
+      await this.cluster.pipeline().setex(key, finalTTL, serializedValue).exec();
       await this.updateStats();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Cache set error:", error);
     }
   }
@@ -89,6 +87,7 @@ class DistributedCache {
       await this.cluster.del(key);
       await this.updateStats();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Cache del error:", error);
     }
   }
@@ -120,6 +119,7 @@ class DistributedCache {
 
       return result;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Cache mget error:", error);
       return new Map();
     }
@@ -151,13 +151,7 @@ class DistributedCache {
       for (const node of this.cluster.nodes()) {
         let cursor = "0";
         do {
-          const [newCursor, nodeKeys] = await node.scan(
-            cursor,
-            "MATCH",
-            pattern,
-            "COUNT",
-            "100",
-          );
+          const [newCursor, nodeKeys] = await node.scan(cursor, "MATCH", pattern, "COUNT", "100");
           cursor = newCursor;
           keys.push(...nodeKeys);
         } while (cursor !== "0");
@@ -203,12 +197,7 @@ class DistributedCache {
     }
   }
 
-  async hset(
-    key: string,
-    field: string,
-    value: any,
-    ttl?: number,
-  ): Promise<void> {
+  async hset(key: string, field: string, value: any, ttl?: number): Promise<void> {
     try {
       const serializedValue = JSON.stringify(value);
       const finalTTL = ttl || this.defaultTTL;
@@ -404,6 +393,7 @@ class DistributedCache {
 
         next();
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Cache middleware error:", error);
         next();
       }

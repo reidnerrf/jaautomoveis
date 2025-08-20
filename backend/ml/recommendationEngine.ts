@@ -44,8 +44,7 @@ class RecommendationEngine {
       const viewLogs = await ViewLog.find({}).populate("vehicle");
 
       viewLogs.forEach((log) => {
-        const vehicleId =
-          (log.vehicle as any)._id?.toString?.() ?? log.vehicle.toString();
+        const vehicleId = (log.vehicle as any)._id?.toString?.() ?? log.vehicle.toString();
         // Since ViewLog doesn't have userId, we'll use a default user or skip user-specific logic
         const userId = "default";
 
@@ -102,10 +101,7 @@ class RecommendationEngine {
   }
 
   // Algoritmo de recomendação baseado em conteúdo
-  async getContentBasedRecommendations(
-    userId: string,
-    limit: number = 10,
-  ): Promise<string[]> {
+  async getContentBasedRecommendations(userId: string, limit: number = 10): Promise<string[]> {
     const userPref = this.userPreferences.get(userId);
     if (!userPref) {
       return this.getPopularVehicles(limit);
@@ -163,10 +159,7 @@ class RecommendationEngine {
   }
 
   // Algoritmo de recomendação colaborativa
-  async getCollaborativeRecommendations(
-    userId: string,
-    limit: number = 10,
-  ): Promise<string[]> {
+  async getCollaborativeRecommendations(userId: string, limit: number = 10): Promise<string[]> {
     const userPref = this.userPreferences.get(userId);
     if (!userPref) {
       return this.getPopularVehicles(limit);
@@ -199,7 +192,7 @@ class RecommendationEngine {
   // Encontrar usuários similares
   private findSimilarUsers(
     userId: string,
-    limit: number = 5,
+    limit: number = 5
   ): Array<{ userId: string; similarity: number }> {
     const userPref = this.userPreferences.get(userId);
     if (!userPref) return [];
@@ -221,19 +214,12 @@ class RecommendationEngine {
       });
 
       // Calcular similaridade baseada em preferências
-      if (
-        userPref.preferredMakes.some((make) =>
-          otherUserPref.preferredMakes.includes(make),
-        )
-      ) {
+      if (userPref.preferredMakes.some((make) => otherUserPref.preferredMakes.includes(make))) {
         similarity += 0.5;
       }
 
       if (
-        Math.abs(
-          userPref.preferredPriceRange.min -
-            otherUserPref.preferredPriceRange.min,
-        ) < 10000
+        Math.abs(userPref.preferredPriceRange.min - otherUserPref.preferredPriceRange.min) < 10000
       ) {
         similarity += 0.3;
       }
@@ -242,9 +228,7 @@ class RecommendationEngine {
       if (commonItems > 0) {
         similarity =
           similarity /
-          (userPref.viewHistory.length +
-            otherUserPref.viewHistory.length -
-            commonItems);
+          (userPref.viewHistory.length + otherUserPref.viewHistory.length - commonItems);
       }
 
       if (similarity > 0) {
@@ -252,9 +236,7 @@ class RecommendationEngine {
       }
     });
 
-    return similarities
-      .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, limit);
+    return similarities.sort((a, b) => b.similarity - a.similarity).slice(0, limit);
   }
 
   // Recomendações baseadas em popularidade
@@ -276,7 +258,7 @@ class RecommendationEngine {
   async getContextualRecommendations(
     userId: string,
     context: any,
-    limit: number = 10,
+    limit: number = 10
   ): Promise<string[]> {
     const recommendations: Array<{ vehicleId: string; score: number }> = [];
 
@@ -324,7 +306,7 @@ class RecommendationEngine {
   async updateUserPreferences(
     userId: string,
     action: "view" | "like" | "share",
-    vehicleId: string,
+    vehicleId: string
   ) {
     if (!this.userPreferences.has(userId)) {
       this.userPreferences.set(userId, {
@@ -412,9 +394,7 @@ class RecommendationEngine {
       };
     }
 
-    userPref.preferredYears = [...new Set(years)]
-      .sort((a, b) => b - a)
-      .slice(0, 5);
+    userPref.preferredYears = [...new Set(years)].sort((a, b) => b - a).slice(0, 5);
 
     userPref.preferredFuelTypes = Array.from(fuels.entries())
       .sort((a, b) => b[1] - a[1])
@@ -428,18 +408,9 @@ class RecommendationEngine {
   }
 
   // Obter recomendações híbridas
-  async getHybridRecommendations(
-    userId: string,
-    limit: number = 10,
-  ): Promise<string[]> {
-    const contentBased = await this.getContentBasedRecommendations(
-      userId,
-      limit,
-    );
-    const collaborative = await this.getCollaborativeRecommendations(
-      userId,
-      limit,
-    );
+  async getHybridRecommendations(userId: string, limit: number = 10): Promise<string[]> {
+    const contentBased = await this.getContentBasedRecommendations(userId, limit);
+    const collaborative = await this.getCollaborativeRecommendations(userId, limit);
     const popular = await this.getPopularVehicles(limit);
 
     // Combinar recomendações com pesos

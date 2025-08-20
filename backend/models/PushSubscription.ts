@@ -51,7 +51,7 @@ const pushSubscriptionSchema = new mongoose.Schema<IPushSubscription>(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 // Índices para performance
@@ -61,7 +61,7 @@ pushSubscriptionSchema.index({ lastUsed: -1 });
 
 const PushSubscription = mongoose.model<IPushSubscription>(
   "PushSubscription",
-  pushSubscriptionSchema,
+  pushSubscriptionSchema
 );
 
 export default PushSubscription;

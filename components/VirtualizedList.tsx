@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Vehicle } from "../types/common";
 
 interface VirtualizedListProps<T> {
@@ -49,14 +43,10 @@ function VirtualizedList<T>({
 
   // Calculate visible range
   const { startIndex, visibleItems } = useMemo(() => {
-    const startIndex = Math.max(
-      0,
-      Math.floor(state.scrollTop / itemHeight) - overscan,
-    );
+    const startIndex = Math.max(0, Math.floor(state.scrollTop / itemHeight) - overscan);
     const endIndex = Math.min(
       items.length - 1,
-      Math.ceil((state.scrollTop + state.containerHeight) / itemHeight) +
-        overscan,
+      Math.ceil((state.scrollTop + state.containerHeight) / itemHeight) + overscan
     );
 
     const visibleItems = items.slice(startIndex, endIndex + 1);
@@ -74,7 +64,7 @@ function VirtualizedList<T>({
       setState((prev) => ({ ...prev, scrollTop }));
       onScroll?.(scrollTop);
     },
-    [onScroll],
+    [onScroll]
   );
 
   // Calculate total height and transform
@@ -178,18 +168,15 @@ export function useVirtualization<T>(
   items: T[],
   itemHeight: number,
   containerHeight: number,
-  overscan = 5,
+  overscan = 5
 ) {
   const [scrollTop, setScrollTop] = useState(0);
 
   const { startIndex, endIndex, visibleItems } = useMemo(() => {
-    const startIndex = Math.max(
-      0,
-      Math.floor(scrollTop / itemHeight) - overscan,
-    );
+    const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
     const endIndex = Math.min(
       items.length - 1,
-      Math.ceil((scrollTop + containerHeight) / itemHeight) + overscan,
+      Math.ceil((scrollTop + containerHeight) / itemHeight) + overscan
     );
 
     const visibleItems = items.slice(startIndex, endIndex + 1);
@@ -263,7 +250,7 @@ export const VirtualizedVehicleList: React.FC<VehicleListProps> = ({
         </div>
       </div>
     ),
-    [onVehicleClick],
+    [onVehicleClick]
   );
 
   return (
@@ -312,14 +299,7 @@ export function InfiniteVirtualizedList<T>({
         onLoadMore();
       }
     },
-    [
-      items.length,
-      props.height,
-      props.itemHeight,
-      hasMore,
-      loadingMore,
-      onLoadMore,
-    ],
+    [items.length, props.height, props.itemHeight, hasMore, loadingMore, onLoadMore]
   );
 
   return (

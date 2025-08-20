@@ -21,57 +21,50 @@ const PrivacyPolicyPage: React.FC = () => {
           </h1>
 
           <p className={textStyles}>
-            A sua privacidade é importante para nós. É política do{" "}
-            <strong>JA Automóveis</strong> respeitar a sua privacidade em
-            relação a qualquer informação sua que possamos coletar no site JA
-            Automóveis e outros sites que possuímos e operamos.
+            A sua privacidade é importante para nós. É política do <strong>JA Automóveis</strong>{" "}
+            respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no
+            site JA Automóveis e outros sites que possuímos e operamos.
           </p>
 
           <p className={textStyles}>
-            Solicitamos informações pessoais apenas quando realmente precisamos
-            delas para lhe fornecer um serviço. Fazemos isso por meios justos e
-            legais, com o seu conhecimento e consentimento, informando o motivo
-            da coleta e como será utilizada.
+            Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe
+            fornecer um serviço. Fazemos isso por meios justos e legais, com o seu conhecimento e
+            consentimento, informando o motivo da coleta e como será utilizada.
           </p>
 
           <p className={textStyles}>
-            Apenas retemos as informações pelo tempo necessário para fornecer o
-            serviço solicitado, protegendo-as de forma segura contra perdas,
-            roubos, acesso ou uso não autorizados.
+            Apenas retemos as informações pelo tempo necessário para fornecer o serviço solicitado,
+            protegendo-as de forma segura contra perdas, roubos, acesso ou uso não autorizados.
           </p>
 
           <p className={textStyles}>
-            Não compartilhamos informações de identificação pessoal, exceto
-            quando exigido por lei.
+            Não compartilhamos informações de identificação pessoal, exceto quando exigido por lei.
           </p>
 
           <p className={textStyles}>
-            Nosso site pode conter links para sites externos. Não temos controle
-            sobre o conteúdo e políticas desses sites e não nos
-            responsabilizamos por suas práticas.
+            Nosso site pode conter links para sites externos. Não temos controle sobre o conteúdo e
+            políticas desses sites e não nos responsabilizamos por suas práticas.
           </p>
 
           <p className={textStyles}>
-            Você pode recusar o fornecimento de informações pessoais, ciente de
-            que isso pode limitar alguns serviços.
+            Você pode recusar o fornecimento de informações pessoais, ciente de que isso pode
+            limitar alguns serviços.
           </p>
 
           <h2 className={headingStyles}>
             <FiInfo /> Google AdSense e Cookies
           </h2>
           <p className={textStyles}>
-            Utilizamos o Google AdSense para veicular anúncios mais relevantes e
-            limitar a frequência com que você vê determinados anúncios, por meio
-            do cookie DoubleClick.
+            Utilizamos o Google AdSense para veicular anúncios mais relevantes e limitar a
+            frequência com que você vê determinados anúncios, por meio do cookie DoubleClick.
           </p>
           <p className={textStyles}>
-            Esses cookies ajudam a personalizar sua experiência, mostrando
-            anúncios baseados em seus interesses.
+            Esses cookies ajudam a personalizar sua experiência, mostrando anúncios baseados em seus
+            interesses.
           </p>
           <p className={textStyles}>
-            Parceiros afiliados podem utilizar cookies para rastrear visitas e
-            compras feitas por meio de seus links, garantindo créditos e ofertas
-            promocionais.
+            Parceiros afiliados podem utilizar cookies para rastrear visitas e compras feitas por
+            meio de seus links, garantindo créditos e ofertas promocionais.
           </p>
 
           <h2 className={headingStyles}>
@@ -79,17 +72,16 @@ const PrivacyPolicyPage: React.FC = () => {
           </h2>
           <ul className="list-none space-y-3 text-gray-700 dark:text-gray-300">
             <li className="flex items-center gap-2">
-              <FiChevronRight className="text-blue-500" /> Não realizar
-              atividades ilegais ou contrárias à boa fé e à ordem pública.
+              <FiChevronRight className="text-blue-500" /> Não realizar atividades ilegais ou
+              contrárias à boa fé e à ordem pública.
             </li>
             <li className="flex items-center gap-2">
-              <FiChevronRight className="text-blue-500" /> Não difundir conteúdo
-              ofensivo, discriminatório ou ilegal.
+              <FiChevronRight className="text-blue-500" /> Não difundir conteúdo ofensivo,
+              discriminatório ou ilegal.
             </li>
             <li className="flex items-center gap-2">
-              <FiChevronRight className="text-blue-500" /> Não causar danos a
-              sistemas físicos ou lógicos do JA Automóveis, fornecedores ou
-              terceiros.
+              <FiChevronRight className="text-blue-500" /> Não causar danos a sistemas físicos ou
+              lógicos do JA Automóveis, fornecedores ou terceiros.
             </li>
           </ul>
 
@@ -97,9 +89,8 @@ const PrivacyPolicyPage: React.FC = () => {
             <FiInfo /> Mais informações
           </h2>
           <p className={textStyles}>
-            Se tiver dúvidas sobre privacidade, entre em contato conosco.
-            Lembramos que manter os cookies ativados pode melhorar a sua
-            experiência no site.
+            Se tiver dúvidas sobre privacidade, entre em contato conosco. Lembramos que manter os
+            cookies ativados pode melhorar a sua experiência no site.
           </p>
 
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-8">

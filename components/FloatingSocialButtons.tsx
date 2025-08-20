@@ -47,9 +47,7 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
 
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3 items-end">
-      {showRealtime && page && (
-        <RealTimeViewers page={page as string} variant="inline" />
-      )}
+      {showRealtime && page ? <RealTimeViewers page={page as string} variant="inline" /> : null}
 
       {buttons.map((btn) => (
         <a
@@ -81,7 +79,7 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
 
       {/* Botão "Voltar ao topo" com fade-in/out */}
       <AnimatePresence>
-        {showTopButton && (
+        {showTopButton ? (
           <motion.button
             key="top-button"
             onClick={scrollToTop}
@@ -102,7 +100,7 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
             {/* Glow Effect */}
             <span className="absolute inset-0 rounded-full animate-pulse bg-white/10"></span>
           </motion.button>
-        )}
+        ) : null}
       </AnimatePresence>
     </div>
   );

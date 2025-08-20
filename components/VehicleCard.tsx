@@ -19,33 +19,21 @@ interface VehicleCardProps {
 }
 
 const VehicleCard: React.FC<VehicleCardProps> = memo(
-  ({
-    vehicle,
-    onView,
-    onFavorite,
-    isFavorite = false,
-    index = 0,
-    viewMode = "grid",
-  }) => {
+  ({ vehicle, onView, onFavorite, isFavorite = false, index = 0, viewMode = "grid" }) => {
     const navigate = useNavigate();
     const [localFavorite, setLocalFavorite] = useState<boolean>(isFavorite);
 
     // Load favorite state from localStorage on mount
     useEffect(() => {
       try {
-        const likedVehicles = JSON.parse(
-          localStorage.getItem("likedVehicles") || "[]",
-        );
+        const likedVehicles = JSON.parse(localStorage.getItem("likedVehicles") || "[]");
         setLocalFavorite(likedVehicles.includes(vehicle.id));
       } catch (error) {
         // Silently handle error
       }
     }, [vehicle.id]);
 
-    const favorite = useMemo(
-      () => localFavorite || isFavorite,
-      [localFavorite, isFavorite],
-    );
+    const favorite = useMemo(() => localFavorite || isFavorite, [localFavorite, isFavorite]);
 
     // Build image src with cache-busting using updatedAt to avoid stale images
     const imageSrc = useMemo(() => {
@@ -66,19 +54,13 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
         if (
           (
             window as unknown as {
-              trackBusinessEvent?: (
-                event: string,
-                data: Record<string, unknown>,
-              ) => void;
+              trackBusinessEvent?: (event: string, data: Record<string, unknown>) => void;
             }
           ).trackBusinessEvent
         ) {
           (
             window as unknown as {
-              trackBusinessEvent: (
-                event: string,
-                data: Record<string, unknown>,
-              ) => void;
+              trackBusinessEvent: (event: string, data: Record<string, unknown>) => void;
             }
           ).trackBusinessEvent("like_vehicle", {
             vehicleId: vehicle.id,
@@ -110,19 +92,14 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
         sendLikeAnalytics(newFavoriteState);
 
         try {
-          const current: string[] = JSON.parse(
-            localStorage.getItem("likedVehicles") || "[]",
-          );
+          const current: string[] = JSON.parse(localStorage.getItem("likedVehicles") || "[]");
           const set = new Set<string>(current);
           if (newFavoriteState) {
             set.add(vehicle.id);
           } else {
             set.delete(vehicle.id);
           }
-          localStorage.setItem(
-            "likedVehicles",
-            JSON.stringify(Array.from(set)),
-          );
+          localStorage.setItem("likedVehicles", JSON.stringify(Array.from(set)));
         } catch (error) {
           // Silently handle error
         }
@@ -132,136 +109,131 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
     // removed unused helpers
 
     if (viewMode === "list") {
-  return (
-    <motion.div
-      className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 cursor-pointer group"
-      whileHover={{ scale: 1.01 }}
-      onClick={handleCardClick}
-    >
-      <div className="flex flex-col md:flex-row">
-        {/* Imagem */}
-        <div className="md:w-80 h-48 md:h-auto relative overflow-hidden flex-shrink-0">
-          <OptimizedImage
-            src={imageSrc}
-            alt={`${vehicle.make} ${vehicle.model}`}
-            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-          />
+      return (
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 cursor-pointer group"
+          whileHover={{ scale: 1.01 }}
+          onClick={handleCardClick}
+        >
+          <div className="flex flex-col md:flex-row">
+            {/* Imagem */}
+            <div className="md:w-80 h-48 md:h-auto relative overflow-hidden flex-shrink-0">
+              <OptimizedImage
+                src={imageSrc}
+                alt={`${vehicle.make} ${vehicle.model}`}
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+              />
 
-          {/* Disponível */}
-          <div className="absolute top-3 left-3">
-            <span className="bg-red-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md flex items-center gap-1">
-              <FiCheckCircle className="w-3 h-3" />
-              Disponível
-            </span>
-          </div>
+              {/* Disponível */}
+              <div className="absolute top-3 left-3">
+                <span className="bg-red-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md flex items-center gap-1">
+                  <FiCheckCircle className="w-3 h-3" />
+                  Disponível
+                </span>
+              </div>
 
-          {/* Destaque */}
-          {vehicle.featured && (
-            <div className="absolute top-3 right-3 z-10">
-              <span className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
-                <FiStar className="w-3 h-3" />
-                Destaque
-              </span>
+              {/* Destaque */}
+              {vehicle.featured ? (
+                <div className="absolute top-3 right-3 z-10">
+                  <span className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
+                    <FiStar className="w-3 h-3" />
+                    Destaque
+                  </span>
+                </div>
+              ) : null}
+
+              {/* Favoritar */}
+              <button
+                onClick={handleFavoriteClick}
+                aria-label={favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+                className={`absolute top-3 right-14 z-10 p-2 rounded-full transition-all duration-300 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                  favorite
+                    ? "bg-red-500 text-white shadow-lg scale-110"
+                    : "bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white"
+                }`}
+              >
+                <FiHeart
+                  className={`w-4 h-4 transition-transform ${
+                    favorite ? "fill-current scale-110" : ""
+                  }`}
+                />
+              </button>
             </div>
-          )}
 
-          {/* Favoritar */}
-          <button
-            onClick={handleFavoriteClick}
-            aria-label={
-              favorite
-                ? "Remover dos favoritos"
-                : "Adicionar aos favoritos"
-            }
-            className={`absolute top-3 right-14 z-10 p-2 rounded-full transition-all duration-300 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-              favorite
-                ? "bg-red-500 text-white shadow-lg scale-110"
-                : "bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white"
-            }`}
-          >
-            <FiHeart
-              className={`w-4 h-4 transition-transform ${
-                favorite ? "fill-current scale-110" : ""
-              }`}
-            />
-          </button>
-        </div>
+            {/* Conteúdo */}
+            <div className="flex-1 p-6">
+              {/* Header */}
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 transition-colors duration-300">
+                    {vehicle.make} {vehicle.model}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {vehicle.year}{" "}
+                    {vehicle.description && vehicle.description.length > 60
+                      ? `${vehicle.description.substring(0, 60)}...`
+                      : vehicle.description}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-sm text-gray-500">R$</span>
+                    <p className="text-3xl font-extrabold text-green-600 dark:text-green-400 drop-shadow-sm">
+                      {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-        {/* Conteúdo */}
-        <div className="flex-1 p-6">
-          {/* Header */}
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 transition-colors duration-300">
-                {vehicle.make} {vehicle.model}
-              </h3>
-              <p className="text-sm text-gray-500">
-                {vehicle.year}{" "}
-                {vehicle.description && vehicle.description.length > 60
-                  ? `${vehicle.description.substring(0, 60)}...`
-                  : vehicle.description}
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="flex items-baseline gap-1">
-                <span className="text-sm text-gray-500">R$</span>
-                <p className="text-3xl font-extrabold text-green-600 dark:text-green-400 drop-shadow-sm">
-                  {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
-                </p>
+              {/* Informações */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                  <FiCalendar className="w-4 h-4 text-blue-500" />
+                  <span>{vehicle.year}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                  <BsSpeedometer2 className="w-4 h-4 text-green-500" />
+                  <span>{formatMileage(vehicle.km)} km</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                  <BsFuelPump className="w-4 h-4 text-orange-500" />
+                  <span>{vehicle.fuel}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                  <FiSettings className="w-4 h-4 text-purple-500" />
+                  <span>{vehicle.gearbox}</span>
+                </div>
+              </div>
+
+              {/* Ações */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <Link
+                  to={`/vehicle/${vehicle.id}`}
+                  aria-label={`Ver detalhes do ${vehicle.make} ${vehicle.model} ${vehicle.year}`}
+                  className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 focus:ring-2 focus:ring-blue-400"
+                >
+                  <FiEye className="w-4 h-4" />
+                  Ver Detalhes
+                </Link>
+
+                <a
+                  href={`https://wa.me/5524999037716?text=${encodeURIComponent(
+                    `Olá! Tenho interesse no ${vehicle.make} ${vehicle.model} ${vehicle.year}`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Conversar no WhatsApp sobre ${vehicle.make} ${vehicle.model}`}
+                  className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 focus:ring-2 focus:ring-green-400"
+                >
+                  <FaWhatsapp className="w-5 h-5" />
+                  WhatsApp
+                </a>
               </div>
             </div>
           </div>
-
-          {/* Informações */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
-            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-              <FiCalendar className="w-4 h-4 text-blue-500" />
-              <span>{vehicle.year}</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-              <BsSpeedometer2 className="w-4 h-4 text-green-500" />
-              <span>{formatMileage(vehicle.km)} km</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-              <BsFuelPump className="w-4 h-4 text-orange-500" />
-              <span>{vehicle.fuel}</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-              <FiSettings className="w-4 h-4 text-purple-500" />
-              <span>{vehicle.gearbox}</span>
-            </div>
-          </div>
-
-          {/* Ações */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
-            <Link
-              to={`/vehicle/${vehicle.id}`}
-              aria-label={`Ver detalhes do ${vehicle.make} ${vehicle.model} ${vehicle.year}`}
-              className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 focus:ring-2 focus:ring-blue-400"
-            >
-              <FiEye className="w-4 h-4" />
-              Ver Detalhes
-            </Link>
-
-            <a
-              href={`https://wa.me/5524999037716?text=${encodeURIComponent(
-                `Olá! Tenho interesse no ${vehicle.make} ${vehicle.model} ${vehicle.year}`,
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Conversar no WhatsApp sobre ${vehicle.make} ${vehicle.model}`}
-              className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 focus:ring-2 focus:ring-green-400"
-            >
-              <FaWhatsapp className="w-5 h-5" />
-              WhatsApp
-            </a>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
+        </motion.div>
+      );
+    }
 
     return (
       <motion.div
@@ -288,7 +260,6 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
 
         {/* Favorite + WhatsApp Buttons */}
         <div className="absolute top-4 right-4 z-10 flex gap-2">
-          
           {/* Botão de Like */}
           <button
             onClick={handleFavoriteClick}
@@ -366,7 +337,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
         </div>
       </motion.div>
     );
-  },
+  }
 );
 
 VehicleCard.displayName = "VehicleCard";

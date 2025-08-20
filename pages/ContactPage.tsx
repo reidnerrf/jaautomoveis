@@ -17,8 +17,7 @@ const ContactPage: React.FC = () => {
             Fale Conosco
           </h1>
           <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Estamos prontos para te atender. Envie-nos uma mensagem ou faça-nos
-            uma visita.
+            Estamos prontos para te atender. Envie-nos uma mensagem ou faça-nos uma visita.
           </p>
         </motion.div>
 
@@ -40,10 +39,7 @@ const ContactPage: React.FC = () => {
                 { id: "email", label: "Email", type: "email" },
               ].map(({ id, label, type }) => (
                 <div key={id}>
-                  <label
-                    htmlFor={id}
-                    className="font-medium text-gray-700 dark:text-gray-300"
-                  >
+                  <label htmlFor={id} className="font-medium text-gray-700 dark:text-gray-300">
                     {label}
                   </label>
                   <input
@@ -55,10 +51,7 @@ const ContactPage: React.FC = () => {
               ))}
 
               <div>
-                <label
-                  htmlFor="message"
-                  className="font-medium text-gray-700 dark:text-gray-300"
-                >
+                <label htmlFor="message" className="font-medium text-gray-700 dark:text-gray-300">
                   Mensagem
                 </label>
                 <textarea

@@ -39,9 +39,7 @@ export class RealTimeManager {
   }
 
   public emitVehicleUpdate(vehicle: any) {
-    this.io
-      .to(`vehicle-${vehicle.id || vehicle._id}`)
-      .emit("vehicle-updated", vehicle);
+    this.io.to(`vehicle-${vehicle.id || vehicle._id}`).emit("vehicle-updated", vehicle);
     this.io.to("admin-room").emit("vehicle-updated", vehicle);
   }
 

@@ -5,8 +5,7 @@ import React from "react";
 export const initSentry = () => {
   if (process.env.NODE_ENV === "production") {
     Sentry.init({
-      dsn:
-        process.env.SENTRY_DSN || "https://your-sentry-dsn@sentry.io/project",
+      dsn: process.env.SENTRY_DSN || "https://your-sentry-dsn@sentry.io/project",
       // Evitamos integrações que variam entre versões do SDK para manter build limpo
       // Performance monitoring básico pode ser reativado futuramente conforme versão do SDK
       environment: process.env.NODE_ENV,
@@ -14,10 +13,7 @@ export const initSentry = () => {
       beforeSend(event) {
         if (event.exception) {
           const exception = event.exception.values?.[0];
-          if (
-            exception?.type === "NetworkError" &&
-            exception?.value?.includes("Failed to fetch")
-          ) {
+          if (exception?.type === "NetworkError" && exception?.value?.includes("Failed to fetch")) {
             return null;
           }
         }
@@ -52,7 +48,7 @@ export const captureError = (error: Error, context?: any) => {
 export const captureMessage = (
   message: string,
   level: Sentry.SeverityLevel = "info",
-  context?: any,
+  context?: any
 ) => {
   if (process.env.NODE_ENV === "production") {
     Sentry.captureMessage(message, {
@@ -95,9 +91,7 @@ export const setContext = (name: string, context: any) => {
 };
 
 // HOC para envolver componentes com error boundary
-export const withSentryErrorBoundary = (
-  Component: React.ComponentType<any>,
-) => {
+export const withSentryErrorBoundary = (Component: React.ComponentType<any>) => {
   return Sentry.withErrorBoundary(Component, {
     fallback: ({ error, componentStack, resetError }) => (
       <div className="error-boundary">
@@ -130,11 +124,7 @@ export const startTransaction = (name: string, operation: string) => {
 };
 
 // Função para monitorar métricas customizadas
-export const captureMetric = (
-  name: string,
-  value: number,
-  unit: string = "millisecond",
-) => {
+export const captureMetric = (name: string, value: number, unit: string = "millisecond") => {
   // No-op por compatibilidade entre versões
 };
 

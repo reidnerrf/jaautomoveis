@@ -27,8 +27,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   ...rest
 }) => {
   const imageRef = useRef<HTMLImageElement>(null);
-  const { getOptimizedImageUrl, getResponsiveImageSet } =
-    useImageOptimization();
+  const { getOptimizedImageUrl, getResponsiveImageSet } = useImageOptimization();
   const { isInView } = useLazyLoad(imageRef, src);
 
   const [currentSrc, setCurrentSrc] = useState<string>("");

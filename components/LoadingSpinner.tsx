@@ -47,25 +47,15 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
             animate={{ y: [0, -2, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
           >
-            <svg
-              className="w-6 h-6 text-blue-600"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
               <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5H15V4C15 3.45 14.55 3 14 3H10C9.45 3 9 3.45 9 3V5H6.5C5.84 5 5.28 5.42 5.08 6.01L3 12V20C3 20.55 3.45 21 4 21H5C5.55 21 6 20.55 6 20V19H18V20C18 20.55 18.45 21 19 21H20C20.55 21 21 20.55 21 20V12L18.92 6.01ZM6.5 16C5.67 16 5 15.33 5 14.5S5.67 13 6.5 13 8 13.67 8 14.5 7.33 16 6.5 16ZM17.5 16C16.67 16 16 15.33 16 14.5S16.67 13 17.5 13 19 13.67 19 14.5 18.33 16 17.5 16ZM5 11L6.5 7H17.5L19 11H5Z" />
             </svg>
           </motion.div>
         </motion.div>
 
         {/* Loading Text */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            {message}
-          </h3>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{message}</h3>
           <div className="flex justify-center gap-1">
             {[...Array(3)].map((_, i) => (
               <motion.div

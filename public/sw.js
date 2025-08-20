@@ -22,7 +22,7 @@ self.addEventListener("install", (event) => {
       caches.open(DYNAMIC_CACHE),
       caches.open(IMAGE_CACHE),
       caches.open(API_CACHE),
-    ]).then(() => self.skipWaiting()),
+    ]).then(() => self.skipWaiting())
   );
 });
 
@@ -33,16 +33,11 @@ self.addEventListener("activate", (event) => {
       .then((names) =>
         Promise.all(
           names
-            .filter(
-              (n) =>
-                ![STATIC_CACHE, DYNAMIC_CACHE, IMAGE_CACHE, API_CACHE].includes(
-                  n,
-                ),
-            )
-            .map((n) => caches.delete(n)),
-        ),
+            .filter((n) => ![STATIC_CACHE, DYNAMIC_CACHE, IMAGE_CACHE, API_CACHE].includes(n))
+            .map((n) => caches.delete(n))
+        )
       )
-      .then(() => self.clients.claim()),
+      .then(() => self.clients.claim())
   );
 });
 
@@ -95,7 +90,7 @@ async function staleWhileRevalidate(request, cacheName) {
 }
 
 self.addEventListener("fetch", (event) => {
-  const request = event.request;
+  const { request } = event;
   const url = new URL(request.url);
 
   // Do not interfere with Vite dev server or TS/TSX module requests
@@ -119,7 +114,7 @@ self.addEventListener("fetch", (event) => {
           cachePut(DYNAMIC_CACHE, request, resp);
           return resp;
         })
-        .catch(() => caches.match("/")),
+        .catch(() => caches.match("/"))
     );
     return;
   }
@@ -136,12 +131,11 @@ self.addEventListener("fetch", (event) => {
         networkFirst(noStoreReq, IMAGE_CACHE).catch(
           () =>
             new Response(
-              "data:image/svg+xml;utf8," +
-                encodeURIComponent(
-                  "<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='#e5e7eb'/></svg>",
-                ),
-            ),
-        ),
+              `data:image/svg+xml;utf8,${encodeURIComponent(
+                "<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='#e5e7eb'/></svg>"
+              )}`
+            )
+        )
       );
       return;
     }
@@ -149,12 +143,11 @@ self.addEventListener("fetch", (event) => {
       cacheFirst(request, IMAGE_CACHE).catch(
         () =>
           new Response(
-            "data:image/svg+xml;utf8," +
-              encodeURIComponent(
-                "<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='#e5e7eb'/></svg>",
-              ),
-          ),
-      ),
+            `data:image/svg+xml;utf8,${encodeURIComponent(
+              "<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><rect width='100%' height='100%' fill='#e5e7eb'/></svg>"
+            )}`
+          )
+      )
     );
     return;
   }

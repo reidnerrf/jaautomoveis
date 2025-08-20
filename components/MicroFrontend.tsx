@@ -84,9 +84,7 @@ const MicroFrontend: React.FC<MicroFrontendProps> = ({
   version,
   cache = true,
 }) => {
-  const [Component, setComponent] = useState<React.ComponentType<any> | null>(
-    null,
-  );
+  const [Component, setComponent] = useState<React.ComponentType<any> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -156,9 +154,7 @@ const MicroFrontend: React.FC<MicroFrontendProps> = ({
   const defaultErrorFallback = (
     <div className="flex items-center justify-center p-8 text-red-600">
       <div className="text-center">
-        <div className="text-xl font-semibold mb-2">
-          Erro ao carregar {name}
-        </div>
+        <div className="text-xl font-semibold mb-2">Erro ao carregar {name}</div>
         <div className="text-sm text-gray-500 mb-4">{error?.message}</div>
         <button
           onClick={loadMicroFrontend}
@@ -183,10 +179,7 @@ const MicroFrontend: React.FC<MicroFrontendProps> = ({
   }
 
   return (
-    <ErrorBoundary
-      fallback={errorFallback || defaultErrorFallback}
-      onError={onError}
-    >
+    <ErrorBoundary fallback={errorFallback || defaultErrorFallback} onError={onError}>
       <Suspense fallback={fallback || defaultFallback}>
         <Component {...props} />
       </Suspense>
@@ -204,10 +197,7 @@ async function loadRemoteModule(config: MicroFrontendConfig): Promise<any> {
       const factory = await container.get(config.module);
       return factory();
     } catch (error) {
-      console.warn(
-        "Module Federation failed, falling back to dynamic import:",
-        error,
-      );
+      console.warn("Module Federation failed, falling back to dynamic import:", error);
     }
   }
 
@@ -263,16 +253,14 @@ async function loadDynamicModule(config: MicroFrontendConfig): Promise<any> {
     default: React.lazy(() =>
       Promise.resolve({
         default: moduleData.component,
-      }),
+      })
     ),
   };
 }
 
 // Hook para gerenciar micro-frontends
 export function useMicroFrontend(name: string) {
-  const [status, setStatus] = useState<"idle" | "loading" | "loaded" | "error">(
-    "idle",
-  );
+  const [status, setStatus] = useState<"idle" | "loading" | "loaded" | "error">("idle");
   const [error, setError] = useState<Error | null>(null);
 
   const load = useCallback(async () => {
@@ -337,7 +325,7 @@ const MultiMicroFrontend: React.FC<MultiMicroFrontendProps> = ({
         return newErrors;
       });
     },
-    [onError],
+    [onError]
   );
 
   return (
@@ -374,25 +362,16 @@ const VersionedMicroFrontend: React.FC<VersionedMicroFrontendProps> = ({
   const handleError = useCallback(
     (error: Error) => {
       if (fallbackVersion && currentVersion === version) {
-        console.warn(
-          `Failed to load version ${version}, falling back to ${fallbackVersion}`,
-        );
+        console.warn(`Failed to load version ${version}, falling back to ${fallbackVersion}`);
         setCurrentVersion(fallbackVersion);
       } else {
         props.onError?.(error);
       }
     },
-    [version, fallbackVersion, currentVersion, props],
+    [version, fallbackVersion, currentVersion, props]
   );
 
-  return (
-    <MicroFrontend
-      {...props}
-      name={name}
-      version={currentVersion}
-      onError={handleError}
-    />
-  );
+  return <MicroFrontend {...props} name={name} version={currentVersion} onError={handleError} />;
 };
 
 // Componente para micro-frontend com cache inteligente
@@ -407,8 +386,7 @@ const CachedMicroFrontend: React.FC<CachedMicroFrontendProps> = ({
   cacheTTL = 3600000, // 1 hora
   ...props
 }) => {
-  const [cachedComponent, setCachedComponent] =
-    useState<React.ComponentType<any> | null>(null);
+  const [cachedComponent, setCachedComponent] = useState<React.ComponentType<any> | null>(null);
 
   useEffect(() => {
     if (cacheStrategy === "memory") {
@@ -416,12 +394,8 @@ const CachedMicroFrontend: React.FC<CachedMicroFrontendProps> = ({
       if (cached) {
         setCachedComponent(() => cached);
       }
-    } else if (
-      cacheStrategy === "localStorage" ||
-      cacheStrategy === "sessionStorage"
-    ) {
-      const storage =
-        cacheStrategy === "localStorage" ? localStorage : sessionStorage;
+    } else if (cacheStrategy === "localStorage" || cacheStrategy === "sessionStorage") {
+      const storage = cacheStrategy === "localStorage" ? localStorage : sessionStorage;
       const cached = storage.getItem(`micro-frontend-${name}`);
 
       if (cached) {

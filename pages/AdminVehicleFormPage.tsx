@@ -81,18 +81,13 @@ const AdminVehicleFormPage: React.FC = () => {
   }, [id, isEditing, getVehicleById]);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setVehicle((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleArrayChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-    field: "optionals",
-  ) => {
+  const handleArrayChange = (e: React.ChangeEvent<HTMLTextAreaElement>, field: "optionals") => {
     const values = e.target.value.split(",").map((item) => item.trim());
     setVehicle((prev) => ({ ...prev, [field]: values }));
   };
@@ -134,7 +129,10 @@ const AdminVehicleFormPage: React.FC = () => {
   };
 
   const handleDeleteImage = async (imageUrl: string) => {
-    const confirmed = window && typeof window !== 'undefined' ? window.confirm("Tem certeza que deseja remover esta imagem?") : true;
+    const confirmed =
+      window && typeof window !== "undefined"
+        ? window.confirm("Tem certeza que deseja remover esta imagem?")
+        : true;
     if (!confirmed) return;
 
     // Optimistically update UI
@@ -147,9 +145,9 @@ const AdminVehicleFormPage: React.FC = () => {
     try {
       if (isEditing && id) {
         await fetch(`/api/vehicles/${id}/images`, {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ path: imageUrl }),
@@ -157,7 +155,7 @@ const AdminVehicleFormPage: React.FC = () => {
       }
     } catch (e) {
       // Non-blocking; UI already updated
-      console.warn('Falha ao remover imagem no servidor', e);
+      console.warn("Falha ao remover imagem no servidor", e);
     }
   };
 
@@ -194,9 +192,12 @@ const AdminVehicleFormPage: React.FC = () => {
   const handleDeleteVehicle = async () => {
     if (!id) return;
 
-    const confirmed = window && typeof window !== 'undefined' ? window.confirm(
-      "Tem certeza que deseja deletar este veículo? Esta ação não pode ser desfeita.",
-    ) : true;
+    const confirmed =
+      window && typeof window !== "undefined"
+        ? window.confirm(
+            "Tem certeza que deseja deletar este veículo? Esta ação não pode ser desfeita."
+          )
+        : true;
     if (!confirmed) return;
     try {
       const response = await fetch(`/api/vehicles/${id}`, {
@@ -388,17 +389,11 @@ const AdminVehicleFormPage: React.FC = () => {
                   <p className="text-xs text-gray-500">ou arraste e solte</p>
                 </div>
                 {isUploading ? (
-                  <p className="text-sm text-gray-600 mt-2">
-                    Enviando imagens...
-                  </p>
+                  <p className="text-sm text-gray-600 mt-2">Enviando imagens...</p>
                 ) : null}
-                {uploadError ? (
-                  <p className="text-sm text-red-500 mt-2">{uploadError}</p>
-                ) : null}
+                {uploadError ? <p className="text-sm text-red-500 mt-2">{uploadError}</p> : null}
               </div>
-              <p className="mt-1 text-xs text-gray-500">
-                A primeira imagem será a capa.
-              </p>
+              <p className="mt-1 text-xs text-gray-500">A primeira imagem será a capa.</p>
             </div>
 
             {/* Textos adicionais */}
@@ -413,9 +408,7 @@ const AdminVehicleFormPage: React.FC = () => {
               ></textarea>
             </div>
             <div>
-              <label className={labelStyles}>
-                Opcionais (separados por vírgula)
-              </label>
+              <label className={labelStyles}>Opcionais (separados por vírgula)</label>
               <textarea
                 name="optionals"
                 value={vehicle.optionals.join(", ")}
@@ -425,7 +418,7 @@ const AdminVehicleFormPage: React.FC = () => {
               ></textarea>
             </div>
 
-           {/* Botões de ação premium */}
+            {/* Botões de ação premium */}
             <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:gap-4">
               {/* Cancelar */}
               <motion.button
@@ -439,7 +432,7 @@ const AdminVehicleFormPage: React.FC = () => {
               </motion.button>
 
               {/* Deletar */}
-              {isEditing && (
+              {isEditing ? (
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
@@ -450,7 +443,7 @@ const AdminVehicleFormPage: React.FC = () => {
                   <FiTrash2 className="inline mr-2" />
                   Deletar Veículo
                 </motion.button>
-              )}
+              ) : null}
 
               {/* Adicionar / Atualizar */}
               <motion.button

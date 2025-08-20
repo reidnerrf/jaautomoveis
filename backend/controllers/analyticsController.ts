@@ -3,10 +3,7 @@ import Analytics from "../models/Analytics";
 import ViewLog from "../models/ViewLog";
 //import { ObjectId } from 'mongodb';
 
-export const getMonthlyViews = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const getMonthlyViews = async (req: express.Request, res: express.Response) => {
   try {
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
@@ -63,10 +60,7 @@ export const getMonthlyViews = async (
   }
 };
 
-export const getDashboardStats = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const getDashboardStats = async (req: express.Request, res: express.Response) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
@@ -93,9 +87,7 @@ export const getDashboardStats = async (
     const totalLikesAgg = await Analytics.countDocuments({ action: "like_vehicle" });
 
     // Count distinct vehicles that received at least one like
-    const likeDocs = await Analytics.find({ action: "like_vehicle" })
-      .select("label")
-      .lean();
+    const likeDocs = await Analytics.find({ action: "like_vehicle" }).select("label").lean();
     const likedVehicleIds = new Set<string>();
     likeDocs.forEach((doc: any) => {
       try {
@@ -125,14 +117,9 @@ export const getDashboardStats = async (
 };
 
 // Lista de likes por veículo para ordenação/filtro no frontend
-export const getLikesByVehicle = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const getLikesByVehicle = async (req: express.Request, res: express.Response) => {
   try {
-    const docs = await Analytics.find({ action: "like_vehicle" })
-      .select("label")
-      .lean();
+    const docs = await Analytics.find({ action: "like_vehicle" }).select("label").lean();
     const counts = new Map<string, { name: string; count: number }>();
     for (const d of docs) {
       try {
@@ -164,10 +151,7 @@ export const getLikesByVehicle = async (
   }
 };
 
-export const getRealtimeStats = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const getRealtimeStats = async (req: express.Request, res: express.Response) => {
   try {
     const last24Hours = new Date();
     last24Hours.setHours(last24Hours.getHours() - 24);
@@ -193,10 +177,7 @@ export const getRealtimeStats = async (
   }
 };
 
-export const getDailyViewsLast30Days = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const getDailyViewsLast30Days = async (req: express.Request, res: express.Response) => {
   try {
     const since = new Date();
     since.setDate(since.getDate() - 30);
@@ -228,10 +209,7 @@ export const getDailyViewsLast30Days = async (
   }
 };
 
-export const purgeOldAnalytics = async (
-  req: express.Request,
-  res: express.Response,
-) => {
+export const purgeOldAnalytics = async (req: express.Request, res: express.Response) => {
   try {
     const cutoff = new Date();
     cutoff.setMonth(cutoff.getMonth() - 3);

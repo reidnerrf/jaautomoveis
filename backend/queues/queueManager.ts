@@ -94,17 +94,14 @@ const QUEUE_CONFIGS: Record<string, QueueConfig> = {
 
 class QueueManager extends EventEmitter {
   private queues: Map<string, Queue.Queue> = new Map();
-  private processors: Map<string, (job: Queue.Job) => Promise<unknown>> =
-    new Map();
+  private processors: Map<string, (job: Queue.Job) => Promise<unknown>> = new Map();
   private redis: Redis;
   private stats: Map<string, QueueStats> = new Map();
   private isShuttingDown = false;
 
   constructor(redisUrl?: string) {
     super();
-    this.redis = new Redis(
-      redisUrl || process.env.REDIS_URL || "redis://localhost:6379",
-    );
+    this.redis = new Redis(redisUrl || process.env.REDIS_URL || "redis://localhost:6379");
     this.initializeQueues();
     this.setupGlobalEvents();
   }
@@ -147,7 +144,7 @@ class QueueManager extends EventEmitter {
         {},
         {
           repeat: config.repeat,
-        },
+        }
       );
     }
 
@@ -238,9 +235,7 @@ class QueueManager extends EventEmitter {
     const processor = this.processors.get(`${queueName}:${jobType}`);
 
     if (!processor) {
-      throw new Error(
-        `No processor registered for job type: ${jobType} in queue: ${queueName}`,
-      );
+      throw new Error(`No processor registered for job type: ${jobType} in queue: ${queueName}`);
     }
 
     try {
@@ -260,8 +255,7 @@ class QueueManager extends EventEmitter {
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
 
       this.emit("job:processed", {
         queue: queueName,
@@ -281,7 +275,7 @@ class QueueManager extends EventEmitter {
   public registerProcessor(
     queueName: string,
     jobType: string,
-    processor: (job: Queue.Job) => Promise<unknown>,
+    processor: (job: Queue.Job) => Promise<unknown>
   ): void {
     const key = `${queueName}:${jobType}`;
     this.processors.set(key, processor);
@@ -313,10 +307,7 @@ class QueueManager extends EventEmitter {
   }
 
   // Adicionar múltiplos jobs
-  public async addJobs(
-    queueName: string,
-    jobs: JobData[],
-  ): Promise<Queue.Job[]> {
+  public async addJobs(queueName: string, jobs: JobData[]): Promise<Queue.Job[]> {
     const queue = this.queues.get(queueName);
     if (!queue) {
       throw new Error(`Queue ${queueName} not found`);
@@ -343,10 +334,7 @@ class QueueManager extends EventEmitter {
   }
 
   // Limpar uma fila
-  public async cleanQueue(
-    queueName: string,
-    grace: number = 1000,
-  ): Promise<void> {
+  public async cleanQueue(queueName: string, grace: number = 1000): Promise<void> {
     const queue = this.queues.get(queueName);
     if (queue) {
       await queue.clean(grace, "completed");
@@ -378,20 +366,13 @@ class QueueManager extends EventEmitter {
       completed: completed.length,
       failed: failed.length,
       delayed: delayed.length,
-      total:
-        waiting.length +
-        active.length +
-        completed.length +
-        failed.length +
-        delayed.length,
+      total: waiting.length + active.length + completed.length + failed.length + delayed.length,
     };
   }
 
   // Obter estatísticas de todas as filas
   public async getAllQueueStats(): Promise<QueueStats[]> {
-    const statsPromises = Array.from(this.queues.keys()).map((name) =>
-      this.getQueueStats(name),
-    );
+    const statsPromises = Array.from(this.queues.keys()).map((name) => this.getQueueStats(name));
     const stats = await Promise.all(statsPromises);
     return stats.filter((stat): stat is QueueStats => stat !== null);
   }
@@ -401,7 +382,7 @@ class QueueManager extends EventEmitter {
     queueName: string,
     status: string = "waiting",
     start = 0,
-    end = 100,
+    end = 100
   ): Promise<Queue.Job[]> {
     const queue = this.queues.get(queueName);
     if (!queue) {
@@ -425,10 +406,7 @@ class QueueManager extends EventEmitter {
   }
 
   // Remover um job
-  public async removeJob(
-    queueName: string,
-    jobId: string | number,
-  ): Promise<void> {
+  public async removeJob(queueName: string, jobId: string | number): Promise<void> {
     const queue = this.queues.get(queueName);
     if (queue) {
       const job = await queue.getJob(jobId);
@@ -439,10 +417,7 @@ class QueueManager extends EventEmitter {
   }
 
   // Retry um job
-  public async retryJob(
-    queueName: string,
-    jobId: string | number,
-  ): Promise<void> {
+  public async retryJob(queueName: string, jobId: string | number): Promise<void> {
     const queue = this.queues.get(queueName);
     if (queue) {
       const job = await queue.getJob(jobId);
@@ -462,20 +437,15 @@ class QueueManager extends EventEmitter {
     console.log("Starting graceful shutdown of queue manager...");
 
     // Pausar todas as filas
-    const pausePromises = Array.from(this.queues.keys()).map((name) =>
-      this.pauseQueue(name),
-    );
+    const pausePromises = Array.from(this.queues.keys()).map((name) => this.pauseQueue(name));
     await Promise.all(pausePromises);
 
     // Aguardar jobs ativos terminarem
     const activeJobs = await Promise.all(
-      Array.from(this.queues.values()).map((queue) => queue.getActive()),
+      Array.from(this.queues.values()).map((queue) => queue.getActive())
     );
 
-    const totalActiveJobs = activeJobs.reduce(
-      (sum, jobs) => sum + jobs.length,
-      0,
-    );
+    const totalActiveJobs = activeJobs.reduce((sum, jobs) => sum + jobs.length, 0);
 
     if (totalActiveJobs > 0) {
       console.log(`Waiting for ${totalActiveJobs} active jobs to complete...`);
@@ -486,13 +456,10 @@ class QueueManager extends EventEmitter {
 
       while (attempts < maxAttempts) {
         const currentActiveJobs = await Promise.all(
-          Array.from(this.queues.values()).map((queue) => queue.getActive()),
+          Array.from(this.queues.values()).map((queue) => queue.getActive())
         );
 
-        const currentTotal = currentActiveJobs.reduce(
-          (sum, jobs) => sum + jobs.length,
-          0,
-        );
+        const currentTotal = currentActiveJobs.reduce((sum, jobs) => sum + jobs.length, 0);
 
         if (currentTotal === 0) {
           break;
@@ -504,9 +471,7 @@ class QueueManager extends EventEmitter {
     }
 
     // Fechar todas as filas
-    const closePromises = Array.from(this.queues.values()).map((queue) =>
-      queue.close(),
-    );
+    const closePromises = Array.from(this.queues.values()).map((queue) => queue.close());
     await Promise.all(closePromises);
 
     // Fechar conexão Redis
@@ -536,7 +501,7 @@ class QueueManager extends EventEmitter {
     queueName: string,
     field: keyof QueueStats,
     increment: number,
-    duration?: number,
+    duration?: number
   ): void {
     const stats = this.stats.get(queueName);
     if (stats) {

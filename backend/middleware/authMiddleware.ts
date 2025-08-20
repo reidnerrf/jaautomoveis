@@ -21,22 +21,18 @@ interface DecodedToken extends JwtPayload {
 export const protect = (
   req: express.Request,
   res: express.Response,
-  next: express.NextFunction,
+  next: express.NextFunction
 ) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res
-      .status(401)
-      .json({ success: false, message: "No authorization header" });
+    return res.status(401).json({ success: false, message: "No authorization header" });
   }
 
   const token = authHeader.split(" ")[1]?.trim();
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Token not provided" });
+    return res.status(401).json({ success: false, message: "Token not provided" });
   }
 
   try {
@@ -61,9 +57,7 @@ export const protect = (
       return res.status(401).json({ success: false, message: "Invalid token" });
     }
 
-    return res
-      .status(401)
-      .json({ success: false, message: "Token verification failed" });
+    return res.status(401).json({ success: false, message: "Token verification failed" });
   }
 };
 
@@ -71,14 +65,12 @@ export const protect = (
 export const requireAdmin = async (
   req: express.Request,
   res: express.Response,
-  next: express.NextFunction,
+  next: express.NextFunction
 ) => {
   try {
     const userId = (req as any).user?.id;
     if (!userId) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Not authorized" });
+      return res.status(401).json({ success: false, message: "Not authorized" });
     }
     const user = await User.findById(userId).select("role").lean();
     if (!user || user.role !== "admin") {
@@ -98,11 +90,7 @@ export const requireAdmin = async (
 
 // Middleware de validação de inputs
 export const validateInput = (fields: string[]) => {
-  return (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction,
-  ) => {
+  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const errors: string[] = [];
 
     fields.forEach((field) => {
@@ -128,17 +116,13 @@ export const validateToken = (req: express.Request, res: express.Response) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res
-      .status(401)
-      .json({ success: false, message: "No authorization header" });
+    return res.status(401).json({ success: false, message: "No authorization header" });
   }
 
   const token = authHeader.split(" ")[1]?.trim();
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Token not provided" });
+    return res.status(401).json({ success: false, message: "Token not provided" });
   }
 
   try {
@@ -165,8 +149,6 @@ export const validateToken = (req: express.Request, res: express.Response) => {
       return res.status(401).json({ success: false, message: "Invalid token" });
     }
 
-    return res
-      .status(401)
-      .json({ success: false, message: "Token verification failed" });
+    return res.status(401).json({ success: false, message: "Token verification failed" });
   }
 };

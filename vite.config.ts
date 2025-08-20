@@ -9,12 +9,12 @@ export default defineConfig(({ mode }) => {
   return {
     define: {
       "process.env": {}, // evita undefined
-      "import.meta.env.MODE": JSON.stringify(mode)
+      "import.meta.env.MODE": JSON.stringify(mode),
     },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
-      },  
+      },
     },
     plugins: [
       react(),

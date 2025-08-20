@@ -1,15 +1,8 @@
 import express from "express";
 import { body } from "express-validator";
 import { handleValidationErrors } from "../middleware/validation";
-import {
-  loginUser,
-  openSession,
-  closeSession,
-} from "../controllers/authController";
-import {
-  forgotPassword,
-  resetPassword,
-} from "../controllers/passwordController";
+import { loginUser, openSession, closeSession } from "../controllers/authController";
+import { forgotPassword, resetPassword } from "../controllers/passwordController";
 import { validateToken } from "../middleware/authMiddleware";
 
 const router = express.Router();
@@ -21,12 +14,12 @@ router.post(
     body("password").isString().isLength({ min: 6, max: 200 }),
     handleValidationErrors,
   ],
-  loginUser,
+  loginUser
 );
 router.post(
   "/forgot-password",
   [body("email").isEmail().normalizeEmail(), handleValidationErrors],
-  forgotPassword,
+  forgotPassword
 );
 router.post(
   "/reset-password",
@@ -35,7 +28,7 @@ router.post(
     body("password").isString().isLength({ min: 8, max: 200 }),
     handleValidationErrors,
   ],
-  resetPassword,
+  resetPassword
 );
 // Sessions endpoints kept as no-ops to preserve compatibility
 router.post("/session/open", openSession);

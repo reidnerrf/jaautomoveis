@@ -37,8 +37,7 @@ const AboutPage: React.FC = () => {
             Sobre a <span className="text-main-red">JA Automóveis</span>
           </h1>
           <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Tradição, confiança e qualidade no mercado automotivo de Resende e
-            região.
+            Tradição, confiança e qualidade no mercado automotivo de Resende e região.
           </p>
         </motion.div>
 
@@ -67,17 +66,15 @@ const AboutPage: React.FC = () => {
               Nossa História
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
-              Localizada em Resende - RJ, a <strong>JA Automóveis</strong> atua
-              há anos oferecendo veículos novos, seminovos e usados com
-              qualidade e procedência garantida. Nosso compromisso vai além da
-              venda: buscamos construir relacionamentos duradouros baseados na
-              confiança e na transparência.
+              Localizada em Resende - RJ, a <strong>JA Automóveis</strong> atua há anos oferecendo
+              veículos novos, seminovos e usados com qualidade e procedência garantida. Nosso
+              compromisso vai além da venda: buscamos construir relacionamentos duradouros baseados
+              na confiança e na transparência.
             </p>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-              Ao longo do tempo, conquistamos espaço no mercado regional por
-              meio de um atendimento humanizado, preços justos e um estoque
-              diversificado que atende a todos os perfis e necessidades. Cada
-              cliente que passa pela JA Automóveis se torna parte da nossa
+              Ao longo do tempo, conquistamos espaço no mercado regional por meio de um atendimento
+              humanizado, preços justos e um estoque diversificado que atende a todos os perfis e
+              necessidades. Cada cliente que passa pela JA Automóveis se torna parte da nossa
               história.
             </p>
           </motion.div>
@@ -89,10 +86,9 @@ const AboutPage: React.FC = () => {
             Missão & Visão
           </h2>
           <p className="text-center text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
-            Nossa missão é oferecer veículos de qualidade com atendimento
-            diferenciado, tornando a experiência de compra simples, segura e
-            prazerosa. Visamos ser referência no setor automotivo de Resende e
-            região, reconhecidos pela credibilidade e excelência em cada
+            Nossa missão é oferecer veículos de qualidade com atendimento diferenciado, tornando a
+            experiência de compra simples, segura e prazerosa. Visamos ser referência no setor
+            automotivo de Resende e região, reconhecidos pela credibilidade e excelência em cada
             negociação.
           </p>
         </div>
@@ -116,9 +112,7 @@ const AboutPage: React.FC = () => {
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
                   {value.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  {value.description}
-                </p>
+                <p className="text-gray-600 dark:text-gray-300">{value.description}</p>
               </motion.div>
             ))}
           </div>

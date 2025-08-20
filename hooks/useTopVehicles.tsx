@@ -17,9 +17,7 @@ interface UseTopVehiclesResult {
 
 const DEFAULT_TTL = 5 * 60 * 1000; // 5 minutos
 
-export const useTopVehicles = (
-  options: UseTopVehiclesOptions = {},
-): UseTopVehiclesResult => {
+export const useTopVehicles = (options: UseTopVehiclesOptions = {}): UseTopVehiclesResult => {
   const { limit = 10, periodDays = 30, cacheTtlMs = DEFAULT_TTL } = options;
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -27,7 +25,7 @@ export const useTopVehicles = (
 
   const cacheKey = useMemo(
     () => createCacheKey("top-vehicles", limit, periodDays),
-    [limit, periodDays],
+    [limit, periodDays]
   );
 
   const fetchTop = useCallback(async () => {
@@ -45,15 +43,11 @@ export const useTopVehicles = (
         periodDays: String(periodDays),
       });
 
-      const response = await fetch(
-        `/api/vehicles/most-viewed?${params.toString()}`,
-        {
-          headers: { "Cache-Control": "no-store", "x-skip-cache": "true" },
-          cache: "no-store",
-        },
-      );
-      if (!response.ok)
-        throw new Error("Falha ao carregar veículos mais vistos");
+      const response = await fetch(`/api/vehicles/most-viewed?${params.toString()}`, {
+        headers: { "Cache-Control": "no-store", "x-skip-cache": "true" },
+        cache: "no-store",
+      });
+      if (!response.ok) throw new Error("Falha ao carregar veículos mais vistos");
       const data: Vehicle[] = await response.json();
 
       // 🔹 Normaliza id (garante que sempre exista)

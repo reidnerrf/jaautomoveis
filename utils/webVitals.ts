@@ -33,9 +33,7 @@ class WebVitalsMonitor {
     if ("PerformanceObserver" in window) {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        const fcpEntry = entries.find(
-          (entry) => entry.name === "first-contentful-paint",
-        );
+        const fcpEntry = entries.find((entry) => entry.name === "first-contentful-paint");
         if (fcpEntry) {
           this.metrics.fcp = fcpEntry.startTime;
           this.reportMetric("FCP", fcpEntry.startTime, fcpEntry.entryType);
@@ -103,12 +101,9 @@ class WebVitalsMonitor {
     if ("PerformanceObserver" in window) {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        const navigationEntry = entries.find(
-          (entry) => entry.entryType === "navigation",
-        ) as any;
+        const navigationEntry = entries.find((entry) => entry.entryType === "navigation") as any;
         if (navigationEntry) {
-          const ttfb =
-            navigationEntry.responseStart - navigationEntry.requestStart;
+          const ttfb = navigationEntry.responseStart - navigationEntry.requestStart;
           this.metrics.ttfb = ttfb;
           this.reportMetric("TTFB", ttfb, "navigation");
         }
@@ -123,9 +118,7 @@ class WebVitalsMonitor {
     if ("PerformanceObserver" in window) {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        const fmpEntry = entries.find(
-          (entry) => entry.name === "first-meaningful-paint",
-        );
+        const fmpEntry = entries.find((entry) => entry.name === "first-meaningful-paint");
         if (fmpEntry) {
           this.metrics.fmp = fmpEntry.startTime;
           this.reportMetric("FMP", fmpEntry.startTime, fmpEntry.entryType);
@@ -154,7 +147,10 @@ class WebVitalsMonitor {
     this.sendToAnalytics(metric);
 
     // Logging opcional controlado por env (desativado por padrão)
-    const shouldLog = ((import.meta as any) && (import.meta as any).env && (import.meta as any).env.VITE_LOG_WEB_VITALS) === "true";
+    const shouldLog =
+      ((import.meta as any) &&
+        (import.meta as any).env &&
+        (import.meta as any).env.VITE_LOG_WEB_VITALS) === "true";
     if (shouldLog) {
       // eslint-disable-next-line no-console
       console.log(`Web Vital: ${name} = ${value.toFixed(2)}ms`);
@@ -190,9 +186,7 @@ class WebVitalsMonitor {
     return { ...this.metrics };
   }
 
-  getScore(
-    metric: keyof WebVitalsMetrics,
-  ): "good" | "needs-improvement" | "poor" {
+  getScore(metric: keyof WebVitalsMetrics): "good" | "needs-improvement" | "poor" {
     const value = this.metrics[metric];
     if (!value) return "needs-improvement";
 

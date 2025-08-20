@@ -24,10 +24,7 @@ interface SSRResult {
   data?: SSRData;
 }
 
-export const renderSSR = async (
-  url: string,
-  data?: SSRData,
-): Promise<SSRResult> => {
+export const renderSSR = async (url: string, data?: SSRData): Promise<SSRResult> => {
   // Simular contexto de dados para SSR
   const context: any = {
     data: data || {},
@@ -38,15 +35,11 @@ export const renderSSR = async (
     React.createElement(
       StaticRouter,
       { location: url, context },
-      React.createElement(
-        HelmetProvider,
-        { context: helmetContext },
-        React.createElement(App),
-      ),
-    ),
+      React.createElement(HelmetProvider, { context: helmetContext }, React.createElement(App))
+    )
   );
 
-  const helmet = helmetContext.helmet;
+  const { helmet } = helmetContext;
 
   return {
     html: app,
@@ -122,8 +115,7 @@ export const generateStaticPages = async (): Promise<void> => {
           title: "JA Automóveis - Seu Próximo Carro Está Aqui",
           description:
             "Encontre seu próximo carro com as melhores ofertas e financiamento facilitado na JA Automóveis",
-          keywords:
-            "carros, automóveis, financiamento, consórcio, JA Automóveis",
+          keywords: "carros, automóveis, financiamento, consórcio, JA Automóveis",
           image: "/assets/logo.png",
           url: "/",
           type: "website",
@@ -179,8 +171,7 @@ export const generateStaticPages = async (): Promise<void> => {
           title: "Financiamento - JA Automóveis",
           description:
             "Financiamento facilitado para seu veículo. Condições especiais e aprovação rápida na JA Automóveis",
-          keywords:
-            "financiamento, crédito, aprovação, condições, JA Automóveis",
+          keywords: "financiamento, crédito, aprovação, condições, JA Automóveis",
           image: "/assets/logo.png",
           url: "/financing",
           type: "website",
@@ -217,9 +208,7 @@ export const generateStaticPages = async (): Promise<void> => {
 };
 
 // Função para gerar página de veículo específica
-export const generateVehiclePage = async (
-  vehicle: Vehicle,
-): Promise<string> => {
+export const generateVehiclePage = async (vehicle: Vehicle): Promise<string> => {
   const data: SSRData = {
     vehicle,
     seo: {

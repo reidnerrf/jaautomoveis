@@ -1,8 +1,4 @@
-type WebSocketEventType =
-  | "vehicle_update"
-  | "new_vehicle"
-  | "price_change"
-  | "system_notification";
+type WebSocketEventType = "vehicle_update" | "new_vehicle" | "price_change" | "system_notification";
 
 interface WebSocketMessage {
   type: WebSocketEventType;
@@ -59,13 +55,10 @@ class WebSocketManager {
   private attemptReconnect() {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      const delay =
-        this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
+      const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
 
       setTimeout(() => {
-        console.log(
-          `Reconnecting to WebSocket (attempt ${this.reconnectAttempts})`,
-        );
+        console.log(`Reconnecting to WebSocket (attempt ${this.reconnectAttempts})`);
         this.connect();
       }, delay);
     }
@@ -113,10 +106,7 @@ class WebSocketManager {
 export const webSocketManager = new WebSocketManager();
 
 // React hook for WebSocket
-export const useWebSocket = (
-  eventType: WebSocketEventType,
-  callback: (data: any) => void,
-) => {
+export const useWebSocket = (eventType: WebSocketEventType, callback: (data: any) => void) => {
   React.useEffect(() => {
     webSocketManager.subscribe(eventType, callback);
 

@@ -9,10 +9,7 @@ interface AdminHeaderProps {
   setSidebarOpen: (open: boolean) => void;
 }
 
-const AdminHeader: React.FC<AdminHeaderProps> = ({
-  sidebarOpen,
-  setSidebarOpen,
-}) => {
+const AdminHeader: React.FC<AdminHeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -21,18 +18,16 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const formatted = now.toLocaleDateString("pt-BR", {
+      const formatted = `${now.toLocaleDateString("pt-BR", {
         weekday: "long",
         day: "2-digit",
         month: "long",
         year: "numeric",
-      }) +
-      " • " +
-      now.toLocaleTimeString("pt-BR", {
+      })} • ${now.toLocaleTimeString("pt-BR", {
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
-      });
+      })}`;
       setDateTime(formatted);
     };
 
@@ -76,9 +71,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
               loading="lazy"
               decoding="async"
             />
-            <span className="font-semibold tracking-tight text-base">
-              Painel Admin
-            </span>
+            <span className="font-semibold tracking-tight text-base">Painel Admin</span>
           </Link>
         </div>
 

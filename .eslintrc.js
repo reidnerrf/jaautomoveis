@@ -9,6 +9,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
+    "plugin:prettier/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -48,6 +49,7 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "warn",
 
     // General rules
+    "no-empty": ["error", { allowEmptyCatch: true }],
     "no-console": process.env.NODE_ENV === "production" ? "error" : "warn",
     "no-debugger": "error",
     "no-alert": "warn",

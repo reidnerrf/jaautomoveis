@@ -51,10 +51,7 @@ interface OptimizationOptions {
 const imageCache = new Map<string, string>();
 
 // Função para gerar hash da imagem
-function generateImageHash(
-  buffer: Buffer,
-  options: OptimizationOptions,
-): string {
+function generateImageHash(buffer: Buffer, options: OptimizationOptions): string {
   const data = buffer.toString("base64") + JSON.stringify(options);
   return crypto.createHash("md5").update(data).digest("hex");
 }
@@ -81,7 +78,7 @@ function getSupportedFormats(req: Request): string[] {
 async function optimizeImage(
   buffer: Buffer,
   options: OptimizationOptions = {},
-  supportedFormats: string[] = ["jpeg"],
+  supportedFormats: string[] = ["jpeg"]
 ): Promise<{ buffer: Buffer; format: string; size: number }> {
   let pipeline = sharp(buffer);
 
@@ -129,24 +126,18 @@ async function optimizeImage(
     case "webp":
       pipeline = pipeline.webp({
         quality,
-        effort:
-          IMAGE_CONFIG.COMPRESSION_LEVELS[options.compression || "medium"]
-            .effort,
+        effort: IMAGE_CONFIG.COMPRESSION_LEVELS[options.compression || "medium"].effort,
       });
       break;
     case "avif":
       pipeline = pipeline.avif({
         quality: IMAGE_CONFIG.AVIF_QUALITY,
-        effort:
-          IMAGE_CONFIG.COMPRESSION_LEVELS[options.compression || "medium"]
-            .effort,
+        effort: IMAGE_CONFIG.COMPRESSION_LEVELS[options.compression || "medium"].effort,
       });
       break;
     case "png":
       pipeline = pipeline.png({
-        compressionLevel:
-          IMAGE_CONFIG.COMPRESSION_LEVELS[options.compression || "medium"]
-            .effort,
+        compressionLevel: IMAGE_CONFIG.COMPRESSION_LEVELS[options.compression || "medium"].effort,
       });
       break;
     default:
@@ -189,7 +180,7 @@ async function saveOptimizedImage(
   originalPath: string,
   optimizedBuffer: Buffer,
   format: string,
-  options: OptimizationOptions,
+  options: OptimizationOptions
 ): Promise<string> {
   const hash = generateImageHash(await fs.readFile(originalPath), options);
   const filename = `${hash}.${format}`;
@@ -205,19 +196,14 @@ async function saveOptimizedImage(
 }
 
 // Middleware principal de otimização de imagens
-export async function vehicleImageOptimization(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export async function vehicleImageOptimization(req: Request, res: Response, next: NextFunction) {
   try {
     // Verificar se é uma requisição de imagem
     if (!req.file && !req.path.includes("/uploads/")) {
       return next();
     }
 
-    const imagePath =
-      req.file?.path || req.path.replace("/uploads/", "uploads/");
+    const imagePath = req.file?.path || req.path.replace("/uploads/", "uploads/");
 
     if (
       !imagePath ||
@@ -256,9 +242,7 @@ export async function vehicleImageOptimization(
       blur: req.query.blur ? parseFloat(req.query.blur as string) : undefined,
       sharpen: req.query.sharpen === "true",
       grayscale: req.query.grayscale === "true",
-      rotate: req.query.rotate
-        ? parseInt(req.query.rotate as string)
-        : undefined,
+      rotate: req.query.rotate ? parseInt(req.query.rotate as string) : undefined,
       flip: req.query.flip === "true",
       flop: req.query.flop === "true",
     };
@@ -271,12 +255,7 @@ export async function vehicleImageOptimization(
     } = await optimizeImage(originalBuffer, options, supportedFormats);
 
     // Salvar imagem otimizada
-    const optimizedPath = await saveOptimizedImage(
-      imagePath,
-      optimizedBuffer,
-      format,
-      options,
-    );
+    const optimizedPath = await saveOptimizedImage(imagePath, optimizedBuffer, format, options);
 
     // Adicionar ao cache
     imageCache.set(cacheKey, optimizedPath);
@@ -300,11 +279,7 @@ export async function vehicleImageOptimization(
 }
 
 // Middleware para otimização automática de uploads
-export async function autoImageOptimization(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export async function autoImageOptimization(req: Request, res: Response, next: NextFunction) {
   if (!req.file) {
     return next();
   }
@@ -351,24 +326,16 @@ export async function autoImageOptimization(
 // Função para otimizar imagem em lote
 export async function batchImageOptimization(
   imagePaths: string[],
-  options: OptimizationOptions = {},
+  options: OptimizationOptions = {}
 ): Promise<{ original: string; optimized: string; savings: number }[]> {
   const results = [];
 
   for (const imagePath of imagePaths) {
     try {
       const originalBuffer = await fs.readFile(imagePath);
-      const { buffer: optimizedBuffer, size } = await optimizeImage(
-        originalBuffer,
-        options,
-      );
+      const { buffer: optimizedBuffer, size } = await optimizeImage(originalBuffer, options);
 
-      const optimizedPath = await saveOptimizedImage(
-        imagePath,
-        optimizedBuffer,
-        "jpeg",
-        options,
-      );
+      const optimizedPath = await saveOptimizedImage(imagePath, optimizedBuffer, "jpeg", options);
       const savings = originalBuffer.length - size;
 
       results.push({
@@ -434,31 +401,31 @@ export async function getImageOptimizationStats(): Promise<{
 }
 
 // Limpeza periódica do cache (desabilitar em testes para evitar handles abertos)
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   setInterval(
     async () => {
-    try {
-      const exists = await fs
-        .access(IMAGE_CONFIG.CACHE_DIR)
-        .then(() => true)
-        .catch(() => false);
-      if (!exists) return;
-      const cacheFiles = await fs.readdir(IMAGE_CONFIG.CACHE_DIR);
-      const now = Date.now();
-      const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 dias
+      try {
+        const exists = await fs
+          .access(IMAGE_CONFIG.CACHE_DIR)
+          .then(() => true)
+          .catch(() => false);
+        if (!exists) return;
+        const cacheFiles = await fs.readdir(IMAGE_CONFIG.CACHE_DIR);
+        const now = Date.now();
+        const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 dias
 
-      for (const file of cacheFiles) {
-        const filePath = path.join(IMAGE_CONFIG.CACHE_DIR, file);
-        const stats = await fs.stat(filePath);
+        for (const file of cacheFiles) {
+          const filePath = path.join(IMAGE_CONFIG.CACHE_DIR, file);
+          const stats = await fs.stat(filePath);
 
-        if (now - stats.mtime.getTime() > maxAge) {
-          await fs.unlink(filePath);
+          if (now - stats.mtime.getTime() > maxAge) {
+            await fs.unlink(filePath);
+          }
         }
+      } catch (error) {
+        console.error("Cache cleanup error:", error);
       }
-    } catch (error) {
-      console.error("Cache cleanup error:", error);
-    }
     },
-    24 * 60 * 60 * 1000,
+    24 * 60 * 60 * 1000
   ); // Diariamente
 }

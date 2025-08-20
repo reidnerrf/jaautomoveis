@@ -19,9 +19,7 @@ router.post("/web-vitals", (req, res) => {
     res.status(200).json({ success: true, message: "Web vitals recorded" });
   } catch (error) {
     console.error("Error recording web vitals:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to record web vitals" });
+    res.status(500).json({ success: false, message: "Failed to record web vitals" });
   }
 });
 
@@ -30,14 +28,10 @@ router.post("/batch", (req, res) => {
     // Process batch analytics data from offline sync
     const analyticsData = req.body;
     console.log("Batch Analytics:", analyticsData);
-    res
-      .status(200)
-      .json({ success: true, message: "Batch analytics processed" });
+    res.status(200).json({ success: true, message: "Batch analytics processed" });
   } catch (error) {
     console.error("Error processing batch analytics:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to process batch analytics" });
+    res.status(500).json({ success: false, message: "Failed to process batch analytics" });
   }
 });
 

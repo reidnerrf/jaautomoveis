@@ -37,7 +37,8 @@
     "docker:run": "docker-compose up -d",
     "docker:stop": "docker-compose down",
     "performance:audit": "npm run test:performance && npm run test:e2e",
-    "ci": "npm run lint && npm run type-check && npm run test && npm run test:e2e"
+    "ci": "npm run lint && npm run type-check && npm run test && npm run test:e2e",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@apollo/client": "^3.13.9",
@@ -123,6 +124,8 @@
     "cross-env": "^7.0.3",
     "esbuild": "^0.25.9",
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.6.2",
     "identity-obj-proxy": "^3.0.0",

@@ -120,11 +120,7 @@ async function getCache(key: string): Promise<unknown> {
 }
 
 // Função para definir cache (local ou Redis)
-async function setCache(
-  key: string,
-  value: unknown,
-  ttl: number,
-): Promise<void> {
+async function setCache(key: string, value: unknown, ttl: number): Promise<void> {
   try {
     const serializedValue = JSON.stringify(value);
 
@@ -168,18 +164,14 @@ async function updateCacheMetrics(): Promise<void> {
       const keys = await redisClient.dbsize();
 
       cacheMetrics.keys = keys;
-      cacheMetrics.memory = parseInt(
-        info.match(/used_memory:(\d+)/)?.[1] || "0",
-        10,
-      );
+      cacheMetrics.memory = parseInt(info.match(/used_memory:(\d+)/)?.[1] || "0", 10);
     } else {
       const stats = localCache.getStats();
       cacheMetrics.keys = stats.keys;
       cacheMetrics.memory = stats.vsize;
     }
 
-    cacheMetrics.hitRate =
-      (cacheMetrics.hits / (cacheMetrics.hits + cacheMetrics.misses)) * 100;
+    cacheMetrics.hitRate = (cacheMetrics.hits / (cacheMetrics.hits + cacheMetrics.misses)) * 100;
   } catch (error) {
     logError("Cache metrics update error:", error as Error);
   }
@@ -238,38 +230,22 @@ export function cacheMiddleware(prefix: string = "api") {
 }
 
 // Middleware específico para lista de veículos
-export function vehicleListCacheMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function vehicleListCacheMiddleware(req: Request, res: Response, next: NextFunction) {
   return cacheMiddleware("vehicles")(req, res, next);
 }
 
 // Middleware específico para detalhes de veículo
-export function vehicleDetailCacheMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function vehicleDetailCacheMiddleware(req: Request, res: Response, next: NextFunction) {
   return cacheMiddleware("vehicle-detail")(req, res, next);
 }
 
 // Middleware específico para estatísticas
-export function statsCacheMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function statsCacheMiddleware(req: Request, res: Response, next: NextFunction) {
   return cacheMiddleware("stats")(req, res, next);
 }
 
 // Middleware para invalidação de cache
-export function invalidateVehicleCacheMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function invalidateVehicleCacheMiddleware(req: Request, res: Response, next: NextFunction) {
   const vehicleId = req.params.id;
 
   // Invalidar cache específico do veículo
@@ -285,11 +261,7 @@ export function invalidateVehicleCacheMiddleware(
 }
 
 // Middleware para cache condicional baseado em headers
-export function conditionalCacheMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function conditionalCacheMiddleware(req: Request, res: Response, next: NextFunction) {
   const etag = req.headers["if-none-match"];
   const lastModified = req.headers["if-modified-since"];
 
@@ -314,11 +286,7 @@ export function conditionalCacheMiddleware(
 }
 
 // Middleware para cache de busca
-export function searchCacheMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function searchCacheMiddleware(req: Request, res: Response, next: NextFunction) {
   const query = req.query.q || req.query.search;
 
   if (!query) {
@@ -345,7 +313,7 @@ export async function cleanupCache(): Promise<void> {
         return #keys
       `,
         0,
-        "*",
+        "*"
       );
     } else {
       localCache.flushAll();
@@ -382,7 +350,7 @@ export async function warmupCache(): Promise<void> {
 }
 
 // Inicializar limpeza periódica (desabilitar em testes para evitar handles abertos)
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   setInterval(cleanupCache, CACHE_CONFIG.CHECK_PERIOD * 1000);
 }
 
