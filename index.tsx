@@ -15,9 +15,8 @@ initSentry();
 // Inicializar Web Vitals monitoring
 import { initWebVitalsMonitoring } from "./utils/webVitals";
 if (import.meta.env.MODE === "production") {
-  initWebVitalsMonitoring((metric) => {
-    console.log("Web Vital:", metric.name, metric.value);
-  });
+  // Callback de logging removido para reduzir ruído no terminal
+  initWebVitalsMonitoring();
 }
 
 // Inicializar PWA (unregister SW in development to avoid caching issues)
