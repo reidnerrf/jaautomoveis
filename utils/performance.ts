@@ -54,9 +54,9 @@ class PerformanceMonitor {
       // Cumulative Layout Shift
       const clsObserver = new PerformanceObserver((list) => {
         let clsValue = 0;
-        for (const entry of list.getEntries()) {
+        for (const entry of list.getEntries() as any) {
           if (!entry.hadRecentInput) {
-            clsValue += (entry as any).value;
+            clsValue += Number(entry.value || 0);
           }
         }
         this.metrics.cumulativeLayoutShift = clsValue;
@@ -68,8 +68,9 @@ class PerformanceMonitor {
       // First Input Delay
       const fidObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        entries.forEach((entry) => {
-          this.metrics.firstInputDelay = entry.processingStart - entry.startTime;
+        entries.forEach((entry: any) => {
+          const processingStart = Number(entry.processingStart ?? 0);
+          this.metrics.firstInputDelay = processingStart - entry.startTime;
           this.logMetric("First Input Delay", this.metrics.firstInputDelay);
         });
       });

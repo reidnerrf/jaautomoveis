@@ -22,19 +22,18 @@
     "noEmit": true
   },
   "include": [
-    "server.ts",
-    "seeder.ts",
-    "backend/**/*.ts",
-    "*.ts",
-    "*.tsx",
-    "components/**/*.tsx",
-    "pages/**/*.tsx",
-    "hooks/**/*.tsx",
+    "components/PrivateRoute.tsx",
+    "components/LoadingSpinner.tsx",
+    "components/DarkModeToggle.tsx",
+    "hooks/useAuth.tsx",
     "contexts/**/*.tsx",
-    "utils/**/*.ts",
-    "utils/**/*.tsx",
-    "types/**/*.ts",
-    "types/**/*.tsx"
+    "types.ts"
   ],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "backend/**"
+  ]
 }

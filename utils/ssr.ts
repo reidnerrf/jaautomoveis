@@ -34,7 +34,7 @@ export const renderSSR = async (url: string, data?: SSRData): Promise<SSRResult>
   const app = renderToString(
     React.createElement(
       StaticRouter,
-      { location: url, context },
+      { location: url },
       React.createElement(HelmetProvider, { context: helmetContext }, React.createElement(App))
     )
   );

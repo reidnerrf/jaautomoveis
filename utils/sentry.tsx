@@ -30,9 +30,9 @@ export const initSentry = () => {
 };
 
 // Função para capturar erros
-export const captureError = (error: Error, context?: any) => {
+export const captureError = (error: unknown, context?: any) => {
   if (process.env.NODE_ENV === "production") {
-    Sentry.captureException(error, {
+    Sentry.captureException(error instanceof Error ? error : new Error(String(error)), {
       extra: context,
       tags: {
         component: context?.component || "unknown",

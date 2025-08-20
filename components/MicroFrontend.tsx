@@ -1,5 +1,5 @@
 import React, { Suspense, useState, useEffect, useCallback } from "react";
-import { ErrorBoundary } from "./ErrorBoundary";
+import ErrorBoundary from "./ErrorBoundary";
 
 // Interface para configuração de micro-frontend
 interface MicroFrontendConfig {
@@ -179,7 +179,7 @@ const MicroFrontend: React.FC<MicroFrontendProps> = ({
   }
 
   return (
-    <ErrorBoundary fallback={errorFallback || defaultErrorFallback} onError={onError}>
+    <ErrorBoundary fallback={errorFallback || defaultErrorFallback}>
       <Suspense fallback={fallback || defaultFallback}>
         <Component {...props} />
       </Suspense>
@@ -334,7 +334,7 @@ const MultiMicroFrontend: React.FC<MultiMicroFrontendProps> = ({
         <MicroFrontend
           key={name}
           name={name}
-          props={props[name] || props}
+          props={(props as any)?.[name] || props}
           fallback={fallback}
           errorFallback={errorFallback}
           onLoad={handleLoad}
@@ -416,7 +416,8 @@ const CachedMicroFrontend: React.FC<CachedMicroFrontendProps> = ({
   }, [name, cacheStrategy, cacheTTL]);
 
   if (cachedComponent) {
-    return <cachedComponent {...props} />;
+    const Component = cachedComponent;
+    return <Component {...props} />;
   }
 
   return (
@@ -433,13 +434,7 @@ const CachedMicroFrontend: React.FC<CachedMicroFrontendProps> = ({
 };
 
 // Exportar componentes e hooks
-export {
-  MicroFrontend,
-  MultiMicroFrontend,
-  VersionedMicroFrontend,
-  CachedMicroFrontend,
-  useMicroFrontend,
-};
+export { MicroFrontend, MultiMicroFrontend, VersionedMicroFrontend, CachedMicroFrontend };
 
 // Exportar registro para uso externo
 export { MICRO_FRONTEND_REGISTRY };

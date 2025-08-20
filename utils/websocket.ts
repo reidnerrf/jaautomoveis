@@ -1,3 +1,4 @@
+import React from "react";
 type WebSocketEventType = "vehicle_update" | "new_vehicle" | "price_change" | "system_notification";
 
 interface WebSocketMessage {

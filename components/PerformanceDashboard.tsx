@@ -15,15 +15,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import {
-  AlertTriangle,
-  CheckCircle,
-  TrendingUp,
-  TrendingDown,
-  Activity,
-  Clock,
-  Database,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle, TrendingUp, TrendingDown, Activity, Clock, Database } from "lucide-react";
 
 interface PerformanceMetrics {
   timestamp: number;
@@ -74,87 +66,7 @@ interface SystemHealth {
   recommendations: string[];
 }
 
-function MetricCard(props: {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-  color: string;
-  trend?: "up" | "down" | "stable";
-  subtitle?: string;
-}) {
-  const { title, value, icon, color, trend, subtitle } = props;
-  return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
-          {subtitle ? <p className="text-xs text-gray-500">{subtitle}</p> : null}
-        </div>
-        <div className={`p-3 rounded-full ${color}`}>{icon}</div>
-      </div>
-      {trend ? (
-        <div className="mt-2 flex items-center">
-          {trend === "up" ? (
-            <TrendingUp className="w-4 h-4 text-green-500" />
-          ) : trend === "down" ? (
-            <TrendingDown className="w-4 h-4 text-red-500" />
-          ) : (
-            <div className="w-4 h-4 text-gray-400">—</div>
-          )}
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function HealthStatus({ health }: { health: SystemHealth }) {
-  return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">System Health</h3>
-        <div
-          className={`px-3 py-1 rounded-full text-sm font-medium ${
-            health.status === "healthy"
-              ? "bg-green-100 text-green-800"
-              : health.status === "warning"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-red-100 text-red-800"
-          }`}
-        >
-          {health.status.toUpperCase()}
-        </div>
-      </div>
-      <div className="space-y-3">
-        {Object.entries(health.checks).map(([check, status]) => (
-          <div key={check} className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 capitalize">
-              {check.replace(/([A-Z])/g, " $1").trim()}
-            </span>
-            {status ? (
-              <CheckCircle className="w-5 h-5 text-green-500" />
-            ) : (
-              <AlertTriangle className="w-5 h-5 text-red-500" />
-            )}
-          </div>
-        ))}
-      </div>
-      {health.recommendations.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <h4 className="text-sm font-medium text-gray-900 mb-2">Recommendations</h4>
-          <ul className="text-sm text-gray-600 space-y-1">
-            {health.recommendations.map((rec) => (
-              <li key={rec} className="flex items-start">
-                <span className="text-red-500 mr-2">•</span>
-                {rec}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-}
+// Duplicate definitions removed below to resolve TS2393 errors
 
 function MetricCard(props: {
   title: string;
@@ -210,14 +122,8 @@ function HealthStatus({ health }: { health: SystemHealth }) {
       <div className="space-y-3">
         {Object.entries(health.checks).map(([check, status]) => (
           <div key={check} className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 capitalize">
-              {check.replace(/([A-Z])/g, " $1").trim()}
-            </span>
-            {status ? (
-              <CheckCircle className="w-5 h-5 text-green-500" />
-            ) : (
-              <AlertTriangle className="w-5 h-5 text-red-500" />
-            )}
+            <span className="text-sm text-gray-600 capitalize">{check.replace(/([A-Z])/g, " $1").trim()}</span>
+            {status ? <CheckCircle className="w-5 h-5 text-green-500" /> : <AlertTriangle className="w-5 h-5 text-red-500" />}
           </div>
         ))}
       </div>
@@ -370,10 +276,10 @@ const PerformanceDashboard: React.FC = () => {
         />
         <MetricCard
           title="Avg Response Time"
-          value={`${summary?.avgResponseTime.toFixed(2) || "0"}ms`}
+          value={`${(summary?.avgResponseTime ?? 0).toFixed(2)}ms`}
           icon={<Clock className="w-6 h-6 text-white" />}
           color="bg-green-500"
-          trend={summary?.avgResponseTime > 1000 ? "up" : "stable"}
+          trend={(summary?.avgResponseTime ?? 0) > 1000 ? "up" : "stable"}
         />
         <MetricCard
           title="Error Rate"
@@ -400,13 +306,7 @@ const PerformanceDashboard: React.FC = () => {
               <XAxis dataKey="time" />
               <YAxis />
               <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="responseTime"
-                stroke={colors.primary}
-                strokeWidth={2}
-                dot={false}
-              />
+              <Line type="monotone" dataKey="responseTime" stroke={colors.primary} strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -419,22 +319,8 @@ const PerformanceDashboard: React.FC = () => {
               <XAxis dataKey="time" />
               <YAxis />
               <Tooltip />
-              <Area
-                type="monotone"
-                dataKey="heapUsed"
-                stackId="1"
-                stroke={colors.warning}
-                fill={colors.warning}
-                fillOpacity={0.6}
-              />
-              <Area
-                type="monotone"
-                dataKey="heapTotal"
-                stackId="1"
-                stroke={colors.danger}
-                fill={colors.danger}
-                fillOpacity={0.6}
-              />
+              <Area type="monotone" dataKey="heapUsed" stackId="1" stroke={colors.warning} fill={colors.warning} fillOpacity={0.6} />
+              <Area type="monotone" dataKey="heapTotal" stackId="1" stroke={colors.danger} fill={colors.danger} fillOpacity={0.6} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -463,7 +349,7 @@ const PerformanceDashboard: React.FC = () => {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent = 0 }) => `${name} ${(percent * 100).toFixed(0)}%`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
@@ -487,22 +373,15 @@ const PerformanceDashboard: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Alerts</h3>
             <div className="space-y-3">
               {(summary?.alerts || []).slice(0, 5).map((alert) => (
-                <div
-                  key={`${alert.message}-${alert.timestamp}`}
-                  className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg"
-                >
+                <div key={`${alert.message}-${alert.timestamp}`} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
                   <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5" />
                   <div>
                     <p className="text-sm font-medium text-gray-900">{alert.message}</p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(alert.timestamp).toLocaleString()}
-                    </p>
+                    <p className="text-xs text-gray-500">{new Date(alert.timestamp).toLocaleString()}</p>
                   </div>
                 </div>
               ))}
-              {(!summary?.alerts || summary.alerts.length === 0) && (
-                <p className="text-sm text-gray-500">No recent alerts</p>
-              )}
+              {(!summary?.alerts || summary.alerts.length === 0) && <p className="text-sm text-gray-500">No recent alerts</p>}
             </div>
           </div>
         </div>
@@ -512,3 +391,4 @@ const PerformanceDashboard: React.FC = () => {
 };
 
 export default PerformanceDashboard;
+
