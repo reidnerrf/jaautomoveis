@@ -13,6 +13,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { setSocketServer } from "./backend/socket";
 import UAParser from "ua-parser-js";
+import cron from "node-cron";
 import connectDB from "./backend/config/db";
 import vehicleRoutes from "./backend/routes/vehicleRoutes";
 import authRoutes from "./backend/routes/authRoutes";
@@ -20,6 +21,7 @@ import uploadRoutes from "./backend/routes/uploadRoutes";
 import analyticsRoutes from "./backend/routes/analyticsRoutes";
 import Analytics from "./backend/models/Analytics";
 import Vehicle from "./backend/models/Vehicle";
+import ViewLog from "./backend/models/ViewLog";
 import performanceMiddleware, {
   memoryMetricsMiddleware,
   getPerformanceMetrics,
@@ -414,11 +416,11 @@ app.use(
     maxAge: isProduction ? "1h" : 0,
     etag: true,
     lastModified: true,
-    setHeaders: (res, path) => {
-      if (path.endsWith(".html")) {
+    setHeaders: (res, p) => {
+      if (p.endsWith(".html")) {
         res.setHeader("Cache-Control", "no-cache");
       } else if (
-        path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$/)
+        p.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$/)
       ) {
         res.setHeader("Cache-Control", "public, max-age=31536000");
       }
@@ -432,24 +434,8 @@ if (isProduction) {
   });
 }
 
-const activeUsers = new Map();
-const pageViews = new Map();
-
-const getUAResult = (uaInput: unknown) => {
-  const uaString = Array.isArray(uaInput)
-    ? uaInput[0]
-    : (uaInput as string | undefined) || "";
-  try {
-    const ParserAny: any = UAParser as unknown as any;
-    const instance =
-      typeof ParserAny === "function" ? ParserAny(uaString) : new ParserAny(uaString);
-    if (instance && typeof instance.getResult === "function") {
-      return instance.getResult();
-    }
-  } catch {
-  }
-  return { device: {}, browser: {}, os: {} } as any;
-};
+const activeUsers = new Map<string, { page: string; joinTime: number }>();
+const pageViews = new Map<string, Set<string>>();
 
 io.on("connection", (socket) => {
   if (!isProduction) {
@@ -457,35 +443,59 @@ io.on("connection", (socket) => {
   }
 
   socket.on("page-view", async (data) => {
-    const { page } = data;
+    const { page } = data || {};
+    const pagePath = String(page || "");
 
     const previous = activeUsers.get(socket.id)?.page;
-    if (previous && previous !== page && pageViews.has(previous)) {
-      pageViews.get(previous).delete(socket.id);
+    if (previous && previous !== pagePath && pageViews.has(previous)) {
+      pageViews.get(previous)!.delete(socket.id);
       io.emit("page-viewers", {
         page: previous,
-        count: pageViews.get(previous).size,
+        count: pageViews.get(previous)!.size,
       });
     }
 
-    if (!pageViews.has(page)) {
-      pageViews.set(page, new Set());
+    if (!pageViews.has(pagePath)) {
+      pageViews.set(pagePath, new Set());
     }
-    pageViews.get(page).add(socket.id);
+    pageViews.get(pagePath)!.add(socket.id);
 
     activeUsers.set(socket.id, {
-      page,
+      page: pagePath,
       joinTime: Date.now(),
     });
 
     io.emit("page-viewers", {
-      page,
-      count: pageViews.get(page).size,
+      page: pagePath,
+      count: pageViews.get(pagePath)!.size,
     });
+
+    // Persist view logs only for home and vehicle detail, and dedupe by minute
+    if (pagePath === "/" || pagePath.startsWith("/vehicle/")) {
+      try {
+        // Extract vehicle id if present
+        const match = pagePath.match(/^\/vehicle\/(.+)$/);
+        if (match && match[1]) {
+          // Throttle inserts: only insert a view per vehicle per minute
+          const now = new Date();
+          const minuteWindow = new Date(now);
+          minuteWindow.setSeconds(0, 0);
+          const exists = await ViewLog.findOne({
+            vehicle: match[1],
+            createdAt: { $gte: minuteWindow },
+          }).lean();
+          if (!exists) {
+            await ViewLog.create({ vehicle: match[1] });
+          }
+        }
+      } catch (e) {
+        // swallow logging errors
+      }
+    }
   });
 
   socket.on("user-action", async (data) => {
-    const { action, category, label, page } = data;
+    const { action, category, label, page } = data || {};
 
     const essentialActions = new Set([
       "like_vehicle",
@@ -502,6 +512,14 @@ io.on("connection", (socket) => {
         timestamp: Date.now(),
       });
       return;
+    }
+
+    // Only persist vehicle_view for allowed pages
+    if (action === "vehicle_view") {
+      const pagePath = String(page || "");
+      if (!(pagePath === "/" || pagePath.startsWith("/vehicle/"))) {
+        return;
+      }
     }
 
     try {
@@ -543,10 +561,10 @@ io.on("connection", (socket) => {
     if (user) {
       const { page } = user;
       if (pageViews.has(page)) {
-        pageViews.get(page).delete(socket.id);
+        pageViews.get(page)!.delete(socket.id);
         io.emit("page-viewers", {
           page,
-          count: pageViews.get(page).size,
+          count: pageViews.get(page)!.size,
         });
       }
       activeUsers.delete(socket.id);
@@ -572,6 +590,24 @@ if (process.env.NODE_ENV !== "test") {
       console.log(
         `Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`,
       );
+      // Monthly purges at 03:00 on day 1 (GMT-3)
+      try {
+        cron.schedule("0 3 1 * *", async () => {
+          try {
+            const cutoff = new Date();
+            cutoff.setMonth(cutoff.getMonth() - 3);
+            const a = await Analytics.deleteMany({ timestamp: { $lt: cutoff } });
+            const v = await ViewLog.deleteMany({ createdAt: { $lt: cutoff } });
+            console.log(
+              `[CRON] Purged analytics older than ${cutoff.toISOString()}: analytics=${a?.deletedCount || 0}, viewlogs=${v?.deletedCount || 0}`,
+            );
+          } catch (err) {
+            console.error("[CRON] Failed to purge analytics:", err);
+          }
+        }, { timezone: "Etc/GMT+3" });
+      } catch (err) {
+        console.error("Failed to schedule cron job:", err);
+      }
     });
 
   if (process.env.SKIP_DB === "true") {
@@ -587,3 +623,4 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 export { app, server };
+

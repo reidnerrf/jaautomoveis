@@ -30,9 +30,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
 
   const alternateLocales: Array<{ hrefLang: string; href: string }> = [
     { hrefLang: "pt-BR", href: fullUrl },
-    // Add other locales/domains as needed
-    { hrefLang: "en", href: fullUrl.replace(/jaautomoveis\.[^/]+/, "jaautomoveis.com") },
-    { hrefLang: "es", href: fullUrl.replace(/jaautomoveis\.[^/]+/, "jaautomoveis.com") },
+    { hrefLang: "x-default", href: fullUrl },
   ];
 
   return (
