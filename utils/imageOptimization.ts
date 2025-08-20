@@ -34,7 +34,7 @@ export const useImageOptimization = () => {
     if (width && height) {
       // Backend expects short param keys: w, h, f
       const separator = baseSrc.includes("?") ? "&" : "?";
-      return `${baseSrc}${separator}w=${width}&h=${height}&f=webp`;
+      return `${baseSrc}${separator}w=${width}&h=${height}&f=${isWebPSupported ? 'webp' : 'jpg'}`;
     }
 
     return baseSrc;
