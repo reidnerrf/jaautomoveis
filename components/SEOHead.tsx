@@ -28,6 +28,13 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     ? image
     : `${siteUrl}${image || "/assets/logo.png"}`;
 
+  const alternateLocales: Array<{ hrefLang: string; href: string }> = [
+    { hrefLang: "pt-BR", href: fullUrl },
+    // Add other locales/domains as needed
+    { hrefLang: "en", href: fullUrl.replace(/jaautomoveis\.[^/]+/, "jaautomoveis.com") },
+    { hrefLang: "es", href: fullUrl.replace(/jaautomoveis\.[^/]+/, "jaautomoveis.com") },
+  ];
+
   return (
     <Helmet prioritizeSeoTags>
       <html lang="pt-BR" />
@@ -54,6 +61,9 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       <meta name="robots" content="index, follow" />
       <meta name="author" content="JA Automóveis" />
       <link rel="canonical" href={fullUrl} />
+      {alternateLocales.map((alt, idx) => (
+        <link key={idx} rel="alternate" hrefLang={alt.hrefLang} href={alt.href} />
+      ))}
 
       {/* Open Graph defaults */}
       <meta property="og:locale" content="pt_BR" />
