@@ -68,11 +68,12 @@ class PerformanceMonitor {
       // First Input Delay
       const fidObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        entries.forEach((entry: any) => {
-          const processingStart = Number(entry.processingStart ?? 0);
-          this.metrics.firstInputDelay = processingStart - entry.startTime;
+        const firstEntry = entries[0];
+        if (firstEntry) {
+          const processingStart = Number(firstEntry.processingStart ?? 0);
+          this.metrics.firstInputDelay = processingStart - firstEntry.startTime;
           this.logMetric("First Input Delay", this.metrics.firstInputDelay);
-        });
+        }
       });
       fidObserver.observe({ entryTypes: ["first-input"] });
       this.observers.push(fidObserver);
