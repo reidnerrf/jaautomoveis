@@ -45,11 +45,15 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(
     }, [vehicles.length, visibleSlides]);
 
     const nextSlide = useCallback(() => {
-      setCurrentIndex((prev) =>
-        prev >= vehicles.length - visibleSlides
-          ? Math.max(0, vehicles.length - visibleSlides)
-          : prev + 1,
-      );
+      setCurrentIndex((prev) => {
+        const lastIndex = Math.max(0, vehicles.length - visibleSlides);
+        // In mobile (1 visible slide), loop back to the beginning
+        if (visibleSlides === 1) {
+          return prev >= lastIndex ? 0 : prev + 1;
+        }
+        // On larger screens, clamp at the end
+        return prev >= lastIndex ? lastIndex : prev + 1;
+      });
     }, [vehicles.length, visibleSlides]);
 
     // Auto-play suave em telas menores
