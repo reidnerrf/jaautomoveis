@@ -1,251 +1,1462 @@
-<testsuites id="" name="" tests="40" failures="4" skipped="36" errors="0" time="27.180314">
-<testsuite name="performance.spec.ts" timestamp="2025-08-19T13:49:56.589Z" hostname="chromium" tests="8" failures="4" skipped="4" time="71.184" errors="0">
-<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="11.793">
+<testsuites id="" name="" tests="40" failures="40" skipped="0" errors="0" time="427.917028">
+<testsuite name="performance.spec.ts" timestamp="2025-08-20T20:18:37.228Z" hostname="chromium" tests="8" failures="8" skipped="0" time="378.514" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="52.027">
 <failure message="performance.spec.ts:4:7 should load homepage within performance budget" type="FAILURE">
 <![CDATA[  [chromium] › performance.spec.ts:4:7 › Performance Tests › should load homepage within performance budget 
 
-    Error: page.waitForLoadState: Target page, context or browser has been closed
+    Test timeout of 30000ms exceeded.
 
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+       5 |     const startTime = Date.now();
+       6 |
+    >  7 |     await page.goto("/");
+         |                ^
        8 |
        9 |     // Aguardar carregamento completo
-    > 10 |     await page.waitForLoadState("networkidle");
+      10 |     await page.waitForLoadState("networkidle");
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:7:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="52.624">
+<failure message="performance.spec.ts:41:7 should load inventory page efficiently" type="FAILURE">
+<![CDATA[  [chromium] › performance.spec.ts:41:7 › Performance Tests › should load inventory page efficiently 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/inventory", waiting until "load"
+
+
+      40 |
+      41 |   test("should load inventory page efficiently", async ({ page }) => {
+    > 42 |     await page.goto("/inventory");
          |                ^
-      11 |
-      12 |     const loadTime = Date.now() - startTime;
+      43 |
+      44 |     // Aguardar carregamento dos veículos
+      45 |     await page.waitForSelector('[data-testid="vehicle-card"]', {
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:42:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="52.325">
+<failure message="performance.spec.ts:78:7 should handle vehicle detail page performance" type="FAILURE">
+<![CDATA[  [chromium] › performance.spec.ts:78:7 › Performance Tests › should handle vehicle detail page performance 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/inventory", waiting until "load"
+
+
+      78 |   test("should handle vehicle detail page performance", async ({ page }) => {
+      79 |     // Primeiro, ir para o estoque para pegar um ID de veículo
+    > 80 |     await page.goto("/inventory");
+         |                ^
+      81 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+      82 |
+      83 |     // Clicar no primeiro veículo
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:80:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="52.439">
+<failure message="performance.spec.ts:120:7 should maintain performance during navigation" type="FAILURE">
+<![CDATA[  [chromium] › performance.spec.ts:120:7 › Performance Tests › should maintain performance during navigation 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      124 |     for (const pagePath of pages) {
+      125 |       const startTime = Date.now();
+    > 126 |       await page.goto(pagePath);
+          |                  ^
+      127 |       await page.waitForLoadState("networkidle");
+      128 |
+      129 |       const loadTime = Date.now() - startTime;
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:126:18
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="50.821">
+<failure message="performance.spec.ts:141:7 should handle mobile performance" type="FAILURE">
+<![CDATA[  [chromium] › performance.spec.ts:141:7 › Performance Tests › should handle mobile performance ────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      143 |     await page.setViewportSize({ width: 375, height: 667 });
+      144 |
+    > 145 |     await page.goto("/");
+          |                ^
+      146 |     await page.waitForLoadState("networkidle");
+      147 |
+      148 |     // Verificar se elementos responsivos carregam corretamente
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:145:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="52.226">
+<failure message="performance.spec.ts:164:7 should handle search and filtering performance" type="FAILURE">
+<![CDATA[  [chromium] › performance.spec.ts:164:7 › Performance Tests › should handle search and filtering performance 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/inventory", waiting until "load"
+
+
+      163 |
+      164 |   test("should handle search and filtering performance", async ({ page }) => {
+    > 165 |     await page.goto("/inventory");
+          |                ^
+      166 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+      167 |
+      168 |     // Contar veículos iniciais
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:165:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="33.047">
+<failure message="performance.spec.ts:198:7 should handle image optimization" type="FAILURE">
+<![CDATA[  [chromium] › performance.spec.ts:198:7 › Performance Tests › should handle image optimization ────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      198 |   test("should handle image optimization", async ({ page }) => {
+      199 |     await page.goto("/inventory");
+    > 200 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+          |                ^
+      201 |
+      202 |     // Verificar se imagens estão sendo servidas com otimizações
+      203 |     const images = await page.$$('img[src*="/uploads/"]');
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:200:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="33.005">
+<failure message="performance.spec.ts:216:7 should handle service worker functionality" type="FAILURE">
+<![CDATA[  [chromium] › performance.spec.ts:216:7 › Performance Tests › should handle service worker functionality 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      226 |     // Verificar cache funcionando
+      227 |     await page.goto("/inventory");
+    > 228 |     await page.waitForLoadState("networkidle");
+          |                ^
+      229 |
+      230 |     // Desconectar rede e tentar navegar
+      231 |     await context.setOffline(true);
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:228:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="performance.spec.ts" timestamp="2025-08-20T20:18:37.228Z" hostname="firefox" tests="8" failures="8" skipped="0" time="591.036" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="140.625">
+<failure message="performance.spec.ts:4:7 should load homepage within performance budget" type="FAILURE">
+<![CDATA[  [firefox] › performance.spec.ts:4:7 › Performance Tests › should load homepage within performance budget 
+
+    Test timeout of 30000ms exceeded.
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test ended.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+       5 |     const startTime = Date.now();
+       6 |
+    >  7 |     await page.goto("/");
+         |                ^
+       8 |
+       9 |     // Aguardar carregamento completo
+      10 |     await page.waitForLoadState("networkidle");
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:7:16
+]]>
+</failure>
+</testcase>
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="103.294">
+<failure message="performance.spec.ts:41:7 should load inventory page efficiently" type="FAILURE">
+<![CDATA[  [firefox] › performance.spec.ts:41:7 › Performance Tests › should load inventory page efficiently 
+
+    Test timeout of 30000ms exceeded.
+
+    Test timeout of 30000ms exceeded.
+
+    Fixture "trace recording" timeout of 30000ms exceeded during teardown.
+
+    Error: page.goto: Test ended.
+    Call log:
+      - navigating to "http://localhost:3000/inventory", waiting until "load"
+
+
+      40 |
+      41 |   test("should load inventory page efficiently", async ({ page }) => {
+    > 42 |     await page.goto("/inventory");
+         |                ^
+      43 |
+      44 |     // Aguardar carregamento dos veículos
+      45 |     await page.waitForSelector('[data-testid="vehicle-card"]', {
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:42:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-firefox\test-failed-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="107.435">
+<failure message="performance.spec.ts:78:7 should handle vehicle detail page performance" type="FAILURE">
+<![CDATA[  [firefox] › performance.spec.ts:78:7 › Performance Tests › should handle vehicle detail page performance 
+
+    Test timeout of 30000ms exceeded.
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test ended.
+    Call log:
+      - navigating to "http://localhost:3000/inventory", waiting until "load"
+
+
+      78 |   test("should handle vehicle detail page performance", async ({ page }) => {
+      79 |     // Primeiro, ir para o estoque para pegar um ID de veículo
+    > 80 |     await page.goto("/inventory");
+         |                ^
+      81 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+      82 |
+      83 |     // Clicar no primeiro veículo
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:80:16
+]]>
+</failure>
+</testcase>
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="133.532">
+<failure message="performance.spec.ts:120:7 should maintain performance during navigation" type="FAILURE">
+<![CDATA[  [firefox] › performance.spec.ts:120:7 › Performance Tests › should maintain performance during navigation 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      125 |       const startTime = Date.now();
+      126 |       await page.goto(pagePath);
+    > 127 |       await page.waitForLoadState("networkidle");
+          |                  ^
+      128 |
+      129 |       const loadTime = Date.now() - startTime;
+      130 |       navigationTimes.push(loadTime);
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:127:18
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-firefox\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="25.009">
+<failure message="performance.spec.ts:141:7 should handle mobile performance" type="FAILURE">
+<![CDATA[  [firefox] › performance.spec.ts:141:7 › Performance Tests › should handle mobile performance ─────
+
+    Error: expect(received).toBeTruthy()
+
+    Received: null
+
+      148 |     // Verificar se elementos responsivos carregam corretamente
+      149 |     const heroSection = await page.$('[data-testid="hero-section"]');
+    > 150 |     expect(heroSection).toBeTruthy();
+          |                         ^
+      151 |
+      152 |     // Verificar se vídeo não carrega em mobile (deve mostrar imagem)
+      153 |     const video = await page.$("video");
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:150:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="30.944">
+<failure message="performance.spec.ts:164:7 should handle search and filtering performance" type="FAILURE">
+<![CDATA[  [firefox] › performance.spec.ts:164:7 › Performance Tests › should handle search and filtering performance 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      164 |   test("should handle search and filtering performance", async ({ page }) => {
+      165 |     await page.goto("/inventory");
+    > 166 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+          |                ^
+      167 |
+      168 |     // Contar veículos iniciais
+      169 |     const initialCount = await page.$$eval('[data-testid="vehicle-card"]', (cards) => cards.length);
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:166:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-firefox\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-firefox\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-firefox\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-firefox\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="31.114">
+<failure message="performance.spec.ts:198:7 should handle image optimization" type="FAILURE">
+<![CDATA[  [firefox] › performance.spec.ts:198:7 › Performance Tests › should handle image optimization ─────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      198 |   test("should handle image optimization", async ({ page }) => {
+      199 |     await page.goto("/inventory");
+    > 200 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+          |                ^
+      201 |
+      202 |     // Verificar se imagens estão sendo servidas com otimizações
+      203 |     const images = await page.$$('img[src*="/uploads/"]');
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:200:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="19.083">
+<failure message="performance.spec.ts:216:7 should handle service worker functionality" type="FAILURE">
+<![CDATA[  [firefox] › performance.spec.ts:216:7 › Performance Tests › should handle service worker functionality 
+
+    Error: page.goto: NS_ERROR_OFFLINE
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      232 |
+      233 |     // Tentar navegar para página já visitada
+    > 234 |     await page.goto("/");
+          |                ^
+      235 |
+      236 |     // Verificar se página ainda carrega (do cache)
+      237 |     const title = await page.title();
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:234:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-firefox\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-firefox\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-firefox\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-firefox\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="performance.spec.ts" timestamp="2025-08-20T20:18:37.228Z" hostname="webkit" tests="8" failures="8" skipped="0" time="157.99" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="12.873">
+<failure message="performance.spec.ts:4:7 should load homepage within performance budget" type="FAILURE">
+<![CDATA[  [webkit] › performance.spec.ts:4:7 › Performance Tests › should load homepage within performance budget 
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 3000
+    Received:   5705
+
       13 |
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:10:16
+      14 |     // Verificar tempo de carregamento
+    > 15 |     expect(loadTime).toBeLessThan(3000); // 3 segundos
+         |                      ^
+      16 |
+      17 |     // Verificar Core Web Vitals
+      18 |     const fcp = await page.evaluate(() => {
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:15:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
 </failure>
-</testcase>
-<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="11.974">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="11.769">
-<failure message="performance.spec.ts:80:7 should handle vehicle detail page performance" type="FAILURE">
-<![CDATA[  [chromium] › performance.spec.ts:80:7 › Performance Tests › should handle vehicle detail page performance 
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-webkit\test-failed-1.png]]
 
-    Error: page.waitForSelector: Target page, context or browser has been closed
+[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-webkit\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="16.69">
+<failure message="performance.spec.ts:41:7 should load inventory page efficiently" type="FAILURE">
+<![CDATA[  [webkit] › performance.spec.ts:41:7 › Performance Tests › should load inventory page efficiently ─
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
     Call log:
       - waiting for locator('[data-testid="vehicle-card"]') to be visible
 
 
-      81 |     // Primeiro, ir para o estoque para pegar um ID de veículo
-      82 |     await page.goto("/inventory");
-    > 83 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+      43 |
+      44 |     // Aguardar carregamento dos veículos
+    > 45 |     await page.waitForSelector('[data-testid="vehicle-card"]', {
          |                ^
-      84 |
-      85 |     // Clicar no primeiro veículo
-      86 |     const firstVehicle = await page.$('[data-testid="vehicle-card"]');
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:83:16
+      46 |       timeout: 10000,
+      47 |     });
+      48 |
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:45:16
 
-    Error: browserContext._wrapApiCall: Test ended.
-    Browser logs:
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    <launching> C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1181\chrome-win\headless_shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AutoExpandDetailsElement,AvoidUnnecessaryBeforeUnloadCheckSync,CertificateTransparencyComponentUpdater,DestroyProfileOnBrowserClose,DialMediaRouteProvider,ExtensionManifestV2Disabled,GlobalMediaControls,HttpsUpgrades,ImprovedCookieControls,LazyFrameLoading,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\Users\Zummit\AppData\Local\Temp\playwright_chromiumdev_profile-ulkpwb --remote-debugging-pipe --no-startup-window
-    <launched> pid=35300
-    [pid=35300] <gracefully close start>
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 ]]>
 </failure>
-</testcase>
-<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="12.019">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="11.79">
-<failure message="performance.spec.ts:146:7 should handle mobile performance" type="FAILURE">
-<![CDATA[  [chromium] › performance.spec.ts:146:7 › Performance Tests › should handle mobile performance ────
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-webkit\test-failed-1.png]]
 
-    Error: page.waitForLoadState: Target page, context or browser has been closed
-
-      149 |
-      150 |     await page.goto("/");
-    > 151 |     await page.waitForLoadState("networkidle");
-          |                ^
-      152 |
-      153 |     // Verificar se elementos responsivos carregam corretamente
-      154 |     const heroSection = await page.$('[data-testid="hero-section"]');
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:151:16
-
-    Error: browserContext._wrapApiCall: Test ended.
-    Browser logs:
-
-    <launching> C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1181\chrome-win\headless_shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AutoExpandDetailsElement,AvoidUnnecessaryBeforeUnloadCheckSync,CertificateTransparencyComponentUpdater,DestroyProfileOnBrowserClose,DialMediaRouteProvider,ExtensionManifestV2Disabled,GlobalMediaControls,HttpsUpgrades,ImprovedCookieControls,LazyFrameLoading,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\Users\Zummit\AppData\Local\Temp\playwright_chromiumdev_profile-hxmh5A --remote-debugging-pipe --no-startup-window
-    <launched> pid=38936
-    [pid=38936] <gracefully close start>
+[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-webkit\video.webm]]
 ]]>
-</failure>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="11.839">
-<failure message="performance.spec.ts:169:7 should handle search and filtering performance" type="FAILURE">
-<![CDATA[  [chromium] › performance.spec.ts:169:7 › Performance Tests › should handle search and filtering performance 
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="37">
+<failure message="performance.spec.ts:78:7 should handle vehicle detail page performance" type="FAILURE">
+<![CDATA[  [webkit] › performance.spec.ts:78:7 › Performance Tests › should handle vehicle detail page performance 
 
-    Error: page.waitForSelector: Target page, context or browser has been closed
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
     Call log:
       - waiting for locator('[data-testid="vehicle-card"]') to be visible
 
 
-      169 |   test("should handle search and filtering performance", async ({ page }) => {
-      170 |     await page.goto("/inventory");
-    > 171 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-          |                ^
-      172 |
-      173 |     // Contar veículos iniciais
-      174 |     const initialCount = await page.$$eval(
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:171:16
+      79 |     // Primeiro, ir para o estoque para pegar um ID de veículo
+      80 |     await page.goto("/inventory");
+    > 81 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+         |                ^
+      82 |
+      83 |     // Clicar no primeiro veículo
+      84 |     const firstVehicle = await page.$('[data-testid="vehicle-card"]');
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:81:16
 
-    Error: browserContext._wrapApiCall: Test ended.
-    Browser logs:
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    <launching> C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1181\chrome-win\headless_shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AutoExpandDetailsElement,AvoidUnnecessaryBeforeUnloadCheckSync,CertificateTransparencyComponentUpdater,DestroyProfileOnBrowserClose,DialMediaRouteProvider,ExtensionManifestV2Disabled,GlobalMediaControls,HttpsUpgrades,ImprovedCookieControls,LazyFrameLoading,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\Users\Zummit\AppData\Local\Temp\playwright_chromiumdev_profile-KvQDYO --remote-debugging-pipe --no-startup-window
-    <launched> pid=42316
-    [pid=42316] <gracefully close start>
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-webkit\error-context.md
 ]]>
 </failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-webkit\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-webkit\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="7.062">
+<failure message="performance.spec.ts:120:7 should maintain performance during navigation" type="FAILURE">
+<![CDATA[  [webkit] › performance.spec.ts:120:7 › Performance Tests › should maintain performance during navigation 
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 3000
+    Received:   5243
+
+      131 |
+      132 |       // Verificar se a página carregou em tempo aceitável
+    > 133 |       expect(loadTime).toBeLessThan(3000);
+          |                        ^
+      134 |     }
+      135 |
+      136 |     // Verificar consistência de performance
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:133:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-webkit\video.webm]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="6.253">
+<failure message="performance.spec.ts:141:7 should handle mobile performance" type="FAILURE">
+<![CDATA[  [webkit] › performance.spec.ts:141:7 › Performance Tests › should handle mobile performance ──────
+
+    Error: expect(received).toBeTruthy()
+
+    Received: null
+
+      148 |     // Verificar se elementos responsivos carregam corretamente
+      149 |     const heroSection = await page.$('[data-testid="hero-section"]');
+    > 150 |     expect(heroSection).toBeTruthy();
+          |                         ^
+      151 |
+      152 |     // Verificar se vídeo não carrega em mobile (deve mostrar imagem)
+      153 |     const video = await page.$("video");
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:150:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-webkit\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="34.955">
+<failure message="performance.spec.ts:164:7 should handle search and filtering performance" type="FAILURE">
+<![CDATA[  [webkit] › performance.spec.ts:164:7 › Performance Tests › should handle search and filtering performance 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      164 |   test("should handle search and filtering performance", async ({ page }) => {
+      165 |     await page.goto("/inventory");
+    > 166 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+          |                ^
+      167 |
+      168 |     // Contar veículos iniciais
+      169 |     const initialCount = await page.$$eval('[data-testid="vehicle-card"]', (cards) => cards.length);
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:166:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-webkit\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-webkit\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-webkit\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="34.512">
+<failure message="performance.spec.ts:198:7 should handle image optimization" type="FAILURE">
+<![CDATA[  [webkit] › performance.spec.ts:198:7 › Performance Tests › should handle image optimization ──────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      198 |   test("should handle image optimization", async ({ page }) => {
+      199 |     await page.goto("/inventory");
+    > 200 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+          |                ^
+      201 |
+      202 |     // Verificar se imagens estão sendo servidas com otimizações
+      203 |     const images = await page.$$('img[src*="/uploads/"]');
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:200:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="8.645">
+<failure message="performance.spec.ts:216:7 should handle service worker functionality" type="FAILURE">
+<![CDATA[  [webkit] › performance.spec.ts:216:7 › Performance Tests › should handle service worker functionality 
+
+    Error: page.goto: WebKit encountered an internal error
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      232 |
+      233 |     // Tentar navegar para página já visitada
+    > 234 |     await page.goto("/");
+          |                ^
+      235 |
+      236 |     // Verificar se página ainda carrega (do cache)
+      237 |     const title = await page.title();
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:234:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-webkit\video.webm]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
-<testsuite name="performance.spec.ts" timestamp="2025-08-19T13:49:56.589Z" hostname="firefox" tests="8" failures="0" skipped="8" time="0" errors="0">
-<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="performance.spec.ts" timestamp="2025-08-20T20:18:37.228Z" hostname="Mobile Chrome" tests="8" failures="8" skipped="0" time="159.186" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="7.369">
+<failure message="performance.spec.ts:4:7 should load homepage within performance budget" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › performance.spec.ts:4:7 › Performance Tests › should load homepage within performance budget 
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 3000
+    Received:   3542
+
+      13 |
+      14 |     // Verificar tempo de carregamento
+    > 15 |     expect(loadTime).toBeLessThan(3000); // 3 segundos
+         |                      ^
+      16 |
+      17 |     // Verificar Core Web Vitals
+      18 |     const fcp = await page.evaluate(() => {
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:15:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="17.895">
+<failure message="performance.spec.ts:41:7 should load inventory page efficiently" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › performance.spec.ts:41:7 › Performance Tests › should load inventory page efficiently 
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      43 |
+      44 |     // Aguardar carregamento dos veículos
+    > 45 |     await page.waitForSelector('[data-testid="vehicle-card"]', {
+         |                ^
+      46 |       timeout: 10000,
+      47 |     });
+      48 |
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:45:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="37.003">
+<failure message="performance.spec.ts:78:7 should handle vehicle detail page performance" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › performance.spec.ts:78:7 › Performance Tests › should handle vehicle detail page performance 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      79 |     // Primeiro, ir para o estoque para pegar um ID de veículo
+      80 |     await page.goto("/inventory");
+    > 81 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+         |                ^
+      82 |
+      83 |     // Clicar no primeiro veículo
+      84 |     const firstVehicle = await page.$('[data-testid="vehicle-card"]');
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:81:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="9.512">
+<failure message="performance.spec.ts:120:7 should maintain performance during navigation" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › performance.spec.ts:120:7 › Performance Tests › should maintain performance during navigation 
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 3000
+    Received:   4115
+
+      131 |
+      132 |       // Verificar se a página carregou em tempo aceitável
+    > 133 |       expect(loadTime).toBeLessThan(3000);
+          |                        ^
+      134 |     }
+      135 |
+      136 |     // Verificar consistência de performance
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:133:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="10.16">
+<failure message="performance.spec.ts:141:7 should handle mobile performance" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › performance.spec.ts:141:7 › Performance Tests › should handle mobile performance 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: null
+
+      148 |     // Verificar se elementos responsivos carregam corretamente
+      149 |     const heroSection = await page.$('[data-testid="hero-section"]');
+    > 150 |     expect(heroSection).toBeTruthy();
+          |                         ^
+      151 |
+      152 |     // Verificar se vídeo não carrega em mobile (deve mostrar imagem)
+      153 |     const video = await page.$("video");
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:150:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="33.634">
+<failure message="performance.spec.ts:164:7 should handle search and filtering performance" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › performance.spec.ts:164:7 › Performance Tests › should handle search and filtering performance 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      164 |   test("should handle search and filtering performance", async ({ page }) => {
+      165 |     await page.goto("/inventory");
+    > 166 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+          |                ^
+      167 |
+      168 |     // Contar veículos iniciais
+      169 |     const initialCount = await page.$$eval('[data-testid="vehicle-card"]', (cards) => cards.length);
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:166:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="34.065">
+<failure message="performance.spec.ts:198:7 should handle image optimization" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › performance.spec.ts:198:7 › Performance Tests › should handle image optimization 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      198 |   test("should handle image optimization", async ({ page }) => {
+      199 |     await page.goto("/inventory");
+    > 200 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+          |                ^
+      201 |
+      202 |     // Verificar se imagens estão sendo servidas com otimizações
+      203 |     const images = await page.$$('img[src*="/uploads/"]');
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:200:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="9.548">
+<failure message="performance.spec.ts:216:7 should handle service worker functionality" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › performance.spec.ts:216:7 › Performance Tests › should handle service worker functionality 
+
+    Error: page.goto: net::ERR_INTERNET_DISCONNECTED at http://localhost:3000/
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      232 |
+      233 |     // Tentar navegar para página já visitada
+    > 234 |     await page.goto("/");
+          |                ^
+      235 |
+      236 |     // Verificar se página ainda carrega (do cache)
+      237 |     const title = await page.title();
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:234:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Chrome\video.webm]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
-<testsuite name="performance.spec.ts" timestamp="2025-08-19T13:49:56.589Z" hostname="webkit" tests="8" failures="0" skipped="8" time="0" errors="0">
-<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="performance.spec.ts" timestamp="2025-08-20T20:18:37.228Z" hostname="Mobile Safari" tests="8" failures="8" skipped="0" time="180.143" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="12.763">
+<failure message="performance.spec.ts:4:7 should load homepage within performance budget" type="FAILURE">
+<![CDATA[  [Mobile Safari] › performance.spec.ts:4:7 › Performance Tests › should load homepage within performance budget 
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 3000
+    Received:   5301
+
+      13 |
+      14 |     // Verificar tempo de carregamento
+    > 15 |     expect(loadTime).toBeLessThan(3000); // 3 segundos
+         |                      ^
+      16 |
+      17 |     // Verificar Core Web Vitals
+      18 |     const fcp = await page.evaluate(() => {
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:15:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="18.856">
+<failure message="performance.spec.ts:41:7 should load inventory page efficiently" type="FAILURE">
+<![CDATA[  [Mobile Safari] › performance.spec.ts:41:7 › Performance Tests › should load inventory page efficiently 
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      43 |
+      44 |     // Aguardar carregamento dos veículos
+    > 45 |     await page.waitForSelector('[data-testid="vehicle-card"]', {
+         |                ^
+      46 |       timeout: 10000,
+      47 |     });
+      48 |
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:45:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="35.915">
+<failure message="performance.spec.ts:78:7 should handle vehicle detail page performance" type="FAILURE">
+<![CDATA[  [Mobile Safari] › performance.spec.ts:78:7 › Performance Tests › should handle vehicle detail page performance 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      79 |     // Primeiro, ir para o estoque para pegar um ID de veículo
+      80 |     await page.goto("/inventory");
+    > 81 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+         |                ^
+      82 |
+      83 |     // Clicar no primeiro veículo
+      84 |     const firstVehicle = await page.$('[data-testid="vehicle-card"]');
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:81:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="22.592">
+<failure message="performance.spec.ts:120:7 should maintain performance during navigation" type="FAILURE">
+<![CDATA[  [Mobile Safari] › performance.spec.ts:120:7 › Performance Tests › should maintain performance during navigation 
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 3000
+    Received:   6746
+
+      131 |
+      132 |       // Verificar se a página carregou em tempo aceitável
+    > 133 |       expect(loadTime).toBeLessThan(3000);
+          |                        ^
+      134 |     }
+      135 |
+      136 |     // Verificar consistência de performance
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:133:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="8.739">
+<failure message="performance.spec.ts:141:7 should handle mobile performance" type="FAILURE">
+<![CDATA[  [Mobile Safari] › performance.spec.ts:141:7 › Performance Tests › should handle mobile performance 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: null
+
+      148 |     // Verificar se elementos responsivos carregam corretamente
+      149 |     const heroSection = await page.$('[data-testid="hero-section"]');
+    > 150 |     expect(heroSection).toBeTruthy();
+          |                         ^
+      151 |
+      152 |     // Verificar se vídeo não carrega em mobile (deve mostrar imagem)
+      153 |     const video = await page.$("video");
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:150:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Safari\video.webm]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="32.945">
+<failure message="performance.spec.ts:164:7 should handle search and filtering performance" type="FAILURE">
+<![CDATA[  [Mobile Safari] › performance.spec.ts:164:7 › Performance Tests › should handle search and filtering performance 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      164 |   test("should handle search and filtering performance", async ({ page }) => {
+      165 |     await page.goto("/inventory");
+    > 166 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+          |                ^
+      167 |
+      168 |     // Contar veículos iniciais
+      169 |     const initialCount = await page.$$eval('[data-testid="vehicle-card"]', (cards) => cards.length);
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:166:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="32.792">
+<failure message="performance.spec.ts:198:7 should handle image optimization" type="FAILURE">
+<![CDATA[  [Mobile Safari] › performance.spec.ts:198:7 › Performance Tests › should handle image optimization 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="vehicle-card"]') to be visible
+
+
+      198 |   test("should handle image optimization", async ({ page }) => {
+      199 |     await page.goto("/inventory");
+    > 200 |     await page.waitForSelector('[data-testid="vehicle-card"]');
+          |                ^
+      201 |
+      202 |     // Verificar se imagens estão sendo servidas com otimizações
+      203 |     const images = await page.$$('img[src*="/uploads/"]');
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:200:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="performance.spec.ts" timestamp="2025-08-19T13:49:56.589Z" hostname="Mobile Chrome" tests="8" failures="0" skipped="8" time="0" errors="0">
-<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-</testsuite>
-<testsuite name="performance.spec.ts" timestamp="2025-08-19T13:49:56.589Z" hostname="Mobile Safari" tests="8" failures="0" skipped="8" time="0" errors="0">
-<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="15.541">
+<failure message="performance.spec.ts:216:7 should handle service worker functionality" type="FAILURE">
+<![CDATA[  [Mobile Safari] › performance.spec.ts:216:7 › Performance Tests › should handle service worker functionality 
+
+    Error: page.goto: WebKit encountered an internal error
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      232 |
+      233 |     // Tentar navegar para página já visitada
+    > 234 |     await page.goto("/");
+          |                ^
+      235 |
+      236 |     // Verificar se página ainda carrega (do cache)
+      237 |     const title = await page.title();
+        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:234:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\video.webm]]
+
+[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\error-context.md]]
+]]>
+</system-out>
 </testcase>
 </testsuite>
 </testsuites>
