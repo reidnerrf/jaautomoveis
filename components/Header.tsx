@@ -5,7 +5,7 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { useAuth } from "../hooks/useAuth.tsx";
 import DarkModeToggle from "./DarkModeToggle";
 import { prefetchRoute } from "../utils/prefetch.ts";
-import toast from "react-hot-toast";
+ 
 
 const baseNavLinks = [
   { name: "Início", path: "/" },
@@ -21,7 +21,7 @@ const Header: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const [pushSupported, setPushSupported] = useState(false);
+  
 
   const navLinks = isAuthenticated
     ? [...baseNavLinks, { name: "Admin", path: "/admin" }]
@@ -33,9 +33,7 @@ const Header: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    setPushSupported("serviceWorker" in navigator && "PushManager" in window);
-  }, []);
+  
 
   const isHome = location.pathname === "/";
   const isTransparent = isHome && !isScrolled;
@@ -53,43 +51,7 @@ const Header: React.FC = () => {
     return () => document.removeEventListener("click", onClick, true);
   }, [isOpen]);
 
-  const urlBase64ToUint8Array = (base64String: string) => {
-    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
-    }
-    return outputArray;
-  };
-
-  const subscribeToPush = async () => {
-    try {
-      if (!("serviceWorker" in navigator)) {
-        toast.error("Push não suportado");
-        return;
-      }
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        toast.error("Permita as notificações no navegador");
-        return;
-      }
-      const reg = await navigator.serviceWorker.ready;
-      const vapidRes = await fetch("/api/push/vapid-public-key");
-      const { publicKey } = await vapidRes.json();
-      const convertedKey = urlBase64ToUint8Array(publicKey);
-      const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: convertedKey });
-      await fetch("/api/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(sub),
-      });
-      toast.success("Notificações ativadas!");
-    } catch (e) {
-      toast.error("Não foi possível ativar notificações");
-    }
-  };
+  
 
   const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
     `relative block py-2 px-3 transition-colors duration-300 font-medium group
@@ -144,15 +106,7 @@ const Header: React.FC = () => {
                 </span>
               </NavLink>
             ))}
-            {pushSupported && (
-              <button
-                onClick={subscribeToPush}
-                className="ml-2 bg-main-red text-white px-3 py-2 rounded-lg text-sm hover:bg-red-700"
-                title="Receber novos veículos"
-              >
-                Ativar Notificações
-              </button>
-            )}
+            
             <DarkModeToggle />
           </div>
 

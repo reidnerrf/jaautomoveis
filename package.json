@@ -38,7 +38,8 @@
     "docker:stop": "docker-compose down",
     "performance:audit": "npm run test:performance && npm run test:e2e",
     "ci": "npm run lint && npm run type-check && npm run test && npm run test:e2e",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "monitor:uptime": "ts-node scripts/uptime-monitor.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.13.9",
