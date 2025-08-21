@@ -1,10 +1,17 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FiMapPin, FiPhone, FiMail } from "react-icons/fi";
+import SEOHead from "../components/SEOHead.tsx";
+import { generatePageSEO } from "../utils/seo";
 
 const ContactPage: React.FC = () => {
   return (
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
+      <SEOHead
+        title={generatePageSEO("contact").title}
+        description={generatePageSEO("contact").description}
+        keywords={generatePageSEO("contact").keywords}
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Título e subtítulo */}
         <motion.div

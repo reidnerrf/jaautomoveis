@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
+import SEOHead from "../components/SEOHead.tsx";
 
 const ConsortiumPage: React.FC = () => {
   const [creditAmount, setCreditAmount] = useState(80000);
@@ -40,6 +41,11 @@ const ConsortiumPage: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
+      <SEOHead
+        title="Consórcio | JA Automóveis"
+        description="Planeje sua compra com consórcio: sem juros bancários, taxas reduzidas e segurança."
+        keywords="consórcio, carta de crédito, sem juros, taxas administrativas, JA Automóveis"
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
           {/* Simulador */}

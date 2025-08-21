@@ -24,8 +24,8 @@ import {
 import { GoogleReview } from "../types.ts";
 import { useAnalytics } from "../utils/analytics.ts";
 import { analytics } from "../utils/analytics";
-//import { useTheme } from "../contexts/ThemeContext.tsx";
 import SEOHead from "../components/SEOHead.tsx";
+//import { useTheme } from "../contexts/ThemeContext.tsx";
 
 const HomePage: React.FC = () => {
   const { vehicles, refreshVehicles } = useVehicleData();

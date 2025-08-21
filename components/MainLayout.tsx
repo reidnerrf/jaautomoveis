@@ -11,6 +11,18 @@ const MainLayout: React.FC = () => {
 
   React.useEffect(() => {
     analytics.trackPageView(location.pathname);
+    try {
+      // GA4 SPA page_view
+      // @ts-ignore
+      if (typeof window !== "undefined" && typeof window.gtag === "function") {
+        // @ts-ignore
+        window.gtag("event", "page_view", {
+          page_title: document.title,
+          page_location: window.location.href,
+          page_path: location.pathname,
+        });
+      }
+    } catch {}
   }, [location.pathname]);
 
   return (

@@ -213,10 +213,47 @@ export const getVapidPublicKey = async (req: Request, res: Response) => {
   });
 };
 
+// Helper: notify all subscribers about a new vehicle
+export const notifyNewVehicle = async (vehicle: any) => {
+  try {
+    const subscriptions = await PushSubscription.find({ isActive: true });
+    if (!subscriptions.length) return;
+    const payload = JSON.stringify({
+      title: "Novo veículo no estoque!",
+      body: `${vehicle?.name || "Veículo"} por R$ ${new Intl.NumberFormat("pt-BR").format(
+        vehicle?.price || 0
+      )}. Toque para ver.`,
+      icon: "/assets/logo.png",
+      badge: "/assets/favicon-32x32.png",
+      tag: `vehicle-${vehicle?._id || vehicle?.id || Date.now()}`,
+      data: { url: `/vehicle/${vehicle?._id || vehicle?.id || ""}` },
+    });
+    await Promise.allSettled(
+      subscriptions.map((s) =>
+        webpush.sendNotification(
+          {
+            endpoint: s.endpoint,
+            keys: s.keys as any,
+          },
+          payload
+        ).catch(async (err) => {
+          if (err && err.statusCode === 410) {
+            s.isActive = false;
+            await s.save();
+          }
+        })
+      )
+    );
+  } catch (e) {
+    // Best-effort; do not throw
+  }
+};
+
 export default {
   subscribeToPush,
   unsubscribeFromPush,
   sendPushNotification,
   getPushStats,
   getVapidPublicKey,
+  notifyNewVehicle,
 };

@@ -180,3 +180,39 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(staleWhileRevalidate(request, DYNAMIC_CACHE));
 });
+
+// Push Notifications
+self.addEventListener("push", (event) => {
+  try {
+    const data = event.data ? event.data.json() : {};
+    const title = data.title || "JA Automóveis";
+    const options = {
+      body: data.body || "Novidades no nosso estoque!",
+      icon: data.icon || "/assets/logo.png",
+      badge: data.badge || "/assets/favicon-32x32.png",
+      data: data.data || {},
+      tag: data.tag || "ja-automoveis",
+      actions: data.actions || [],
+    };
+    event.waitUntil(self.registration.showNotification(title, options));
+  } catch (e) {
+    // ignore malformed push payloads
+  }
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = (event.notification && event.notification.data && event.notification.data.url) || "/";
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url === url && "focus" in client) {
+          return client.focus();
+        }
+      }
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(url);
+      }
+    })
+  );
+});
