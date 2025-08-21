@@ -1,9 +1,23 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
+import SEOHead from "../components/SEOHead.tsx";
+import { generatePageSEO } from "../utils/seo";
 import { motion } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
 
 const FinancingPage: React.FC = () => {
-  const [amount, setAmount] = useState(50000); // Valor do veículo
+  const location = useLocation();
+  const amountFromQuery = useMemo(() => {
+    try {
+      const params = new URLSearchParams(location.search);
+      const parsed = Number(params.get("amount") || "");
+      return Number.isFinite(parsed) && parsed > 0 ? Math.min(Math.max(parsed, 10000), 250000) : null;
+    } catch {
+      return null;
+    }
+  }, [location.search]);
+
+  const [amount, setAmount] = useState(amountFromQuery ?? 50000); // Valor do veículo
   const [downPayment, setDownPayment] = useState(10000); // Entrada
   const [installments, setInstallments] = useState(48);
   const [rate, setRate] = useState(1.39); // taxa ao mês (%)
@@ -64,6 +78,11 @@ const FinancingPage: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
+      <SEOHead
+        title={generatePageSEO("financing").title}
+        description={generatePageSEO("financing").description}
+        keywords={generatePageSEO("financing").keywords}
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
           {/* Simulador */}

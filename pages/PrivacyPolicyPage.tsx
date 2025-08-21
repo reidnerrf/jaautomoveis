@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FiLock, FiInfo, FiShield, FiChevronRight } from "react-icons/fi";
+import SEOHead from "../components/SEOHead.tsx";
 
 const PrivacyPolicyPage: React.FC = () => {
   const textStyles = "mb-4 text-gray-700 dark:text-gray-300 leading-relaxed";
@@ -9,6 +10,11 @@ const PrivacyPolicyPage: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16">
+      <SEOHead
+        title="Política de Privacidade | JA Automóveis"
+        description="Conheça nossa Política de Privacidade e como protegemos seus dados."
+        keywords="política de privacidade, proteção de dados, cookies, JA Automóveis"
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: -20 }}

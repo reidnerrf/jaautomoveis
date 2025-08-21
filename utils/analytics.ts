@@ -12,12 +12,14 @@ interface AnalyticsEventPayload {
 
 class AnalyticsService {
   private socket: Socket | null = null;
+  private gaInitialized = false;
 
   constructor() {
     try {
       this.connectSocket();
       // Page views are emitted from MainLayout to avoid double counting here
       (window as any).trackBusinessEvent = this.trackBusinessEvent.bind(this);
+      this.initGA();
     } catch (e) {
       console.error("Analytics init error", e);
     }
@@ -52,6 +54,16 @@ class AnalyticsService {
     this.socket.emit("page-view", {
       page,
     });
+  }
+
+  private initGA() {
+    if (this.gaInitialized) return;
+    try {
+      // @ts-ignore
+      if (typeof window !== "undefined" && typeof window.gtag === "function") {
+        this.gaInitialized = true;
+      }
+    } catch {}
   }
 
   // Track user interactions (filtered server-side)

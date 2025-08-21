@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FiFileText, FiLink, FiShield, FiAlertTriangle, FiCheckCircle } from "react-icons/fi";
+import SEOHead from "../components/SEOHead.tsx";
 
 const TermsOfServicePage: React.FC = () => {
   const sectionClasses =
@@ -11,6 +12,11 @@ const TermsOfServicePage: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16">
+      <SEOHead
+        title="Termos de Serviço | JA Automóveis"
+        description="Leia os Termos de Serviço do site da JA Automóveis."
+        keywords="termos de serviço, condições de uso, JA Automóveis"
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-10 border-b-4 border-blue-500 pb-4">

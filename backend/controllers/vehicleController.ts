@@ -4,6 +4,7 @@ import ViewLog from "../models/ViewLog";
 import fs from "fs/promises";
 import path from "path";
 import { getSocketServer } from "../socket";
+import { notifyNewVehicle } from "./pushController";
 
 // Helper to delete image files from the filesystem
 const deleteImageFiles = async (imagePaths: string[]) => {
@@ -97,6 +98,10 @@ export const createVehicle = async (req: express.Request, res: express.Response)
     } catch (e) {
       // ignore socket broadcast errors in API response path
     }
+    // Best-effort: notify push subscribers about new vehicle
+    try {
+      await notifyNewVehicle(createdVehicle);
+    } catch {}
     res.status(201).json(createdVehicle);
   } catch (error) {
     res.status(400).json({ message: "Invalid vehicle data" });
