@@ -79,15 +79,15 @@ class RecommendationEngine {
       vehicles.forEach((vehicle) => {
         this.vehicleFeatures.set(vehicle.id, {
           id: vehicle.id,
-          make: vehicle.make,
+          make: vehicle.make ?? "",
           model: vehicle.model,
-          year: vehicle.year,
-          price: vehicle.price,
-          km: vehicle.km,
+          year: vehicle.year ?? 0,
+          price: vehicle.price ?? 0,
+          km: vehicle.km ?? 0,
           fuel: vehicle.fuel,
           gearbox: vehicle.gearbox,
           color: vehicle.color,
-          doors: vehicle.doors,
+          doors: vehicle.doors ?? 0,
           views: vehicle.views || 0,
           likes: 0, // TODO: Implement likes count
           shares: 0, // TODO: Implement shares count
