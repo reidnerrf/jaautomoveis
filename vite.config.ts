@@ -2,6 +2,7 @@ import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
+import { federation } from "@module-federation/vite";
 
 export default defineConfig(({ mode }) => {
   const isProduction = mode === "production";
@@ -11,6 +12,8 @@ export default defineConfig(({ mode }) => {
       "process.env": {}, // evita undefined
       "import.meta.env.MODE": JSON.stringify(mode),
     },
+    // Add base to support CDN asset prefix
+    base: process.env.CDN_BASE_URL || "/",
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
@@ -18,6 +21,17 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
+      federation({
+        name: "host",
+        remotes: {
+          // vehicles: "vehicles@http://localhost:3001/assets/remoteEntry.js",
+        },
+        shared: {
+          react: { singleton: true, eager: false, requiredVersion: false },
+          "react-dom": { singleton: true, eager: false, requiredVersion: false },
+          "react-router-dom": { singleton: true, eager: false, requiredVersion: false },
+        },
+      }),
       isProduction &&
         visualizer({
           filename: "dist/stats.html",
@@ -27,7 +41,7 @@ export default defineConfig(({ mode }) => {
         }),
     ].filter(Boolean),
     build: {
-      target: "es2018",
+      target: "esnext",
       outDir: "dist",
       minify: isProduction ? "esbuild" : false, // ⚡ muito mais rápido que terser
       sourcemap: !isProduction,
@@ -85,7 +99,7 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       force: true, // build incremental mais confiável
       esbuildOptions: {
-        target: "es2018",
+        target: "esnext",
         treeShaking: true,
       },
     },
@@ -108,6 +122,12 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
         "/socket.io": {
+          target: "http://localhost:5000",
+          changeOrigin: true,
+          ws: true,
+        },
+        // GraphQL endpoint
+        "/graphql": {
           target: "http://localhost:5000",
           changeOrigin: true,
           ws: true,

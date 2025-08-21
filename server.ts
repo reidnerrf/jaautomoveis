@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response, NextFunction, Application } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
@@ -43,6 +43,13 @@ import {
   getImageOptimizationStats,
   clearImageCache,
 } from "./backend/middleware/imageOptimization";
+// Apollo GraphQL imports
+import { ApolloServer } from "apollo-server-express";
+import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
+import typeDefs from "./backend/graphql/schema";
+import resolvers from "./backend/graphql/resolvers";
+// Chat namespace init
+import { initChatNamespace } from "./backend/websockets/chatManager";
 
 dotenv.config();
 
@@ -54,7 +61,7 @@ const getAvailablePort = (preferredPort: number): number => {
 
 const PORT = getAvailablePort(5000);
 
-const app = express();
+const app: Application = express();
 app.disable("x-powered-by");
 const server = createServer(app);
 // Centralized CORS allow-list
@@ -100,9 +107,23 @@ const io = new Server(server, {
   path: "/socket.io",
 });
 setSocketServer(io);
+// Initialize chat namespace
+initChatNamespace();
 app.set("trust proxy", 1);
 
 const isProduction = process.env.NODE_ENV === "production";
+
+// Initialize Apollo Server (GraphQL)
+const startApollo = async () => {
+  const apolloServer = new ApolloServer({
+    typeDefs,
+    resolvers,
+    plugins: isProduction ? [] : [ApolloServerPluginLandingPageLocalDefault()],
+    context: ({ req, res }) => ({ req, res }),
+  });
+  await apolloServer.start();
+  apolloServer.applyMiddleware({ app: app as any, path: "/graphql", cors: false });
+};
 
 const scriptSrcDirectives = [
   "'self'",
@@ -650,10 +671,17 @@ if (process.env.NODE_ENV !== "test") {
       console.error("JWT_SECRET must be set in production");
       process.exit(1);
     }
-    startServer();
+    // Start GraphQL then server
+    startApollo().then(startServer).catch((err) => {
+      console.error("Failed to start Apollo Server:", err);
+      process.exit(1);
+    });
   } else {
     connectDB()
-      .then(startServer)
+      .then(async () => {
+        await startApollo();
+        startServer();
+      })
       .catch((err) => {
         console.error("Failed to connect to MongoDB. Server not started.", err);
         process.exit(1);
