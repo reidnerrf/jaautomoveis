@@ -14,8 +14,10 @@ const router = express.Router();
 // Public endpoints for performance monitoring and offline sync (no auth required)
 router.post("/web-vitals", (req, res) => {
   try {
-    // Log web vitals data for performance monitoring
-    console.log("Web Vitals:", req.body);
+    // Optionally log in development when explicitly enabled
+    if (process.env.NODE_ENV !== "production" && process.env.LOG_WEB_VITALS === "true") {
+      console.debug("Web Vitals:", req.body);
+    }
     res.status(200).json({ success: true, message: "Web vitals recorded" });
   } catch (error) {
     console.error("Error recording web vitals:", error);
@@ -25,9 +27,11 @@ router.post("/web-vitals", (req, res) => {
 
 router.post("/batch", (req, res) => {
   try {
-    // Process batch analytics data from offline sync
-    const analyticsData = req.body;
-    console.log("Batch Analytics:", analyticsData);
+    // Process batch analytics data from offline sync (no verbose logging in prod)
+    if (process.env.NODE_ENV !== "production" && process.env.LOG_WEB_VITALS === "true") {
+      const analyticsData = req.body;
+      console.debug("Batch Analytics:", analyticsData);
+    }
     res.status(200).json({ success: true, message: "Batch analytics processed" });
   } catch (error) {
     console.error("Error processing batch analytics:", error);
