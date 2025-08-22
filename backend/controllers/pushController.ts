@@ -253,43 +253,6 @@ export const notifyNewVehicle = async (vehicle: any) => {
   }
 };
 
-// @desc Helper: notify a specific user about a chat reply
-export const notifyChatReply = async (userId: string, message: string) => {
-  try {
-    if (!userId) return;
-    const subscriptions = await PushSubscription.find({ isActive: true, userId });
-    if (!subscriptions.length) return;
-    const payload = JSON.stringify({
-      title: "Nova resposta no chat",
-      body: message?.slice(0, 120) || "Você recebeu uma nova mensagem.",
-      icon: "/assets/logo.png",
-      badge: "/assets/favicon-32x32.png",
-      tag: `chat-${userId}`,
-      data: { url: "/" },
-    });
-    await Promise.allSettled(
-      subscriptions.map((s) =>
-        webpush
-          .sendNotification(
-            {
-              endpoint: s.endpoint,
-              keys: s.keys as any,
-            },
-            payload
-          )
-          .catch(async (err) => {
-            if (err && err.statusCode === 410) {
-              s.isActive = false;
-              await s.save();
-            }
-          })
-      )
-    );
-  } catch (e) {
-    // ignore
-  }
-};
-
 export default {
   subscribeToPush,
   unsubscribeFromPush,
@@ -297,5 +260,4 @@ export default {
   getPushStats,
   getVapidPublicKey,
   notifyNewVehicle,
-  notifyChatReply,
 };

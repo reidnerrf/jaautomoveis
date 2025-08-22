@@ -20,7 +20,6 @@ import authRoutes from "./backend/routes/authRoutes";
 import uploadRoutes from "./backend/routes/uploadRoutes";
 import analyticsRoutes from "./backend/routes/analyticsRoutes";
 import pushRoutes from "./backend/routes/pushRoutes";
-import chatUploadRoutes from "./backend/routes/chatUploadRoutes";
 import Analytics from "./backend/models/Analytics";
 import Vehicle from "./backend/models/Vehicle";
 import ViewLog from "./backend/models/ViewLog";
@@ -49,8 +48,6 @@ import { ApolloServer } from "apollo-server-express";
 import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
 import typeDefs from "./backend/graphql/schema";
 import resolvers from "./backend/graphql/resolvers";
-// Chat namespace init
-import { initChatNamespace } from "./backend/websockets/chatManager";
 import { queueManager } from "./backend/queues/queueManager";
 import recommendationEngine from "./backend/ml/recommendationEngine";
 
@@ -110,8 +107,6 @@ const io = new Server(server, {
   path: "/socket.io",
 });
 setSocketServer(io);
-// Initialize chat namespace
-initChatNamespace();
 app.set("trust proxy", 1);
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -138,7 +133,7 @@ const scriptSrcDirectives = [
 if (!isProduction) {
   scriptSrcDirectives.push("data:");
 }
-scriptSrcDirectives.push("https://www.googletagmanager.com", "https://www.google-analytics.com");
+scriptSrcDirectives.push("https://www.googletagmanager.com", "https://www.google-analytics.com", "https://code.jivosite.com");
 
 const uploadsDirBuild = path.join(__dirname, "uploads");
 const uploadsDirRoot = path.join(process.cwd(), "uploads");
@@ -190,6 +185,7 @@ app.use(
           "https://maps.googleapis.com",
           "https://www.google-analytics.com",
           "https://www.googletagmanager.com",
+          "https://code.jivosite.com",
         ],
         frameSrc: [
           "'self'",
@@ -258,7 +254,6 @@ app.use("/api/vehicles", vehicleListCacheMiddleware, vehicleRoutes);
 app.use("/api/upload", autoImageOptimization, uploadRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/push", pushRoutes);
-app.use("/api/chat/upload", chatUploadRoutes);
 
 app.get("/api/place-details", async (req: Request, res: Response) => {
   try {
