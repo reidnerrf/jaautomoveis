@@ -122,6 +122,7 @@ const startApollo = async () => {
     typeDefs,
     resolvers,
     plugins: isProduction ? [] : [ApolloServerPluginLandingPageLocalDefault()],
+    persistedQueries: false,
     context: ({ req, res }) => ({ req, res }),
   });
   await apolloServer.start();
