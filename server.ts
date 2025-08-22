@@ -189,6 +189,7 @@ app.use(
           "https://lh3.googleusercontent.com",
           "https://maps.googleapis.com",
           "https://www.google-analytics.com",
+          "https://www.googletagmanager.com",
         ],
         frameSrc: [
           "'self'",
