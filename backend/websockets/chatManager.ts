@@ -1,4 +1,5 @@
 import { getSocketServer } from "../socket";
+import { notifyChatReply } from "../controllers/pushController";
 
 const activeRooms = new Set<string>();
 
@@ -17,10 +18,16 @@ export const initChatNamespace = () => {
 			chat.to("admin").emit("new_chat", { roomId });
 		});
 
-		socket.on("message", (payload: { roomId: string; message: string; user?: string }) => {
-			const { roomId, message, user } = payload || ({} as any);
+		socket.on("message", async (payload: { roomId: string; message: string; user?: string }) => {
+			const { roomId, message, user } = (payload || ({} as any));
 			if (!roomId || !message) return;
 			chat.to(roomId).emit("message", { user: user || socket.id, message, ts: Date.now() });
+			// If admin replied, try to send push to that visitor (roomId is the visitor chatId)
+			if ((user || "").toLowerCase() === "admin") {
+				try {
+					await notifyChatReply(roomId, message);
+				} catch {}
+			}
 		});
 
 		socket.on("leave", (roomId: string) => {

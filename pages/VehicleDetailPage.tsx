@@ -225,7 +225,7 @@ const VehicleDetailPage: React.FC = () => {
         />
       </SEOHead>
 
-      <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Seta para voltar ao estoque */}
           <div className="mb-4">
@@ -239,7 +239,7 @@ const VehicleDetailPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Galeria de imagens */}
             <div className="lg:col-span-3">
-              <div className="relative rounded-2xl overflow-hidden shadow-xl">
+              <div className="relative rounded-2xl overflow-hidden shadow-xl ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
                 <motion.img
                   whileHover={{ scale: 1.02 }}
                   src={`${vehicle.images[currentImageIndex]}${vehicle.images[currentImageIndex].includes("?") ? "&" : "?"}v=${encodeURIComponent(vehicle.updatedAt || "")}`}
@@ -278,7 +278,7 @@ const VehicleDetailPage: React.FC = () => {
             </div>
 
             {/* Informações do veículo */}
-            <div className="lg:col-span-2 bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col">
+            <div className="lg:col-span-2 bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center text-sm text-gray-500">
                   <FiEye className="mr-2" />
@@ -323,7 +323,7 @@ const VehicleDetailPage: React.FC = () => {
               </div>
 
               {/* Características */}
-              <div className="mb-6 bg-white dark:bg-gray-900 p-4 rounded-xl shadow">
+              <div className="mb-6 bg-white dark:bg-gray-900 p-4 rounded-xl shadow ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
                   Características
                 </h2>
@@ -377,7 +377,7 @@ const VehicleDetailPage: React.FC = () => {
           {/* Opcionais e Comparativo */}
           <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
             {vehicle.optionals?.length > 0 && vehicle.optionals[0] !== "" && (
-              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Opcionais</h2>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-600 dark:text-gray-300">
                   {vehicle.optionals.map((opt) => (
@@ -394,7 +394,7 @@ const VehicleDetailPage: React.FC = () => {
 
           {/* Informações adicionais */}
           {vehicle.additionalInfo ? (
-            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg mt-8">
+            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg mt-8 ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                 Informações Adicionais
               </h2>

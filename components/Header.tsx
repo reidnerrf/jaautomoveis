@@ -21,19 +21,12 @@ const Header: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  
-
-  const navLinks = isAuthenticated
-    ? [...baseNavLinks, { name: "Admin", path: "/admin" }]
-    : baseNavLinks;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 80);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  
 
   const isHome = location.pathname === "/";
   const isTransparent = isHome && !isScrolled;
@@ -50,8 +43,6 @@ const Header: React.FC = () => {
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
   }, [isOpen]);
-
-  
 
   const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
     `relative block py-2 px-3 transition-colors duration-300 font-medium group
@@ -92,7 +83,7 @@ const Header: React.FC = () => {
           <div
             className={`hidden lg:flex items-center space-x-8 ${isTransparent ? "text-white" : ""}`}
           >
-            {navLinks.map((link) => (
+            {baseNavLinks.map((link) => (
               <NavLink
                 key={link.name}
                 to={link.path}
@@ -106,7 +97,6 @@ const Header: React.FC = () => {
                 </span>
               </NavLink>
             ))}
-            
             <DarkModeToggle />
           </div>
 
@@ -143,7 +133,7 @@ const Header: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-4 pt-4 pb-6 space-y-3">
-              {navLinks.map((link) => (
+              {baseNavLinks.map((link) => (
                 <NavLink
                   key={link.name}
                   to={link.path}
@@ -161,17 +151,6 @@ const Header: React.FC = () => {
                   {link.name}
                 </NavLink>
               ))}
-              {pushSupported && (
-                <button
-                  onClick={() => {
-                    subscribeToPush();
-                    setIsOpen(false);
-                  }}
-                  className="w-full mt-2 bg-main-red text-white px-3 py-2 rounded-lg text-sm"
-                >
-                  Ativar Notificações
-                </button>
-              )}
             </div>
           </motion.div>
         ) : null}
