@@ -8,6 +8,7 @@ interface ChatMessage {
 	imageUrl?: string;
 	ts: number;
 	self?: boolean;
+	clientTempId?: string;
 }
 
 const getOrCreateChatId = (): string => {
@@ -32,6 +33,7 @@ const ChatWidget: React.FC = () => {
 	const roomIdRef = React.useRef<string>("");
 	const userRef = React.useRef<string>("");
 	const lastIncomingTsRef = React.useRef<number>(0);
+	const joinedRef = React.useRef<boolean>(false);
 
 	React.useEffect(() => {
 		userRef.current = getOrCreateChatId();
@@ -44,9 +46,10 @@ const ChatWidget: React.FC = () => {
 		socketRef.current = s;
 		s.on("connect", () => {
 			// only join if user has provided a name
-			if (displayName.trim()) {
+			if (displayName.trim() && !joinedRef.current) {
 				s.emit("join", roomIdRef.current);
 				s.emit("set_name", { roomId: roomIdRef.current, name: displayName.trim() });
+				joinedRef.current = true;
 			}
 		});
 		s.on("history", (items: { user: string; message?: string; imageUrl?: string; ts: number }[]) => {
@@ -65,7 +68,24 @@ const ChatWidget: React.FC = () => {
 		});
 		s.on("message", (m: { user: string; message?: string; imageUrl?: string; ts: number }) => {
 			const isSelf = m.user === userRef.current;
-			// de-dupe by timestamp ordering and equality guard
+			// Replace optimistic message if it matches text and is recent
+			if (isSelf && m.message) {
+				setMessages((prev) => {
+					const cutoff = Date.now() - 5000; // 5s window
+					for (let i = prev.length - 1; i >= 0; i--) {
+						const pm = prev[i];
+						if (pm.self && pm.message === m.message && pm.ts >= cutoff) {
+							const next = [...prev];
+							next[i] = { ...pm, ts: m.ts }; // use server timestamp
+							return next;
+						}
+					}
+					return [...prev, { ...m, message: m.message || "", self: isSelf }];
+				});
+				lastIncomingTsRef.current = Math.max(lastIncomingTsRef.current, m.ts || 0);
+				return;
+			}
+			// de-dupe incoming non-self by timestamp ordering and equality guard
 			if (m.ts && m.ts <= lastIncomingTsRef.current && !isSelf) return;
 			lastIncomingTsRef.current = Math.max(lastIncomingTsRef.current, m.ts || 0);
 			setMessages((prev) => [...prev, { ...m, message: m.message || "", self: isSelf }]);
@@ -112,7 +132,14 @@ const ChatWidget: React.FC = () => {
 		return () => {
 			s.disconnect();
 		};
-	}, []);
+	}, [displayName]);
+
+	const ensureJoined = () => {
+		if (!socketRef.current || joinedRef.current) return;
+		socketRef.current.emit("join", roomIdRef.current);
+		socketRef.current.emit("set_name", { roomId: roomIdRef.current, name: displayName.trim() });
+		joinedRef.current = true;
+	};
 
 	const sendText = () => {
 		const text = input.trim();
@@ -121,15 +148,11 @@ const ChatWidget: React.FC = () => {
 			toast.error("Informe seu nome antes de enviar mensagens");
 			return;
 		}
-		// ensure join happens if not already
-		socketRef.current.emit("join", roomIdRef.current);
-		socketRef.current.emit("set_name", { roomId: roomIdRef.current, name: displayName.trim() });
-		const msg = { roomId: roomIdRef.current, message: text, user: userRef.current };
-		// optimistic add with a unique ts; server will broadcast its own copy with different ts
+		ensureJoined();
 		const now = Date.now();
 		setMessages((prev) => [...prev, { user: userRef.current, message: text, ts: now, self: true }]);
 		setInput("");
-		socketRef.current.emit("message", msg);
+		socketRef.current.emit("message", { roomId: roomIdRef.current, message: text, user: userRef.current });
 	};
 
 	const uploadAndSendImage = async (file: File) => {
@@ -150,9 +173,7 @@ const ChatWidget: React.FC = () => {
 				...prev,
 				{ user: userRef.current, message: "", imageUrl, ts: Date.now(), self: true },
 			]);
-			// ensure join happens if not already
-			socketRef.current?.emit("join", roomIdRef.current);
-			socketRef.current?.emit("set_name", { roomId: roomIdRef.current, name: displayName.trim() });
+			ensureJoined();
 			socketRef.current?.emit("message", { roomId: roomIdRef.current, imageUrl, user: userRef.current });
 		} catch (e) {
 			toast.error("Não foi possível enviar a imagem");
@@ -174,8 +195,11 @@ const ChatWidget: React.FC = () => {
 			return;
 		}
 		localStorage.setItem("chatDisplayName", name);
-		socketRef.current?.emit("join", roomIdRef.current);
-		socketRef.current?.emit("set_name", { roomId: roomIdRef.current, name });
+		if (socketRef.current && !joinedRef.current) {
+			ensureJoined();
+		} else {
+			socketRef.current?.emit("set_name", { roomId: roomIdRef.current, name });
+		}
 		toast.success("Nome salvo");
 	};
 
@@ -184,8 +208,8 @@ const ChatWidget: React.FC = () => {
 		userRef.current = getOrCreateChatId();
 		roomIdRef.current = userRef.current;
 		setMessages([]);
-		socketRef.current?.emit("join", roomIdRef.current);
-		if (displayName) socketRef.current?.emit("set_name", { roomId: roomIdRef.current, name: displayName });
+		joinedRef.current = false;
+		if (displayName) ensureJoined();
 	};
 
 	const deleteChat = () => {
@@ -226,129 +250,129 @@ const ChatWidget: React.FC = () => {
 </button>
 
 			{/* Chat panel */}
-{open && (
-  <div
-    className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-50 
-      w-[92vw] max-w-sm bg-white dark:bg-gray-800 
-      rounded-3xl shadow-2xl shadow-red-500/10 border 
-      border-gray-200 dark:border-gray-700 flex flex-col 
-      overflow-hidden transition-all duration-300 ease-out"
-  >
-    {/* Header */}
-    <div className="px-4 py-3 bg-gradient-to-r from-main-red to-red-600 
-      text-white flex items-center justify-between">
-      <div className="text-sm font-semibold">💬 Atendimento</div>
-      <button
-        onClick={() => setOpen(false)}
-        className="p-1 rounded-full hover:bg-white/20 transition"
-      >
-        ✕
-      </button>
-    </div>
+		{open && (
+		  <div
+		    className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-50 
+		      w-[92vw] max-w-sm bg-white dark:bg-gray-800 
+		      rounded-3xl shadow-2xl shadow-red-500/10 border 
+		      border-gray-200 dark:border-gray-700 flex flex-col 
+		      overflow-hidden transition-all duration-300 ease-out"
+		  >
+		    {/* Header */}
+		    <div className="px-4 py-3 bg-gradient-to-r from-main-red to-red-600 
+		      text-white flex items-center justify-between">
+		      <div className="text-sm font-semibold">💬 Atendimento</div>
+		      <button
+		        onClick={() => setOpen(false)}
+		        className="p-1 rounded-full hover:bg-white/20 transition"
+		      >
+		        ✕
+		      </button>
+		    </div>
+		
+		    {/* Nome e ações */}
+		    <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700 flex gap-2 items-center">
+		      <input
+		        type="text"
+		        value={displayName}
+		        onChange={(e) => setDisplayName(e.target.value)}
+		        placeholder="Seu nome"
+		        className="w-1/2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 
+		          rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-main-red/50"
+		      />
+		      <button
+		        onClick={saveName}
+		        className="px-3 py-2 rounded-md bg-gray-800 text-white text-xs hover:bg-gray-900 transition"
+		      >
+		        Salvar
+		      </button>
+		      <button
+		        onClick={newChat}
+		        className="px-3 py-2 rounded-md bg-blue-600 text-white text-xs hover:bg-blue-700 transition"
+		      >
+		        Novo
+		      </button>
+		      <button
+		        onClick={deleteChat}
+		        className="px-3 py-2 rounded-md bg-red-100 text-red-600 text-xs hover:bg-red-200 
+		          dark:bg-red-900/40 dark:text-red-400 dark:hover:bg-red-800/60 flex items-center gap-1 transition"
+		      >
+		        🗑 Deletar
+		      </button>
+		    </div>
+		
+		    {/* Messages */}
+		    <div className="p-3 h-72 overflow-y-auto overscroll-contain space-y-2 scrollbar-thin">
+		      {!displayName.trim() && (
+		        <div className="text-xs text-red-600">Informe seu nome acima para iniciar o chat.</div>
+		      )}
+		      {messages.length === 0 && displayName.trim() && (
+		        <div className="text-xs text-gray-500">Como podemos ajudar? Envie sua mensagem.</div>
+		      )}
+		      {messages.map((m, idx) => (
+		        <div key={idx} className={`flex ${m.self ? "justify-end" : "justify-start"}`}>
+		          <div
+		            className={`${m.self
+		              ? "bg-main-red text-white"
+		              : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+		              } px-3 py-2 rounded-xl max-w-[80%] text-sm shadow-sm`}
+		          >
+		            {m.imageUrl ? (
+		              <img src={m.imageUrl} alt="imagem" className="max-w-full rounded-md" />
+		            ) : (
+		              <span>{m.message}</span>
+		            )}
+		            <div className="mt-1 text-[10px] text-gray-400 dark:text-gray-500 text-right">
+		              {new Date(m.ts).toLocaleString()}
+		            </div>
+		          </div>
+		        </div>
+		      ))}
+		    </div>
+		
+		    {/* Input */}
+		    <div className="p-2 border-t border-gray-200 dark:border-gray-700 flex gap-2 items-center">
+		      <input
+		        type="text"
+		        value={input}
+		        onChange={(e) => setInput(e.target.value)}
+		        placeholder="Digite sua mensagem..."
+		        className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 
+		          rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-main-red/50"
+		        onKeyDown={(e) => {
+		          if (e.key === "Enter") sendText();
+		        }}
+		        disabled={!displayName.trim()}
+		      />
+		      <button
+		        onClick={sendText}
+		        disabled={!displayName.trim()}
+		        className="bg-main-red hover:bg-red-700 disabled:opacity-50 
+		          text-white rounded-md px-3 py-2 text-sm transition"
+		      >
+		        Enviar
+		      </button>
+		      <input
+		        ref={fileInputRef}
+		        onChange={handleFileChange}
+		        type="file"
+		        accept="image/*"
+		        className="hidden"
+		      />
+		      <button
+		        onClick={() => fileInputRef.current?.click()}
+		        disabled={uploading || !displayName.trim()}
+		        className="bg-gray-700 hover:bg-gray-800 disabled:opacity-50 
+		          text-white rounded-md px-3 py-2 text-sm flex items-center gap-1 transition"
+		      >
+		        {uploading ? "⏳" : "📷"} {uploading ? "Enviando" : "Imagem"}
+		      </button>
+		    </div>
+		  </div>
+		)}
 
-    {/* Nome e ações */}
-    <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700 flex gap-2 items-center">
-      <input
-        type="text"
-        value={displayName}
-        onChange={(e) => setDisplayName(e.target.value)}
-        placeholder="Seu nome"
-        className="w-1/2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 
-          rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-main-red/50"
-      />
-      <button
-        onClick={saveName}
-        className="px-3 py-2 rounded-md bg-gray-800 text-white text-xs hover:bg-gray-900 transition"
-      >
-        Salvar
-      </button>
-      <button
-        onClick={newChat}
-        className="px-3 py-2 rounded-md bg-blue-600 text-white text-xs hover:bg-blue-700 transition"
-      >
-        Novo
-      </button>
-      <button
-        onClick={deleteChat}
-        className="px-3 py-2 rounded-md bg-red-100 text-red-600 text-xs hover:bg-red-200 
-          dark:bg-red-900/40 dark:text-red-400 dark:hover:bg-red-800/60 flex items-center gap-1 transition"
-      >
-        🗑 Deletar
-      </button>
-    </div>
 
-    {/* Messages */}
-    <div className="p-3 h-72 overflow-y-auto overscroll-contain space-y-2 scrollbar-thin">
-      {!displayName.trim() && (
-        <div className="text-xs text-red-600">Informe seu nome acima para iniciar o chat.</div>
-      )}
-      {messages.length === 0 && displayName.trim() && (
-        <div className="text-xs text-gray-500">Como podemos ajudar? Envie sua mensagem.</div>
-      )}
-      {messages.map((m, idx) => (
-        <div key={idx} className={`flex ${m.self ? "justify-end" : "justify-start"}`}>
-          <div
-            className={`${m.self
-              ? "bg-main-red text-white"
-              : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              } px-3 py-2 rounded-xl max-w-[80%] text-sm shadow-sm`}
-          >
-            {m.imageUrl ? (
-              <img src={m.imageUrl} alt="imagem" className="max-w-full rounded-md" />
-            ) : (
-              <span>{m.message}</span>
-            )}
-            <div className="mt-1 text-[10px] text-gray-400 dark:text-gray-500 text-right">
-              {new Date(m.ts).toLocaleString()}
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-
-    {/* Input */}
-    <div className="p-2 border-t border-gray-200 dark:border-gray-700 flex gap-2 items-center">
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Digite sua mensagem..."
-        className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 
-          rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-main-red/50"
-        onKeyDown={(e) => {
-          if (e.key === "Enter") sendText();
-        }}
-        disabled={!displayName.trim()}
-      />
-      <button
-        onClick={sendText}
-        disabled={!displayName.trim()}
-        className="bg-main-red hover:bg-red-700 disabled:opacity-50 
-          text-white rounded-md px-3 py-2 text-sm transition"
-      >
-        Enviar
-      </button>
-      <input
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        type="file"
-        accept="image/*"
-        className="hidden"
-      />
-      <button
-        onClick={() => fileInputRef.current?.click()}
-        disabled={uploading || !displayName.trim()}
-        className="bg-gray-700 hover:bg-gray-800 disabled:opacity-50 
-          text-white rounded-md px-3 py-2 text-sm flex items-center gap-1 transition"
-      >
-        {uploading ? "⏳" : "📷"} {uploading ? "Enviando" : "Imagem"}
-      </button>
-    </div>
-  </div>
-)}
-
-
-		</>
+			</>
 	);
 };
 

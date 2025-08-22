@@ -9,7 +9,8 @@ export default defineConfig(({ mode }) => {
 
   return {
     define: {
-      "process.env": {}, // evita undefined
+      // Only define specific keys to avoid clobbering process.env entirely
+      "process.env.NODE_ENV": JSON.stringify(mode),
       "import.meta.env.MODE": JSON.stringify(mode),
     },
     // Add base to support CDN asset prefix
@@ -21,17 +22,19 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-      federation({
-        name: "host",
-        remotes: {
-          // vehicles: "vehicles@http://localhost:3001/assets/remoteEntry.js",
-        },
-        shared: {
-          react: { singleton: true, eager: false, requiredVersion: false },
-          "react-dom": { singleton: true, eager: false, requiredVersion: false },
-          "react-router-dom": { singleton: true, eager: false, requiredVersion: false },
-        },
-      }),
+      // Enable federation only when explicitly desired (default disabled in production)
+      !isProduction &&
+        federation({
+          name: "host",
+          remotes: {
+            // vehicles: "vehicles@http://localhost:3001/assets/remoteEntry.js",
+          },
+          shared: {
+            react: { singleton: true, eager: false, requiredVersion: false },
+            "react-dom": { singleton: true, eager: false, requiredVersion: false },
+            "react-router-dom": { singleton: true, eager: false, requiredVersion: false },
+          },
+        }),
       isProduction &&
         visualizer({
           filename: "dist/stats.html",
