@@ -122,6 +122,7 @@ const startApollo = async () => {
     typeDefs,
     resolvers,
     plugins: isProduction ? [] : [ApolloServerPluginLandingPageLocalDefault()],
+    persistedQueries: false,
     context: ({ req, res }) => ({ req, res }),
   });
   await apolloServer.start();
@@ -188,6 +189,7 @@ app.use(
           "https://lh3.googleusercontent.com",
           "https://maps.googleapis.com",
           "https://www.google-analytics.com",
+          "https://www.googletagmanager.com",
         ],
         frameSrc: [
           "'self'",
