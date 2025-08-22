@@ -40,13 +40,11 @@ export const initChatNamespace = () => {
 			if (!roomId) return;
 			socket.join(roomId);
 			const now = Date.now();
-			if (!rooms.has(roomId)) {
-				rooms.set(roomId, { lastTs: now });
-				chat.to("admin").emit("new_chat", { roomId, lastTs: now });
-			} else {
+			if (rooms.has(roomId)) {
 				const meta = rooms.get(roomId)!;
 				meta.lastTs = now;
 				rooms.set(roomId, meta);
+				chat.to("admin").emit("room_updated", { id: roomId, ...meta });
 			}
 			chat.to(roomId).emit("system", { type: "join", userId: socket.id });
 			// Send existing history (if any) to the newly joined socket
