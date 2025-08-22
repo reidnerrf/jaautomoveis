@@ -21,17 +21,11 @@ const Header: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const [pushSupported, setPushSupported] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 80);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const has = typeof window !== "undefined" && "Notification" in window && "serviceWorker" in navigator && "PushManager" in window;
-    setPushSupported(Boolean(has));
   }, []);
 
   const isHome = location.pathname === "/";
@@ -59,37 +53,6 @@ const Header: React.FC = () => {
            ? "text-white/95 hover:text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
            : "text-gray-700 hover:text-main-red dark:text-gray-300 dark:hover:text-main-red"
      }`;
-
-  const subscribeToPush = async () => {
-    try {
-      if (!("Notification" in window) || !("serviceWorker" in navigator)) return;
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") return;
-      const reg = await navigator.serviceWorker.ready;
-      const resp = await fetch("/api/push/vapid-public-key");
-      const { publicKey } = await resp.json();
-      const urlBase64ToUint8Array = (base64String: string) => {
-        const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-        const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-        const rawData = window.atob(base64);
-        const outputArray = new Uint8Array(rawData.length);
-        for (let i = 0; i < rawData.length; ++i) {
-          outputArray[i] = rawData.charCodeAt(i);
-        }
-        return outputArray;
-      };
-      const sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey),
-      });
-      const chatId = localStorage.getItem("chatId") || "";
-      await fetch("/api/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...sub.toJSON(), userId: chatId }),
-      });
-    } catch {}
-  };
 
   return (
     <motion.header
@@ -120,7 +83,7 @@ const Header: React.FC = () => {
           <div
             className={`hidden lg:flex items-center space-x-8 ${isTransparent ? "text-white" : ""}`}
           >
-            {navLinks.map((link) => (
+            {baseNavLinks.map((link) => (
               <NavLink
                 key={link.name}
                 to={link.path}
@@ -134,14 +97,6 @@ const Header: React.FC = () => {
                 </span>
               </NavLink>
             ))}
-            {pushSupported && (
-              <button
-                onClick={subscribeToPush}
-                className="text-sm bg-main-red text-white px-3 py-1.5 rounded-md"
-              >
-                Ativar Notificações
-              </button>
-            )}
             <DarkModeToggle />
           </div>
 
@@ -178,7 +133,7 @@ const Header: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-4 pt-4 pb-6 space-y-3">
-              {navLinks.map((link) => (
+              {baseNavLinks.map((link) => (
                 <NavLink
                   key={link.name}
                   to={link.path}
@@ -196,17 +151,6 @@ const Header: React.FC = () => {
                   {link.name}
                 </NavLink>
               ))}
-              {pushSupported && (
-                <button
-                  onClick={() => {
-                    subscribeToPush();
-                    setIsOpen(false);
-                  }}
-                  className="w-full mt-2 bg-main-red text-white px-3 py-2 rounded-lg text-sm"
-                >
-                  Ativar Notificações
-                </button>
-              )}
             </div>
           </motion.div>
         ) : null}
