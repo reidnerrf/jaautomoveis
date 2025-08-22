@@ -16,7 +16,7 @@ webpush.setVapidDetails(
 // @access  Public
 export const subscribeToPush = async (req: Request, res: Response) => {
   try {
-    const { endpoint, keys } = req.body;
+    const { endpoint, keys, userId } = req.body;
 
     if (!endpoint || !keys) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -30,6 +30,7 @@ export const subscribeToPush = async (req: Request, res: Response) => {
       subscription.keys = keys;
       subscription.lastUsed = new Date();
       subscription.userAgent = req.get("User-Agent");
+      if (userId) subscription.userId = userId;
       await subscription.save();
     } else {
       // Criar nova subscription
@@ -37,6 +38,7 @@ export const subscribeToPush = async (req: Request, res: Response) => {
         endpoint,
         keys,
         userAgent: req.get("User-Agent"),
+        userId: userId || undefined,
       });
       await subscription.save();
     }
@@ -213,7 +215,7 @@ export const getVapidPublicKey = async (req: Request, res: Response) => {
   });
 };
 
-// Helper: notify all subscribers about a new vehicle
+// @desc Helper: notify all subscribers about a new vehicle
 export const notifyNewVehicle = async (vehicle: any) => {
   try {
     const subscriptions = await PushSubscription.find({ isActive: true });
@@ -230,22 +232,61 @@ export const notifyNewVehicle = async (vehicle: any) => {
     });
     await Promise.allSettled(
       subscriptions.map((s) =>
-        webpush.sendNotification(
-          {
-            endpoint: s.endpoint,
-            keys: s.keys as any,
-          },
-          payload
-        ).catch(async (err) => {
-          if (err && err.statusCode === 410) {
-            s.isActive = false;
-            await s.save();
-          }
-        })
+        webpush
+          .sendNotification(
+            {
+              endpoint: s.endpoint,
+              keys: s.keys as any,
+            },
+            payload
+          )
+          .catch(async (err) => {
+            if (err && err.statusCode === 410) {
+              s.isActive = false;
+              await s.save();
+            }
+          })
       )
     );
   } catch (e) {
     // Best-effort; do not throw
+  }
+};
+
+// @desc Helper: notify a specific user about a chat reply
+export const notifyChatReply = async (userId: string, message: string) => {
+  try {
+    if (!userId) return;
+    const subscriptions = await PushSubscription.find({ isActive: true, userId });
+    if (!subscriptions.length) return;
+    const payload = JSON.stringify({
+      title: "Nova resposta no chat",
+      body: message?.slice(0, 120) || "Você recebeu uma nova mensagem.",
+      icon: "/assets/logo.png",
+      badge: "/assets/favicon-32x32.png",
+      tag: `chat-${userId}`,
+      data: { url: "/" },
+    });
+    await Promise.allSettled(
+      subscriptions.map((s) =>
+        webpush
+          .sendNotification(
+            {
+              endpoint: s.endpoint,
+              keys: s.keys as any,
+            },
+            payload
+          )
+          .catch(async (err) => {
+            if (err && err.statusCode === 410) {
+              s.isActive = false;
+              await s.save();
+            }
+          })
+      )
+    );
+  } catch (e) {
+    // ignore
   }
 };
 
@@ -256,4 +297,5 @@ export default {
   getPushStats,
   getVapidPublicKey,
   notifyNewVehicle,
+  notifyChatReply,
 };

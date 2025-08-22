@@ -1,5 +1,6 @@
 import React from "react";
 import { io, Socket } from "socket.io-client";
+import toast from "react-hot-toast";
 
 interface ChatMessage {
 	user: string;
@@ -22,6 +23,7 @@ const ChatWidget: React.FC = () => {
 	const [open, setOpen] = React.useState(false);
 	const [messages, setMessages] = React.useState<ChatMessage[]>([]);
 	const [input, setInput] = React.useState("");
+	const [unread, setUnread] = React.useState<number>(0);
 	const socketRef = React.useRef<Socket | null>(null);
 	const roomIdRef = React.useRef<string>("");
 	const userRef = React.useRef<string>("");
@@ -39,7 +41,31 @@ const ChatWidget: React.FC = () => {
 			s.emit("join", roomIdRef.current);
 		});
 		s.on("message", (m: { user: string; message: string; ts: number }) => {
-			setMessages((prev) => [...prev, { ...m, self: m.user === userRef.current }]);
+			const isSelf = m.user === userRef.current;
+			setMessages((prev) => [...prev, { ...m, self: isSelf }]);
+			if (!open && !isSelf) {
+				setUnread((u) => u + 1);
+				toast((t) => (
+					<div className="text-sm">
+						<strong>Nova resposta:</strong> {m.message}
+						<div className="mt-2 flex gap-2">
+							<button
+								onClick={() => {
+									setOpen(true);
+									setUnread(0);
+									toast.dismiss(t.id);
+								}}
+								className="bg-main-red text-white px-2 py-1 rounded-md text-xs"
+							>
+								Abrir chat
+							</button>
+							<button onClick={() => toast.dismiss(t.id)} className="text-gray-300 hover:text-white text-xs">
+								Fechar
+							</button>
+						</div>
+					</div>
+				));
+			}
 		});
 		s.on("system", (payload: any) => {
 			if (payload?.type === "join" && payload.userId !== s.id) {
@@ -52,7 +78,7 @@ const ChatWidget: React.FC = () => {
 		return () => {
 			s.disconnect();
 		};
-	}, []);
+	}, [open]);
 
 	const send = () => {
 		const text = input.trim();
@@ -67,13 +93,19 @@ const ChatWidget: React.FC = () => {
 		<>
 			{/* Floating button */}
 			<button
-				onClick={() => setOpen((v) => !v)}
-				className="fixed bottom-6 right-6 z-40 rounded-full bg-main-red text-white shadow-lg w-14 h-14 flex items-center justify-center hover:bg-red-700 focus:outline-none"
+				onClick={() => {
+					setOpen((v) => !v);
+					setUnread(0);
+				}}
+				className="fixed bottom-6 right-6 z-40 rounded-full bg-main-red text-white shadow-lg w-14 h-14 flex items-center justify-center hover:bg-red-700 focus:outline-none relative"
 				aria-label="Abrir chat"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
 					<path d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75A9.716 9.716 0 0 1 7.5 20.1l-3.284.82A1.125 1.125 0 0 1 2.67 19.5l.82-3.284A9.716 9.716 0 0 1 2.25 12Z" />
 				</svg>
+				{unread > 0 && (
+					<span className="absolute -top-1 -right-1 bg-green-500 text-white text-[10px] leading-none px-1.5 py-1 rounded-full shadow">{unread}</span>
+				)}
 			</button>
 
 			{/* Chat panel */}
