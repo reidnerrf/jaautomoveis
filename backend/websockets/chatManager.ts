@@ -17,6 +17,7 @@ interface ChatPayload {
 
 const rooms = new Map<string, RoomMeta>();
 const history = new Map<string, ChatPayload[]>();
+const pendingNames = new Map<string, string>();
 
 export const initChatNamespace = () => {
 	const io = getSocketServer();
@@ -60,11 +61,26 @@ export const initChatNamespace = () => {
 				const { roomId, message, imageUrl, user } = payload || ({} as any);
 				if (!roomId || (!message && !imageUrl)) return;
 				const ts = Date.now();
-				const sender = user || socket.id;
+				const sender = (user || socket.id) as string;
+				// Enforce name for non-admin senders
+				const existingMeta = rooms.get(roomId);
+				const effectiveName = existingMeta?.name || pendingNames.get(roomId) || "";
+				if (sender.toLowerCase() !== "admin" && !effectiveName.trim()) {
+					socket.emit("message_rejected", { reason: "missing_name" });
+					return;
+				}
+				// create room on first message, attach pending name if exists
+				let meta = existingMeta;
+				if (!meta) {
+					meta = { lastTs: ts };
+					const pn = pendingNames.get(roomId);
+					if (pn) meta.name = pn;
+					rooms.set(roomId, meta);
+					chat.to("admin").emit("new_chat", { roomId, lastTs: ts });
+				}
 				const outgoing: ChatPayload = { user: sender, message: message || "", imageUrl, ts };
 				chat.to(roomId).emit("message", outgoing);
 				// update room last activity
-				const meta = rooms.get(roomId) || { lastTs: ts };
 				meta.lastTs = ts;
 				rooms.set(roomId, meta);
 				// store history (limited buffer)
@@ -73,7 +89,7 @@ export const initChatNamespace = () => {
 				if (msgs.length > 200) msgs.shift();
 				history.set(roomId, msgs);
 				// If admin replied, try to send push to that visitor (roomId is the visitor chatId)
-				if ((sender || "").toLowerCase() === "admin" && message) {
+				if (sender.toLowerCase() === "admin" && message) {
 					try {
 						await notifyChatReply(roomId, message);
 					} catch {}
@@ -85,10 +101,16 @@ export const initChatNamespace = () => {
 		socket.on("set_name", (payload: { roomId: string; name: string }) => {
 			const { roomId, name } = payload || ({} as any);
 			if (!roomId || !name) return;
-			const meta = rooms.get(roomId) || { lastTs: Date.now() };
-			meta.name = String(name).slice(0, 100);
-			rooms.set(roomId, meta);
-			chat.to("admin").emit("room_updated", { id: roomId, ...meta });
+			const trimmed = String(name).slice(0, 100).trim();
+			if (!trimmed) return;
+			pendingNames.set(roomId, trimmed);
+			// If room already exists, apply immediately
+			const meta = rooms.get(roomId);
+			if (meta) {
+				meta.name = trimmed;
+				rooms.set(roomId, meta);
+				chat.to("admin").emit("room_updated", { id: roomId, ...meta });
+			}
 		});
 
 		socket.on("leave", (roomId: string) => {
@@ -110,6 +132,7 @@ export const initChatNamespace = () => {
 			if (rooms.has(roomId)) {
 				rooms.delete(roomId);
 				history.delete(roomId);
+				pendingNames.delete(roomId);
 				// Attempt to delete uploaded images associated with this roomId
 				try {
 					const uploadsDir = path.join(process.cwd(), "uploads");

@@ -93,6 +93,11 @@ const ChatWidget: React.FC = () => {
 				));
 			}
 		});
+		s.on("message_rejected", (p: { reason: string }) => {
+			if (p?.reason === "missing_name") {
+				toast.error("Informe seu nome para enviar mensagens");
+			}
+		});
 		s.on("system", (payload: any) => {
 			if (payload?.type === "join" && payload.userId !== s.id) {
 				setMessages((prev) => [
