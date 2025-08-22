@@ -10,6 +10,17 @@ interface AnalyticsEventPayload {
   page: string;
 }
 
+const getConsent = () => {
+  try {
+    const raw = localStorage.getItem("cookieConsentV1");
+    if (!raw) return { analytics: false, personalization: false };
+    const parsed = JSON.parse(raw);
+    return { analytics: !!parsed.analytics, personalization: !!parsed.personalization };
+  } catch {
+    return { analytics: false, personalization: false };
+  }
+};
+
 class AnalyticsService {
   private socket: Socket | null = null;
   private gaInitialized = false;
@@ -43,8 +54,10 @@ class AnalyticsService {
     });
   }
 
-  // Track page views (real-time only; server will not persist)
+  // Track page views (respeita consentimento)
   trackPageView(page?: string) {
+    const consent = getConsent();
+    if (!consent.analytics) return;
     const currentPage = page || window.location.pathname;
     this.emitPageView(currentPage);
   }
@@ -66,8 +79,10 @@ class AnalyticsService {
     } catch {}
   }
 
-  // Track user interactions (filtered server-side)
+  // Track user interactions (respeita consentimento)
   trackUserAction(action: string, category: string, label?: string, page?: string) {
+    const consent = getConsent();
+    if (!consent.analytics) return;
     const payload: AnalyticsEventPayload = {
       event: "user_action",
       category,
@@ -78,7 +93,7 @@ class AnalyticsService {
     this.emitUserAction(payload);
   }
 
-  // Track business events (essential only)
+  // Track business events (respeita consentimento)
   trackBusinessEvent(
     eventType:
       | "vehicle_view"
@@ -91,6 +106,8 @@ class AnalyticsService {
     data: any,
     page?: string
   ) {
+    const consent = getConsent();
+    if (!consent.analytics) return;
     const payload: AnalyticsEventPayload = {
       event: eventType,
       category: "business",

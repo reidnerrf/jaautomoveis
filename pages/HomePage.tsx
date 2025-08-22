@@ -27,6 +27,27 @@ import { analytics } from "../utils/analytics";
 import SEOHead from "../components/SEOHead.tsx";
 //import { useTheme } from "../contexts/ThemeContext.tsx";
 
+const consentAllowed = (key: "analytics" | "personalization") => {
+  try {
+    const raw = localStorage.getItem("cookieConsentV1");
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    return !!parsed[key];
+  } catch {
+    return false;
+  }
+};
+
+const getUserId = () => {
+  const key = "chatId";
+  let id = localStorage.getItem(key);
+  if (!id) {
+    id = Math.random().toString(36).slice(2);
+    localStorage.setItem(key, id);
+  }
+  return id;
+};
+
 const HomePage: React.FC = () => {
   const { vehicles, refreshVehicles } = useVehicleData();
   const {
@@ -41,6 +62,29 @@ const HomePage: React.FC = () => {
 
   const [googleReviews, setGoogleReviews] = useState<GoogleReview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [personalized, setPersonalized] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Recomendações personalizadas
+    if (!consentAllowed("personalization")) {
+      setPersonalized([]);
+      return;
+    }
+    const controller = new AbortController();
+    const fetchRecs = async () => {
+      try {
+        const userId = getUserId();
+        const res = await fetch(`/api/recommendations?userId=${encodeURIComponent(userId)}`, { signal: controller.signal });
+        const json = await res.json();
+        const items = Array.isArray(json?.recommendations) ? json.recommendations : [];
+        // Ensure id field exists
+        const normalized = items.map((v: any) => ({ ...v, id: v.id || v._id }));
+        setPersonalized(normalized);
+      } catch {}
+    };
+    fetchRecs();
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     // Atualiza em tempo real para carrosséis usando socket compartilhado
@@ -198,127 +242,59 @@ const HomePage: React.FC = () => {
                   (entries) => {
                     entries.forEach((entry) => {
                       const video = entry.target as HTMLVideoElement;
-                      if (entry.isIntersecting) {
-                        video.play().catch(() => {});
-                      } else {
-                        video.pause();
-                      }
+                      if (entry.isIntersecting) video.play();
+                      else video.pause();
                     });
                   },
-                  { threshold: 0.1 }
+                  { threshold: 0.2 }
                 );
-                observer.observe(document.querySelector("video") as Element);
+                const el = document.querySelector("video");
+                if (el) observer.observe(el);
               }}
-            >
-              <source src="/assets/homevideo.mp4" type="video/mp4" />
-            </motion.video>
-          </div>
-          <div className="block sm:hidden h-full w-full">
-            <img
-              src="/assets/homepageabout.webp"
-              alt="Showroom da JA Automóveis"
-              className="absolute inset-0 w-full h-full object-cover"
-              loading="eager"
-              decoding="async"
             />
           </div>
+          <img
+            src="/assets/homepageabout.webp"
+            alt="JA Automóveis"
+            className="sm:hidden absolute inset-0 w-full h-full object-cover"
+            loading="lazy"
+          />
         </div>
-
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 z-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-red-900/25 to-transparent z-10"></div>
-
-        <motion.div
-          className="relative z-20 text-center px-6 max-w-6xl mx-auto pt-28 pb-16 sm:pt-20 sm:pb-12"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-        >
-          <motion.div
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="mb-8"
-          >
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-7xl font-black mb-6 tracking-tight">
-              <span className="block text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
-                Seu Próximo
-              </span>
-              <span className="block bg-gradient-to-r from-red-400 via-red-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]">
-                Carro Está Aqui
-              </span>
-            </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-100 font-light max-w-4xl mx-auto leading-relaxed drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
-              Na <span className="font-bold text-red-400">JA Automóveis</span>, ofertas exclusivas,
-              financiamento facilitado e garantia total de procedência.
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            <Link to="/inventory" className="w-full sm:w-auto">
-              <motion.button
-                className="group relative overflow-hidden px-10 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-lg rounded-full shadow-2xl border-2 border-red-500/30 transition-all duration-300 w-full sm:w-auto min-h-[56px]"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span className="relative z-10 flex items-center gap-3 justify-center">
-                  <FaCar />
-                  Ver Estoque Completo
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-rose-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </motion.button>
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70"></div>
+        {/* Content */}
+        <div className="relative z-10 text-center px-6">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg">
+            Seu Próximo Carro Está Aqui
+          </h1>
+          <p className="mt-4 text-lg md:text-xl text-gray-200 max-w-3xl mx-auto">
+            Ofertas imperdíveis, atendimento de qualidade e as melhores condições do mercado.
+          </p>
+          <div className="mt-6 flex justify-center gap-4">
+            <Link
+              to="/inventory"
+              className="bg-main-red hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg"
+            >
+              Ver Estoque
             </Link>
             <a
-              href="https://wa.me/5524999037716?text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="https://wa.me/5524999037716"
               onClick={() => handleSocialClick("whatsapp")}
-              className="w-full sm:w-auto"
+              className="bg-white/90 hover:bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg shadow-lg"
             >
-              <motion.button
-                className="group relative overflow-hidden px-10 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white font-bold text-lg rounded-full shadow-2xl border-2 border-green-500/30 transition-all duration-300 w-full sm:w-auto min-h-[56px]"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span className="relative z-10 flex items-center gap-3 justify-center">
-                  <FaWhatsapp />
-                  Fale no WhatsApp
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </motion.button>
+              Falar no WhatsApp
             </a>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-          >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                className="text-center p-6 backdrop-blur-md bg-white/10 rounded-2xl border border-white/20"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 + index * 0.1, duration: 0.6 }}
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className="text-red-400 flex justify-center mb-2">{stat.icon}</div>
-                <div className="text-3xl font-black text-white mb-1">{stat.number}</div>
-                <div className="text-gray-300 text-sm font-medium">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll indicator removed to avoid cursor/mouse distraction */}
+          </div>
+        </div>
       </section>
+
+      {/* PERSONALIZADOS */}
+      {personalized.length > 0 && (
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <h2 className="text-2xl font-bold mb-4">Recomendados para você</h2>
+          <VehicleCarousel vehicles={personalized as any} />
+        </section>
+      )}
 
       {/* DESTAQUES */}
       <section className="py-24 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">

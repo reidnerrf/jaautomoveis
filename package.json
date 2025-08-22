@@ -102,6 +102,7 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@module-federation/vite": "^1.7.1",
     "@playwright/test": "^1.54.2",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",

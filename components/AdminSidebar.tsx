@@ -1,7 +1,9 @@
-import React, { useEffect, useRef } from "react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
-import { FiGrid, FiList, FiLogOut } from "react-icons/fi";
+import React, { useEffect, useRef, useState } from "react";
+import { NavLink, Link, useNavigate, useLocation } from "react-router-dom";
+import { FiGrid, FiList, FiLogOut, FiMessageSquare } from "react-icons/fi";
 import { useAuth } from "../hooks/useAuth.tsx";
+import { io, Socket } from "socket.io-client";
+import toast from "react-hot-toast";
 
 interface AdminSidebarProps {
   sidebarOpen: boolean;
@@ -10,10 +12,13 @@ interface AdminSidebarProps {
 
 const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout } = useAuth();
 
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
+  const [unread, setUnread] = useState(0);
+  const socketRef = useRef<Socket | null>(null);
 
   // Fechar no clique fora (but ignore clicks on the header toggle button)
   useEffect(() => {
@@ -48,6 +53,33 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
     document.addEventListener("keydown", keyHandler);
     return () => document.removeEventListener("keydown", keyHandler);
   });
+
+  // Reset unread on chat page
+  useEffect(() => {
+    if (location.pathname.startsWith("/admin/chat")) {
+      setUnread(0);
+    }
+  }, [location.pathname]);
+
+  // Socket listener for new chat notifications
+  useEffect(() => {
+    const s = io("/chat", { path: "/socket.io", transports: ["websocket"], withCredentials: true });
+    socketRef.current = s;
+    s.on("connect", () => {
+      s.emit("join_admin");
+    });
+    s.on("new_chat", ({ roomId }: { roomId: string }) => {
+      setUnread((u) => u + 1);
+      toast.custom((t) => (
+        <div className="bg-gray-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3">
+          <FiMessageSquare className="text-main-red" />
+          <div className="text-sm">Novo chat iniciado: {roomId}</div>
+          <button onClick={() => { toast.dismiss(t.id); navigate("/admin/chat"); }} className="ml-3 bg-main-red hover:bg-red-700 text-white text-xs px-2 py-1 rounded-md">Abrir</button>
+        </div>
+      ), { duration: 6000 });
+    });
+    return () => s.disconnect();
+  }, [navigate]);
 
   const handleLogout = () => {
     logout();
@@ -112,6 +144,19 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
               <NavLink to="/admin/vehicles" className={getNavLinkClass}>
                 <FiList className="text-lg" />
                 Veículos
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/admin/chat" className={getNavLinkClass}>
+                <div className="relative flex items-center gap-3">
+                  <FiMessageSquare className="text-lg" />
+                  <span>Chat</span>
+                  {unread > 0 && (
+                    <span className="ml-auto inline-flex items-center justify-center text-[10px] font-bold bg-main-red text-white rounded-full px-2 py-0.5">
+                      {unread}
+                    </span>
+                  )}
+                </div>
               </NavLink>
             </li>
           </ul>

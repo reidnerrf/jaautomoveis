@@ -6,29 +6,33 @@ Implementar arquitetura de micro-frontends para melhorar escalabilidade, manuten
 
 ## Estrutura Proposta
 
-### 1. **Module Federation (Webpack 5)**
+### 1. **Module Federation (Vite)**
 
 ```javascript
-// webpack.config.js
-const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
+// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import federation from "@module-federation/vite";
 
-module.exports = {
+export default defineConfig(({ mode }) => ({
+  base: process.env.CDN_BASE_URL || "/",
   plugins: [
-    new ModuleFederationPlugin({
-      name: "jaAutomoveis",
+    react(),
+    federation({
+      name: "jaAutomoveisHost",
       remotes: {
-        vehicleModule: "vehicleModule@http://localhost:3001/remoteEntry.js",
-        adminModule: "adminModule@http://localhost:3002/remoteEntry.js",
-        analyticsModule: "analyticsModule@http://localhost:3003/remoteEntry.js",
+        // vehicles: "vehicles@http://localhost:3001/assets/remoteEntry.js",
+        // admin: "admin@http://localhost:3002/assets/remoteEntry.js",
+        // analytics: "analytics@http://localhost:3003/assets/remoteEntry.js",
       },
       shared: {
-        react: { singleton: true },
-        "react-dom": { singleton: true },
-        "react-router-dom": { singleton: true },
+        react: { singleton: true, eager: false },
+        "react-dom": { singleton: true, eager: false },
+        "react-router-dom": { singleton: true, eager: false },
       },
     }),
   ],
-};
+}));
 ```
 
 ### 2. **Módulos Independentes**
