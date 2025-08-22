@@ -43,9 +43,24 @@ const ChatWidget: React.FC = () => {
 		});
 		socketRef.current = s;
 		s.on("connect", () => {
-			s.emit("join", roomIdRef.current);
-			if (displayName) {
-				s.emit("set_name", { roomId: roomIdRef.current, name: displayName });
+			// only join if user has provided a name
+			if (displayName.trim()) {
+				s.emit("join", roomIdRef.current);
+				s.emit("set_name", { roomId: roomIdRef.current, name: displayName.trim() });
+			}
+		});
+		s.on("history", (items: { user: string; message?: string; imageUrl?: string; ts: number }[]) => {
+			const mapped = items.map((m) => ({ ...m, message: m.message || "", self: m.user === userRef.current }));
+			if (mapped.length > 0) {
+				lastIncomingTsRef.current = Math.max(lastIncomingTsRef.current, ...mapped.map((m) => m.ts || 0));
+				setMessages((prev) => {
+					// avoid duplicating if we already have some history
+					if (prev.length === 0) return mapped;
+					const existingTs = new Set(prev.map((m) => m.ts));
+					const merged = [...prev, ...mapped.filter((m) => !existingTs.has(m.ts))];
+					merged.sort((a, b) => a.ts - b.ts);
+					return merged;
+				});
 			}
 		});
 		s.on("message", (m: { user: string; message?: string; imageUrl?: string; ts: number }) => {
@@ -78,6 +93,11 @@ const ChatWidget: React.FC = () => {
 				));
 			}
 		});
+		s.on("message_rejected", (p: { reason: string }) => {
+			if (p?.reason === "missing_name") {
+				toast.error("Informe seu nome para enviar mensagens");
+			}
+		});
 		s.on("system", (payload: any) => {
 			if (payload?.type === "join" && payload.userId !== s.id) {
 				setMessages((prev) => [
@@ -97,17 +117,31 @@ const ChatWidget: React.FC = () => {
 	const sendText = () => {
 		const text = input.trim();
 		if (!text || !socketRef.current) return;
+		if (!displayName.trim()) {
+			toast.error("Informe seu nome antes de enviar mensagens");
+			return;
+		}
+		// ensure join happens if not already
+		socketRef.current.emit("join", roomIdRef.current);
+		socketRef.current.emit("set_name", { roomId: roomIdRef.current, name: displayName.trim() });
 		const msg = { roomId: roomIdRef.current, message: text, user: userRef.current };
-		setMessages((prev) => [...prev, { user: userRef.current, message: text, ts: Date.now(), self: true }]);
+		// optimistic add with a unique ts; server will broadcast its own copy with different ts
+		const now = Date.now();
+		setMessages((prev) => [...prev, { user: userRef.current, message: text, ts: now, self: true }]);
 		setInput("");
 		socketRef.current.emit("message", msg);
 	};
 
 	const uploadAndSendImage = async (file: File) => {
 		try {
+			if (!displayName.trim()) {
+				toast.error("Informe seu nome antes de enviar imagens");
+				return;
+			}
 			setUploading(true);
 			const form = new FormData();
 			form.append("image", file);
+			form.append("roomId", roomIdRef.current);
 			const resp = await fetch("/api/chat/upload", { method: "POST", body: form });
 			if (!resp.ok) throw new Error("Falha no upload");
 			const data = await resp.json();
@@ -116,6 +150,9 @@ const ChatWidget: React.FC = () => {
 				...prev,
 				{ user: userRef.current, message: "", imageUrl, ts: Date.now(), self: true },
 			]);
+			// ensure join happens if not already
+			socketRef.current?.emit("join", roomIdRef.current);
+			socketRef.current?.emit("set_name", { roomId: roomIdRef.current, name: displayName.trim() });
 			socketRef.current?.emit("message", { roomId: roomIdRef.current, imageUrl, user: userRef.current });
 		} catch (e) {
 			toast.error("Não foi possível enviar a imagem");
@@ -132,8 +169,12 @@ const ChatWidget: React.FC = () => {
 
 	const saveName = () => {
 		const name = displayName.trim();
-		if (!name) return;
+		if (!name) {
+			toast.error("Por favor, informe seu nome para iniciar o chat");
+			return;
+		}
 		localStorage.setItem("chatDisplayName", name);
+		socketRef.current?.emit("join", roomIdRef.current);
 		socketRef.current?.emit("set_name", { roomId: roomIdRef.current, name });
 		toast.success("Nome salvo");
 	};
@@ -194,7 +235,10 @@ const ChatWidget: React.FC = () => {
 						<button onClick={deleteChat} className="bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-md px-2 py-2 text-xs">Deletar</button>
 					</div>
 					<div className="p-3 h-72 overflow-y-auto space-y-2">
-						{messages.length === 0 && (
+						{!displayName.trim() && (
+							<div className="text-xs text-red-600">Informe seu nome acima para iniciar o chat.</div>
+						)}
+						{messages.length === 0 && displayName.trim() && (
 							<div className="text-xs text-gray-500">Como podemos ajudar? Envie sua mensagem.</div>
 						)}
 						{messages.map((m, idx) => (
@@ -220,12 +264,13 @@ const ChatWidget: React.FC = () => {
 							onKeyDown={(e) => {
 								if (e.key === "Enter") sendText();
 							}}
+							disabled={!displayName.trim()}
 						/>
-						<button onClick={sendText} className="bg-main-red hover:bg-red-700 text-white rounded-md px-3 py-2 text-sm">Enviar</button>
+						<button onClick={sendText} disabled={!displayName.trim()} className="bg-main-red hover:bg-red-700 disabled:opacity-50 text-white rounded-md px-3 py-2 text-sm">Enviar</button>
 						<input ref={fileInputRef} onChange={handleFileChange} type="file" accept="image/*" className="hidden" />
 						<button
 							onClick={() => fileInputRef.current?.click()}
-							disabled={uploading}
+							disabled={uploading || !displayName.trim()}
 							className="bg-gray-700 disabled:opacity-50 text-white rounded-md px-2 py-2 text-xs"
 						>
 							{uploading ? "Enviando..." : "Imagem"}

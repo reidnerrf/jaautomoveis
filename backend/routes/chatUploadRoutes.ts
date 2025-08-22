@@ -26,7 +26,9 @@ router.post("/", upload.single("image"), async (req, res) => {
 	if (!req.file) return res.status(400).json({ message: "Nenhuma imagem foi enviada" });
 	try {
 		const rootPath = process.cwd();
-		const filename = `chat-${Date.now()}.webp`;
+		const roomId = String((req.body?.roomId || "")).replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 64);
+		const prefix = roomId ? `chat-${roomId}-` : "chat-";
+		const filename = `${prefix}${Date.now()}.webp`;
 		const outputPath = path.join(rootPath, "uploads", filename);
 		await sharp(req.file.buffer)
 			.resize(1600, null, { fit: "inside", withoutEnlargement: true })
