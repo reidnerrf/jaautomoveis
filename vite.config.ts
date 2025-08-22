@@ -102,6 +102,7 @@ export default defineConfig(({ mode }) => {
         target: "esnext",
         treeShaking: true,
       },
+      exclude: ["lucide-react"],
     },
     server: {
       port: 3000,
