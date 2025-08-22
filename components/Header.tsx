@@ -5,6 +5,7 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { useAuth } from "../hooks/useAuth.tsx";
 import DarkModeToggle from "./DarkModeToggle";
 import { prefetchRoute } from "../utils/prefetch.ts";
+import { FaInstagram } from "react-icons/fa";
  
 
 const baseNavLinks = [
@@ -81,7 +82,7 @@ const Header: React.FC = () => {
 
           {/* Menu Desktop */}
           <div
-            className={`hidden lg:flex items-center space-x-8 ${isTransparent ? "text-white" : ""}`}
+            className={`hidden lg:flex flex-1 justify-center items-center space-x-8 ${isTransparent ? "text-white" : ""}`}
           >
             {baseNavLinks.map((link) => (
               <NavLink
@@ -97,11 +98,38 @@ const Header: React.FC = () => {
                 </span>
               </NavLink>
             ))}
-            <DarkModeToggle />
-          </div>
+            </div>
+            <div className="hidden lg:flex items-center gap-4">
+              <a
+                href="https://www.instagram.com/_jaautomoveis/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`transition-colors ${
+                  isTransparent
+                    ? "text-white/95 hover:text-pink-500 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
+                    : "text-gray-700 hover:text-pink-500 dark:text-gray-300 dark:hover:text-pink-500"
+                }`}
+              >
+                <FaInstagram size={22} />
+              </a>
+              <DarkModeToggle />
+            </div>
+          
 
           {/* Botão Mobile */}
           <div className="lg:hidden flex items-center gap-3">
+            <a
+              href="https://www.instagram.com/_jaautomoveis/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`transition-colors ${
+                isTransparent
+                  ? "text-white/95 hover:text-pink-500 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]"
+                  : "text-gray-700 hover:text-pink-500 dark:text-gray-300 dark:hover:text-pink-500"
+              }`}
+            >
+              <FaInstagram size={22} />
+            </a>
             <DarkModeToggle />
             <button
               onClick={(e) => {

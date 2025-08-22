@@ -28,9 +28,9 @@ const MainLayout: React.FC = () => {
 	}, [location.pathname]);
 
 	return (
-		<div className="relative bg-comp-light-gray dark:bg-gray-900 min-h-screen flex flex-col font-sans antialiased">
+		<div className="relative min-h-screen flex flex-col bg-comp-light-gray dark:bg-gray-900 font-sans antialiased overflow-x-hidden">
 			{/* Decorative gradient background */}
-			<div className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-30">
+			<div className="pointer-events-none absolute inset-0 overflow-hidden opacity-40 dark:opacity-30">
 				<div className="absolute -top-24 -right-24 w-96 h-96 bg-red-500/20 blur-3xl rounded-full" />
 				<div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500/20 blur-3xl rounded-full" />
 			</div>

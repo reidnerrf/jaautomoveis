@@ -198,86 +198,156 @@ const ChatWidget: React.FC = () => {
 		<>
 			{/* Floating button - positioned just below Instagram floater */}
 			<button
-				onClick={() => {
-					setOpen((v) => !v);
-					setUnread(0);
-				}}
-				className="fixed bottom-6 right-6 z-50 rounded-full bg-main-red text-white shadow-lg w-14 h-14 flex items-center justify-center hover:bg-red-700 focus:outline-none relative"
-				aria-label="Abrir chat"
-			>
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
-					<path d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75A9.716 9.716 0 0 1 7.5 20.1l-3.284.82A1.125 1.125 0 0 1 2.67 19.5l.82-3.284A9.716 9.716 0 0 1 2.25 12Z" />
-				</svg>
-				{unread > 0 && (
-					<span className="absolute -top-1 -right-1 bg-green-500 text-white text-[10px] leading-none px-1.5 py-1 rounded-full shadow">{unread}</span>
-				)}
-			</button>
+	onClick={() => {
+		setOpen((v) => !v);
+		setUnread(0);
+	}}
+	className="fixed bottom-6 left-6 z-[9999] w-14 h-14 flex items-center justify-center rounded-full 
+    bg-gradient-to-r from-main-red to-red-600 
+    text-white shadow-lg hover:shadow-2xl transition-all duration-300 
+    hover:scale-110 active:scale-95 focus:outline-none"
+	aria-label="Abrir chat"
+>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		fill="currentColor"
+		className="w-7 h-7 drop-shadow-sm"
+	>
+		<path d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75A9.716 9.716 0 0 1 7.5 20.1l-3.284.82A1.125 1.125 0 0 1 2.67 19.5l.82-3.284A9.716 9.716 0 0 1 2.25 12Z" />
+	</svg>
+
+	{unread > 0 && (
+		<span className="absolute -top-1 -right-1 bg-green-500 text-white text-[10px] 
+        leading-none px-1.5 py-1 rounded-full shadow-md animate-bounce">
+			{unread}
+		</span>
+	)}
+</button>
 
 			{/* Chat panel */}
-			{open && (
-				<div className="fixed bottom-24 right-6 z-50 w-80 max-w-[90vw] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
-					<div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-						<div className="text-sm font-semibold">Atendimento</div>
-						<button onClick={() => setOpen(false)} className="text-gray-500 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white">
-							✕
-						</button>
-					</div>
-					<div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700 flex gap-2 items-center">
-						<input
-							type="text"
-							value={displayName}
-							onChange={(e) => setDisplayName(e.target.value)}
-							placeholder="Seu nome"
-							className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md px-3 py-2 text-sm focus:outline-none"
-						/>
-						<button onClick={saveName} className="bg-gray-900 dark:bg-gray-700 text-white rounded-md px-2 py-2 text-xs">Salvar</button>
-						<button onClick={newChat} className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-2 py-2 text-xs">Novo</button>
-						<button onClick={deleteChat} className="bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-md px-2 py-2 text-xs">Deletar</button>
-					</div>
-					<div className="p-3 h-72 overflow-y-auto space-y-2">
-						{!displayName.trim() && (
-							<div className="text-xs text-red-600">Informe seu nome acima para iniciar o chat.</div>
-						)}
-						{messages.length === 0 && displayName.trim() && (
-							<div className="text-xs text-gray-500">Como podemos ajudar? Envie sua mensagem.</div>
-						)}
-						{messages.map((m, idx) => (
-							<div key={idx} className={`flex ${m.self ? "justify-end" : "justify-start"}`}>
-								<div className={`${m.self ? "bg-main-red text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"} px-3 py-2 rounded-lg max-w-[80%] text-sm`}>
-									{m.imageUrl ? (
-										<img src={m.imageUrl} alt="imagem" className="max-w-full rounded" />
-									) : (
-										<span>{m.message}</span>
-									)}
-									<div className="mt-1 text-[10px] opacity-70 text-right">{new Date(m.ts).toLocaleString()}</div>
-								</div>
-							</div>
-						))}
-					</div>
-					<div className="p-2 border-t border-gray-200 dark:border-gray-700 flex gap-2 items-center">
-						<input
-							type="text"
-							value={input}
-							onChange={(e) => setInput(e.target.value)}
-							placeholder="Digite sua mensagem..."
-							className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md px-3 py-2 text-sm focus:outline-none"
-							onKeyDown={(e) => {
-								if (e.key === "Enter") sendText();
-							}}
-							disabled={!displayName.trim()}
-						/>
-						<button onClick={sendText} disabled={!displayName.trim()} className="bg-main-red hover:bg-red-700 disabled:opacity-50 text-white rounded-md px-3 py-2 text-sm">Enviar</button>
-						<input ref={fileInputRef} onChange={handleFileChange} type="file" accept="image/*" className="hidden" />
-						<button
-							onClick={() => fileInputRef.current?.click()}
-							disabled={uploading || !displayName.trim()}
-							className="bg-gray-700 disabled:opacity-50 text-white rounded-md px-2 py-2 text-xs"
-						>
-							{uploading ? "Enviando..." : "Imagem"}
-						</button>
-					</div>
-				</div>
-			)}
+{open && (
+  <div
+    className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-50 
+      w-[92vw] max-w-sm bg-white dark:bg-gray-800 
+      rounded-3xl shadow-2xl shadow-red-500/10 border 
+      border-gray-200 dark:border-gray-700 flex flex-col 
+      overflow-hidden transition-all duration-300 ease-out"
+  >
+    {/* Header */}
+    <div className="px-4 py-3 bg-gradient-to-r from-main-red to-red-600 
+      text-white flex items-center justify-between">
+      <div className="text-sm font-semibold">💬 Atendimento</div>
+      <button
+        onClick={() => setOpen(false)}
+        className="p-1 rounded-full hover:bg-white/20 transition"
+      >
+        ✕
+      </button>
+    </div>
+
+    {/* Nome e ações */}
+    <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700 flex gap-2 items-center">
+      <input
+        type="text"
+        value={displayName}
+        onChange={(e) => setDisplayName(e.target.value)}
+        placeholder="Seu nome"
+        className="w-1/2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 
+          rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-main-red/50"
+      />
+      <button
+        onClick={saveName}
+        className="px-3 py-2 rounded-md bg-gray-800 text-white text-xs hover:bg-gray-900 transition"
+      >
+        Salvar
+      </button>
+      <button
+        onClick={newChat}
+        className="px-3 py-2 rounded-md bg-blue-600 text-white text-xs hover:bg-blue-700 transition"
+      >
+        Novo
+      </button>
+      <button
+        onClick={deleteChat}
+        className="px-3 py-2 rounded-md bg-red-100 text-red-600 text-xs hover:bg-red-200 
+          dark:bg-red-900/40 dark:text-red-400 dark:hover:bg-red-800/60 flex items-center gap-1 transition"
+      >
+        🗑 Deletar
+      </button>
+    </div>
+
+    {/* Messages */}
+    <div className="p-3 h-72 overflow-y-auto overscroll-contain space-y-2 scrollbar-thin">
+      {!displayName.trim() && (
+        <div className="text-xs text-red-600">Informe seu nome acima para iniciar o chat.</div>
+      )}
+      {messages.length === 0 && displayName.trim() && (
+        <div className="text-xs text-gray-500">Como podemos ajudar? Envie sua mensagem.</div>
+      )}
+      {messages.map((m, idx) => (
+        <div key={idx} className={`flex ${m.self ? "justify-end" : "justify-start"}`}>
+          <div
+            className={`${m.self
+              ? "bg-main-red text-white"
+              : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              } px-3 py-2 rounded-xl max-w-[80%] text-sm shadow-sm`}
+          >
+            {m.imageUrl ? (
+              <img src={m.imageUrl} alt="imagem" className="max-w-full rounded-md" />
+            ) : (
+              <span>{m.message}</span>
+            )}
+            <div className="mt-1 text-[10px] text-gray-400 dark:text-gray-500 text-right">
+              {new Date(m.ts).toLocaleString()}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* Input */}
+    <div className="p-2 border-t border-gray-200 dark:border-gray-700 flex gap-2 items-center">
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Digite sua mensagem..."
+        className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 
+          rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-main-red/50"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") sendText();
+        }}
+        disabled={!displayName.trim()}
+      />
+      <button
+        onClick={sendText}
+        disabled={!displayName.trim()}
+        className="bg-main-red hover:bg-red-700 disabled:opacity-50 
+          text-white rounded-md px-3 py-2 text-sm transition"
+      >
+        Enviar
+      </button>
+      <input
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        type="file"
+        accept="image/*"
+        className="hidden"
+      />
+      <button
+        onClick={() => fileInputRef.current?.click()}
+        disabled={uploading || !displayName.trim()}
+        className="bg-gray-700 hover:bg-gray-800 disabled:opacity-50 
+          text-white rounded-md px-3 py-2 text-sm flex items-center gap-1 transition"
+      >
+        {uploading ? "⏳" : "📷"} {uploading ? "Enviando" : "Imagem"}
+      </button>
+    </div>
+  </div>
+)}
+
+
 		</>
 	);
 };

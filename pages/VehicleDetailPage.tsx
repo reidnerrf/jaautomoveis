@@ -82,7 +82,7 @@ const VehicleDetailPage: React.FC = () => {
   if (!vehicle) {
     return (
       <div className="text-center py-16">
-        Veículo não encontrado.{" "}
+        Caregando veículo...{" "}
         <Link to="/inventory" className="text-main-red">
           Voltar para o estoque
         </Link>
@@ -230,11 +230,14 @@ const VehicleDetailPage: React.FC = () => {
           {/* Seta para voltar ao estoque */}
           <div className="mb-4">
             <Link
-              to="/inventory"
-              className="inline-flex items-center text-main-red hover:underline"
-            >
-              <FiArrowLeft className="mr-1" /> Voltar ao estoque
-            </Link>
+  to="/inventory"
+  className="inline-flex items-center text-main-red font-medium relative group"
+>
+  <FiArrowLeft className="mr-2 w-5 h-5 transition-transform duration-200 group-hover:-translate-x-1" />
+  Voltar ao estoque
+  <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-main-red transition-all duration-300 group-hover:w-full"></span>
+</Link>
+
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Galeria de imagens */}
