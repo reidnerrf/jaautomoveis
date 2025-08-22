@@ -1,12 +1,22 @@
 import { getSocketServer } from "../socket";
 import { notifyChatReply } from "../controllers/pushController";
+import fs from "fs";
+import path from "path";
 
 interface RoomMeta {
 	name?: string;
 	lastTs: number;
 }
 
+interface ChatPayload {
+	user: string;
+	message?: string;
+	imageUrl?: string;
+	ts: number;
+}
+
 const rooms = new Map<string, RoomMeta>();
+const history = new Map<string, ChatPayload[]>();
 
 export const initChatNamespace = () => {
 	const io = getSocketServer();
@@ -39,6 +49,11 @@ export const initChatNamespace = () => {
 				rooms.set(roomId, meta);
 			}
 			chat.to(roomId).emit("system", { type: "join", userId: socket.id });
+			// Send existing history (if any) to the newly joined socket
+			const msgs = history.get(roomId) || [];
+			if (msgs.length > 0) {
+				socket.emit("history", msgs);
+			}
 		});
 
 		socket.on(
@@ -47,13 +62,20 @@ export const initChatNamespace = () => {
 				const { roomId, message, imageUrl, user } = payload || ({} as any);
 				if (!roomId || (!message && !imageUrl)) return;
 				const ts = Date.now();
-				chat.to(roomId).emit("message", { user: user || socket.id, message: message || "", imageUrl, ts });
+				const sender = user || socket.id;
+				const outgoing: ChatPayload = { user: sender, message: message || "", imageUrl, ts };
+				chat.to(roomId).emit("message", outgoing);
 				// update room last activity
 				const meta = rooms.get(roomId) || { lastTs: ts };
 				meta.lastTs = ts;
 				rooms.set(roomId, meta);
+				// store history (limited buffer)
+				const msgs = history.get(roomId) || [];
+				msgs.push(outgoing);
+				if (msgs.length > 200) msgs.shift();
+				history.set(roomId, msgs);
 				// If admin replied, try to send push to that visitor (roomId is the visitor chatId)
-				if ((user || "").toLowerCase() === "admin" && message) {
+				if ((sender || "").toLowerCase() === "admin" && message) {
 					try {
 						await notifyChatReply(roomId, message);
 					} catch {}
@@ -89,6 +111,22 @@ export const initChatNamespace = () => {
 			if (!roomId) return;
 			if (rooms.has(roomId)) {
 				rooms.delete(roomId);
+				history.delete(roomId);
+				// Attempt to delete uploaded images associated with this roomId
+				try {
+					const uploadsDir = path.join(process.cwd(), "uploads");
+					const prefix = `chat-${roomId}-`;
+					fs.promises
+						.readdir(uploadsDir)
+						.then((files) => {
+							return Promise.all(
+								files
+									.filter((f) => f.startsWith(prefix) && f.endsWith(".webp"))
+									.map((f) => fs.promises.unlink(path.join(uploadsDir, f)).catch(() => {}))
+							);
+						})
+						.catch(() => {});
+				} catch {}
 				chat.to("admin").emit("room_deleted", { roomId });
 				chat.to(roomId).emit("system", { type: "closed" });
 			}

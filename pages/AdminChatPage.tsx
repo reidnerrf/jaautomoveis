@@ -55,6 +55,18 @@ const AdminChatPage: React.FC = () => {
 				setMessages([]);
 			}
 		});
+		s.on("history", (items: ChatMessage[]) => {
+			if (!Array.isArray(items)) return;
+			const normalized = items.map((m) => ({ ...m, message: m.message || "" }));
+			if (normalized.length > 0) {
+				lastIncomingTsRef.current = Math.max(lastIncomingTsRef.current, ...normalized.map((m) => m.ts || 0));
+				setMessages((prev) => {
+					if (prev.length === 0) return normalized;
+					const existing = new Set(prev.map((m) => m.ts));
+					return [...prev, ...normalized.filter((m) => !existing.has(m.ts))].sort((a, b) => a.ts - b.ts);
+				});
+			}
+		});
 		s.on("message", (m: ChatMessage) => {
 			if (m.ts && m.ts <= lastIncomingTsRef.current) return;
 			lastIncomingTsRef.current = Math.max(lastIncomingTsRef.current, m.ts || 0);
@@ -76,6 +88,9 @@ const AdminChatPage: React.FC = () => {
 	const send = () => {
 		const text = input.trim();
 		if (!text || !activeRoom) return;
+		// optimistic append so admin sees own message immediately
+		const ts = Date.now();
+		setMessages((prev) => [...prev, { user: "admin", message: text, ts }]);
 		socketRef.current?.emit("message", { roomId: activeRoom, message: text, user: "admin" });
 		setInput("");
 	};

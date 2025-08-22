@@ -48,6 +48,20 @@ const ChatWidget: React.FC = () => {
 				s.emit("set_name", { roomId: roomIdRef.current, name: displayName });
 			}
 		});
+		s.on("history", (items: { user: string; message?: string; imageUrl?: string; ts: number }[]) => {
+			const mapped = items.map((m) => ({ ...m, message: m.message || "", self: m.user === userRef.current }));
+			if (mapped.length > 0) {
+				lastIncomingTsRef.current = Math.max(lastIncomingTsRef.current, ...mapped.map((m) => m.ts || 0));
+				setMessages((prev) => {
+					// avoid duplicating if we already have some history
+					if (prev.length === 0) return mapped;
+					const existingTs = new Set(prev.map((m) => m.ts));
+					const merged = [...prev, ...mapped.filter((m) => !existingTs.has(m.ts))];
+					merged.sort((a, b) => a.ts - b.ts);
+					return merged;
+				});
+			}
+		});
 		s.on("message", (m: { user: string; message?: string; imageUrl?: string; ts: number }) => {
 			const isSelf = m.user === userRef.current;
 			// de-dupe by timestamp ordering and equality guard
@@ -98,7 +112,9 @@ const ChatWidget: React.FC = () => {
 		const text = input.trim();
 		if (!text || !socketRef.current) return;
 		const msg = { roomId: roomIdRef.current, message: text, user: userRef.current };
-		setMessages((prev) => [...prev, { user: userRef.current, message: text, ts: Date.now(), self: true }]);
+		// optimistic add with a unique ts; server will broadcast its own copy with different ts
+		const now = Date.now();
+		setMessages((prev) => [...prev, { user: userRef.current, message: text, ts: now, self: true }]);
 		setInput("");
 		socketRef.current.emit("message", msg);
 	};
@@ -108,6 +124,7 @@ const ChatWidget: React.FC = () => {
 			setUploading(true);
 			const form = new FormData();
 			form.append("image", file);
+			form.append("roomId", roomIdRef.current);
 			const resp = await fetch("/api/chat/upload", { method: "POST", body: form });
 			if (!resp.ok) throw new Error("Falha no upload");
 			const data = await resp.json();
