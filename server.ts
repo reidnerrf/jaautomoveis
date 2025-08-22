@@ -50,6 +50,8 @@ import typeDefs from "./backend/graphql/schema";
 import resolvers from "./backend/graphql/resolvers";
 // Chat namespace init
 import { initChatNamespace } from "./backend/websockets/chatManager";
+import { queueManager } from "./backend/queues/queueManager";
+import recommendationEngine from "./backend/ml/recommendationEngine";
 
 dotenv.config();
 
@@ -690,3 +692,23 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 export { app, server };
+
+app.get("/api/queues/health", async (_req: Request, res: Response) => {
+  const health = await queueManager.healthCheck();
+  res.json(health);
+});
+app.get("/api/queues/stats", async (_req: Request, res: Response) => {
+  const stats = await queueManager.getAllQueueStats();
+  res.json(stats);
+});
+app.get("/api/recommendations", async (req: Request, res: Response) => {
+  try {
+    const userId = String(req.query.userId || "default");
+    await recommendationEngine.initialize();
+    const ids = await recommendationEngine.getHybridRecommendations(userId, 10);
+    const vehicles = await Vehicle.find({ _id: { $in: ids } }).lean();
+    res.json({ userId, recommendations: vehicles });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "failed" });
+  }
+});
