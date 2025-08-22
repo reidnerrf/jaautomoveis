@@ -27,6 +27,7 @@ const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage.tsx"));
 const MainLayout = lazy(() => import("./components/MainLayout.tsx"));
 const PrivateRoute = lazy(() => import("./components/PrivateRoute.tsx"));
 const AdminLayout = lazy(() => import("./components/AdminLayout.tsx"));
+const AdminChatPage = lazy(() => import("./pages/AdminChatPage.tsx"));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -153,6 +154,7 @@ const App: React.FC = () => {
                         <Route path="vehicles" element={<AdminVehicleListPage />} />
                         <Route path="vehicles/new" element={<AdminVehicleFormPage />} />
                         <Route path="vehicles/edit/:id" element={<AdminVehicleFormPage />} />
+                        <Route path="chat" element={<AdminChatPage />} />
                       </Route>
                     </Route>
                   </Routes>

@@ -4,6 +4,8 @@ import Footer from "./Footer.tsx";
 import { Outlet, useLocation } from "react-router-dom";
 import FloatingSocialButtons from "./FloatingSocialButtons.tsx";
 import { analytics } from "../utils/analytics.ts";
+const ChatWidget = React.lazy(() => import("./ChatWidget.tsx"));
+const CookieConsent = React.lazy(() => import("./CookieConsent.tsx"));
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
@@ -34,6 +36,12 @@ const MainLayout: React.FC = () => {
       </main>
       <Footer />
       <FloatingSocialButtons page={location.pathname} />
+      <React.Suspense fallback={null}>
+        <ChatWidget />
+      </React.Suspense>
+      <React.Suspense fallback={null}>
+        <CookieConsent />
+      </React.Suspense>
     </div>
   );
 };
