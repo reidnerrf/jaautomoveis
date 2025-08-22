@@ -21,7 +21,7 @@ const CookieConsent: React.FC = () => {
 		<div className="fixed bottom-0 inset-x-0 z-50 bg-gray-900 text-white p-4 shadow-2xl">
 			<div className="max-w-5xl mx-auto flex flex-col md:flex-row items-start md:items-center gap-4">
 				<div className="flex-1 text-sm">
-					Usamos cookies para melhorar sua experiência, analisar o tráfego e personalizar anúncios de veículos.
+					Usamos cookies para melhorar sua experiência e personalizar anúncios de veículos.
 				</div>
 				<div className="flex items-center gap-4">
 					<label className="text-xs flex items-center gap-2">
