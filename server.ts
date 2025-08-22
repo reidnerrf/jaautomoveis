@@ -20,6 +20,7 @@ import authRoutes from "./backend/routes/authRoutes";
 import uploadRoutes from "./backend/routes/uploadRoutes";
 import analyticsRoutes from "./backend/routes/analyticsRoutes";
 import pushRoutes from "./backend/routes/pushRoutes";
+import chatUploadRoutes from "./backend/routes/chatUploadRoutes";
 import Analytics from "./backend/models/Analytics";
 import Vehicle from "./backend/models/Vehicle";
 import ViewLog from "./backend/models/ViewLog";
@@ -255,6 +256,7 @@ app.use("/api/vehicles", vehicleListCacheMiddleware, vehicleRoutes);
 app.use("/api/upload", autoImageOptimization, uploadRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/push", pushRoutes);
+app.use("/api/chat/upload", chatUploadRoutes);
 
 app.get("/api/place-details", async (req: Request, res: Response) => {
   try {
