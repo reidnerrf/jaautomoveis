@@ -107,7 +107,7 @@ class QueueManager extends EventEmitter {
 
 		// Disable queues in development when Redis is not configured
 		const hasRedisConfigured = clusterNodes.length > 0 || !!process.env.REDIS_URL || !!process.env.REDIS_HOST;
-		const shouldDisable = process.env.DISABLE_QUEUES === "true" || (!hasRedisConfigured && process.env.NODE_ENV !== "production");
+		const shouldDisable = process.env.DISABLE_QUEUES === "true" || !hasRedisConfigured;
 
 		if (shouldDisable) {
 			this.disabled = true;
@@ -127,7 +127,21 @@ class QueueManager extends EventEmitter {
 				},
 			});
 		} else {
-			this.redis = new IORedis(redisUrl || process.env.REDIS_URL || "redis://localhost:6379");
+			// Prefer explicit REDIS_URL; otherwise, build from host/port without localhost fallback
+			if (process.env.REDIS_URL) {
+				this.redis = new IORedis(process.env.REDIS_URL);
+			} else if (process.env.REDIS_HOST) {
+				this.redis = new IORedis({
+					host: process.env.REDIS_HOST,
+					port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,
+					password: process.env.REDIS_PASSWORD,
+				});
+			} else {
+				// Should not reach here due to hasRedisConfigured, but guard anyway
+				this.disabled = true;
+				this.redis = null;
+				return;
+			}
 		}
 		this.initializeQueues();
 		this.setupGlobalEvents();
@@ -162,11 +176,13 @@ class QueueManager extends EventEmitter {
 				delay: config.delay,
 			},
 		} : {
-			redis: {
-				host: process.env.REDIS_HOST || "localhost",
-				port: parseInt(process.env.REDIS_PORT || "6379"),
-				password: process.env.REDIS_PASSWORD,
-			},
+			redis: process.env.REDIS_URL
+				? process.env.REDIS_URL
+				: {
+					host: process.env.REDIS_HOST as string,
+					port: parseInt(process.env.REDIS_PORT || "6379"),
+					password: process.env.REDIS_PASSWORD,
+				},
 			defaultJobOptions: {
 				priority: config.priority,
 				attempts: config.attempts,
