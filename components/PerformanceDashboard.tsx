@@ -15,7 +15,13 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { AlertTriangle, CheckCircle, TrendingUp, TrendingDown, Activity, Clock, Database } from "lucide-react";
+import AlertTriangle from "lucide-react/dist/esm/icons/alert-triangle.js";
+import CheckCircle from "lucide-react/dist/esm/icons/check-circle.js";
+import TrendingUp from "lucide-react/dist/esm/icons/trending-up.js";
+import TrendingDown from "lucide-react/dist/esm/icons/trending-down.js";
+import Activity from "lucide-react/dist/esm/icons/activity.js";
+import Clock from "lucide-react/dist/esm/icons/clock.js";
+import Database from "lucide-react/dist/esm/icons/database.js";
 
 interface PerformanceMetrics {
   timestamp: number;

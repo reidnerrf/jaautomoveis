@@ -2,7 +2,10 @@ import React, { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.tsx";
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import { Lock, User, ArrowLeft, Loader2 } from "lucide-react";
+import Lock from "lucide-react/dist/esm/icons/lock.js";
+import User from "lucide-react/dist/esm/icons/user.js";
+import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left.js";
+import Loader2 from "lucide-react/dist/esm/icons/loader-2.js";
 import logo from "../assets/logo.png";
 
 const phrases = [
