@@ -95,14 +95,27 @@ const QUEUE_CONFIGS: Record<string, QueueConfig> = {
 class QueueManager extends EventEmitter {
 	private queues: Map<string, Queue.Queue> = new Map();
 	private processors: Map<string, (job: Queue.Job) => Promise<unknown>> = new Map();
-	private redis: IORedis | Cluster;
+	private redis: IORedis | Cluster | null;
 	private stats: Map<string, QueueStats> = new Map();
 	private isShuttingDown = false;
+	private disabled = false;
 
 	constructor(redisUrl?: string) {
 		super();
 		// Prefer cluster if REDIS_CLUSTER_NODES is provided
 		const clusterNodes = (process.env.REDIS_CLUSTER_NODES || "").split(",").map((s) => s.trim()).filter(Boolean);
+
+		// Disable queues in development when Redis is not configured
+		const hasRedisConfigured = clusterNodes.length > 0 || !!process.env.REDIS_URL || !!process.env.REDIS_HOST;
+		const shouldDisable = process.env.DISABLE_QUEUES === "true" || (!hasRedisConfigured && process.env.NODE_ENV !== "production");
+
+		if (shouldDisable) {
+			this.disabled = true;
+			this.redis = null;
+			// Do not initialize Bull queues when disabled
+			return;
+		}
+
 		if (clusterNodes.length > 0) {
 			const nodes = clusterNodes.map((n) => {
 				const [host, portStr] = n.split(":");
@@ -122,6 +135,7 @@ class QueueManager extends EventEmitter {
 
 	// Inicializar todas as filas
 	private initializeQueues(): void {
+		if (this.disabled) return;
 		Object.values(QUEUE_CONFIGS).forEach((config) => {
 			this.createQueue(config);
 		});
@@ -507,7 +521,7 @@ class QueueManager extends EventEmitter {
 		await Promise.all(closePromises);
 
 		// Fechar conexão Redis
-		await (this.redis as any).quit?.();
+		await (this.redis as any)?.quit?.();
 
 		console.log("Queue manager shutdown completed");
 		this.emit("shutdown:completed");
@@ -550,6 +564,9 @@ class QueueManager extends EventEmitter {
 		status: string;
 		queues: Record<string, boolean>;
 	}> {
+		if (this.disabled) {
+			return { status: "disabled", queues: {} };
+		}
 		const queueStatus: Record<string, boolean> = {};
 
 		for (const [name, queue] of this.queues) {
