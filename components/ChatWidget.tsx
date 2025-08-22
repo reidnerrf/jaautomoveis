@@ -161,7 +161,7 @@ const ChatWidget: React.FC = () => {
 					setOpen((v) => !v);
 					setUnread(0);
 				}}
-				className="fixed bottom-[6rem] right-6 z-40 rounded-full bg-main-red text-white shadow-lg w-14 h-14 flex items-center justify-center hover:bg-red-700 focus:outline-none relative"
+				className="fixed bottom-6 right-6 z-50 rounded-full bg-main-red text-white shadow-lg w-14 h-14 flex items-center justify-center hover:bg-red-700 focus:outline-none relative"
 				aria-label="Abrir chat"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
@@ -174,7 +174,7 @@ const ChatWidget: React.FC = () => {
 
 			{/* Chat panel */}
 			{open && (
-				<div className="fixed bottom-24 right-6 z-40 w-80 max-w-[90vw] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
+				<div className="fixed bottom-24 right-6 z-50 w-80 max-w-[90vw] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
 					<div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
 						<div className="text-sm font-semibold">Atendimento</div>
 						<button onClick={() => setOpen(false)} className="text-gray-500 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white">
