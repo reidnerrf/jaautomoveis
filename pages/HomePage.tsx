@@ -197,6 +197,15 @@ const HomePage: React.FC = () => {
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Início", "item": typeof window !== "undefined" ? window.location.origin + "/" : "/" }
+            ]
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "AutoDealer",
             name: "JA Automóveis",
             url:

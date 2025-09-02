@@ -280,6 +280,16 @@ const InventoryPage: React.FC = () => {
               })),
             })}
           </script>
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Início", "item": typeof window !== "undefined" ? window.location.origin + "/" : "/" },
+                { "@type": "ListItem", "position": 2, "name": "Estoque", "item": typeof window !== "undefined" ? window.location.origin + "/inventory" : "/inventory" }
+              ]
+            })}
+          </script>
         </SEOHead>
         {/* Hero Section */}
         <motion.div

@@ -86,6 +86,26 @@ const FinancingPage: React.FC = () => {
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Início",
+                "item": typeof window !== "undefined" ? window.location.origin + "/" : "/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Financiamento",
+                "item": typeof window !== "undefined" ? window.location.origin + "/financing" : "/financing"
+              }
+            ]
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "FAQPage",
             "mainEntity": [
               {
