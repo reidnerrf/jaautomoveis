@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { Vehicle } from "../types.ts";
 import VehicleCard from "./VehicleCard.tsx";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 interface VehicleCarouselProps {
   vehicles: Vehicle[];
@@ -10,6 +10,7 @@ interface VehicleCarouselProps {
 
 const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const touchStartXRef = useRef<number | null>(null);
   const touchDeltaXRef = useRef<number>(0);
@@ -53,14 +54,14 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
   useEffect(() => {
     if (vehicles.length <= visibleSlides) return;
     const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-    if (!isMobile) return;
+    if (!isMobile || prefersReducedMotion) return;
     autoPlayRef.current = window.setInterval(() => {
       nextSlide();
     }, 5000);
     return () => {
       if (autoPlayRef.current) window.clearInterval(autoPlayRef.current);
     };
-  }, [vehicles.length, visibleSlides, nextSlide]);
+  }, [vehicles.length, visibleSlides, nextSlide, prefersReducedMotion]);
 
   // Suporte a arraste por toque
   useEffect(() => {
@@ -143,8 +144,8 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
       <div className="overflow-hidden">
         <motion.div
           className="flex"
-          animate={{ x: `-${currentIndex * (100 / visibleSlides)}%` }}
-          transition={{ type: "spring", stiffness: 80, damping: 20 }}
+          animate={prefersReducedMotion ? undefined : { x: `-${currentIndex * (100 / visibleSlides)}%` }}
+          transition={prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 80, damping: 20 }}
         >
           {carouselItems}
         </motion.div>
@@ -157,8 +158,9 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
             onClick={prevSlide}
             className="absolute top-24 md:top-1/2 left-3 transform -translate-y-1/2 
                        bg-white/70 dark:bg-gray-800/60 backdrop-blur-md hover:bg-white/90 dark:hover:bg-gray-800/80 
-                       rounded-full p-2 shadow-lg transition-all duration-300"
-            aria-label="Previous slide"
+                       rounded-full p-2 shadow-lg transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-main-red"
+            aria-label="Slide anterior"
+            title="Slide anterior"
           >
             <FiChevronLeft size={28} className="text-gray-800 dark:text-white" />
           </button>
@@ -166,8 +168,9 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
             onClick={nextSlide}
             className="absolute top-24 md:top-1/2 right-3 transform -translate-y-1/2 
                        bg-white/70 dark:bg-gray-800/60 backdrop-blur-md hover:bg-white/90 dark:hover:bg-gray-800/80 
-                       rounded-full p-2 shadow-lg transition-all duration-300"
-            aria-label="Next slide"
+                       rounded-full p-2 shadow-lg transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-main-red"
+            aria-label="Próximo slide"
+            title="Próximo slide"
           >
             <FiChevronRight size={28} className="text-gray-800 dark:text-white" />
           </button>

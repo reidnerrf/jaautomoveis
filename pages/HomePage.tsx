@@ -260,6 +260,9 @@ const HomePage: React.FC = () => {
                 const el = document.querySelector("video");
                 if (el) observer.observe(el);
               }}
+              // Respect reduced motion preference
+              {...(typeof window !== "undefined" && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                ? { autoPlay: false, loop: false } : {})}
             />
           </div>
           <img
