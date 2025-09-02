@@ -570,6 +570,36 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* CONSIGNE SEU CARRO */}
+      <section className="py-12 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="max-w-5xl mx-auto bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6"
+          >
+            <div className="flex-1 text-center sm:text-left">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Consigne seu carro com a <span className="text-red-500">JA Automóveis</span>
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Cuidamos de todo o processo de divulgação, negociação e venda. Você segue como proprietário até a venda e recebe à vista.
+              </p>
+            </div>
+            <div>
+              <Link
+                to="/consignado"
+                className="inline-block bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-2 rounded-xl transition-colors"
+              >
+                Consignar meu carro
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* AVISO CONSÓRCIO RODOBENS */}
       <section className="py-12 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
