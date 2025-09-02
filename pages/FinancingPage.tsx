@@ -82,7 +82,40 @@ const FinancingPage: React.FC = () => {
         title={generatePageSEO("financing").title}
         description={generatePageSEO("financing").description}
         keywords={generatePageSEO("financing").keywords}
-      />
+      >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Quais documentos são necessários para financiamento?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Documento com foto, comprovante de renda e residência. O banco pode solicitar outros conforme análise."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Quanto preciso dar de entrada?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Depende do perfil e do banco. Normalmente entre 10% e 30%, mas há casos com entrada menor."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Posso antecipar parcelas?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Sim, é possível antecipar com redução proporcional de juros."
+                }
+              }
+            ]
+          })}
+        </script>
+      </SEOHead>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
           {/* Simulador */}
@@ -313,6 +346,36 @@ const FinancingPage: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* FAQ */}
+      <section className="mt-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
+        >
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Perguntas Frequentes</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Documentos necessários</h3>
+              <p className="text-gray-600 dark:text-gray-300">RG/CPF, comprovantes de renda e residência; o banco pode pedir mais itens.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Entrada mínima</h3>
+              <p className="text-gray-600 dark:text-gray-300">Normalmente 10% a 30%, variando conforme análise e instituição.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Antecipação de parcelas</h3>
+              <p className="text-gray-600 dark:text-gray-300">Permitida com abatimento proporcional de juros.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Prazos</h3>
+              <p className="text-gray-600 dark:text-gray-300">Geralmente de 12 a 72 meses, conforme o banco.</p>
+            </div>
+          </div>
+        </motion.div>
+      </section>
     </div>
   );
 };

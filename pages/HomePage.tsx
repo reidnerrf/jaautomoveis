@@ -257,7 +257,8 @@ const HomePage: React.FC = () => {
             src="/assets/homepageabout.webp"
             alt="JA Automóveis"
             className="sm:hidden absolute inset-0 w-full h-full object-cover"
-            loading="lazy"
+            loading="eager"
+            fetchPriority="high"
           />
         </div>
         {/* Overlay */}
