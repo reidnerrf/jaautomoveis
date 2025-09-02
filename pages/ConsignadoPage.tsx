@@ -4,18 +4,12 @@ import { FaCheckCircle, FaUserShield, FaRegClock, FaPercentage, FaWhatsapp } fro
 import SEOHead from "../components/SEOHead.tsx";
 
 const ConsignadoPage: React.FC = () => {
-  const [state, setState] = React.useState<{ amount: number; term: number; rate: number; income: number }>({
-    amount: 10000,
-    term: 48,
-    rate: 1.8,
-    income: 3500,
-  });
   return (
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
       <SEOHead
-        title="Consignado | JA Automóveis"
-        description="Entenda o crédito consignado: taxas mais baixas, desconto em folha e contratação simples para servidores, aposentados e pensionistas."
-        keywords="consignado, crédito consignado, desconto em folha, taxas baixas, JA Automóveis"
+        title="Carro Consignado | JA Automóveis"
+        description="Venda seu carro em consignação com segurança, divulgação profissional e pagamento à vista após a venda. Você permanece como proprietário até a transferência."
+        keywords="carro consignado, venda em consignação, consignação de veículos, vender carro, JA Automóveis"
       >
         <script type="application/ld+json">
           {JSON.stringify({
@@ -24,34 +18,34 @@ const ConsignadoPage: React.FC = () => {
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "Quem pode contratar o crédito consignado?",
+                "name": "O que é carro consignado?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Servidores públicos, aposentados e pensionistas do INSS e trabalhadores CLT de empresas conveniadas."
+                  "text": "É quando o proprietário entrega o carro à loja para divulgação, negociação e venda em seu nome. O dono segue como proprietário legal até a conclusão da venda."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Quais as vantagens do consignado?",
+                "name": "Como funciona o pagamento?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Taxas menores, parcelas fixas descontadas em folha e prazos mais longos com contratação simples."
+                  "text": "Após a venda, o proprietário recebe o valor acordado à vista e a loja retém a comissão pelo serviço conforme contrato."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Posso quitar antecipadamente?",
+                "name": "Quais documentos são necessários?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Sim. A quitação antecipada reduz os juros proporcionais ao período restante, conforme regras da instituição."
+                  "text": "Documento do veículo (CRLV/CRV digital), documento com foto, comprovante de endereço e eventuais autorizações do proprietário."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Como funciona o desconto em folha?",
+                "name": "Quem transfere a propriedade?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "A parcela é descontada automaticamente do benefício/salário, respeitando a margem consignável definida em lei."
+                  "text": "A transferência é feita no momento da venda para o comprador. Até lá, o proprietário original continua como dono legal."
                 }
               }
             ]
@@ -88,10 +82,10 @@ const ConsignadoPage: React.FC = () => {
           className="text-center mb-12"
         >
           <h1 className="text-4xl sm:text-5xl font-black text-gray-900 dark:text-white mb-4">
-            Crédito <span className="text-red-500">Consignado</span>
+            Carro <span className="text-red-500">Consignado</span>
           </h1>
           <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Uma forma prática e econômica de obter crédito com parcelas descontadas diretamente da folha de pagamento.
+            Entregue seu veículo para nossa equipe vender em seu nome, com divulgação profissional e segurança. Você segue como proprietário até a venda e recebe à vista.
           </p>
         </motion.div>
 
@@ -103,11 +97,9 @@ const ConsignadoPage: React.FC = () => {
             transition={{ duration: 0.5 }}
             className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
           >
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">O que é o Consignado?</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">O que é Consignação de Veículos?</h2>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-              O crédito consignado é um empréstimo em que as parcelas são descontadas
-              automaticamente do salário, benefício do INSS ou holerite. Por ter menor risco de inadimplência,
-              as taxas costumam ser mais baixas quando comparadas a outras modalidades.
+              Um carro consignado é um veículo entregue à loja para que ela faça toda a divulgação, negociação e venda em nome do proprietário. O dono continua sendo o proprietário legal até a conclusão da venda e a transferência ao comprador.
             </p>
           </motion.div>
 
@@ -120,172 +112,63 @@ const ConsignadoPage: React.FC = () => {
           >
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Vantagens</h2>
             <ul className="space-y-3 text-gray-600 dark:text-gray-300">
-              <li className="flex items-start gap-3"><FaPercentage className="text-red-500 mt-1" /> Taxas geralmente menores do que empréstimos tradicionais.</li>
-              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Parcelas fixas e previsíveis, descontadas direto da folha.</li>
-              <li className="flex items-start gap-3"><FaRegClock className="text-red-500 mt-1" /> Prazos mais longos para pagar, com conforto no orçamento.</li>
-              <li className="flex items-start gap-3"><FaUserShield className="text-red-500 mt-1" /> Contratação simples e mais segurança para ambas as partes.</li>
+              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Divulgação profissional do veículo nos principais canais.</li>
+              <li className="flex items-start gap-3"><FaUserShield className="text-red-500 mt-1" /> Negociação e segurança jurídica conduzidas pela loja.</li>
+              <li className="flex items-start gap-3"><FaRegClock className="text-red-500 mt-1" /> Você não precisa parar sua rotina: cuidamos de todo o processo.</li>
+              <li className="flex items-start gap-3"><FaPercentage className="text-red-500 mt-1" /> Pagamento ao proprietário à vista após a venda, com comissão transparente.</li>
             </ul>
           </motion.div>
 
-          {/* Quem pode fazer */}
+          {/* Como funciona */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
           >
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Quem pode contratar?</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Como funciona na prática?</h2>
             <ul className="list-disc pl-6 space-y-2 text-gray-600 dark:text-gray-300">
-              <li>Servidores públicos municipais, estaduais e federais (conveniados).</li>
-              <li>Aposentados e pensionistas do INSS.</li>
-              <li>Trabalhadores CLT de empresas com convênio para consignado.</li>
+              <li>Avaliamos o veículo e alinhamos o valor de venda e a comissão.</li>
+              <li>Assinamos um termo de consignação com condições e prazos.</li>
+              <li>Fazemos fotos, anúncios e cuidamos das visitas e propostas.</li>
+              <li>Concretizada a venda, você recebe à vista e efetuamos a transferência.</li>
             </ul>
           </motion.div>
 
-          {/* Por que fazer conosco */}
+          {/* Por que consignar conosco */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
             className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
           >
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Por que fazer o Consignado conosco?</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Por que consignar com a JA Automóveis?</h2>
             <ul className="space-y-3 text-gray-600 dark:text-gray-300">
-              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Atendimento consultivo para encontrar a melhor taxa e prazo.</li>
-              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Parcerias com instituições sérias e reconhecidas.</li>
-              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Agilidade na análise e na liberação do crédito.</li>
+              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Equipe experiente e reputação local.</li>
+              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Fotos profissionais e anúncios em múltiplos portais.</li>
+              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Processo transparente, contrato claro e segurança na transação.</li>
             </ul>
           </motion.div>
         </div>
-
-        {/* Simulador simples */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="mt-10 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg max-w-5xl mx-auto"
-        >
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Simulação de Consignado</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">Ajuste os valores para estimar a parcela.</p>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-            className="grid md:grid-cols-2 gap-6"
-          >
-            <div>
-              <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Valor do Crédito: <span className="font-bold">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format((state as any)?.amount ?? 10000)}</span>
-              </label>
-              <input
-                type="range"
-                min="1000"
-                max="200000"
-                step="500"
-                defaultValue={10000}
-                onChange={(e) => setState({ ...(state as any), amount: Number(e.target.value) })}
-                className="w-full accent-red-500"
-              />
-            </div>
-            <div>
-              <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Prazo (meses): <span className="font-bold">{(state as any)?.term ?? 48}</span>
-              </label>
-              <input
-                type="range"
-                min="6"
-                max="84"
-                step="1"
-                defaultValue={48}
-                onChange={(e) => setState({ ...(state as any), term: Number(e.target.value) })}
-                className="w-full accent-red-500"
-              />
-            </div>
-            <div>
-              <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Taxa mensal (%): <span className="font-bold">{((state as any)?.rate ?? 1.8).toFixed(2)}%</span>
-              </label>
-              <input
-                type="range"
-                min="0.5"
-                max="3"
-                step="0.01"
-                defaultValue={1.8}
-                onChange={(e) => setState({ ...(state as any), rate: Number(e.target.value) })}
-                className="w-full accent-red-500"
-              />
-            </div>
-            <div>
-              <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Renda mensal: <span className="font-bold">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format((state as any)?.income ?? 3500)}</span>
-              </label>
-              <input
-                type="range"
-                min="1500"
-                max="20000"
-                step="100"
-                defaultValue={3500}
-                onChange={(e) => setState({ ...(state as any), income: Number(e.target.value) })}
-                className="w-full accent-red-500"
-              />
-              <p className="text-xs text-gray-500 mt-1">Usado para verificar a margem consignável.</p>
-            </div>
-          </form>
-
-          {(() => {
-            const amount = (state as any)?.amount ?? 10000;
-            const term = (state as any)?.term ?? 48;
-            const rate = (state as any)?.rate ?? 1.8; // % ao mês
-            const income = (state as any)?.income ?? 3500;
-            const monthlyRate = rate / 100;
-            const payment = amount === 0 ? 0 : (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -term));
-            const margin = income * 0.35; // 35% de margem típica
-            const ok = payment <= margin;
-            return (
-              <div className="mt-6 grid md:grid-cols-3 gap-6">
-                <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl text-center">
-                  <div className="text-sm text-gray-600 dark:text-gray-300">Parcela estimada</div>
-                  <div className="text-2xl font-extrabold text-red-600 dark:text-red-400">
-                    {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(payment)}
-                  </div>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl text-center">
-                  <div className="text-sm text-gray-600 dark:text-gray-300">Margem estimada (35%)</div>
-                  <div className="text-xl font-bold text-gray-900 dark:text-white">
-                    {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(margin)}
-                  </div>
-                </div>
-                <div className={`p-4 rounded-xl text-center ${ok ? "bg-green-50 dark:bg-green-900/20" : "bg-yellow-50 dark:bg-yellow-900/20"}`}>
-                  <div className="text-sm text-gray-600 dark:text-gray-300">Adequação</div>
-                  <div className={`text-lg font-bold ${ok ? "text-green-700 dark:text-green-300" : "text-yellow-700 dark:text-yellow-300"}`}>
-                    {ok ? "Dentro da margem" : "Acima da margem"}
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-        </motion.div>
-
         {/* FAQ */}
         <section className="mt-12 max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Perguntas Frequentes</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Quem pode contratar?</h3>
-              <p className="text-gray-600 dark:text-gray-300">Servidores, aposentados e pensionistas do INSS e CLT conveniados.</p>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Há exclusividade?</h3>
+              <p className="text-gray-600 dark:text-gray-300">Trabalhamos com termo de consignação definindo prazos e condições, normalmente com exclusividade pelo período acordado.</p>
             </div>
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Quais são as taxas?</h3>
-              <p className="text-gray-600 dark:text-gray-300">Variam conforme convênio e instituição. Ajudamos a buscar a menor taxa.</p>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Qual a comissão?</h3>
+              <p className="text-gray-600 dark:text-gray-300">A comissão é previamente acordada e somente aplicada quando a venda for concluída.</p>
             </div>
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Desconto em folha</h3>
-              <p className="text-gray-600 dark:text-gray-300">A parcela é debitada automaticamente do benefício/salário.</p>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">E se eu quiser retirar o carro?</h3>
+              <p className="text-gray-600 dark:text-gray-300">Você pode solicitar a retirada conforme condições do contrato; cuidamos da atualização dos anúncios.</p>
             </div>
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Quitação antecipada</h3>
-              <p className="text-gray-600 dark:text-gray-300">É possível quitar com redução proporcional de juros do período restante.</p>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">O pagamento é seguro?</h3>
+              <p className="text-gray-600 dark:text-gray-300">Sim. O repasse é feito à vista para o proprietário, e a transferência é realizada ao comprador com toda a documentação.</p>
             </div>
           </div>
         </section>
@@ -298,14 +181,14 @@ const ConsignadoPage: React.FC = () => {
           className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <a
-            href="https://wa.me/5524999037716"
+            href="https://wa.me/5524999037716?text=Olá%2C%20quero%20consignar%20meu%20carro%20na%20JA%20Automóveis."
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
           >
             <FaWhatsapp /> Falar no WhatsApp
           </a>
-          <span className="text-gray-500 dark:text-gray-400 text-sm">Tire suas dúvidas e faça sua simulação sem compromisso.</span>
+          <span className="text-gray-500 dark:text-gray-400 text-sm">Tire suas dúvidas e solicite a avaliação do seu veículo.</span>
         </motion.div>
       </div>
     </div>
