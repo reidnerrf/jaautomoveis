@@ -15,8 +15,17 @@
     <title>JA Automóveis</title>
     <link rel="manifest" href="/manifest.json" />
     <!-- Preload critical resources -->
+    <link rel="preload" as="image" href="/assets/logo.png" imagesrcset="/assets/logo.png" />
+    <link rel="preload" as="image" href="/assets/homepageabout.webp" type="image/webp" />
     <link rel="dns-prefetch" href="//lh3.googleusercontent.com" />
     <link rel="preconnect" href="//lh3.googleusercontent.com" />
+    <!-- Image CDN preconnects (common sources for photos) -->
+    <link rel="dns-prefetch" href="//images.unsplash.com" />
+    <link rel="preconnect" href="//images.unsplash.com" crossorigin />
+    <link rel="dns-prefetch" href="//res.cloudinary.com" />
+    <link rel="preconnect" href="//res.cloudinary.com" crossorigin />
+    <link rel="dns-prefetch" href="//cdn.discordapp.com" />
+    <link rel="preconnect" href="//cdn.discordapp.com" crossorigin />
     <!-- Google Analytics (GA4) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-P8BNCWX706"></script>
     <script src="/ga.js"></script>

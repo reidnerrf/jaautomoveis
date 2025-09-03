@@ -32,7 +32,18 @@ const AboutPage: React.FC = () => {
         title={generatePageSEO("about").title}
         description={generatePageSEO("about").description}
         keywords={generatePageSEO("about").keywords}
-      />
+      >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Início", "item": typeof window !== "undefined" ? window.location.origin + "/" : "/" },
+              { "@type": "ListItem", "position": 2, "name": "Sobre Nós", "item": typeof window !== "undefined" ? window.location.origin + "/about" : "/about" }
+            ]
+          })}
+        </script>
+      </SEOHead>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Cabeçalho */}
         <motion.div

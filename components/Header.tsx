@@ -12,6 +12,7 @@ const baseNavLinks = [
   { name: "Início", path: "/" },
   { name: "Estoque", path: "/inventory" },
   { name: "Financiamento", path: "/financing" },
+  { name: "Carro Consignado", path: "/consignado" },
   { name: "Consórcio", path: "/consortium" },
   { name: "Sobre Nós", path: "/about" },
   { name: "Contato", path: "/contact" },
