@@ -181,26 +181,6 @@ const ConsignadoPage: React.FC = () => {
             </div>
           </div>
 
-            <a
-              href="https://wa.me/5524999037716"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-main-red hover:bg-red-700 text-white font-semibold shadow-lg transition-colors"
-            >
-              Falar no WhatsApp
-            </a>
-            <a
-              href="/financing"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 font-semibold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >
-              Ver opções de Financiamento
-            </a>
-            <a
-              href="/consortium"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 font-semibold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >
-              Conhecer Consórcio
-            </a>
-          </div>
-
           {/* Cross-links section */}
           <div className="mt-12 bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
