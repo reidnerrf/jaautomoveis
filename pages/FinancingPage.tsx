@@ -349,6 +349,33 @@ const FinancingPage: React.FC = () => {
             </motion.div>
           </div>
         </div>
+
+        {/* Cross-links section */}
+        <div className="mt-12 bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            Outras opções de financiamento
+          </h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            <a
+              href="/consignado"
+              className="block p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 transition-colors"
+            >
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Crédito Consignado</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Para servidores públicos e aposentados. Taxas reduzidas com desconto em folha.
+              </p>
+            </a>
+            <a
+              href="/consortium"
+              className="block p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 transition-colors"
+            >
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Consórcio</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Sem juros bancários. Planeje sua compra com segurança e condições especiais.
+              </p>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
