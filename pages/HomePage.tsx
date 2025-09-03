@@ -297,6 +297,9 @@ const HomePage: React.FC = () => {
               const form = e.currentTarget as HTMLFormElement;
               const amount = (form.elements.namedItem("amount") as HTMLInputElement)?.value || "";
               const url = amount ? `/financing?amount=${encodeURIComponent(amount)}` : "/financing";
+              try {
+                trackBusinessEvent("financing_simulation", { amount: Number(amount) || null });
+              } catch {}
               window.location.href = url;
             }}
             className="mt-6 mx-auto grid grid-cols-1 md:grid-cols-4 gap-3 max-w-3xl bg-white/90 backdrop-blur-md rounded-xl p-3 shadow-lg"
@@ -320,7 +323,7 @@ const HomePage: React.FC = () => {
             </button>
             <a
               href="https://wa.me/5524999037716"
-              onClick={() => handleSocialClick("whatsapp")}
+              onClick={() => { handleSocialClick("whatsapp"); try { trackBusinessEvent("whatsapp_click", { source: "home_hero_form" }); } catch {} }}
               className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg text-center"
               aria-label="Falar no WhatsApp"
             >
@@ -336,7 +339,7 @@ const HomePage: React.FC = () => {
             </Link>
             <a
               href="https://wa.me/5524999037716"
-              onClick={() => handleSocialClick("whatsapp")}
+              onClick={() => { handleSocialClick("whatsapp"); try { trackBusinessEvent("whatsapp_click", { source: "home_hero_cta" }); } catch {} }}
               className="bg-white/90 hover:bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg shadow-lg"
             >
               Falar no WhatsApp

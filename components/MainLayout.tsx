@@ -44,6 +44,9 @@ const MainLayout: React.FC = () => {
 					<a
 						href="https://wa.me/5524999037716"
 						className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-xl transition-colors"
+						onClick={() => {
+							try { (window as any).trackBusinessEvent?.("whatsapp_click", { source: "fixed_cta_mobile" }); } catch {}
+						}}
 						aria-label="Falar no WhatsApp"
 					>
 						<span>WhatsApp</span>
