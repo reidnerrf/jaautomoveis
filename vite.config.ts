@@ -49,6 +49,7 @@ export default defineConfig(({ mode }) => {
       minify: isProduction ? "esbuild" : false, // ⚡ muito mais rápido que terser
       sourcemap: !isProduction,
       rollupOptions: {
+        external: ["@sentry/tracing"],
         output: {
           manualChunks(id: string) {
             if (id.includes("react") || id.includes("react-dom")) {

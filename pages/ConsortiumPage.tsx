@@ -289,7 +289,7 @@ const ConsortiumPage: React.FC = () => {
 
               <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-lg mb-8 flex items-start gap-4">
                 <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIavnQKOtP3yeN9k5Qh6x-j4grMU0OsBZNhQ&s"
+                  src="/assets/logo-rodobens.png"
                   alt="Rodobens Logo"
                   className="h-10 mt-1"
                 />

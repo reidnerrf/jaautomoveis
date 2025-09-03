@@ -87,11 +87,10 @@ class AnalyticsService {
     try {
       const consent = getConsent();
       if (!consent.analytics) return;
-      const Sentry = await impsort("@sentry/browser");
-      const Tracing = await import("@sentry/tracing");
+      const Sentry = await import("@sentry/react");
       Sentry.init({
         dsn: (window as any).SENTRY_DSN || "",
-        integrations: [new Tracing.BrowserTracing({ tracePropagationTargets: [/.*/] }) as any],
+        integrations: [Sentry.browserTracingIntegration()],
         tracesSampleRate: 0.1,
         environment: (window as any).SENTRY_ENV || "production",
       });
@@ -111,7 +110,6 @@ class AnalyticsService {
         this.trackUserAction("web_vital", "performance", `${name}:${Math.round(value)}`);
       };
       onCLS((m) => report("CLS", m.value));
-      onFID((m) => report("FID", m.value));
       onLCP((m) => report("LCP", m.value));
       // onINP may not exist in older versions; guard optional chaining
       try {

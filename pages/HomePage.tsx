@@ -684,7 +684,7 @@ const HomePage: React.FC = () => {
             className="max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6"
           >
             <img
-              src="https://consorcios.ababas.com.br/wp-content/uploads/2023/05/logo-rodobens.png"
+              src="/assets/logo-rodobens.png"
               alt="Rodobens Consórcios"
               className="w-[200px] sm:w-[240px] object-contain"
               loading="lazy"
