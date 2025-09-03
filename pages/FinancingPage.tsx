@@ -11,7 +11,9 @@ const FinancingPage: React.FC = () => {
     try {
       const params = new URLSearchParams(location.search);
       const parsed = Number(params.get("amount") || "");
-      return Number.isFinite(parsed) && parsed > 0 ? Math.min(Math.max(parsed, 10000), 250000) : null;
+      return Number.isFinite(parsed) && parsed > 0
+        ? Math.min(Math.max(parsed, 10000), 250000)
+        : null;
     } catch {
       return null;
     }
@@ -87,20 +89,23 @@ const FinancingPage: React.FC = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
-            "itemListElement": [
+            itemListElement: [
               {
                 "@type": "ListItem",
-                "position": 1,
-                "name": "Início",
-                "item": typeof window !== "undefined" ? window.location.origin + "/" : "/"
+                position: 1,
+                name: "Início",
+                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
               },
               {
                 "@type": "ListItem",
-                "position": 2,
-                "name": "Financiamento",
-                "item": typeof window !== "undefined" ? window.location.origin + "/financing" : "/financing"
-              }
-            ]
+                position: 2,
+                name: "Financiamento",
+                item:
+                  typeof window !== "undefined"
+                    ? window.location.origin + "/financing"
+                    : "/financing",
+              },
+            ],
           })}
         </script>
         <script type="application/ld+json">
@@ -113,8 +118,7 @@ const FinancingPage: React.FC = () => {
                 name: "Como simular o financiamento?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text:
-                    "Ajuste valor, entrada, prazo e taxa no simulador para ver a parcela estimada e o custo total.",
+                  text: "Ajuste valor, entrada, prazo e taxa no simulador para ver a parcela estimada e o custo total.",
                 },
               },
               {
@@ -122,8 +126,7 @@ const FinancingPage: React.FC = () => {
                 name: "Qual a diferença para consórcio?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text:
-                    "No financiamento há juros; no consórcio não há juros, mas taxa de administração e contemplação por sorteio ou lance.",
+                  text: "No financiamento há juros; no consórcio não há juros, mas taxa de administração e contemplação por sorteio ou lance.",
                 },
               },
             ],
@@ -370,7 +373,9 @@ const FinancingPage: React.FC = () => {
               href="/consignado"
               className="block p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 transition-colors"
             >
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Crédito Consignado</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                Crédito Consignado
+              </h4>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 Para servidores públicos e aposentados. Taxas reduzidas com desconto em folha.
               </p>
@@ -396,23 +401,37 @@ const FinancingPage: React.FC = () => {
           viewport={{ once: true }}
           className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
         >
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Perguntas Frequentes</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Perguntas Frequentes
+          </h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Documentos necessários</h3>
-              <p className="text-gray-600 dark:text-gray-300">RG/CPF, comprovantes de renda e residência; o banco pode pedir mais itens.</p>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                Documentos necessários
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                RG/CPF, comprovantes de renda e residência; o banco pode pedir mais itens.
+              </p>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Entrada mínima</h3>
-              <p className="text-gray-600 dark:text-gray-300">Normalmente 10% a 30%, variando conforme análise e instituição.</p>
+              <p className="text-gray-600 dark:text-gray-300">
+                Normalmente 10% a 30%, variando conforme análise e instituição.
+              </p>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Antecipação de parcelas</h3>
-              <p className="text-gray-600 dark:text-gray-300">Permitida com abatimento proporcional de juros.</p>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                Antecipação de parcelas
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Permitida com abatimento proporcional de juros.
+              </p>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Prazos</h3>
-              <p className="text-gray-600 dark:text-gray-300">Geralmente de 12 a 72 meses, conforme o banco.</p>
+              <p className="text-gray-600 dark:text-gray-300">
+                Geralmente de 12 a 72 meses, conforme o banco.
+              </p>
             </div>
           </div>
         </motion.div>

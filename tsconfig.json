@@ -29,11 +29,5 @@
     "contexts/**/*.tsx",
     "types.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "backend/**"
-  ]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx", "backend/**"]
 }

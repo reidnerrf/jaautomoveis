@@ -15,7 +15,6 @@ const VehicleDetailPage = lazy(() => import("./pages/VehicleDetailPage.tsx"));
 const FinancingPage = lazy(() => import("./pages/FinancingPage.tsx"));
 const ConsignadoPage = lazy(() => import("./pages/ConsignadoPage.tsx"));
 const ConsortiumPage = lazy(() => import("./pages/ConsortiumPage.tsx"));
-const ConsignadoPage = lazy(() => import("./pages/ConsignadoPage.tsx"));
 const AboutPage = lazy(() => import("./pages/AboutPage.tsx"));
 const ContactPage = lazy(() => import("./pages/ContactPage.tsx"));
 const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage.tsx"));
@@ -40,7 +39,8 @@ const LoadingSpinner = () => (
 const App: React.FC = () => {
   React.useEffect(() => {
     if (typeof window === "undefined") return;
-    const hasBrowserSupport = "Notification" in window && "serviceWorker" in navigator && "PushManager" in window;
+    const hasBrowserSupport =
+      "Notification" in window && "serviceWorker" in navigator && "PushManager" in window;
     if (!hasBrowserSupport) return;
 
     const alreadyPrompted = localStorage.getItem("notificationsPromptShown") === "1";
@@ -91,31 +91,32 @@ const App: React.FC = () => {
         const existing = await reg.pushManager.getSubscription();
         if (Notification.permission === "granted" && existing) return;
 
-        const id = toast.custom((t) => (
-          <div className="rounded-xl shadow-lg bg-gray-800 text-white p-4 flex items-center gap-3">
-            <div className="flex-1 text-sm">
-              Quer receber notificações de novos veículos?
+        const id = toast.custom(
+          (t) => (
+            <div className="rounded-xl shadow-lg bg-gray-800 text-white p-4 flex items-center gap-3">
+              <div className="flex-1 text-sm">Quer receber notificações de novos veículos?</div>
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  attemptSubscribe();
+                }}
+                className="bg-main-red hover:bg-red-700 text-white text-sm px-3 py-1 rounded-md"
+              >
+                Ativar
+              </button>
+              <button
+                onClick={() => {
+                  localStorage.setItem("notificationsPromptShown", "1");
+                  toast.dismiss(t.id);
+                }}
+                className="text-gray-300 hover:text-white text-sm px-2 py-1"
+              >
+                Agora não
+              </button>
             </div>
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                attemptSubscribe();
-              }}
-              className="bg-main-red hover:bg-red-700 text-white text-sm px-3 py-1 rounded-md"
-            >
-              Ativar
-            </button>
-            <button
-              onClick={() => {
-                localStorage.setItem("notificationsPromptShown", "1");
-                toast.dismiss(t.id);
-              }}
-              className="text-gray-300 hover:text-white text-sm px-2 py-1"
-            >
-              Agora não
-            </button>
-          </div>
-        ), { duration: 10000 });
+          ),
+          { duration: 10000 }
+        );
       } catch {
         // ignore
       }

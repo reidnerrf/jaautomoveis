@@ -26,11 +26,12 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
   const buttons = [
     {
       href: "https://wa.me/5524999037716?text=Ol%C3%A1%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es",
-      gradient: "bg-gradient-to-tr from-green-500 to-green-400 hover:from-green-600 hover:to-green-500",
+      gradient:
+        "bg-gradient-to-tr from-green-500 to-green-400 hover:from-green-600 hover:to-green-500",
       icon: <FaWhatsapp size={22} />,
       label: "WhatsApp",
       tracking: "whatsapp_click",
-    }
+    },
   ];
 
   return (
@@ -108,4 +109,4 @@ const FloatingSocialButtons: React.FC<FloatingSocialButtonsProps> = ({ page }) =
 };
 
 export default FloatingSocialButtons;
-``
+``;

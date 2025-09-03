@@ -37,10 +37,20 @@ const AboutPage: React.FC = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
-            "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Início", "item": typeof window !== "undefined" ? window.location.origin + "/" : "/" },
-              { "@type": "ListItem", "position": 2, "name": "Sobre Nós", "item": typeof window !== "undefined" ? window.location.origin + "/about" : "/about" }
-            ]
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Início",
+                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Sobre Nós",
+                item: typeof window !== "undefined" ? window.location.origin + "/about" : "/about",
+              },
+            ],
           })}
         </script>
       </SEOHead>

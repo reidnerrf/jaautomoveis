@@ -10,7 +10,10 @@ interface VehicleCarouselProps {
 
 const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const containerRef = useRef<HTMLDivElement | null>(null);
   const touchStartXRef = useRef<number | null>(null);
   const touchDeltaXRef = useRef<number>(0);
@@ -138,16 +141,18 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
     return <div className="text-center p-8">Nenhum veículo para exibir.</div>;
   }
 
-  const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
   return (
     <div className="relative w-full px-2 md:px-4 overflow-hidden" ref={containerRef}>
       {/* Lista de veículos */}
       <div className="overflow-hidden">
         <motion.div
           className="flex"
-          animate={prefersReducedMotion ? undefined : { x: `-${currentIndex * (100 / visibleSlides)}%` }}
-          transition={prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 80, damping: 20 }}
+          animate={
+            prefersReducedMotion ? undefined : { x: `-${currentIndex * (100 / visibleSlides)}%` }
+          }
+          transition={
+            prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 80, damping: 20 }
+          }
         >
           {carouselItems}
         </motion.div>

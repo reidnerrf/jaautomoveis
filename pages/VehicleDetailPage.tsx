@@ -217,40 +217,66 @@ const VehicleDetailPage: React.FC = () => {
         url={`/vehicle/${vehicle.id}`}
         type="product"
       >
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Início", item: typeof window !== "undefined" ? `${window.location.origin}/` : "" },
-            { "@type": "ListItem", position: 2, name: "Estoque", item: typeof window !== "undefined" ? `${window.location.origin}/inventory` : "" },
-            { "@type": "ListItem", position: 3, name: `${vehicle.make} ${vehicle.model} ${vehicle.year}` , item: typeof window !== "undefined" ? `${window.location.origin}/vehicle/${vehicle.id}` : "" },
-          ],
-        })}</script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Início",
+                item: typeof window !== "undefined" ? `${window.location.origin}/` : "",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Estoque",
+                item: typeof window !== "undefined" ? `${window.location.origin}/inventory` : "",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${vehicle.make} ${vehicle.model} ${vehicle.year}`,
+                item:
+                  typeof window !== "undefined"
+                    ? `${window.location.origin}/vehicle/${vehicle.id}`
+                    : "",
+              },
+            ],
+          })}
+        </script>
         <script type="application/ld+json">{JSON.stringify(generateStructuredData())}</script>
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
-            "itemListElement": [
+            itemListElement: [
               {
                 "@type": "ListItem",
-                "position": 1,
-                "name": "Início",
-                "item": typeof window !== "undefined" ? window.location.origin + "/" : "/"
+                position: 1,
+                name: "Início",
+                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
               },
               {
                 "@type": "ListItem",
-                "position": 2,
-                "name": "Estoque",
-                "item": typeof window !== "undefined" ? window.location.origin + "/inventory" : "/inventory"
+                position: 2,
+                name: "Estoque",
+                item:
+                  typeof window !== "undefined"
+                    ? window.location.origin + "/inventory"
+                    : "/inventory",
               },
               {
                 "@type": "ListItem",
-                "position": 3,
-                "name": vehicle.name,
-                "item": typeof window !== "undefined" ? window.location.origin + `/vehicle/${vehicle.id}` : `/vehicle/${vehicle.id}`
-              }
-            ]
+                position: 3,
+                name: vehicle.name,
+                item:
+                  typeof window !== "undefined"
+                    ? window.location.origin + `/vehicle/${vehicle.id}`
+                    : `/vehicle/${vehicle.id}`,
+              },
+            ],
           })}
         </script>
         <link
@@ -265,14 +291,13 @@ const VehicleDetailPage: React.FC = () => {
           {/* Seta para voltar ao estoque */}
           <div className="mb-4">
             <Link
-  to="/inventory"
-  className="inline-flex items-center text-main-red font-medium relative group"
->
-  <FiArrowLeft className="mr-2 w-5 h-5 transition-transform duration-200 group-hover:-translate-x-1" />
-  Voltar ao estoque
-  <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-main-red transition-all duration-300 group-hover:w-full"></span>
-</Link>
-
+              to="/inventory"
+              className="inline-flex items-center text-main-red font-medium relative group"
+            >
+              <FiArrowLeft className="mr-2 w-5 h-5 transition-transform duration-200 group-hover:-translate-x-1" />
+              Voltar ao estoque
+              <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-main-red transition-all duration-300 group-hover:w-full"></span>
+            </Link>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Galeria de imagens */}
@@ -406,7 +431,10 @@ const VehicleDetailPage: React.FC = () => {
                     Tenho Interesse
                   </button>
                 </a>
-                <Link to={`/financing?amount=${encodeURIComponent(String(vehicle.price))}`} className="flex-1">
+                <Link
+                  to={`/financing?amount=${encodeURIComponent(String(vehicle.price))}`}
+                  className="flex-1"
+                >
                   <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
                     Simular Financiamento
                   </button>

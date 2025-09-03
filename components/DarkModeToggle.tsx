@@ -33,9 +33,15 @@ const DarkModeToggle: React.FC = () => {
           className="flex items-center justify-center"
         >
           {isDarkMode ? (
-            <FiMoon className="text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.6)]" size={22} />
+            <FiMoon
+              className="text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.6)]"
+              size={22}
+            />
           ) : (
-            <FiSun className="text-orange-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.6)]" size={22} />
+            <FiSun
+              className="text-orange-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.6)]"
+              size={22}
+            />
           )}
         </motion.div>
       </AnimatePresence>

@@ -75,7 +75,9 @@ const HomePage: React.FC = () => {
     const fetchRecs = async () => {
       try {
         const userId = getUserId();
-        const res = await fetch(`/api/recommendations?userId=${encodeURIComponent(userId)}`, { signal: controller.signal });
+        const res = await fetch(`/api/recommendations?userId=${encodeURIComponent(userId)}`, {
+          signal: controller.signal,
+        });
         const json = await res.json();
         const items = Array.isArray(json?.recommendations) ? json.recommendations : [];
         // Ensure id field exists
@@ -216,9 +218,14 @@ const HomePage: React.FC = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
-            "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Início", "item": typeof window !== "undefined" ? window.location.origin + "/" : "/" }
-            ]
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Início",
+                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
+              },
+            ],
           })}
         </script>
         <script type="application/ld+json">
@@ -242,8 +249,18 @@ const HomePage: React.FC = () => {
               addressCountry: "BR",
             },
             openingHoursSpecification: [
-              { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday"], opens: "09:00", closes: "18:00" },
-              { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "09:00", closes: "13:00" }
+              {
+                "@type": "OpeningHoursSpecification",
+                dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                opens: "09:00",
+                closes: "18:00",
+              },
+              {
+                "@type": "OpeningHoursSpecification",
+                dayOfWeek: "Saturday",
+                opens: "09:00",
+                closes: "13:00",
+              },
             ],
             sameAs: ["https://www.instagram.com/_jaautomoveis/", "https://wa.me/5524999037716"],
           })}
@@ -283,8 +300,11 @@ const HomePage: React.FC = () => {
                 if (el) observer.observe(el);
               }}
               // Respect reduced motion preference
-              {...(typeof window !== "undefined" && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-                ? { autoPlay: false, loop: false } : {})}
+              {...(typeof window !== "undefined" &&
+              window.matchMedia &&
+              window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                ? { autoPlay: false, loop: false }
+                : {})}
             />
           </div>
           <img
@@ -340,7 +360,12 @@ const HomePage: React.FC = () => {
             </button>
             <a
               href="https://wa.me/5524999037716"
-              onClick={() => { handleSocialClick("whatsapp"); try { trackBusinessEvent("whatsapp_click", { source: "home_hero_form" }); } catch {} }}
+              onClick={() => {
+                handleSocialClick("whatsapp");
+                try {
+                  trackBusinessEvent("whatsapp_click", { source: "home_hero_form" });
+                } catch {}
+              }}
               className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg text-center"
               aria-label="Falar no WhatsApp"
             >
@@ -356,7 +381,12 @@ const HomePage: React.FC = () => {
             </Link>
             <a
               href="https://wa.me/5524999037716"
-              onClick={() => { handleSocialClick("whatsapp"); try { trackBusinessEvent("whatsapp_click", { source: "home_hero_cta" }); } catch {} }}
+              onClick={() => {
+                handleSocialClick("whatsapp");
+                try {
+                  trackBusinessEvent("whatsapp_click", { source: "home_hero_cta" });
+                } catch {}
+              }}
               className="bg-white/90 hover:bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg shadow-lg"
             >
               Falar no WhatsApp
@@ -671,7 +701,8 @@ const HomePage: React.FC = () => {
                 Consigne seu carro com a <span className="text-red-500">JA Automóveis</span>
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Cuidamos de todo o processo de divulgação, negociação e venda. Você segue como proprietário até a venda e recebe à vista.
+                Cuidamos de todo o processo de divulgação, negociação e venda. Você segue como
+                proprietário até a venda e recebe à vista.
               </p>
             </div>
             <div>
@@ -707,7 +738,8 @@ const HomePage: React.FC = () => {
                 Trabalhamos com <span className="text-red-500">Consórcio Rodobens</span>
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Planeje a compra do seu veículo com segurança e condições diferenciadas. Fale conosco e faça sua simulação.
+                Planeje a compra do seu veículo com segurança e condições diferenciadas. Fale
+                conosco e faça sua simulação.
               </p>
               <div className="mt-4">
                 <Link

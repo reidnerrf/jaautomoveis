@@ -51,8 +51,18 @@ const ConsortiumPage: React.FC = () => {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Início", item: typeof window !== "undefined" ? `${window.location.origin}/` : "" },
-              { "@type": "ListItem", position: 2, name: "Consórcio", item: typeof window !== "undefined" ? `${window.location.origin}/consortium` : "" },
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Início",
+                item: typeof window !== "undefined" ? `${window.location.origin}/` : "",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Consórcio",
+                item: typeof window !== "undefined" ? `${window.location.origin}/consortium` : "",
+              },
             ],
           })}
         </script>
@@ -66,8 +76,7 @@ const ConsortiumPage: React.FC = () => {
                 name: "Como funciona o consórcio?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text:
-                    "Um grupo de pessoas contribui mensalmente para formar crédito e, por sorteio ou lance, é contemplado com a carta para compra do bem.",
+                  text: "Um grupo de pessoas contribui mensalmente para formar crédito e, por sorteio ou lance, é contemplado com a carta para compra do bem.",
                 },
               },
               {
@@ -75,27 +84,28 @@ const ConsortiumPage: React.FC = () => {
                 name: "Tem juros?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text:
-                    "Não há juros como no financiamento; há taxa de administração e possíveis seguros conforme o plano.",
+                  text: "Não há juros como no financiamento; há taxa de administração e possíveis seguros conforme o plano.",
                 },
               },
             ],
 
-            "itemListElement": [
+            itemListElement: [
               {
                 "@type": "ListItem",
-                "position": 1,
-                "name": "Início",
-                "item": typeof window !== "undefined" ? window.location.origin + "/" : "/"
+                position: 1,
+                name: "Início",
+                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
               },
               {
                 "@type": "ListItem",
-                "position": 2,
-                "name": "Consórcio",
-                "item": typeof window !== "undefined" ? window.location.origin + "/consortium" : "/consortium"
-              }
-            ]
-
+                position: 2,
+                name: "Consórcio",
+                item:
+                  typeof window !== "undefined"
+                    ? window.location.origin + "/consortium"
+                    : "/consortium",
+              },
+            ],
           })}
         </script>
       </SEOHead>
@@ -318,24 +328,42 @@ const ConsortiumPage: React.FC = () => {
                 <h3 className="text-xl font-bold mb-3">Como funciona o processo</h3>
                 <ol className="relative border-s border-gray-200 dark:border-gray-700 ms-4">
                   <li className="mb-6 ms-6">
-                    <span className="absolute -start-3 flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">1</span>
+                    <span className="absolute -start-3 flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
+                      1
+                    </span>
                     <h4 className="font-semibold text-gray-900 dark:text-white">Adesão ao grupo</h4>
-                    <p className="text-gray-600 dark:text-gray-300">Escolha a carta e entre no grupo com parcelas acessíveis.</p>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Escolha a carta e entre no grupo com parcelas acessíveis.
+                    </p>
                   </li>
                   <li className="mb-6 ms-6">
-                    <span className="absolute -start-3 flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">2</span>
-                    <h4 className="font-semibold text-gray-900 dark:text-white">Sorteio ou lance</h4>
-                    <p className="text-gray-600 dark:text-gray-300">Você pode ser contemplado por sorteio mensal ou oferecer um lance.</p>
+                    <span className="absolute -start-3 flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
+                      2
+                    </span>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                      Sorteio ou lance
+                    </h4>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Você pode ser contemplado por sorteio mensal ou oferecer um lance.
+                    </p>
                   </li>
                   <li className="mb-6 ms-6">
-                    <span className="absolute -start-3 flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">3</span>
+                    <span className="absolute -start-3 flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
+                      3
+                    </span>
                     <h4 className="font-semibold text-gray-900 dark:text-white">Contemplação</h4>
-                    <p className="text-gray-600 dark:text-gray-300">Ao ser contemplado, a carta fica disponível para compra do veículo.</p>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Ao ser contemplado, a carta fica disponível para compra do veículo.
+                    </p>
                   </li>
                   <li className="ms-6">
-                    <span className="absolute -start-3 flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">4</span>
+                    <span className="absolute -start-3 flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
+                      4
+                    </span>
                     <h4 className="font-semibold text-gray-900 dark:text-white">Aquisição</h4>
-                    <p className="text-gray-600 dark:text-gray-300">Utilize a carta para adquirir seu carro com nossa assessoria completa.</p>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Utilize a carta para adquirir seu carro com nossa assessoria completa.
+                    </p>
                   </li>
                 </ol>
               </div>
@@ -365,7 +393,9 @@ const ConsortiumPage: React.FC = () => {
               href="/consignado"
               className="block p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 transition-colors"
             >
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Crédito Consignado</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                Crédito Consignado
+              </h4>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 Para servidores públicos e aposentados. Taxas reduzidas com desconto em folha.
               </p>
@@ -374,7 +404,9 @@ const ConsortiumPage: React.FC = () => {
               href="/financing"
               className="block p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 transition-colors"
             >
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Financiamento Tradicional</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                Financiamento Tradicional
+              </h4>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 Para quem não tem desconto em folha. Taxas competitivas e aprovação rápida.
               </p>

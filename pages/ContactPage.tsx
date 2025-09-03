@@ -16,10 +16,21 @@ const ContactPage: React.FC = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
-            "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Início", "item": typeof window !== "undefined" ? window.location.origin + "/" : "/" },
-              { "@type": "ListItem", "position": 2, "name": "Contato", "item": typeof window !== "undefined" ? window.location.origin + "/contact" : "/contact" }
-            ]
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Início",
+                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Contato",
+                item:
+                  typeof window !== "undefined" ? window.location.origin + "/contact" : "/contact",
+              },
+            ],
           })}
         </script>
       </SEOHead>
@@ -59,7 +70,9 @@ const ContactPage: React.FC = () => {
                 const name = (form.elements.namedItem("name") as HTMLInputElement)?.value.trim();
                 const email = (form.elements.namedItem("email") as HTMLInputElement)?.value.trim();
                 const phone = (form.elements.namedItem("phone") as HTMLInputElement)?.value.trim();
-                const message = (form.elements.namedItem("message") as HTMLTextAreaElement)?.value.trim();
+                const message = (
+                  form.elements.namedItem("message") as HTMLTextAreaElement
+                )?.value.trim();
                 const honey = (form.elements.namedItem("company") as HTMLInputElement)?.value;
                 if (honey) return; // honeypot filled -> likely bot
                 const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -68,8 +81,14 @@ const ContactPage: React.FC = () => {
                   alert("Por favor, preencha os campos corretamente.");
                   return;
                 }
-                try { (window as any).trackBusinessEvent?.("contact_form", { name, email }); } catch {}
-                fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, email, phone, message }) }).then(() => alert("Mensagem enviada!"));
+                try {
+                  (window as any).trackBusinessEvent?.("contact_form", { name, email });
+                } catch {}
+                fetch("/api/contact", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ name, email, phone, message }),
+                }).then(() => alert("Mensagem enviada!"));
               }}
             >
               {[
@@ -107,7 +126,9 @@ const ContactPage: React.FC = () => {
                     const parts = digits.match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
                     if (!parts) return;
                     const [, a, b, c] = parts;
-                    e.target.value = [a && `(${a})`, b && ` ${b}`, c && `-${c}`].filter(Boolean).join("");
+                    e.target.value = [a && `(${a})`, b && ` ${b}`, c && `-${c}`]
+                      .filter(Boolean)
+                      .join("");
                   }}
                   className="w-full mt-1 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-main-red shadow-sm transition-all duration-300 dark:bg-gray-700 dark:text-white"
                   required

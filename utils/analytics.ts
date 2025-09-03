@@ -114,7 +114,9 @@ class AnalyticsService {
       onFID((m) => report("FID", m.value));
       onLCP((m) => report("LCP", m.value));
       // onINP may not exist in older versions; guard optional chaining
-      try { onINP?.((m: any) => report("INP", m.value)); } catch {}
+      try {
+        onINP?.((m: any) => report("INP", m.value));
+      } catch {}
       onTTFB((m) => report("TTFB", m.value));
     } catch {
       // ignore

@@ -50,7 +50,9 @@ class PushNotificationManager {
     try {
       this.subscription = await this.registration!.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: (this.urlBase64ToUint8Array(process.env.VAPID_PUBLIC_KEY || "") as unknown) as BufferSource,
+        applicationServerKey: this.urlBase64ToUint8Array(
+          process.env.VAPID_PUBLIC_KEY || ""
+        ) as unknown as BufferSource,
       });
 
       // Enviar subscription para o servidor

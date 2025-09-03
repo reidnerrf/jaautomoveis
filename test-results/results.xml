@@ -1,1462 +1,652 @@
-<testsuites id="" name="" tests="40" failures="40" skipped="0" errors="0" time="427.917028">
-<testsuite name="performance.spec.ts" timestamp="2025-08-20T20:18:37.228Z" hostname="chromium" tests="8" failures="8" skipped="0" time="378.514" errors="0">
-<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="52.027">
+<testsuites id="" name="" tests="40" failures="40" skipped="0" errors="0" time="50.347432999999995">
+<testsuite name="performance.spec.ts" timestamp="2025-09-03T13:35:43.525Z" hostname="chromium" tests="8" failures="8" skipped="0" time="0.154" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0.015">
 <failure message="performance.spec.ts:4:7 should load homepage within performance budget" type="FAILURE">
 <![CDATA[  [chromium] › performance.spec.ts:4:7 › Performance Tests › should load homepage within performance budget 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.goto: Test timeout of 30000ms exceeded.
-    Call log:
-      - navigating to "http://localhost:3000/", waiting until "load"
-
-
-       5 |     const startTime = Date.now();
-       6 |
-    >  7 |     await page.goto("/");
-         |                ^
-       8 |
-       9 |     // Aguardar carregamento completo
-      10 |     await page.waitForLoadState("networkidle");
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:7:16
-
-    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-chromium\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="52.624">
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0.023">
 <failure message="performance.spec.ts:41:7 should load inventory page efficiently" type="FAILURE">
 <![CDATA[  [chromium] › performance.spec.ts:41:7 › Performance Tests › should load inventory page efficiently 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.goto: Test timeout of 30000ms exceeded.
-    Call log:
-      - navigating to "http://localhost:3000/inventory", waiting until "load"
-
-
-      40 |
-      41 |   test("should load inventory page efficiently", async ({ page }) => {
-    > 42 |     await page.goto("/inventory");
-         |                ^
-      43 |
-      44 |     // Aguardar carregamento dos veículos
-      45 |     await page.waitForSelector('[data-testid="vehicle-card"]', {
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:42:16
-
-    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-chromium\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="52.325">
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0.021">
 <failure message="performance.spec.ts:78:7 should handle vehicle detail page performance" type="FAILURE">
 <![CDATA[  [chromium] › performance.spec.ts:78:7 › Performance Tests › should handle vehicle detail page performance 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.goto: Test timeout of 30000ms exceeded.
-    Call log:
-      - navigating to "http://localhost:3000/inventory", waiting until "load"
-
-
-      78 |   test("should handle vehicle detail page performance", async ({ page }) => {
-      79 |     // Primeiro, ir para o estoque para pegar um ID de veículo
-    > 80 |     await page.goto("/inventory");
-         |                ^
-      81 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-      82 |
-      83 |     // Clicar no primeiro veículo
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:80:16
-
-    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-chromium\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="52.439">
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0.016">
 <failure message="performance.spec.ts:120:7 should maintain performance during navigation" type="FAILURE">
 <![CDATA[  [chromium] › performance.spec.ts:120:7 › Performance Tests › should maintain performance during navigation 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.goto: Test timeout of 30000ms exceeded.
-    Call log:
-      - navigating to "http://localhost:3000/", waiting until "load"
-
-
-      124 |     for (const pagePath of pages) {
-      125 |       const startTime = Date.now();
-    > 126 |       await page.goto(pagePath);
-          |                  ^
-      127 |       await page.waitForLoadState("networkidle");
-      128 |
-      129 |       const loadTime = Date.now() - startTime;
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:126:18
-
-    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-chromium\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="50.821">
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0.015">
 <failure message="performance.spec.ts:141:7 should handle mobile performance" type="FAILURE">
 <![CDATA[  [chromium] › performance.spec.ts:141:7 › Performance Tests › should handle mobile performance ────
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.goto: Test timeout of 30000ms exceeded.
-    Call log:
-      - navigating to "http://localhost:3000/", waiting until "load"
-
-
-      143 |     await page.setViewportSize({ width: 375, height: 667 });
-      144 |
-    > 145 |     await page.goto("/");
-          |                ^
-      146 |     await page.waitForLoadState("networkidle");
-      147 |
-      148 |     // Verificar se elementos responsivos carregam corretamente
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:145:16
-
-    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-chromium\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="52.226">
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0.017">
 <failure message="performance.spec.ts:164:7 should handle search and filtering performance" type="FAILURE">
 <![CDATA[  [chromium] › performance.spec.ts:164:7 › Performance Tests › should handle search and filtering performance 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.goto: Test timeout of 30000ms exceeded.
-    Call log:
-      - navigating to "http://localhost:3000/inventory", waiting until "load"
-
-
-      163 |
-      164 |   test("should handle search and filtering performance", async ({ page }) => {
-    > 165 |     await page.goto("/inventory");
-          |                ^
-      166 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-      167 |
-      168 |     // Contar veículos iniciais
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:165:16
-
-    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-chromium\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="33.047">
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0.02">
 <failure message="performance.spec.ts:198:7 should handle image optimization" type="FAILURE">
 <![CDATA[  [chromium] › performance.spec.ts:198:7 › Performance Tests › should handle image optimization ────
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      198 |   test("should handle image optimization", async ({ page }) => {
-      199 |     await page.goto("/inventory");
-    > 200 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-          |                ^
-      201 |
-      202 |     // Verificar se imagens estão sendo servidas com otimizações
-      203 |     const images = await page.$$('img[src*="/uploads/"]');
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:200:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-chromium\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-chromium\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="33.005">
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0.027">
 <failure message="performance.spec.ts:216:7 should handle service worker functionality" type="FAILURE">
 <![CDATA[  [chromium] › performance.spec.ts:216:7 › Performance Tests › should handle service worker functionality 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
-
-      226 |     // Verificar cache funcionando
-      227 |     await page.goto("/inventory");
-    > 228 |     await page.waitForLoadState("networkidle");
-          |                ^
-      229 |
-      230 |     // Desconectar rede e tentar navegar
-      231 |     await context.setOffline(true);
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:228:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-chromium\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-chromium\video.webm]]
-]]>
-</system-out>
 </testcase>
 </testsuite>
-<testsuite name="performance.spec.ts" timestamp="2025-08-20T20:18:37.228Z" hostname="firefox" tests="8" failures="8" skipped="0" time="591.036" errors="0">
-<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="140.625">
+<testsuite name="performance.spec.ts" timestamp="2025-09-03T13:35:43.525Z" hostname="firefox" tests="8" failures="8" skipped="0" time="0.382" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0.025">
 <failure message="performance.spec.ts:4:7 should load homepage within performance budget" type="FAILURE">
 <![CDATA[  [firefox] › performance.spec.ts:4:7 › Performance Tests › should load homepage within performance budget 
 
-    Test timeout of 30000ms exceeded.
-
-    Test timeout of 30000ms exceeded.
-
-    Error: page.goto: Test ended.
-    Call log:
-      - navigating to "http://localhost:3000/", waiting until "load"
-
-
-       5 |     const startTime = Date.now();
-       6 |
-    >  7 |     await page.goto("/");
-         |                ^
-       8 |
-       9 |     // Aguardar carregamento completo
-      10 |     await page.waitForLoadState("networkidle");
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:7:16
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
 </testcase>
-<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="103.294">
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0.019">
 <failure message="performance.spec.ts:41:7 should load inventory page efficiently" type="FAILURE">
 <![CDATA[  [firefox] › performance.spec.ts:41:7 › Performance Tests › should load inventory page efficiently 
 
-    Test timeout of 30000ms exceeded.
-
-    Test timeout of 30000ms exceeded.
-
-    Fixture "trace recording" timeout of 30000ms exceeded during teardown.
-
-    Error: page.goto: Test ended.
-    Call log:
-      - navigating to "http://localhost:3000/inventory", waiting until "load"
-
-
-      40 |
-      41 |   test("should load inventory page efficiently", async ({ page }) => {
-    > 42 |     await page.goto("/inventory");
-         |                ^
-      43 |
-      44 |     // Aguardar carregamento dos veículos
-      45 |     await page.waitForSelector('[data-testid="vehicle-card"]', {
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:42:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-firefox\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-firefox\test-failed-1.png]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="107.435">
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0.022">
 <failure message="performance.spec.ts:78:7 should handle vehicle detail page performance" type="FAILURE">
 <![CDATA[  [firefox] › performance.spec.ts:78:7 › Performance Tests › should handle vehicle detail page performance 
 
-    Test timeout of 30000ms exceeded.
-
-    Test timeout of 30000ms exceeded.
-
-    Error: page.goto: Test ended.
-    Call log:
-      - navigating to "http://localhost:3000/inventory", waiting until "load"
-
-
-      78 |   test("should handle vehicle detail page performance", async ({ page }) => {
-      79 |     // Primeiro, ir para o estoque para pegar um ID de veículo
-    > 80 |     await page.goto("/inventory");
-         |                ^
-      81 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-      82 |
-      83 |     // Clicar no primeiro veículo
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:80:16
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
 </testcase>
-<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="133.532">
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0.044">
 <failure message="performance.spec.ts:120:7 should maintain performance during navigation" type="FAILURE">
 <![CDATA[  [firefox] › performance.spec.ts:120:7 › Performance Tests › should maintain performance during navigation 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
-
-      125 |       const startTime = Date.now();
-      126 |       await page.goto(pagePath);
-    > 127 |       await page.waitForLoadState("networkidle");
-          |                  ^
-      128 |
-      129 |       const loadTime = Date.now() - startTime;
-      130 |       navigationTimes.push(loadTime);
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:127:18
-
-    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-firefox\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-firefox\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="25.009">
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0.027">
 <failure message="performance.spec.ts:141:7 should handle mobile performance" type="FAILURE">
 <![CDATA[  [firefox] › performance.spec.ts:141:7 › Performance Tests › should handle mobile performance ─────
 
-    Error: expect(received).toBeTruthy()
-
-    Received: null
-
-      148 |     // Verificar se elementos responsivos carregam corretamente
-      149 |     const heroSection = await page.$('[data-testid="hero-section"]');
-    > 150 |     expect(heroSection).toBeTruthy();
-          |                         ^
-      151 |
-      152 |     // Verificar se vídeo não carrega em mobile (deve mostrar imagem)
-      153 |     const video = await page.$("video");
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:150:25
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-firefox\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="30.944">
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0.17">
 <failure message="performance.spec.ts:164:7 should handle search and filtering performance" type="FAILURE">
 <![CDATA[  [firefox] › performance.spec.ts:164:7 › Performance Tests › should handle search and filtering performance 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      164 |   test("should handle search and filtering performance", async ({ page }) => {
-      165 |     await page.goto("/inventory");
-    > 166 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-          |                ^
-      167 |
-      168 |     // Contar veículos iniciais
-      169 |     const initialCount = await page.$$eval('[data-testid="vehicle-card"]', (cards) => cards.length);
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:166:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-firefox\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-firefox\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-firefox\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-firefox\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-firefox\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-firefox\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="31.114">
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0.042">
 <failure message="performance.spec.ts:198:7 should handle image optimization" type="FAILURE">
 <![CDATA[  [firefox] › performance.spec.ts:198:7 › Performance Tests › should handle image optimization ─────
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      198 |   test("should handle image optimization", async ({ page }) => {
-      199 |     await page.goto("/inventory");
-    > 200 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-          |                ^
-      201 |
-      202 |     // Verificar se imagens estão sendo servidas com otimizações
-      203 |     const images = await page.$$('img[src*="/uploads/"]');
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:200:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-firefox\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="19.083">
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0.033">
 <failure message="performance.spec.ts:216:7 should handle service worker functionality" type="FAILURE">
 <![CDATA[  [firefox] › performance.spec.ts:216:7 › Performance Tests › should handle service worker functionality 
 
-    Error: page.goto: NS_ERROR_OFFLINE
-    Call log:
-      - navigating to "http://localhost:3000/", waiting until "load"
-
-
-      232 |
-      233 |     // Tentar navegar para página já visitada
-    > 234 |     await page.goto("/");
-          |                ^
-      235 |
-      236 |     // Verificar se página ainda carrega (do cache)
-      237 |     const title = await page.title();
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:234:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-firefox\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-firefox\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-firefox\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-firefox\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-firefox\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-firefox\error-context.md]]
-]]>
-</system-out>
 </testcase>
 </testsuite>
-<testsuite name="performance.spec.ts" timestamp="2025-08-20T20:18:37.228Z" hostname="webkit" tests="8" failures="8" skipped="0" time="157.99" errors="0">
-<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="12.873">
+<testsuite name="performance.spec.ts" timestamp="2025-09-03T13:35:43.525Z" hostname="webkit" tests="8" failures="8" skipped="0" time="0.201" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0.039">
 <failure message="performance.spec.ts:4:7 should load homepage within performance budget" type="FAILURE">
 <![CDATA[  [webkit] › performance.spec.ts:4:7 › Performance Tests › should load homepage within performance budget 
 
-    Error: expect(received).toBeLessThan(expected)
-
-    Expected: < 3000
-    Received:   5705
-
-      13 |
-      14 |     // Verificar tempo de carregamento
-    > 15 |     expect(loadTime).toBeLessThan(3000); // 3 segundos
-         |                      ^
-      16 |
-      17 |     // Verificar Core Web Vitals
-      18 |     const fcp = await page.evaluate(() => {
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:15:22
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-webkit\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-webkit\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-webkit\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-webkit\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="16.69">
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0.021">
 <failure message="performance.spec.ts:41:7 should load inventory page efficiently" type="FAILURE">
 <![CDATA[  [webkit] › performance.spec.ts:41:7 › Performance Tests › should load inventory page efficiently ─
 
-    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      43 |
-      44 |     // Aguardar carregamento dos veículos
-    > 45 |     await page.waitForSelector('[data-testid="vehicle-card"]', {
-         |                ^
-      46 |       timeout: 10000,
-      47 |     });
-      48 |
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:45:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-webkit\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-webkit\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-webkit\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-webkit\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="37">
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0.024">
 <failure message="performance.spec.ts:78:7 should handle vehicle detail page performance" type="FAILURE">
 <![CDATA[  [webkit] › performance.spec.ts:78:7 › Performance Tests › should handle vehicle detail page performance 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      79 |     // Primeiro, ir para o estoque para pegar um ID de veículo
-      80 |     await page.goto("/inventory");
-    > 81 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-         |                ^
-      82 |
-      83 |     // Clicar no primeiro veículo
-      84 |     const firstVehicle = await page.$('[data-testid="vehicle-card"]');
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:81:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-webkit\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-webkit\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-webkit\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-webkit\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-webkit\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-webkit\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="7.062">
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0.019">
 <failure message="performance.spec.ts:120:7 should maintain performance during navigation" type="FAILURE">
 <![CDATA[  [webkit] › performance.spec.ts:120:7 › Performance Tests › should maintain performance during navigation 
 
-    Error: expect(received).toBeLessThan(expected)
-
-    Expected: < 3000
-    Received:   5243
-
-      131 |
-      132 |       // Verificar se a página carregou em tempo aceitável
-    > 133 |       expect(loadTime).toBeLessThan(3000);
-          |                        ^
-      134 |     }
-      135 |
-      136 |     // Verificar consistência de performance
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:133:24
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-webkit\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-webkit\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-webkit\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-webkit\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="6.253">
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0.028">
 <failure message="performance.spec.ts:141:7 should handle mobile performance" type="FAILURE">
 <![CDATA[  [webkit] › performance.spec.ts:141:7 › Performance Tests › should handle mobile performance ──────
 
-    Error: expect(received).toBeTruthy()
-
-    Received: null
-
-      148 |     // Verificar se elementos responsivos carregam corretamente
-      149 |     const heroSection = await page.$('[data-testid="hero-section"]');
-    > 150 |     expect(heroSection).toBeTruthy();
-          |                         ^
-      151 |
-      152 |     // Verificar se vídeo não carrega em mobile (deve mostrar imagem)
-      153 |     const video = await page.$("video");
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:150:25
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-webkit\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-webkit\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-webkit\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-webkit\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="34.955">
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0.026">
 <failure message="performance.spec.ts:164:7 should handle search and filtering performance" type="FAILURE">
 <![CDATA[  [webkit] › performance.spec.ts:164:7 › Performance Tests › should handle search and filtering performance 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      164 |   test("should handle search and filtering performance", async ({ page }) => {
-      165 |     await page.goto("/inventory");
-    > 166 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-          |                ^
-      167 |
-      168 |     // Contar veículos iniciais
-      169 |     const initialCount = await page.$$eval('[data-testid="vehicle-card"]', (cards) => cards.length);
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:166:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-webkit\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-webkit\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-webkit\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-webkit\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-webkit\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-webkit\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="34.512">
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0.022">
 <failure message="performance.spec.ts:198:7 should handle image optimization" type="FAILURE">
 <![CDATA[  [webkit] › performance.spec.ts:198:7 › Performance Tests › should handle image optimization ──────
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      198 |   test("should handle image optimization", async ({ page }) => {
-      199 |     await page.goto("/inventory");
-    > 200 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-          |                ^
-      201 |
-      202 |     // Verificar se imagens estão sendo servidas com otimizações
-      203 |     const images = await page.$$('img[src*="/uploads/"]');
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:200:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-webkit\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="8.645">
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0.022">
 <failure message="performance.spec.ts:216:7 should handle service worker functionality" type="FAILURE">
 <![CDATA[  [webkit] › performance.spec.ts:216:7 › Performance Tests › should handle service worker functionality 
 
-    Error: page.goto: WebKit encountered an internal error
-    Call log:
-      - navigating to "http://localhost:3000/", waiting until "load"
-
-
-      232 |
-      233 |     // Tentar navegar para página já visitada
-    > 234 |     await page.goto("/");
-          |                ^
-      235 |
-      236 |     // Verificar se página ainda carrega (do cache)
-      237 |     const title = await page.title();
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:234:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-webkit\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-webkit\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-webkit\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-webkit\video.webm]]
-]]>
-</system-out>
 </testcase>
 </testsuite>
-<testsuite name="performance.spec.ts" timestamp="2025-08-20T20:18:37.228Z" hostname="Mobile Chrome" tests="8" failures="8" skipped="0" time="159.186" errors="0">
-<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="7.369">
+<testsuite name="performance.spec.ts" timestamp="2025-09-03T13:35:43.525Z" hostname="Mobile Chrome" tests="8" failures="8" skipped="0" time="0.206" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0.028">
 <failure message="performance.spec.ts:4:7 should load homepage within performance budget" type="FAILURE">
 <![CDATA[  [Mobile Chrome] › performance.spec.ts:4:7 › Performance Tests › should load homepage within performance budget 
 
-    Error: expect(received).toBeLessThan(expected)
-
-    Expected: < 3000
-    Received:   3542
-
-      13 |
-      14 |     // Verificar tempo de carregamento
-    > 15 |     expect(loadTime).toBeLessThan(3000); // 3 segundos
-         |                      ^
-      16 |
-      17 |     // Verificar Core Web Vitals
-      18 |     const fcp = await page.evaluate(() => {
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:15:22
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Chrome\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="17.895">
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0.032">
 <failure message="performance.spec.ts:41:7 should load inventory page efficiently" type="FAILURE">
 <![CDATA[  [Mobile Chrome] › performance.spec.ts:41:7 › Performance Tests › should load inventory page efficiently 
 
-    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      43 |
-      44 |     // Aguardar carregamento dos veículos
-    > 45 |     await page.waitForSelector('[data-testid="vehicle-card"]', {
-         |                ^
-      46 |       timeout: 10000,
-      47 |     });
-      48 |
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:45:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Chrome\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="37.003">
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0.037">
 <failure message="performance.spec.ts:78:7 should handle vehicle detail page performance" type="FAILURE">
 <![CDATA[  [Mobile Chrome] › performance.spec.ts:78:7 › Performance Tests › should handle vehicle detail page performance 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      79 |     // Primeiro, ir para o estoque para pegar um ID de veículo
-      80 |     await page.goto("/inventory");
-    > 81 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-         |                ^
-      82 |
-      83 |     // Clicar no primeiro veículo
-      84 |     const firstVehicle = await page.$('[data-testid="vehicle-card"]');
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:81:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Chrome\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="9.512">
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0.021">
 <failure message="performance.spec.ts:120:7 should maintain performance during navigation" type="FAILURE">
 <![CDATA[  [Mobile Chrome] › performance.spec.ts:120:7 › Performance Tests › should maintain performance during navigation 
 
-    Error: expect(received).toBeLessThan(expected)
-
-    Expected: < 3000
-    Received:   4115
-
-      131 |
-      132 |       // Verificar se a página carregou em tempo aceitável
-    > 133 |       expect(loadTime).toBeLessThan(3000);
-          |                        ^
-      134 |     }
-      135 |
-      136 |     // Verificar consistência de performance
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:133:24
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Chrome\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="10.16">
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0.024">
 <failure message="performance.spec.ts:141:7 should handle mobile performance" type="FAILURE">
 <![CDATA[  [Mobile Chrome] › performance.spec.ts:141:7 › Performance Tests › should handle mobile performance 
 
-    Error: expect(received).toBeTruthy()
-
-    Received: null
-
-      148 |     // Verificar se elementos responsivos carregam corretamente
-      149 |     const heroSection = await page.$('[data-testid="hero-section"]');
-    > 150 |     expect(heroSection).toBeTruthy();
-          |                         ^
-      151 |
-      152 |     // Verificar se vídeo não carrega em mobile (deve mostrar imagem)
-      153 |     const video = await page.$("video");
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:150:25
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Chrome\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="33.634">
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0.028">
 <failure message="performance.spec.ts:164:7 should handle search and filtering performance" type="FAILURE">
 <![CDATA[  [Mobile Chrome] › performance.spec.ts:164:7 › Performance Tests › should handle search and filtering performance 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      164 |   test("should handle search and filtering performance", async ({ page }) => {
-      165 |     await page.goto("/inventory");
-    > 166 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-          |                ^
-      167 |
-      168 |     // Contar veículos iniciais
-      169 |     const initialCount = await page.$$eval('[data-testid="vehicle-card"]', (cards) => cards.length);
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:166:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Chrome\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="34.065">
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0.017">
 <failure message="performance.spec.ts:198:7 should handle image optimization" type="FAILURE">
 <![CDATA[  [Mobile Chrome] › performance.spec.ts:198:7 › Performance Tests › should handle image optimization 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      198 |   test("should handle image optimization", async ({ page }) => {
-      199 |     await page.goto("/inventory");
-    > 200 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-          |                ^
-      201 |
-      202 |     // Verificar se imagens estão sendo servidas com otimizações
-      203 |     const images = await page.$$('img[src*="/uploads/"]');
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:200:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Chrome\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="9.548">
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0.019">
 <failure message="performance.spec.ts:216:7 should handle service worker functionality" type="FAILURE">
 <![CDATA[  [Mobile Chrome] › performance.spec.ts:216:7 › Performance Tests › should handle service worker functionality 
 
-    Error: page.goto: net::ERR_INTERNET_DISCONNECTED at http://localhost:3000/
-    Call log:
-      - navigating to "http://localhost:3000/", waiting until "load"
-
-
-      232 |
-      233 |     // Tentar navegar para página já visitada
-    > 234 |     await page.goto("/");
-          |                ^
-      235 |
-      236 |     // Verificar se página ainda carrega (do cache)
-      237 |     const title = await page.title();
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:234:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Chrome\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Chrome\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Chrome\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Chrome\video.webm]]
-]]>
-</system-out>
 </testcase>
 </testsuite>
-<testsuite name="performance.spec.ts" timestamp="2025-08-20T20:18:37.228Z" hostname="Mobile Safari" tests="8" failures="8" skipped="0" time="180.143" errors="0">
-<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="12.763">
+<testsuite name="performance.spec.ts" timestamp="2025-09-03T13:35:43.525Z" hostname="Mobile Safari" tests="8" failures="8" skipped="0" time="0.157" errors="0">
+<testcase name="Performance Tests › should load homepage within performance budget" classname="performance.spec.ts" time="0.02">
 <failure message="performance.spec.ts:4:7 should load homepage within performance budget" type="FAILURE">
 <![CDATA[  [Mobile Safari] › performance.spec.ts:4:7 › Performance Tests › should load homepage within performance budget 
 
-    Error: expect(received).toBeLessThan(expected)
-
-    Expected: < 3000
-    Received:   5301
-
-      13 |
-      14 |     // Verificar tempo de carregamento
-    > 15 |     expect(loadTime).toBeLessThan(3000); // 3 segundos
-         |                      ^
-      16 |
-      17 |     // Verificar Core Web Vitals
-      18 |     const fcp = await page.evaluate(() => {
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:15:22
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-8186f-e-within-performance-budget-Mobile-Safari\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="18.856">
+<testcase name="Performance Tests › should load inventory page efficiently" classname="performance.spec.ts" time="0.018">
 <failure message="performance.spec.ts:41:7 should load inventory page efficiently" type="FAILURE">
 <![CDATA[  [Mobile Safari] › performance.spec.ts:41:7 › Performance Tests › should load inventory page efficiently 
 
-    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      43 |
-      44 |     // Aguardar carregamento dos veículos
-    > 45 |     await page.waitForSelector('[data-testid="vehicle-card"]', {
-         |                ^
-      46 |       timeout: 10000,
-      47 |     });
-      48 |
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:45:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-65701--inventory-page-efficiently-Mobile-Safari\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="35.915">
+<testcase name="Performance Tests › should handle vehicle detail page performance" classname="performance.spec.ts" time="0.024">
 <failure message="performance.spec.ts:78:7 should handle vehicle detail page performance" type="FAILURE">
 <![CDATA[  [Mobile Safari] › performance.spec.ts:78:7 › Performance Tests › should handle vehicle detail page performance 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      79 |     // Primeiro, ir para o estoque para pegar um ID de veículo
-      80 |     await page.goto("/inventory");
-    > 81 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-         |                ^
-      82 |
-      83 |     // Clicar no primeiro veículo
-      84 |     const firstVehicle = await page.$('[data-testid="vehicle-card"]');
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:81:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-be83a-cle-detail-page-performance-Mobile-Safari\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="22.592">
+<testcase name="Performance Tests › should maintain performance during navigation" classname="performance.spec.ts" time="0.024">
 <failure message="performance.spec.ts:120:7 should maintain performance during navigation" type="FAILURE">
 <![CDATA[  [Mobile Safari] › performance.spec.ts:120:7 › Performance Tests › should maintain performance during navigation 
 
-    Error: expect(received).toBeLessThan(expected)
-
-    Expected: < 3000
-    Received:   6746
-
-      131 |
-      132 |       // Verificar se a página carregou em tempo aceitável
-    > 133 |       expect(loadTime).toBeLessThan(3000);
-          |                        ^
-      134 |     }
-      135 |
-      136 |     // Verificar consistência de performance
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:133:24
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-35d52-rformance-during-navigation-Mobile-Safari\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="8.739">
+<testcase name="Performance Tests › should handle mobile performance" classname="performance.spec.ts" time="0.014">
 <failure message="performance.spec.ts:141:7 should handle mobile performance" type="FAILURE">
 <![CDATA[  [Mobile Safari] › performance.spec.ts:141:7 › Performance Tests › should handle mobile performance 
 
-    Error: expect(received).toBeTruthy()
-
-    Received: null
-
-      148 |     // Verificar se elementos responsivos carregam corretamente
-      149 |     const heroSection = await page.$('[data-testid="hero-section"]');
-    > 150 |     expect(heroSection).toBeTruthy();
-          |                         ^
-      151 |
-      152 |     // Verificar se vídeo não carrega em mobile (deve mostrar imagem)
-      153 |     const video = await page.$("video");
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:150:25
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Safari\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Safari\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Safari\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-72fba-d-handle-mobile-performance-Mobile-Safari\video.webm]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="32.945">
+<testcase name="Performance Tests › should handle search and filtering performance" classname="performance.spec.ts" time="0.018">
 <failure message="performance.spec.ts:164:7 should handle search and filtering performance" type="FAILURE">
 <![CDATA[  [Mobile Safari] › performance.spec.ts:164:7 › Performance Tests › should handle search and filtering performance 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      164 |   test("should handle search and filtering performance", async ({ page }) => {
-      165 |     await page.goto("/inventory");
-    > 166 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-          |                ^
-      167 |
-      168 |     // Contar veículos iniciais
-      169 |     const initialCount = await page.$$eval('[data-testid="vehicle-card"]', (cards) => cards.length);
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:166:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-1644e-h-and-filtering-performance-Mobile-Safari\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="32.792">
+<testcase name="Performance Tests › should handle image optimization" classname="performance.spec.ts" time="0.019">
 <failure message="performance.spec.ts:198:7 should handle image optimization" type="FAILURE">
 <![CDATA[  [Mobile Safari] › performance.spec.ts:198:7 › Performance Tests › should handle image optimization 
 
-    Test timeout of 30000ms exceeded.
-
-    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
-    Call log:
-      - waiting for locator('[data-testid="vehicle-card"]') to be visible
-
-
-      198 |   test("should handle image optimization", async ({ page }) => {
-      199 |     await page.goto("/inventory");
-    > 200 |     await page.waitForSelector('[data-testid="vehicle-card"]');
-          |                ^
-      201 |
-      202 |     // Verificar se imagens estão sendo servidas com otimizações
-      203 |     const images = await page.$$('img[src*="/uploads/"]');
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:200:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-a85d9-d-handle-image-optimization-Mobile-Safari\error-context.md]]
-]]>
-</system-out>
 </testcase>
-<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="15.541">
+<testcase name="Performance Tests › should handle service worker functionality" classname="performance.spec.ts" time="0.02">
 <failure message="performance.spec.ts:216:7 should handle service worker functionality" type="FAILURE">
 <![CDATA[  [Mobile Safari] › performance.spec.ts:216:7 › Performance Tests › should handle service worker functionality 
 
-    Error: page.goto: WebKit encountered an internal error
-    Call log:
-      - navigating to "http://localhost:3000/", waiting until "load"
-
-
-      232 |
-      233 |     // Tentar navegar para página já visitada
-    > 234 |     await page.goto("/");
-          |                ^
-      235 |
-      236 |     // Verificar se página ainda carrega (do cache)
-      237 |     const title = await page.title();
-        at C:\Users\Zummit\Documents\Reidner\Site\ja3\tests\e2e\performance.spec.ts:234:16
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\..\test-results\performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\error-context.md
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Zummit\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
 ]]>
 </failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\test-failed-1.png]]
-
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\video.webm]]
-
-[[ATTACHMENT|performance-Performance-Te-7a128-ervice-worker-functionality-Mobile-Safari\error-context.md]]
-]]>
-</system-out>
 </testcase>
 </testsuite>
 </testsuites>

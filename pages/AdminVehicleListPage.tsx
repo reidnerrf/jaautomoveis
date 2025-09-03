@@ -49,7 +49,8 @@ const AdminVehicleListPage: React.FC = () => {
   const vehicleStats = useMemo(() => {
     const totalValue = vehicles.reduce((sum, v) => sum + (v.price || 0), 0);
     const averagePrice = vehicles.length ? totalValue / vehicles.length : 0;
-    const averageYear = vehicles.reduce((sum, v) => sum + (v.year || 0), 0) / (vehicles.length || 1);
+    const averageYear =
+      vehicles.reduce((sum, v) => sum + (v.year || 0), 0) / (vehicles.length || 1);
     const averageKm = vehicles.reduce((sum, v) => sum + (v.km || 0), 0) / (vehicles.length || 1);
 
     const makeDistribution = vehicles.reduce(
@@ -76,8 +77,14 @@ const AdminVehicleListPage: React.FC = () => {
       averageKm: Math.round(averageKm),
       makeDistribution,
       priceRanges,
-      mostExpensive: vehicles.length > 0 ? vehicles.reduce((max, v) => ((v.price || 0) > (max.price || 0) ? v : max)) : null,
-      cheapest: vehicles.length > 0 ? vehicles.reduce((min, v) => ((v.price || 0) < (min.price || 0) ? v : min)) : null,
+      mostExpensive:
+        vehicles.length > 0
+          ? vehicles.reduce((max, v) => ((v.price || 0) > (max.price || 0) ? v : max))
+          : null,
+      cheapest:
+        vehicles.length > 0
+          ? vehicles.reduce((min, v) => ((v.price || 0) < (min.price || 0) ? v : min))
+          : null,
     };
   }, [vehicles]);
 
@@ -94,7 +101,9 @@ const AdminVehicleListPage: React.FC = () => {
         const priceMatch =
           !priceRangeFilter ||
           (priceRangeFilter === "30000" && (vehicle.price || 0) <= 30000) ||
-          (priceRangeFilter === "30000-60000" && (vehicle.price || 0) > 30000 && (vehicle.price || 0) <= 60000) ||
+          (priceRangeFilter === "30000-60000" &&
+            (vehicle.price || 0) > 30000 &&
+            (vehicle.price || 0) <= 60000) ||
           (priceRangeFilter === "60000-100000" &&
             (vehicle.price || 0) > 60000 &&
             (vehicle.price || 0) <= 100000) ||

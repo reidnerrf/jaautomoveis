@@ -133,7 +133,11 @@ const scriptSrcDirectives = [
 if (!isProduction) {
   scriptSrcDirectives.push("data:");
 }
-scriptSrcDirectives.push("https://www.googletagmanager.com", "https://www.google-analytics.com", "https://code.jivosite.com");
+scriptSrcDirectives.push(
+  "https://www.googletagmanager.com",
+  "https://www.google-analytics.com",
+  "https://code.jivosite.com"
+);
 
 const uploadsDirBuild = path.join(__dirname, "uploads");
 const uploadsDirRoot = path.join(process.cwd(), "uploads");
@@ -674,10 +678,12 @@ if (process.env.NODE_ENV !== "test") {
       process.exit(1);
     }
     // Start GraphQL then server
-    startApollo().then(startServer).catch((err) => {
-      console.error("Failed to start Apollo Server:", err);
-      process.exit(1);
-    });
+    startApollo()
+      .then(startServer)
+      .catch((err) => {
+        console.error("Failed to start Apollo Server:", err);
+        process.exit(1);
+      });
   } else {
     connectDB()
       .then(async () => {
