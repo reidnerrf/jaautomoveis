@@ -86,6 +86,8 @@ const Header: React.FC = () => {
           {/* Menu Desktop */}
           <div
             className={`hidden lg:flex flex-1 justify-center items-center space-x-8 ${isTransparent ? "text-white" : ""}`}
+            role="navigation"
+            aria-label="Menu principal"
           >
             {baseNavLinks.map((link) => (
               <NavLink
