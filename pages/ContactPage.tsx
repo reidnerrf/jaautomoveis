@@ -40,11 +40,31 @@ const ContactPage: React.FC = () => {
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
               Envie uma Mensagem
             </h2>
-            <form className="space-y-5">
+            <form
+              className="space-y-5"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.currentTarget as HTMLFormElement;
+                const name = (form.elements.namedItem("name") as HTMLInputElement)?.value.trim();
+                const email = (form.elements.namedItem("email") as HTMLInputElement)?.value.trim();
+                const phone = (form.elements.namedItem("phone") as HTMLInputElement)?.value.trim();
+                const message = (form.elements.namedItem("message") as HTMLTextAreaElement)?.value.trim();
+                const honey = (form.elements.namedItem("company") as HTMLInputElement)?.value;
+                if (honey) return; // honeypot filled -> likely bot
+                const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                const phoneOk = /\(\d{2}\) \d{5}-\d{4}/.test(phone);
+                if (!name || !emailOk || !phoneOk || !message) {
+                  alert("Por favor, preencha os campos corretamente.");
+                  return;
+                }
+                try { (window as any).trackBusinessEvent?.("contact_form", { name, email }); } catch {}
+                fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, email, phone, message }) }).then(() => alert("Mensagem enviada!"));
+              }}
+            >
               {[
-                { id: "name", label: "Nome", type: "text" },
-                { id: "email", label: "Email", type: "email" },
-              ].map(({ id, label, type }) => (
+                { id: "name", label: "Nome", type: "text", placeholder: "Seu nome completo" },
+                { id: "email", label: "Email", type: "email", placeholder: "voce@email.com" },
+              ].map(({ id, label, type, placeholder }) => (
                 <div key={id}>
                   <label htmlFor={id} className="font-medium text-gray-700 dark:text-gray-300">
                     {label}
@@ -52,10 +72,36 @@ const ContactPage: React.FC = () => {
                   <input
                     type={type}
                     id={id}
+                    name={id}
+                    required
+                    placeholder={placeholder}
                     className="w-full mt-1 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-main-red shadow-sm transition-all duration-300 dark:bg-gray-700 dark:text-white"
                   />
                 </div>
               ))}
+
+              {/* Telefone com máscara simples */}
+              <div>
+                <label htmlFor="phone" className="font-medium text-gray-700 dark:text-gray-300">
+                  Telefone (WhatsApp)
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  inputMode="numeric"
+                  placeholder="(24) 99999-9999"
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+                    const parts = digits.match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+                    if (!parts) return;
+                    const [, a, b, c] = parts;
+                    e.target.value = [a && `(${a})`, b && ` ${b}`, c && `-${c}`].filter(Boolean).join("");
+                  }}
+                  className="w-full mt-1 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-main-red shadow-sm transition-all duration-300 dark:bg-gray-700 dark:text-white"
+                  required
+                />
+              </div>
 
               <div>
                 <label htmlFor="message" className="font-medium text-gray-700 dark:text-gray-300">
@@ -63,9 +109,17 @@ const ContactPage: React.FC = () => {
                 </label>
                 <textarea
                   id="message"
+                  name="message"
                   rows={5}
                   className="w-full mt-1 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-main-red shadow-sm transition-all duration-300 dark:bg-gray-700 dark:text-white"
+                  required
                 ></textarea>
+              </div>
+
+              {/* Honeypot anti-spam */}
+              <div className="hidden" aria-hidden="true">
+                <label htmlFor="company">Company</label>
+                <input type="text" id="company" name="company" autoComplete="off" tabIndex={-1} />
               </div>
 
               <motion.button

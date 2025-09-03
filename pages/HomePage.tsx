@@ -232,6 +232,10 @@ const HomePage: React.FC = () => {
               postalCode: "27511-110",
               addressCountry: "BR",
             },
+            openingHoursSpecification: [
+              { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday"], opens: "09:00", closes: "18:00" },
+              { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "09:00", closes: "13:00" }
+            ],
             sameAs: ["https://www.instagram.com/_jaautomoveis/", "https://wa.me/5524999037716"],
           })}
         </script>
