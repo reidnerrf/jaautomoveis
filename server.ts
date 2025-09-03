@@ -349,6 +349,7 @@ app.get("/sitemap.xml", async (req, res) => {
       { url: "/contact", priority: "0.7", changefreq: "monthly" },
       { url: "/financing", priority: "0.8", changefreq: "monthly" },
       { url: "/consortium", priority: "0.8", changefreq: "monthly" },
+      { url: "/consignado", priority: "0.8", changefreq: "monthly" },
     ];
 
     staticPages.forEach((page) => {
