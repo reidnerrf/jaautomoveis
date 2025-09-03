@@ -557,6 +557,30 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* PARCERIA RODOBENS */}
+      <section className="py-12 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-6">
+            <img
+              src="https://consorcios.ababas.com.br/wp-content/uploads/2023/05/logo-rodobens.png"
+              alt="Consórcio Rodobens"
+              width={220}
+              height={60}
+              className="w-auto h-12 md:h-14 object-contain"
+              loading="lazy"
+            />
+            <div className="text-center md:text-left">
+              <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+                Trabalhamos com Consórcio Rodobens
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
+                Planejamento inteligente para conquistar seu veículo com segurança e condições especiais.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* DEPOIMENTOS */}
       <section className="py-24 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

@@ -13,6 +13,7 @@ const HomePage = lazy(() => import("./pages/HomePage.tsx"));
 const InventoryPage = lazy(() => import("./pages/InventoryPage.tsx"));
 const VehicleDetailPage = lazy(() => import("./pages/VehicleDetailPage.tsx"));
 const FinancingPage = lazy(() => import("./pages/FinancingPage.tsx"));
+const ConsignadoPage = lazy(() => import("./pages/ConsignadoPage.tsx"));
 const ConsortiumPage = lazy(() => import("./pages/ConsortiumPage.tsx"));
 const AboutPage = lazy(() => import("./pages/AboutPage.tsx"));
 const ContactPage = lazy(() => import("./pages/ContactPage.tsx"));
@@ -136,6 +137,7 @@ const App: React.FC = () => {
                       <Route path="inventory" element={<InventoryPage />} />
                       <Route path="vehicle/:id" element={<VehicleDetailPage />} />
                       <Route path="financing" element={<FinancingPage />} />
+                      <Route path="consignado" element={<ConsignadoPage />} />
                       <Route path="consortium" element={<ConsortiumPage />} />
                       <Route path="about" element={<AboutPage />} />
                       <Route path="contact" element={<ContactPage />} />
