@@ -327,51 +327,7 @@ const HomePage: React.FC = () => {
           <p className="mt-4 text-lg md:text-xl text-gray-200 max-w-3xl mx-auto">
             Ofertas imperdíveis, atendimento de qualidade e as melhores condições do mercado.
           </p>
-          {/* Mini-form acima da dobra */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const form = e.currentTarget as HTMLFormElement;
-              const amount = (form.elements.namedItem("amount") as HTMLInputElement)?.value || "";
-              const url = amount ? `/financing?amount=${encodeURIComponent(amount)}` : "/financing";
-              try {
-                trackBusinessEvent("financing_simulation", { amount: Number(amount) || null });
-              } catch {}
-              window.location.href = url;
-            }}
-            className="mt-6 mx-auto grid grid-cols-1 md:grid-cols-4 gap-3 max-w-3xl bg-white/90 backdrop-blur-md rounded-xl p-3 shadow-lg"
-            aria-label="Simule rapidamente seu financiamento"
-          >
-            <input
-              type="number"
-              name="amount"
-              min={10000}
-              max={250000}
-              step={1000}
-              placeholder="Valor do veículo (R$)"
-              className="md:col-span-2 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-400 focus:outline-none text-gray-900"
-              aria-label="Valor do veículo"
-            />
-            <button
-              type="submit"
-              className="bg-main-red hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg"
-            >
-              Simular agora
-            </button>
-            <a
-              href="https://wa.me/5524999037716"
-              onClick={() => {
-                handleSocialClick("whatsapp");
-                try {
-                  trackBusinessEvent("whatsapp_click", { source: "home_hero_form" });
-                } catch {}
-              }}
-              className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg text-center"
-              aria-label="Falar no WhatsApp"
-            >
-              WhatsApp
-            </a>
-          </form>
+          
           <div className="mt-4 flex justify-center gap-4">
             <Link
               to="/inventory"

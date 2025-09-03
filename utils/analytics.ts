@@ -87,11 +87,11 @@ class AnalyticsService {
     try {
       const consent = getConsent();
       if (!consent.analytics) return;
-      const Sentry = await import("@sentry/browser");
+      const Sentry = await impsort("@sentry/browser");
       const Tracing = await import("@sentry/tracing");
       Sentry.init({
         dsn: (window as any).SENTRY_DSN || "",
-        integrations: [new Tracing.BrowserTracing({ tracePropagationTargets: [/.*/] })],
+        integrations: [new Tracing.BrowserTracing({ tracePropagationTargets: [/.*/] }) as any],
         tracesSampleRate: 0.1,
         environment: (window as any).SENTRY_ENV || "production",
       });
