@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import SEOHead from "../components/SEOHead.tsx";
+import { FaCheckCircle, FaUserShield, FaRegClock, FaPercentage, FaWhatsapp } from "react-icons/fa";
 
 const ConsignadoPage: React.FC = () => {
   const [amount, setAmount] = React.useState<number>(20000);
@@ -67,114 +68,127 @@ const ConsignadoPage: React.FC = () => {
                     "A loja cobra uma comissão acordada sobre o valor de venda do veículo, somente quando a venda é concluída.",
                 },
               }
-            ],
+            ]
           })}
         </script>
       </SEOHead>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        {/* Hero */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
         >
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
-            Venda de Carro Consignado
+          <h1 className="text-4xl sm:text-5xl font-black text-gray-900 dark:text-white mb-4">
+            Carro <span className="text-red-500">Consignado</span>
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 text-lg mb-8">
-            A venda de carros em consignação é um processo em que o proprietário (consignante) deixa um
-            veículo em nossa loja (consignatário) para que realizemos a venda por um preço acordado e em um
-            prazo estipulado, sem que a propriedade seja transferida para a loja. Nós assumimos a
-            responsabilidade pela venda, conduzimos a negociação com segurança e cobramos uma comissão
-            apenas quando o negócio é concluído.
+          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Entregue seu veículo para nossa equipe vender em seu nome, com divulgação profissional e segurança. Você segue como proprietário até a venda e recebe à vista.
           </p>
+        </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">O que é?</h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Você deixa seu veículo na loja para venda com preço e prazo combinados. A propriedade
-                permanece com você até a venda ser concluída.
-              </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+          {/* O que é */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
+          >
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">O que é Consignação de Veículos?</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+              Um carro consignado é um veículo entregue à loja para que ela faça toda a divulgação, negociação e venda em nome do proprietário. O dono continua sendo o proprietário legal até a conclusão da venda e a transferência ao comprador.
+            </p>
+          </motion.div>
+
+          {/* Vantagens */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
+          >
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Vantagens</h2>
+            <ul className="space-y-3 text-gray-600 dark:text-gray-300">
+              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Divulgação profissional do veículo nos principais canais.</li>
+              <li className="flex items-start gap-3"><FaUserShield className="text-red-500 mt-1" /> Negociação e segurança jurídica conduzidas pela loja.</li>
+              <li className="flex items-start gap-3"><FaRegClock className="text-red-500 mt-1" /> Você não precisa parar sua rotina: cuidamos de todo o processo.</li>
+              <li className="flex items-start gap-3"><FaPercentage className="text-red-500 mt-1" /> Pagamento ao proprietário à vista após a venda, com comissão transparente.</li>
+            </ul>
+          </motion.div>
+
+          {/* Como funciona */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
+          >
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Como funciona na prática?</h2>
+            <ul className="list-disc pl-6 space-y-2 text-gray-600 dark:text-gray-300">
+              <li>Avaliamos o veículo e alinhamos o valor de venda e a comissão.</li>
+              <li>Assinamos um termo de consignação com condições e prazos.</li>
+              <li>Fazemos fotos, anúncios e cuidamos das visitas e propostas.</li>
+              <li>Concretizada a venda, você recebe à vista e efetuamos a transferência.</li>
+            </ul>
+          </motion.div>
+
+          {/* Por que consignar conosco */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
+          >
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Por que consignar com a JA Automóveis?</h2>
+            <ul className="space-y-3 text-gray-600 dark:text-gray-300">
+              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Equipe experiente e reputação local.</li>
+              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Fotos profissionais e anúncios em múltiplos portais.</li>
+              <li className="flex items-start gap-3"><FaCheckCircle className="text-red-500 mt-1" /> Processo transparente, contrato claro e segurança na transação.</li>
+            </ul>
+          </motion.div>
+        </div>
+        {/* FAQ */}
+        <section className="mt-12 max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Perguntas Frequentes</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Há exclusividade?</h3>
+              <p className="text-gray-600 dark:text-gray-300">Trabalhamos com termo de consignação definindo prazos e condições, normalmente com exclusividade pelo período acordado.</p>
             </div>
-
-            <div className="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Vantagens</h2>
-              <ul className="list-disc pl-5 space-y-2 text-gray-600 dark:text-gray-300">
-                <li>Divulgação profissional e qualificada</li>
-                <li>Segurança na negociação e documentação</li>
-                <li>Avaliação justa e orientação sobre preço</li>
-                <li>Você recebe e paga comissão apenas quando vender</li>
-              </ul>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Qual a comissão?</h3>
+              <p className="text-gray-600 dark:text-gray-300">A comissão é previamente acordada e somente aplicada quando a venda for concluída.</p>
             </div>
-
-            <div className="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Por que fazer?</h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Ideal para quem quer vender com comodidade e segurança, evitando riscos de golpes e
-                aumentando a visibilidade do veículo para alcançar o melhor valor.
-              </p>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">E se eu quiser retirar o carro?</h3>
+              <p className="text-gray-600 dark:text-gray-300">Você pode solicitar a retirada conforme condições do contrato; cuidamos da atualização dos anúncios.</p>
             </div>
-          </div>
-
-          {/* Como funciona a consignação */}
-          <div className="mt-10 grid md:grid-cols-5 gap-6">
-            <div className="md:col-span-3 bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Como funciona</h3>
-              <ol className="list-decimal pl-5 space-y-2 text-gray-700 dark:text-gray-200">
-                <li>Avaliamos o veículo e definimos preço e prazo em acordo com você.</li>
-                <li>O carro fica exposto e divulgado pela loja para potenciais compradores.</li>
-                <li>Realizamos a negociação, vistorias e documentos com segurança.</li>
-                <li>Venda concluída: você recebe o valor combinado menos a comissão acordada.</li>
-              </ol>
-              <div className="mt-4 p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 text-sm text-yellow-900 dark:text-yellow-200">
-                Comissão: cobrada apenas quando a venda é efetivada. Todos os custos são informados com transparência.
-              </div>
-            </div>
-
-            <div className="md:col-span-2 flex flex-col gap-4">
-              <a
-                href="https://wa.me/5524999037716?text=Olá! Quero vender meu carro na consignação"
-                className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-main-red hover:bg-red-700 text-white font-semibold shadow-lg transition-colors"
-              >
-                Avaliar meu carro (WhatsApp)
-              </a>
-              <a
-                href="/contact"
-                className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 font-semibold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              >
-                Falar com a loja
-              </a>
-            </div>
-          </div>
-
-          {/* Cross-links section */}
-          <div className="mt-12 bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              Outras opções de financiamento
-            </h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              <a
-                href="/financing"
-                className="block p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 transition-colors"
-              >
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Financiamento Tradicional</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Para quem não tem desconto em folha. Taxas competitivas e aprovação rápida.
-                </p>
-              </a>
-              <a
-                href="/consortium"
-                className="block p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 transition-colors"
-              >
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Consórcio</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Sem juros bancários. Planeje sua compra com segurança e condições especiais.
-                </p>
-              </a>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">O pagamento é seguro?</h3>
+              <p className="text-gray-600 dark:text-gray-300">Sim. O repasse é feito à vista para o proprietário, e a transferência é realizada ao comprador com toda a documentação.</p>
             </div>
           </div>
+        </section>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+        >
+          <a
+            href="https://wa.me/5524999037716?text=Olá%2C%20quero%20consignar%20meu%20carro%20na%20JA%20Automóveis."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
+          >
+            <FaWhatsapp /> Falar no WhatsApp
+          </a>
+          <span className="text-gray-500 dark:text-gray-400 text-sm">Tire suas dúvidas e solicite a avaliação do seu veículo.</span>
         </motion.div>
       </div>
     </div>

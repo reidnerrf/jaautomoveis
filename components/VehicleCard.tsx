@@ -168,7 +168,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
                   <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 transition-colors duration-300">
                     {vehicle.make} {vehicle.model}
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-gray-300">
                     {vehicle.year}{" "}
                     {vehicle.description && vehicle.description.length > 60
                       ? `${vehicle.description.substring(0, 60)}...`
@@ -177,7 +177,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
                 </div>
                 <div className="text-right">
                   <div className="flex items-baseline gap-1">
-                    <span className="text-sm text-gray-500">R$</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">R$</span>
                     <p className="text-3xl font-extrabold text-green-600 dark:text-green-400 drop-shadow-sm">
                       {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
                     </p>
@@ -240,7 +240,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: index * 0.1 }}
-        className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 cursor-pointer ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20"
+        className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 cursor-pointer ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20"
         onClick={handleCardClick}
         whileHover={{ y: -5 }}
       >
@@ -287,10 +287,10 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
         <div className="p-6">
           {/* Title */}
           <div className="mb-3">
-            <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors duration-300">
               {vehicle.make} {vehicle.model}
             </h3>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
               {vehicle.description && vehicle.description.length > 60
                 ? `${vehicle.description.substring(0, 60)}...`
                 : vehicle.description}
@@ -299,29 +299,29 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
 
           {/* Specs Grid */}
           <div className="grid grid-cols-2 gap-3 mb-4">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <FiCalendar className="w-4 h-4 text-blue-500" />
               <span>{vehicle.year}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <BsSpeedometer2 className="w-4 h-4 text-green-500" />
               <span>{formatMileage(vehicle.km)} km</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <BsFuelPump className="w-4 h-4 text-orange-500" />
               <span>{vehicle.fuel}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <FiSettings className="w-4 h-4 text-purple-500" />
               <span>{vehicle.gearbox}</span>
             </div>
           </div>
 
           {/* Price and Action */}
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-gray-100 gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700 gap-3">
             <div className="flex items-baseline gap-1">
               <span className="text-sm text-gray-500">R$</span>
-              <span className="text-xl font-bold text-green-600">
+              <span className="text-xl font-bold text-green-600 dark:text-green-400">
                 {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
               </span>
             </div>

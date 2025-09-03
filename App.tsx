@@ -15,6 +15,7 @@ const VehicleDetailPage = lazy(() => import("./pages/VehicleDetailPage.tsx"));
 const FinancingPage = lazy(() => import("./pages/FinancingPage.tsx"));
 const ConsignadoPage = lazy(() => import("./pages/ConsignadoPage.tsx"));
 const ConsortiumPage = lazy(() => import("./pages/ConsortiumPage.tsx"));
+const ConsignadoPage = lazy(() => import("./pages/ConsignadoPage.tsx"));
 const AboutPage = lazy(() => import("./pages/AboutPage.tsx"));
 const ContactPage = lazy(() => import("./pages/ContactPage.tsx"));
 const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage.tsx"));

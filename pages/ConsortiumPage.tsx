@@ -80,6 +80,22 @@ const ConsortiumPage: React.FC = () => {
                 },
               },
             ],
+
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Início",
+                "item": typeof window !== "undefined" ? window.location.origin + "/" : "/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Consórcio",
+                "item": typeof window !== "undefined" ? window.location.origin + "/consortium" : "/consortium"
+              }
+            ]
+
           })}
         </script>
       </SEOHead>

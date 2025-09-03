@@ -87,10 +87,20 @@ const FinancingPage: React.FC = () => {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
-            itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Início", item: typeof window !== "undefined" ? `${window.location.origin}/` : "" },
-              { "@type": "ListItem", position: 2, name: "Financiamento", item: typeof window !== "undefined" ? `${window.location.origin}/financing` : "" },
-            ],
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Início",
+                "item": typeof window !== "undefined" ? window.location.origin + "/" : "/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Financiamento",
+                "item": typeof window !== "undefined" ? window.location.origin + "/financing" : "/financing"
+              }
+            ]
           })}
         </script>
         <script type="application/ld+json">
@@ -377,6 +387,36 @@ const FinancingPage: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* FAQ */}
+      <section className="mt-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg"
+        >
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Perguntas Frequentes</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Documentos necessários</h3>
+              <p className="text-gray-600 dark:text-gray-300">RG/CPF, comprovantes de renda e residência; o banco pode pedir mais itens.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Entrada mínima</h3>
+              <p className="text-gray-600 dark:text-gray-300">Normalmente 10% a 30%, variando conforme análise e instituição.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Antecipação de parcelas</h3>
+              <p className="text-gray-600 dark:text-gray-300">Permitida com abatimento proporcional de juros.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Prazos</h3>
+              <p className="text-gray-600 dark:text-gray-300">Geralmente de 12 a 72 meses, conforme o banco.</p>
+            </div>
+          </div>
+        </motion.div>
+      </section>
     </div>
   );
 };

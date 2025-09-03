@@ -215,6 +215,15 @@ const HomePage: React.FC = () => {
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Início", "item": typeof window !== "undefined" ? window.location.origin + "/" : "/" }
+            ]
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "AutoDealer",
             name: "JA Automóveis",
             url:
@@ -273,6 +282,9 @@ const HomePage: React.FC = () => {
                 const el = document.querySelector("video");
                 if (el) observer.observe(el);
               }}
+              // Respect reduced motion preference
+              {...(typeof window !== "undefined" && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                ? { autoPlay: false, loop: false } : {})}
             />
           </div>
           <img
@@ -281,7 +293,8 @@ const HomePage: React.FC = () => {
             width={1920}
             height={1080}
             className="sm:hidden absolute inset-0 w-full h-full object-cover"
-            loading="lazy"
+            loading="eager"
+            fetchPriority="high"
           />
         </div>
         {/* Overlay */}
@@ -643,27 +656,69 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* PARCERIA RODOBENS */}
+      {/* CONSIGNE SEU CARRO */}
       <section className="py-12 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-6">
-            <img
-              src="https://consorcios.ababas.com.br/wp-content/uploads/2023/05/logo-rodobens.png"
-              alt="Consórcio Rodobens"
-              width={220}
-              height={60}
-              className="w-auto h-12 md:h-14 object-contain"
-              loading="lazy"
-            />
-            <div className="text-center md:text-left">
-              <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
-                Trabalhamos com Consórcio Rodobens
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="max-w-5xl mx-auto bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6"
+          >
+            <div className="flex-1 text-center sm:text-left">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Consigne seu carro com a <span className="text-red-500">JA Automóveis</span>
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">
-                Planejamento inteligente para conquistar seu veículo com segurança e condições especiais.
+              <p className="text-gray-600 dark:text-gray-300">
+                Cuidamos de todo o processo de divulgação, negociação e venda. Você segue como proprietário até a venda e recebe à vista.
               </p>
             </div>
-          </div>
+            <div>
+              <Link
+                to="/consignado"
+                className="inline-block bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-2 rounded-xl transition-colors"
+              >
+                Consignar meu carro
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* AVISO CONSÓRCIO RODOBENS */}
+      <section className="py-12 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6"
+          >
+            <img
+              src="https://consorcios.ababas.com.br/wp-content/uploads/2023/05/logo-rodobens.png"
+              alt="Rodobens Consórcios"
+              className="w-[200px] sm:w-[240px] object-contain"
+              loading="lazy"
+            />
+            <div className="text-center sm:text-left">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Trabalhamos com <span className="text-red-500">Consórcio Rodobens</span>
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Planeje a compra do seu veículo com segurança e condições diferenciadas. Fale conosco e faça sua simulação.
+              </p>
+              <div className="mt-4">
+                <Link
+                  to="/consortium"
+                  className="inline-block bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-2 rounded-xl transition-colors"
+                >
+                  Saiba mais
+                </Link>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 

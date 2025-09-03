@@ -227,6 +227,32 @@ const VehicleDetailPage: React.FC = () => {
           ],
         })}</script>
         <script type="application/ld+json">{JSON.stringify(generateStructuredData())}</script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Início",
+                "item": typeof window !== "undefined" ? window.location.origin + "/" : "/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Estoque",
+                "item": typeof window !== "undefined" ? window.location.origin + "/inventory" : "/inventory"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": vehicle.name,
+                "item": typeof window !== "undefined" ? window.location.origin + `/vehicle/${vehicle.id}` : `/vehicle/${vehicle.id}`
+              }
+            ]
+          })}
+        </script>
         <link
           rel="alternate"
           hrefLang="pt-BR"

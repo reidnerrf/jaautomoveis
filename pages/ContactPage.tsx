@@ -11,7 +11,18 @@ const ContactPage: React.FC = () => {
         title={generatePageSEO("contact").title}
         description={generatePageSEO("contact").description}
         keywords={generatePageSEO("contact").keywords}
-      />
+      >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Início", "item": typeof window !== "undefined" ? window.location.origin + "/" : "/" },
+              { "@type": "ListItem", "position": 2, "name": "Contato", "item": typeof window !== "undefined" ? window.location.origin + "/contact" : "/contact" }
+            ]
+          })}
+        </script>
+      </SEOHead>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Título e subtítulo */}
         <motion.div

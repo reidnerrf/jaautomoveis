@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { GoogleReview } from "../types.ts";
 import { FaStar, FaGoogle } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 interface GoogleReviewsCarouselProps {
   reviews: GoogleReview[];
@@ -9,15 +9,17 @@ interface GoogleReviewsCarouselProps {
 
 const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
 
   const nextReview = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % reviews.length);
   }, [reviews.length]);
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
     const slideInterval = setInterval(nextReview, 6000);
     return () => clearInterval(slideInterval);
-  }, [nextReview]);
+  }, [nextReview, prefersReducedMotion]);
 
   if (!reviews || reviews.length === 0) return null;
 
@@ -28,10 +30,10 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
       <AnimatePresence mode="wait">
         <motion.div
           key={currentReview.id || `${currentReview.reviewerName}-${currentIndex}`}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9 }}
+          animate={prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }}
+          exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9 }}
+          transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5, ease: "easeOut" }}
           className="relative bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center"
         >
           {/* Logo Google */}
@@ -44,8 +46,8 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
             src={currentReview.avatarUrl || "/assets/semavatar.png"}
             alt={currentReview.reviewerName}
             className="w-24 h-24 rounded-full mb-4 border-4 border-yellow-400 shadow-md object-cover bg-gray-100"
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.3 }}
+            whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.3 }}
             onError={(e) => {
               const target = e.currentTarget as HTMLImageElement;
               if (!target.src.includes("/assets/semavatar.png")) {
@@ -59,9 +61,9 @@ const GoogleReviewsCarousel: React.FC<GoogleReviewsCarouselProps> = ({ reviews }
             {["s1", "s2", "s3", "s4", "s5"].map((key, idx) => (
               <motion.div
                 key={`star-${key}`}
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: -5 }}
+                animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={prefersReducedMotion ? { duration: 0 } : { delay: idx * 0.1 }}
               >
                 <FaStar />
               </motion.div>
