@@ -21,9 +21,9 @@ const ConsignadoPage: React.FC = () => {
   return (
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
       <SEOHead
-        title="Crédito Consignado | JA Automóveis"
-        description="Entenda o que é crédito consignado, suas vantagens e por que fazer seu consignado com a JA Automóveis."
-        keywords="consignado, crédito consignado, desconto em folha, taxas baixas, JA Automóveis"
+        title="Venda de Carro Consignado | JA Automóveis"
+        description="Entenda como funciona a venda de carros em consignação: você deixa seu veículo na loja, nós vendemos e você recebe com segurança e transparência."
+        keywords="consignado, venda consignada, consignação de veículos, vender carro consignado, JA Automóveis"
       >
         <script type="application/ld+json">
           {JSON.stringify({
@@ -42,31 +42,31 @@ const ConsignadoPage: React.FC = () => {
             mainEntity: [
               {
                 "@type": "Question",
-                name: "O que é crédito consignado?",
+                name: "O que é venda de carro consignado?",
                 acceptedAnswer: {
                   "@type": "Answer",
                   text:
-                    "É um empréstimo com parcelas descontadas diretamente da folha de pagamento ou benefício, oferecendo taxas menores e prazos maiores.",
+                    "É quando o proprietário deixa o veículo na loja (consignatário) para que esta realize a venda por um valor e prazo acordados, sem transferência de propriedade para a loja.",
                 },
               },
               {
                 "@type": "Question",
-                name: "Quem pode contratar?",
+                name: "Quais as vantagens da consignação?",
                 acceptedAnswer: {
                   "@type": "Answer",
                   text:
-                    "Servidores públicos, aposentados e pensionistas do INSS e colaboradores de empresas conveniadas.",
+                    "Loja cuida da divulgação, negociação, segurança e documentação; você evita golpes, ganha visibilidade e negocia melhor, pagando uma comissão sobre a venda.",
                 },
               },
               {
                 "@type": "Question",
-                name: "Quais as vantagens?",
+                name: "Como funciona a comissão?",
                 acceptedAnswer: {
                   "@type": "Answer",
                   text:
-                    "Taxas reduzidas, desconto automático em folha (menos risco de atraso), prazos maiores e menos burocracia.",
+                    "A loja cobra uma comissão acordada sobre o valor de venda do veículo, somente quando a venda é concluída.",
                 },
-              },
+              }
             ],
           })}
         </script>
@@ -80,103 +80,71 @@ const ConsignadoPage: React.FC = () => {
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12"
         >
           <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
-            Crédito Consignado
+            Venda de Carro Consignado
           </h1>
           <p className="text-gray-600 dark:text-gray-300 text-lg mb-8">
-            O crédito consignado é uma modalidade de empréstimo em que as parcelas são descontadas
-            diretamente da sua folha de pagamento ou benefício. Por ter menor risco para as instituições,
-            costuma oferecer taxas mais baixas e prazos mais longos.
+            A venda de carros em consignação é um processo em que o proprietário (consignante) deixa um
+            veículo em nossa loja (consignatário) para que realizemos a venda por um preço acordado e em um
+            prazo estipulado, sem que a propriedade seja transferida para a loja. Nós assumimos a
+            responsabilidade pela venda, conduzimos a negociação com segurança e cobramos uma comissão
+            apenas quando o negócio é concluído.
           </p>
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">O que é?</h2>
               <p className="text-gray-600 dark:text-gray-300">
-                Empréstimo com pagamento automático via desconto em folha para servidores públicos,
-                aposentados e pensionistas do INSS, além de colaboradores de empresas conveniadas.
+                Você deixa seu veículo na loja para venda com preço e prazo combinados. A propriedade
+                permanece com você até a venda ser concluída.
               </p>
             </div>
 
             <div className="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Vantagens</h2>
               <ul className="list-disc pl-5 space-y-2 text-gray-600 dark:text-gray-300">
-                <li>Taxas de juros reduzidas</li>
-                <li>Desconto direto em folha (menos risco de atraso)</li>
-                <li>Prazos maiores e parcelas que cabem no bolso</li>
-                <li>Menos burocracia e aprovação mais ágil</li>
+                <li>Divulgação profissional e qualificada</li>
+                <li>Segurança na negociação e documentação</li>
+                <li>Avaliação justa e orientação sobre preço</li>
+                <li>Você recebe e paga comissão apenas quando vender</li>
               </ul>
             </div>
 
             <div className="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Por que fazer?</h2>
               <p className="text-gray-600 dark:text-gray-300">
-                Ideal para quem busca organizar as finanças, trocar dívidas caras por uma opção mais
-                barata e previsível, ou viabilizar um projeto com planejamento e segurança.
+                Ideal para quem quer vender com comodidade e segurança, evitando riscos de golpes e
+                aumentando a visibilidade do veículo para alcançar o melhor valor.
               </p>
             </div>
           </div>
 
-          {/* Simulador simples */}
+          {/* Como funciona a consignação */}
           <div className="mt-10 grid md:grid-cols-5 gap-6">
             <div className="md:col-span-3 bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Simulador Consignado</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <label className="block text-sm text-gray-600 dark:text-gray-300">
-                  Valor (R$)
-                  <input type="number" min={1000} max={100000} step={500}
-                         value={amount}
-                         onChange={(e) => setAmount(Number(e.target.value))}
-                         className="mt-1 w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-400" />
-                </label>
-                <label className="block text-sm text-gray-600 dark:text-gray-300">
-                  Prazo (meses)
-                  <input type="number" min={6} max={96} step={1}
-                         value={term}
-                         onChange={(e) => setTerm(Number(e.target.value))}
-                         className="mt-1 w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-400" />
-                </label>
-                <label className="block text-sm text-gray-600 dark:text-gray-300">
-                  Renda (R$)
-                  <input type="number" min={1000} max={30000} step={100}
-                         value={income}
-                         onChange={(e) => setIncome(Number(e.target.value))}
-                         className="mt-1 w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-400" />
-                </label>
-                <label className="block text-sm text-gray-600 dark:text-gray-300">
-                  Margem (% da renda)
-                  <input type="number" min={5} max={40} step={1}
-                         value={margin}
-                         onChange={(e) => setMargin(Number(e.target.value))}
-                         className="mt-1 w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-400" />
-                </label>
-              </div>
-              <div className="mt-4 text-sm text-gray-700 dark:text-gray-200">
-                <p>Parcela estimada: <span className="font-bold">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(simulate.monthly || 0)}</span></p>
-                <p>Limite da margem: <span className="font-bold">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(simulate.maxInstallment || 0)}</span></p>
-                <p className={`mt-1 font-semibold ${simulate.fits ? "text-green-600" : "text-red-600"}`}>
-                  {simulate.fits ? "Dentro da margem" : "Acima da margem"}
-                </p>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Como funciona</h3>
+              <ol className="list-decimal pl-5 space-y-2 text-gray-700 dark:text-gray-200">
+                <li>Avaliamos o veículo e definimos preço e prazo em acordo com você.</li>
+                <li>O carro fica exposto e divulgado pela loja para potenciais compradores.</li>
+                <li>Realizamos a negociação, vistorias e documentos com segurança.</li>
+                <li>Venda concluída: você recebe o valor combinado menos a comissão acordada.</li>
+              </ol>
+              <div className="mt-4 p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 text-sm text-yellow-900 dark:text-yellow-200">
+                Comissão: cobrada apenas quando a venda é efetivada. Todos os custos são informados com transparência.
               </div>
             </div>
 
             <div className="md:col-span-2 flex flex-col gap-4">
               <a
-                href="https://wa.me/5524999037716"
+                href="https://wa.me/5524999037716?text=Olá! Quero vender meu carro na consignação"
                 className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-main-red hover:bg-red-700 text-white font-semibold shadow-lg transition-colors"
               >
-                Falar no WhatsApp
+                Avaliar meu carro (WhatsApp)
               </a>
               <a
-                href="/financing"
+                href="/contact"
                 className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 font-semibold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
-                Ver opções de Financiamento
-              </a>
-              <a
-                href="/consortium"
-                className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 font-semibold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              >
-                Conhecer Consórcio
+                Falar com a loja
               </a>
             </div>
           </div>
