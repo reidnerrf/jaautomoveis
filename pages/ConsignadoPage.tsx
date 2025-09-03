@@ -3,6 +3,21 @@ import { motion } from "framer-motion";
 import SEOHead from "../components/SEOHead.tsx";
 
 const ConsignadoPage: React.FC = () => {
+  const [amount, setAmount] = React.useState<number>(20000);
+  const [term, setTerm] = React.useState<number>(48);
+  const [margin, setMargin] = React.useState<number>(30); // % da renda comprometida
+  const [income, setIncome] = React.useState<number>(4000);
+  const monthlyRate = 1.2; // % ao mês (exemplo)
+
+  const simulate = React.useMemo(() => {
+    const maxInstallment = (income * (margin / 100)) || 0;
+    const monthly = amount > 0 && term > 0
+      ? (amount * (monthlyRate / 100)) / (1 - Math.pow(1 + monthlyRate / 100, -term))
+      : 0;
+    const fits = monthly <= maxInstallment;
+    return { monthly, maxInstallment, fits };
+  }, [amount, term, margin, income]);
+
   return (
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
       <SEOHead
@@ -101,7 +116,71 @@ const ConsignadoPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center gap-4">
+          {/* Simulador simples */}
+          <div className="mt-10 grid md:grid-cols-5 gap-6">
+            <div className="md:col-span-3 bg-gray-50 dark:bg-gray-900/40 rounded-xl p-6">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Simulador Consignado</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <label className="block text-sm text-gray-600 dark:text-gray-300">
+                  Valor (R$)
+                  <input type="number" min={1000} max={100000} step={500}
+                         value={amount}
+                         onChange={(e) => setAmount(Number(e.target.value))}
+                         className="mt-1 w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-400" />
+                </label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300">
+                  Prazo (meses)
+                  <input type="number" min={6} max={96} step={1}
+                         value={term}
+                         onChange={(e) => setTerm(Number(e.target.value))}
+                         className="mt-1 w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-400" />
+                </label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300">
+                  Renda (R$)
+                  <input type="number" min={1000} max={30000} step={100}
+                         value={income}
+                         onChange={(e) => setIncome(Number(e.target.value))}
+                         className="mt-1 w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-400" />
+                </label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300">
+                  Margem (% da renda)
+                  <input type="number" min={5} max={40} step={1}
+                         value={margin}
+                         onChange={(e) => setMargin(Number(e.target.value))}
+                         className="mt-1 w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-400" />
+                </label>
+              </div>
+              <div className="mt-4 text-sm text-gray-700 dark:text-gray-200">
+                <p>Parcela estimada: <span className="font-bold">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(simulate.monthly || 0)}</span></p>
+                <p>Limite da margem: <span className="font-bold">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(simulate.maxInstallment || 0)}</span></p>
+                <p className={`mt-1 font-semibold ${simulate.fits ? "text-green-600" : "text-red-600"}`}>
+                  {simulate.fits ? "Dentro da margem" : "Acima da margem"}
+                </p>
+              </div>
+            </div>
+
+            <div className="md:col-span-2 flex flex-col gap-4">
+              <a
+                href="https://wa.me/5524999037716"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-main-red hover:bg-red-700 text-white font-semibold shadow-lg transition-colors"
+              >
+                Falar no WhatsApp
+              </a>
+              <a
+                href="/financing"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 font-semibold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                Ver opções de Financiamento
+              </a>
+              <a
+                href="/consortium"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 font-semibold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                Conhecer Consórcio
+              </a>
+            </div>
+          </div>
+
             <a
               href="https://wa.me/5524999037716"
               className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-main-red hover:bg-red-700 text-white font-semibold shadow-lg transition-colors"

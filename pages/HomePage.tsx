@@ -63,6 +63,7 @@ const HomePage: React.FC = () => {
   const [googleReviews, setGoogleReviews] = useState<GoogleReview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [personalized, setPersonalized] = useState<any[]>([]);
+  const [clientsServed, setClientsServed] = useState<number>(542);
 
   useEffect(() => {
     // Recomendações personalizadas
@@ -84,6 +85,23 @@ const HomePage: React.FC = () => {
     };
     fetchRecs();
     return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    // contador dinâmico simples (mock/animado). Em prod, pode vir do backend
+    let mounted = true;
+    const base = 542;
+    const extra = Math.floor((Date.now() / 1000 / 60 / 60) % 200);
+    const value = base + extra;
+    if (mounted) setClientsServed(value);
+    const id = window.setInterval(() => {
+      const extraNow = Math.floor((Date.now() / 1000 / 60 / 60) % 200);
+      setClientsServed(base + extraNow);
+    }, 60000);
+    return () => {
+      mounted = false;
+      window.clearInterval(id);
+    };
   }, []);
 
   useEffect(() => {
@@ -334,6 +352,28 @@ const HomePage: React.FC = () => {
           <VehicleCarousel vehicles={personalized as any} />
         </section>
       )}
+
+      {/* PROVAS SOCIAIS */}
+      <section className="py-12 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center shadow">
+              <p className="text-4xl font-extrabold text-main-red">
+                +{new Intl.NumberFormat("pt-BR").format(clientsServed)}
+              </p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Clientes atendidos</p>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center shadow">
+              <p className="text-4xl font-extrabold text-green-600">Garantia</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Veículos com procedência</p>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center shadow">
+              <p className="text-4xl font-extrabold text-blue-600">4.8★</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Avaliação no Google</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* DESTAQUES */}
       <section className="py-24 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
