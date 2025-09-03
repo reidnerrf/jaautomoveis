@@ -217,6 +217,15 @@ const VehicleDetailPage: React.FC = () => {
         url={`/vehicle/${vehicle.id}`}
         type="product"
       >
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Início", item: typeof window !== "undefined" ? `${window.location.origin}/` : "" },
+            { "@type": "ListItem", position: 2, name: "Estoque", item: typeof window !== "undefined" ? `${window.location.origin}/inventory` : "" },
+            { "@type": "ListItem", position: 3, name: `${vehicle.make} ${vehicle.model} ${vehicle.year}` , item: typeof window !== "undefined" ? `${window.location.origin}/vehicle/${vehicle.id}` : "" },
+          ],
+        })}</script>
         <script type="application/ld+json">{JSON.stringify(generateStructuredData())}</script>
         <link
           rel="alternate"

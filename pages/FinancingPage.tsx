@@ -82,7 +82,44 @@ const FinancingPage: React.FC = () => {
         title={generatePageSEO("financing").title}
         description={generatePageSEO("financing").description}
         keywords={generatePageSEO("financing").keywords}
-      />
+      >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Início", item: typeof window !== "undefined" ? `${window.location.origin}/` : "" },
+              { "@type": "ListItem", position: 2, name: "Financiamento", item: typeof window !== "undefined" ? `${window.location.origin}/financing` : "" },
+            ],
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "Como simular o financiamento?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text:
+                    "Ajuste valor, entrada, prazo e taxa no simulador para ver a parcela estimada e o custo total.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Qual a diferença para consórcio?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text:
+                    "No financiamento há juros; no consórcio não há juros, mas taxa de administração e contemplação por sorteio ou lance.",
+                },
+              },
+            ],
+          })}
+        </script>
+      </SEOHead>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
           {/* Simulador */}

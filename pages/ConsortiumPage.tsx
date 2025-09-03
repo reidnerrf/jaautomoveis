@@ -45,7 +45,44 @@ const ConsortiumPage: React.FC = () => {
         title="Consórcio | JA Automóveis"
         description="Planeje sua compra com consórcio: sem juros bancários, taxas reduzidas e segurança."
         keywords="consórcio, carta de crédito, sem juros, taxas administrativas, JA Automóveis"
-      />
+      >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Início", item: typeof window !== "undefined" ? `${window.location.origin}/` : "" },
+              { "@type": "ListItem", position: 2, name: "Consórcio", item: typeof window !== "undefined" ? `${window.location.origin}/consortium` : "" },
+            ],
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "Como funciona o consórcio?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text:
+                    "Um grupo de pessoas contribui mensalmente para formar crédito e, por sorteio ou lance, é contemplado com a carta para compra do bem.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Tem juros?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text:
+                    "Não há juros como no financiamento; há taxa de administração e possíveis seguros conforme o plano.",
+                },
+              },
+            ],
+          })}
+        </script>
+      </SEOHead>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
           {/* Simulador */}

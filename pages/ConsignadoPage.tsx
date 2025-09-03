@@ -9,7 +9,53 @@ const ConsignadoPage: React.FC = () => {
         title="Crédito Consignado | JA Automóveis"
         description="Entenda o que é crédito consignado, suas vantagens e por que fazer seu consignado com a JA Automóveis."
         keywords="consignado, crédito consignado, desconto em folha, taxas baixas, JA Automóveis"
-      />
+      >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Início", item: typeof window !== "undefined" ? `${window.location.origin}/` : "" },
+              { "@type": "ListItem", position: 2, name: "Consignado", item: typeof window !== "undefined" ? `${window.location.origin}/consignado` : "" },
+            ],
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "O que é crédito consignado?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text:
+                    "É um empréstimo com parcelas descontadas diretamente da folha de pagamento ou benefício, oferecendo taxas menores e prazos maiores.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Quem pode contratar?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text:
+                    "Servidores públicos, aposentados e pensionistas do INSS e colaboradores de empresas conveniadas.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Quais as vantagens?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text:
+                    "Taxas reduzidas, desconto automático em folha (menos risco de atraso), prazos maiores e menos burocracia.",
+                },
+              },
+            ],
+          })}
+        </script>
+      </SEOHead>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         <motion.div
