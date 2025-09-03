@@ -282,6 +282,9 @@ const VehicleDetailPage: React.FC = () => {
                     key={`${img}-${index}`}
                     src={`${img}${img.includes("?") ? "&" : "?"}v=${encodeURIComponent(vehicle.updatedAt || "")}`}
                     alt={`${vehicle.name} thumbnail ${index + 1}`}
+                    width={96}
+                    height={80}
+                    loading="lazy"
                     className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${index === currentImageIndex ? "border-main-red" : "border-transparent"} transition`}
                     onClick={() => setCurrentImageIndex(index)}
                   />

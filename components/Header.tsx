@@ -75,6 +75,8 @@ const Header: React.FC = () => {
             <motion.img
               src="/assets/logo.png"
               alt="JA Automóveis Logo"
+              width={112}
+              height={56}
               className="h-14 w-auto transition-transform group-hover:scale-105 drop-shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
               whileHover={{ rotate: -2, scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

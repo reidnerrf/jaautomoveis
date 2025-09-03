@@ -256,6 +256,8 @@ const HomePage: React.FC = () => {
           <img
             src="/assets/homepageabout.webp"
             alt="JA Automóveis"
+            width={1920}
+            height={1080}
             className="sm:hidden absolute inset-0 w-full h-full object-cover"
             loading="lazy"
           />
