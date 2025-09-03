@@ -24,6 +24,7 @@ const getConsent = () => {
 class AnalyticsService {
   private socket: Socket | null = null;
   private gaInitialized = false;
+  private sentryInitialized = false;
 
   constructor() {
     try {
@@ -31,6 +32,8 @@ class AnalyticsService {
       // Page views are emitted from MainLayout to avoid double counting here
       (window as any).trackBusinessEvent = this.trackBusinessEvent.bind(this);
       this.initGA();
+      this.initSentry();
+      this.initWebVitals();
     } catch (e) {
       console.error("Analytics init error", e);
     }
@@ -77,6 +80,45 @@ class AnalyticsService {
         this.gaInitialized = true;
       }
     } catch {}
+  }
+
+  private async initSentry() {
+    if (this.sentryInitialized) return;
+    try {
+      const consent = getConsent();
+      if (!consent.analytics) return;
+      const Sentry = await import("@sentry/browser");
+      const Tracing = await import("@sentry/tracing");
+      Sentry.init({
+        dsn: (window as any).SENTRY_DSN || "",
+        integrations: [new Tracing.BrowserTracing({ tracePropagationTargets: [/.*/] })],
+        tracesSampleRate: 0.1,
+        environment: (window as any).SENTRY_ENV || "production",
+      });
+      this.sentryInitialized = true;
+    } catch {
+      // ignore
+    }
+  }
+
+  private async initWebVitals() {
+    try {
+      const consent = getConsent();
+      if (!consent.analytics) return;
+      // Dynamically import web-vitals to avoid bundle bloat
+      const { onCLS, onFID, onLCP, onINP, onTTFB } = await import("web-vitals");
+      const report = (name: string, value: number) => {
+        this.trackUserAction("web_vital", "performance", `${name}:${Math.round(value)}`);
+      };
+      onCLS((m) => report("CLS", m.value));
+      onFID((m) => report("FID", m.value));
+      onLCP((m) => report("LCP", m.value));
+      // onINP may not exist in older versions; guard optional chaining
+      try { onINP?.((m: any) => report("INP", m.value)); } catch {}
+      onTTFB((m) => report("TTFB", m.value));
+    } catch {
+      // ignore
+    }
   }
 
   // Track user interactions (respeita consentimento)

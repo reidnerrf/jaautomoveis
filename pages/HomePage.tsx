@@ -63,6 +63,7 @@ const HomePage: React.FC = () => {
   const [googleReviews, setGoogleReviews] = useState<GoogleReview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [personalized, setPersonalized] = useState<any[]>([]);
+  const [clientsServed, setClientsServed] = useState<number>(542);
 
   useEffect(() => {
     // Recomendações personalizadas
@@ -84,6 +85,23 @@ const HomePage: React.FC = () => {
     };
     fetchRecs();
     return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    // contador dinâmico simples (mock/animado). Em prod, pode vir do backend
+    let mounted = true;
+    const base = 542;
+    const extra = Math.floor((Date.now() / 1000 / 60 / 60) % 200);
+    const value = base + extra;
+    if (mounted) setClientsServed(value);
+    const id = window.setInterval(() => {
+      const extraNow = Math.floor((Date.now() / 1000 / 60 / 60) % 200);
+      setClientsServed(base + extraNow);
+    }, 60000);
+    return () => {
+      mounted = false;
+      window.clearInterval(id);
+    };
   }, []);
 
   useEffect(() => {
@@ -223,6 +241,10 @@ const HomePage: React.FC = () => {
               postalCode: "27511-110",
               addressCountry: "BR",
             },
+            openingHoursSpecification: [
+              { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday"], opens: "09:00", closes: "18:00" },
+              { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "09:00", closes: "13:00" }
+            ],
             sameAs: ["https://www.instagram.com/_jaautomoveis/", "https://wa.me/5524999037716"],
           })}
         </script>
@@ -268,6 +290,8 @@ const HomePage: React.FC = () => {
           <img
             src="/assets/homepageabout.webp"
             alt="JA Automóveis"
+            width={1920}
+            height={1080}
             className="sm:hidden absolute inset-0 w-full h-full object-cover"
             loading="eager"
             fetchPriority="high"
@@ -283,7 +307,47 @@ const HomePage: React.FC = () => {
           <p className="mt-4 text-lg md:text-xl text-gray-200 max-w-3xl mx-auto">
             Ofertas imperdíveis, atendimento de qualidade e as melhores condições do mercado.
           </p>
-          <div className="mt-6 flex justify-center gap-4">
+          {/* Mini-form acima da dobra */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const form = e.currentTarget as HTMLFormElement;
+              const amount = (form.elements.namedItem("amount") as HTMLInputElement)?.value || "";
+              const url = amount ? `/financing?amount=${encodeURIComponent(amount)}` : "/financing";
+              try {
+                trackBusinessEvent("financing_simulation", { amount: Number(amount) || null });
+              } catch {}
+              window.location.href = url;
+            }}
+            className="mt-6 mx-auto grid grid-cols-1 md:grid-cols-4 gap-3 max-w-3xl bg-white/90 backdrop-blur-md rounded-xl p-3 shadow-lg"
+            aria-label="Simule rapidamente seu financiamento"
+          >
+            <input
+              type="number"
+              name="amount"
+              min={10000}
+              max={250000}
+              step={1000}
+              placeholder="Valor do veículo (R$)"
+              className="md:col-span-2 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-400 focus:outline-none text-gray-900"
+              aria-label="Valor do veículo"
+            />
+            <button
+              type="submit"
+              className="bg-main-red hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg"
+            >
+              Simular agora
+            </button>
+            <a
+              href="https://wa.me/5524999037716"
+              onClick={() => { handleSocialClick("whatsapp"); try { trackBusinessEvent("whatsapp_click", { source: "home_hero_form" }); } catch {} }}
+              className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg text-center"
+              aria-label="Falar no WhatsApp"
+            >
+              WhatsApp
+            </a>
+          </form>
+          <div className="mt-4 flex justify-center gap-4">
             <Link
               to="/inventory"
               className="bg-main-red hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg"
@@ -292,7 +356,7 @@ const HomePage: React.FC = () => {
             </Link>
             <a
               href="https://wa.me/5524999037716"
-              onClick={() => handleSocialClick("whatsapp")}
+              onClick={() => { handleSocialClick("whatsapp"); try { trackBusinessEvent("whatsapp_click", { source: "home_hero_cta" }); } catch {} }}
               className="bg-white/90 hover:bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg shadow-lg"
             >
               Falar no WhatsApp
@@ -308,6 +372,28 @@ const HomePage: React.FC = () => {
           <VehicleCarousel vehicles={personalized as any} />
         </section>
       )}
+
+      {/* PROVAS SOCIAIS */}
+      <section className="py-12 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center shadow">
+              <p className="text-4xl font-extrabold text-main-red">
+                +{new Intl.NumberFormat("pt-BR").format(clientsServed)}
+              </p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Clientes atendidos</p>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center shadow">
+              <p className="text-4xl font-extrabold text-green-600">Garantia</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Veículos com procedência</p>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center shadow">
+              <p className="text-4xl font-extrabold text-blue-600">4.8★</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Avaliação no Google</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* DESTAQUES */}
       <section className="py-24 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">

@@ -13,6 +13,7 @@ const HomePage = lazy(() => import("./pages/HomePage.tsx"));
 const InventoryPage = lazy(() => import("./pages/InventoryPage.tsx"));
 const VehicleDetailPage = lazy(() => import("./pages/VehicleDetailPage.tsx"));
 const FinancingPage = lazy(() => import("./pages/FinancingPage.tsx"));
+const ConsignadoPage = lazy(() => import("./pages/ConsignadoPage.tsx"));
 const ConsortiumPage = lazy(() => import("./pages/ConsortiumPage.tsx"));
 const ConsignadoPage = lazy(() => import("./pages/ConsignadoPage.tsx"));
 const AboutPage = lazy(() => import("./pages/AboutPage.tsx"));

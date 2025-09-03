@@ -1,72 +1,72 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { FaCheckCircle, FaUserShield, FaRegClock, FaPercentage, FaWhatsapp } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
+import { FaCheckCircle, FaUserShield, FaRegClock, FaPercentage, FaWhatsapp } from "react-icons/fa";
 
 const ConsignadoPage: React.FC = () => {
+  const [amount, setAmount] = React.useState<number>(20000);
+  const [term, setTerm] = React.useState<number>(48);
+  const [margin, setMargin] = React.useState<number>(30); // % da renda comprometida
+  const [income, setIncome] = React.useState<number>(4000);
+  const monthlyRate = 1.2; // % ao mês (exemplo)
+
+  const simulate = React.useMemo(() => {
+    const maxInstallment = (income * (margin / 100)) || 0;
+    const monthly = amount > 0 && term > 0
+      ? (amount * (monthlyRate / 100)) / (1 - Math.pow(1 + monthlyRate / 100, -term))
+      : 0;
+    const fits = monthly <= maxInstallment;
+    return { monthly, maxInstallment, fits };
+  }, [amount, term, margin, income]);
+
   return (
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
       <SEOHead
-        title="Carro Consignado | JA Automóveis"
-        description="Venda seu carro em consignação com segurança, divulgação profissional e pagamento à vista após a venda. Você permanece como proprietário até a transferência."
-        keywords="carro consignado, venda em consignação, consignação de veículos, vender carro, JA Automóveis"
+        title="Venda de Carro Consignado | JA Automóveis"
+        description="Entenda como funciona a venda de carros em consignação: você deixa seu veículo na loja, nós vendemos e você recebe com segurança e transparência."
+        keywords="consignado, venda consignada, consignação de veículos, vender carro consignado, JA Automóveis"
       >
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": "O que é carro consignado?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "É quando o proprietário entrega o carro à loja para divulgação, negociação e venda em seu nome. O dono segue como proprietário legal até a conclusão da venda."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Como funciona o pagamento?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Após a venda, o proprietário recebe o valor acordado à vista e a loja retém a comissão pelo serviço conforme contrato."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Quais documentos são necessários?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Documento do veículo (CRLV/CRV digital), documento com foto, comprovante de endereço e eventuais autorizações do proprietário."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Quem transfere a propriedade?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "A transferência é feita no momento da venda para o comprador. Até lá, o proprietário original continua como dono legal."
-                }
-              }
-            ]
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Início", item: typeof window !== "undefined" ? `${window.location.origin}/` : "" },
+              { "@type": "ListItem", position: 2, name: "Consignado", item: typeof window !== "undefined" ? `${window.location.origin}/consignado` : "" },
+            ],
           })}
         </script>
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
+            "@type": "FAQPage",
+            mainEntity: [
               {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Início",
-                "item": typeof window !== "undefined" ? window.location.origin + "/" : "/"
+                "@type": "Question",
+                name: "O que é venda de carro consignado?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text:
+                    "É quando o proprietário deixa o veículo na loja (consignatário) para que esta realize a venda por um valor e prazo acordados, sem transferência de propriedade para a loja.",
+                },
               },
               {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Consignado",
-                "item": typeof window !== "undefined" ? window.location.origin + "/consignado" : "/consignado"
+                "@type": "Question",
+                name: "Quais as vantagens da consignação?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text:
+                    "Loja cuida da divulgação, negociação, segurança e documentação; você evita golpes, ganha visibilidade e negocia melhor, pagando uma comissão sobre a venda.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Como funciona a comissão?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text:
+                    "A loja cobra uma comissão acordada sobre o valor de venda do veículo, somente quando a venda é concluída.",
+                },
               }
             ]
           })}
