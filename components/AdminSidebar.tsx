@@ -1,6 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { FiGrid, FiList, FiLogOut } from "react-icons/fi";
+import { 
+  FiGrid, 
+  FiList, 
+  FiLogOut, 
+  FiBarChart3, 
+  FiSettings, 
+  FiUsers, 
+  FiMessageSquare,
+  FiTrendingUp,
+  FiFileText,
+  FiShield
+} from "react-icons/fi";
 import { useAuth } from "../hooks/useAuth.tsx";
 
 interface AdminSidebarProps {
@@ -99,7 +110,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
       <div className="flex flex-col overflow-y-auto flex-grow">
         <nav className="mt-6 px-4 flex-grow">
           <h3 className="mb-4 ml-2 text-xs font-semibold tracking-wider text-gray-500 uppercase">
-            Menu
+            Menu Principal
           </h3>
           <ul className="flex flex-col gap-2">
             <li>
@@ -112,6 +123,60 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
               <NavLink to="/admin/vehicles" className={getNavLinkClass}>
                 <FiList className="text-lg" />
                 Veículos
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/admin/analytics" className={getNavLinkClass}>
+                <FiBarChart3 className="text-lg" />
+                Analytics
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/admin/performance" className={getNavLinkClass}>
+                <FiTrendingUp className="text-lg" />
+                Performance
+              </NavLink>
+            </li>
+          </ul>
+
+          <h3 className="mb-4 ml-2 mt-8 text-xs font-semibold tracking-wider text-gray-500 uppercase">
+            Gestão
+          </h3>
+          <ul className="flex flex-col gap-2">
+            <li>
+              <NavLink to="/admin/users" className={getNavLinkClass}>
+                <FiUsers className="text-lg" />
+                Usuários
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/admin/messages" className={getNavLinkClass}>
+                <FiMessageSquare className="text-lg" />
+                Mensagens
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/admin/reports" className={getNavLinkClass}>
+                <FiFileText className="text-lg" />
+                Relatórios
+              </NavLink>
+            </li>
+          </ul>
+
+          <h3 className="mb-4 ml-2 mt-8 text-xs font-semibold tracking-wider text-gray-500 uppercase">
+            Sistema
+          </h3>
+          <ul className="flex flex-col gap-2">
+            <li>
+              <NavLink to="/admin/settings" className={getNavLinkClass}>
+                <FiSettings className="text-lg" />
+                Configurações
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/admin/security" className={getNavLinkClass}>
+                <FiShield className="text-lg" />
+                Segurança
               </NavLink>
             </li>
           </ul>

@@ -11,6 +11,15 @@ import {
   FiActivity,
   FiHeart,
   FiTrash2,
+  FiUsers,
+  FiMessageSquare,
+  FiBarChart3,
+  FiRefreshCw,
+  FiDownload,
+  FiSettings,
+  FiAlertCircle,
+  FiCheckCircle,
+  FiClock,
 } from "react-icons/fi";
 import {
   AreaChart,
@@ -20,6 +29,13 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
 } from "recharts";
 import { Vehicle } from "../types.ts";
 import { useAuth } from "../hooks/useAuth.tsx";
@@ -42,13 +58,30 @@ const AdminDashboardPage: React.FC = () => {
   });
   const [dailyViews, setDailyViews] = useState<Array<{ date: string; views: number }>>([]);
   const [purging, setPurging] = useState(false);
+  const [systemHealth, setSystemHealth] = useState({
+    status: 'healthy',
+    uptime: 0,
+    memoryUsage: 0,
+    cpuUsage: 0,
+    activeUsers: 0,
+  });
+  const [recentActivity, setRecentActivity] = useState<Array<{
+    id: string;
+    type: string;
+    message: string;
+    timestamp: string;
+    status: 'success' | 'warning' | 'error';
+  }>>([]);
+  const [vehicleBrands, setVehicleBrands] = useState<Array<{ name: string; count: number; color: string }>>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const fetchAnalyticsData = async () => {
       if (!token) return;
 
       try {
-        const [monthlyRes, dashboardRes, dailyRes] = await Promise.all([
+        setRefreshing(true);
+        const [monthlyRes, dashboardRes, dailyRes, healthRes, activityRes] = await Promise.all([
           fetch("/api/analytics/monthly-views", {
             headers: { Authorization: `Bearer ${token}` },
           }),
@@ -56,6 +89,12 @@ const AdminDashboardPage: React.FC = () => {
             headers: { Authorization: `Bearer ${token}` },
           }),
           fetch("/api/analytics/views/last-30-days", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/health", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/analytics/recent-activity", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -101,8 +140,26 @@ const AdminDashboardPage: React.FC = () => {
         } else {
           setDailyViews([]);
         }
+
+        if (healthRes.ok) {
+          const healthData = await healthRes.json();
+          setSystemHealth({
+            status: healthData.status || 'healthy',
+            uptime: healthData.uptime || 0,
+            memoryUsage: healthData.memoryUsage || 0,
+            cpuUsage: healthData.cpuUsage || 0,
+            activeUsers: healthData.activeUsers || 0,
+          });
+        }
+
+        if (activityRes.ok) {
+          const activityData = await activityRes.json();
+          setRecentActivity(activityData.slice(0, 10) || []);
+        }
       } catch (error) {
         toast.error("Erro ao buscar dados:");
+      } finally {
+        setRefreshing(false);
       }
     };
 
@@ -160,6 +217,7 @@ const AdminDashboardPage: React.FC = () => {
         totalVehicles: 0,
         averagePrice: 0,
         topVehicles: [] as Vehicle[],
+        brandDistribution: [] as Array<{ name: string; count: number; color: string }>,
       };
     }
 
@@ -168,12 +226,28 @@ const AdminDashboardPage: React.FC = () => {
 
     const topVehicles = [...vehicles].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
 
+    // Brand distribution
+    const brandCounts = vehicles.reduce((acc, vehicle) => {
+      acc[vehicle.make] = (acc[vehicle.make] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const colors = ['#3C50E0', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#84CC16', '#F97316'];
+    const brandDistribution = Object.entries(brandCounts)
+      .map(([name, count], index) => ({
+        name,
+        count,
+        color: colors[index % colors.length],
+      }))
+      .sort((a, b) => b.count - a.count);
+
     return {
       totalViews,
       totalValue,
       totalVehicles: vehicles.length,
       averagePrice: vehicles.length > 0 ? totalValue / vehicles.length : 0,
       topVehicles,
+      brandDistribution,
     };
   }, [vehicles]);
 
@@ -198,11 +272,48 @@ const AdminDashboardPage: React.FC = () => {
       if (res.ok) {
         const data = await res.json();
         console.log("Analytics purged:", data);
+        toast.success("Analytics antigos removidos com sucesso!");
       }
     } catch (e) {
       toast.error("Falha ao limpar analytics:");
     } finally {
       setPurging(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    if (!token) return;
+    try {
+      setRefreshing(true);
+      await refreshVehicles();
+      toast.success("Dados atualizados com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao atualizar dados:");
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const handleExportData = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch("/api/analytics/export", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analytics-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        toast.success("Dados exportados com sucesso!");
+      }
+    } catch (error) {
+      toast.error("Erro ao exportar dados:");
     }
   };
 
@@ -218,10 +329,38 @@ const AdminDashboardPage: React.FC = () => {
     <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10 space-y-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Dashboard Administrativo
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300">Visão geral do desempenho</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              Dashboard Administrativo
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300">Visão geral do desempenho e métricas</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-60 transition-colors"
+            >
+              <FiRefreshCw className={`${refreshing ? 'animate-spin' : ''}`} />
+              {refreshing ? 'Atualizando...' : 'Atualizar'}
+            </button>
+            <button
+              onClick={handleExportData}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-green-600 hover:bg-green-700 text-white transition-colors"
+            >
+              <FiDownload />
+              Exportar
+            </button>
+            <Link
+              to="/admin/settings"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-gray-600 hover:bg-gray-700 text-white transition-colors"
+            >
+              <FiSettings />
+              Configurações
+            </Link>
+          </div>
+        </div>
       </motion.div>
 
       {/* Main Stats Cards */}
@@ -260,8 +399,8 @@ const AdminDashboardPage: React.FC = () => {
         </StatCard>
       </div>
 
-      {/* Social Media & Likes Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Social Media & System Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Cliques no WhatsApp"
           value={formatNumber(dashboardStats.whatsappClicks)}
@@ -283,13 +422,106 @@ const AdminDashboardPage: React.FC = () => {
           </div>
         </StatCard>
         <StatCard
-          title="Veículos com Like"
-          value={formatNumber(dashboardStats.likedVehicles)}
-          rate="3.1%"
+          title="Usuários Ativos"
+          value={formatNumber(systemHealth.activeUsers)}
+          rate="2.1%"
           levelUp
         >
-          <FiHeart className="text-red-500" size={22} />
+          <FiUsers className="text-blue-500" size={22} />
         </StatCard>
+        <StatCard
+          title="Status do Sistema"
+          value={systemHealth.status === 'healthy' ? 'Saudável' : 'Atenção'}
+          rate={systemHealth.status === 'healthy' ? '100%' : '85%'}
+          levelUp={systemHealth.status === 'healthy'}
+        >
+          {systemHealth.status === 'healthy' ? (
+            <FiCheckCircle className="text-green-500" size={22} />
+          ) : (
+            <FiAlertCircle className="text-yellow-500" size={22} />
+          )}
+        </StatCard>
+      </div>
+
+      {/* System Health & Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* System Health */}
+        <motion.div
+          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <FiBarChart3 className="text-blue-500" />
+            Saúde do Sistema
+          </h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-300">Uptime</span>
+              <span className="font-semibold text-gray-800 dark:text-white">
+                {Math.floor(systemHealth.uptime / 3600)}h {Math.floor((systemHealth.uptime % 3600) / 60)}m
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-300">Uso de Memória</span>
+              <span className="font-semibold text-gray-800 dark:text-white">
+                {systemHealth.memoryUsage.toFixed(1)}%
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-300">Uso de CPU</span>
+              <span className="font-semibold text-gray-800 dark:text-white">
+                {systemHealth.cpuUsage.toFixed(1)}%
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-600 dark:text-gray-300">Usuários Online</span>
+              <span className="font-semibold text-gray-800 dark:text-white">
+                {systemHealth.activeUsers}
+              </span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Recent Activity */}
+        <motion.div
+          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.15 }}
+        >
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <FiActivity className="text-green-500" />
+            Atividade Recente
+          </h3>
+          <div className="space-y-3 max-h-64 overflow-y-auto">
+            {recentActivity.length > 0 ? (
+              recentActivity.map((activity) => (
+                <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                  <div className={`w-2 h-2 rounded-full mt-2 ${
+                    activity.status === 'success' ? 'bg-green-500' :
+                    activity.status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'
+                  }`} />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">
+                      {activity.message}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                      <FiClock className="w-3 h-3" />
+                      {new Date(activity.timestamp).toLocaleString('pt-BR')}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <FiActivity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>Nenhuma atividade recente</p>
+              </div>
+            )}
+          </div>
+        </motion.div>
       </div>
 
       {/* Monthly Views Chart */}
@@ -303,14 +535,16 @@ const AdminDashboardPage: React.FC = () => {
           <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
             Visualizações Mensais (Últimos 3 Meses)
           </h3>
-          <button
-            onClick={handlePurgeOld}
-            disabled={purging}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium bg-red-600 hover:bg-red-700 text-white disabled:opacity-60"
-            title="Limpar analytics anteriores a 3 meses"
-          >
-            <FiTrash2 /> {purging ? "Limpando..." : "Limpar analytics > 3 meses"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePurgeOld}
+              disabled={purging}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium bg-red-600 hover:bg-red-700 text-white disabled:opacity-60"
+              title="Limpar analytics anteriores a 3 meses"
+            >
+              <FiTrash2 /> {purging ? "Limpando..." : "Limpar"}
+            </button>
+          </div>
         </div>
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
@@ -388,53 +622,96 @@ const AdminDashboardPage: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Top Vehicles */}
-      <motion.div
-        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.3 }}
-      >
-        <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-          Top 5 Veículos Mais Visualizados
-        </h3>
-        <div className="space-y-3">
-          {vehicleStats.topVehicles.map((vehicle, index) => (
-            <Link
-              to={vehicle.id ? `/vehicle/${vehicle.id}` : "#"}
-              key={vehicle.id || index}
-              className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group"
-            >
-              <div className="flex items-center">
-                <div className="w-12 h-12 flex-shrink-0 mr-3">
-                  <img
-                    src={vehicle.images[0]}
-                    alt={vehicle.name}
-                    className="w-full h-full rounded-lg object-cover"
-                  />
-                </div>
-                <div>
-                  <h4 className="font-medium text-gray-800 dark:text-white group-hover:text-primary transition-colors">
-                    {vehicle.name}
-                  </h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{vehicle.make}</p>
-                </div>
-              </div>
-              <div className="flex items-center text-gray-600 dark:text-gray-300">
-                <FiEye className="mr-2" />
-                <span className="font-medium">{formatNumber(vehicle.views || 0)}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-        <Link
-          to="/admin/vehicles"
-          className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-primary/10 py-2 text-sm font-medium text-primary hover:bg-primary/20 transition-colors"
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Brand Distribution */}
+        <motion.div
+          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
         >
-          <span>Ver Todos</span>
-          <FiArrowRight />
-        </Link>
-      </motion.div>
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+            Distribuição por Marca
+          </h3>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={vehicleStats.brandDistribution}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="count"
+                >
+                  {vehicleStats.brandDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1F2937",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "white",
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        {/* Top Vehicles */}
+        <motion.div
+          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.35 }}
+        >
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+            Top 5 Veículos Mais Visualizados
+          </h3>
+          <div className="space-y-3">
+            {vehicleStats.topVehicles.map((vehicle, index) => (
+              <Link
+                to={vehicle.id ? `/vehicle/${vehicle.id}` : "#"}
+                key={vehicle.id || index}
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group"
+              >
+                <div className="flex items-center">
+                  <div className="w-12 h-12 flex-shrink-0 mr-3">
+                    <img
+                      src={vehicle.images[0]}
+                      alt={vehicle.name}
+                      className="w-full h-full rounded-lg object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-800 dark:text-white group-hover:text-primary transition-colors">
+                      {vehicle.name}
+                    </h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{vehicle.make}</p>
+                  </div>
+                </div>
+                <div className="flex items-center text-gray-600 dark:text-gray-300">
+                  <FiEye className="mr-2" />
+                  <span className="font-medium">{formatNumber(vehicle.views || 0)}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <Link
+            to="/admin/vehicles"
+            className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-primary/10 py-2 text-sm font-medium text-primary hover:bg-primary/20 transition-colors"
+          >
+            <span>Ver Todos</span>
+            <FiArrowRight />
+          </Link>
+        </motion.div>
+      </div>
 
       {/* Conversion Funnel */}
       <motion.div

@@ -8,11 +8,12 @@ services:
     environment:
       - NODE_ENV=production
       - MONGODB_URI=mongodb://mongo:27017/JaAutomoveis
-      - JWT_SECRET=${JWT_SECRET}
+      - JWT_SECRET=${JWT_SECRET:-default-jwt-secret-change-in-production}
       - PORT=5000
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:5000}
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
     volumes:
       - ./uploads:/app/uploads
       - ./assets:/app/assets
@@ -40,6 +41,23 @@ services:
       - mongodb_data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  seeder:
+    build: .
+    command: ["npm", "run", "seed"]
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/JaAutomoveis
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: "no"
 
   nginx:
     image: nginx:alpine
