@@ -22,7 +22,7 @@ JWT_SECRET=your-super-secret-jwt-key-here
 MONGODB_URI=mongodb://localhost:27017/JaAutomoveis
 
 # CORS Origins (separados por vírgula)
-ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
+ALLOWED_ORIGINS=http://localhost:80,http://localhost:5000
 ```
 
 ### 2. Executar o Projeto
@@ -157,8 +157,9 @@ docker compose up -d --build
 
 ## 🌐 Acessos
 
-- **Aplicação**: http://localhost:5000
-- **Admin**: http://localhost:5000/admin
+- **Aplicação**: http://localhost:80
+- **Admin**: http://localhost:80/admin
+- **API**: http://localhost:5000
 - **MongoDB**: localhost:27017
 - **Nginx**: http://localhost:80
 
