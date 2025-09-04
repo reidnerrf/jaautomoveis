@@ -5,6 +5,7 @@ import fs from "fs/promises";
 import path from "path";
 import { getSocketServer } from "../socket";
 import { notifyNewVehicle } from "./pushController";
+import Seller from "../models/Seller";
 
 // Helper to delete image files from the filesystem
 const deleteImageFiles = async (imagePaths: string[]) => {
@@ -38,6 +39,7 @@ export const getVehicles = async (req: express.Request, res: express.Response) =
       maxPrice,
       fuel,
       gearbox,
+      status,
     } = req.query;
     const filter: any = {
       ...(make && { make: { $regex: make, $options: "i" } }),
@@ -47,6 +49,7 @@ export const getVehicles = async (req: express.Request, res: express.Response) =
       ...(maxPrice && { price: { $lte: +maxPrice } }),
       ...(fuel && { fuel }),
       ...(gearbox && { gearbox }),
+      ...(status && { status }),
     };
     const [total, vehicles] = await Promise.all([
       Vehicle.countDocuments(filter),
@@ -289,5 +292,43 @@ export const deleteVehicleImage = async (req: express.Request, res: express.Resp
   } catch (error) {
     console.error("Error deleting vehicle image:", error);
     return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const markVehicleAsSold = async (req: express.Request, res: express.Response) => {
+  try {
+    const { id } = req.params;
+    const { sellerId, soldPrice } = req.body as { sellerId?: string; soldPrice?: number };
+    if (!sellerId || typeof soldPrice !== "number") {
+      return res.status(400).json({ message: "sellerId e soldPrice são obrigatórios" });
+    }
+
+    // Validate seller exists
+    const seller = await Seller.findById(sellerId).lean();
+    if (!seller) {
+      return res.status(400).json({ message: "Vendedor inválido" });
+    }
+
+    const update = {
+      status: "vendido",
+      sellerId,
+      soldPrice,
+      soldAt: new Date(),
+      updatedAt: new Date(),
+    } as any;
+
+    const updatedVehicle = await Vehicle.findByIdAndUpdate(id, update, { new: true }).lean();
+    if (!updatedVehicle) {
+      return res.status(404).json({ message: "Vehicle not found" });
+    }
+
+    try {
+      getSocketServer()?.emit("vehicle-updated", updatedVehicle);
+    } catch {}
+
+    res.json(updatedVehicle);
+  } catch (error) {
+    console.error("Error marking vehicle as sold:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };

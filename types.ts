@@ -22,6 +22,22 @@ export interface Vehicle {
   updatedAt?: string;
   description?: string;
   featured?: boolean;
+  status?: "disponivel" | "vendido";
+  cost?: number;
+  soldAt?: string;
+  soldPrice?: number;
+  sellerId?: string;
+}
+
+export interface Seller {
+  _id?: string;
+  id?: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  active?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface GoogleReview {
