@@ -291,7 +291,7 @@ const InventoryPage: React.FC = () => {
                   "@type": "ListItem",
                   position: 1,
                   name: "Início",
-                  item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
+                  item: typeof window !== "undefined" ? `${window.location.origin}/` : "/",
                 },
                 {
                   "@type": "ListItem",
@@ -299,7 +299,7 @@ const InventoryPage: React.FC = () => {
                   name: "Estoque",
                   item:
                     typeof window !== "undefined"
-                      ? window.location.origin + "/inventory"
+                      ? `${window.location.origin}/inventory`
                       : "/inventory",
                 },
               ],

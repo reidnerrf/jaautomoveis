@@ -863,7 +863,7 @@ const AdminVehicleListPage: React.FC = () => {
 
       {/* Sell Modal */}
       <AnimatePresence>
-        {showSellModal && selectedVehicleForSale && (
+        {showSellModal && selectedVehicleForSale ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -967,7 +967,7 @@ const AdminVehicleListPage: React.FC = () => {
               </div>
             </motion.div>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
     </div>
   );

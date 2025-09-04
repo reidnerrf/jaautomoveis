@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.tsx";
 import { Seller } from "../types.ts";
@@ -26,9 +26,9 @@ const AdminSellerFormPage: React.FC = () => {
     if (isEditing && id) {
       fetchSeller();
     }
-  }, [id, isEditing]);
+  }, [id, isEditing, fetchSeller]);
 
-  const fetchSeller = async () => {
+  const fetchSeller = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/sellers/${id}`, {
@@ -55,7 +55,7 @@ const AdminSellerFormPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, token, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -143,7 +143,10 @@ const AdminSellerFormPage: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Nome *
             </label>
             <div className="relative">
@@ -163,7 +166,10 @@ const AdminSellerFormPage: React.FC = () => {
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Email
             </label>
             <div className="relative">
@@ -182,7 +188,10 @@ const AdminSellerFormPage: React.FC = () => {
 
           {/* Phone */}
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Telefone
             </label>
             <div className="relative">
@@ -210,7 +219,10 @@ const AdminSellerFormPage: React.FC = () => {
                 onChange={handleChange}
                 className="h-4 w-4 text-main-red focus:ring-main-red border-gray-300 dark:border-gray-600 rounded"
               />
-              <label htmlFor="active" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="active"
+                className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+              >
                 Vendedor ativo
               </label>
             </div>
@@ -243,8 +255,8 @@ const AdminSellerFormPage: React.FC = () => {
                   ? "Salvando..."
                   : "Criando..."
                 : isEditing
-                ? "Salvar Alterações"
-                : "Criar Vendedor"}
+                  ? "Salvar Alterações"
+                  : "Criar Vendedor"}
             </button>
           </div>
         </form>

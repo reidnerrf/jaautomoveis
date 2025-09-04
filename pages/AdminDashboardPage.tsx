@@ -44,8 +44,6 @@ const AdminDashboardPage: React.FC = () => {
   });
   const [dailyViews, setDailyViews] = useState<Array<{ date: string; views: number }>>([]);
   const [purging, setPurging] = useState(false);
-  const [profitData, setProfitData] = useState<Array<{ month: string; profit: number; revenue: number; cost: number }>>([]);
-  const [totalCost, setTotalCost] = useState(0);
 
   useEffect(() => {
     const fetchAnalyticsData = async () => {
@@ -173,8 +171,8 @@ const AdminDashboardPage: React.FC = () => {
     const totalValue = vehicles.reduce((sum, v) => sum + v.price, 0);
     const totalViews = vehicles.reduce((sum, v) => sum + (v.views || 0), 0);
     const totalCost = vehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
-    
-    const soldVehicles = vehicles.filter(v => v.status === "vendido");
+
+    const soldVehicles = vehicles.filter((v) => v.status === "vendido");
     const totalRevenue = soldVehicles.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
     const soldCost = soldVehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
     const totalProfit = totalRevenue - soldCost;
@@ -197,17 +195,17 @@ const AdminDashboardPage: React.FC = () => {
   const generateProfitData = useMemo(() => {
     const months = [];
     const currentDate = new Date();
-    
+
     for (let i = 5; i >= 0; i--) {
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
-      const monthName = date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
-      
+      const monthName = date.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" });
+
       // Calculate profit for this month (simplified - using random data for demo)
       // In a real app, you'd fetch this data from your backend
       const revenue = Math.floor(Math.random() * 50000) + 20000;
       const cost = Math.floor(Math.random() * 30000) + 15000;
       const profit = revenue - cost;
-      
+
       months.push({
         month: monthName,
         profit,
@@ -215,7 +213,7 @@ const AdminDashboardPage: React.FC = () => {
         cost,
       });
     }
-    
+
     return months;
   }, []);
 
@@ -306,7 +304,10 @@ const AdminDashboardPage: React.FC = () => {
           rate={vehicleStats.totalProfit > 0 ? "+15.3%" : "-5.2%"}
           levelUp={vehicleStats.totalProfit > 0}
         >
-          <FiTrendingUp className={vehicleStats.totalProfit > 0 ? "text-emerald-500" : "text-red-500"} size={24} />
+          <FiTrendingUp
+            className={vehicleStats.totalProfit > 0 ? "text-emerald-500" : "text-red-500"}
+            size={24}
+          />
         </StatCard>
       </div>
 
@@ -450,7 +451,10 @@ const AdminDashboardPage: React.FC = () => {
         </h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={generateProfitData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <BarChart
+              data={generateProfitData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
               <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
               <YAxis tick={{ fill: "#6B7280" }} />
@@ -463,7 +467,7 @@ const AdminDashboardPage: React.FC = () => {
                 }}
                 formatter={(value: number, name: string) => [
                   formatCurrency(value),
-                  name === "profit" ? "Lucro" : name === "revenue" ? "Receita" : "Custo"
+                  name === "profit" ? "Lucro" : name === "revenue" ? "Receita" : "Custo",
                 ]}
               />
               <Bar dataKey="profit" fill="#10B981" radius={[4, 4, 0, 0]} />

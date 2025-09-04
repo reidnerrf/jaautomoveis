@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.tsx";
 import {
@@ -22,9 +22,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
 } from "recharts";
 
 interface Seller {
@@ -47,13 +44,12 @@ const AdminSellerListPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [vehicles, setVehicles] = useState<any[]>([]);
   const [sellerPerformance, setSellerPerformance] = useState<any[]>([]);
   const [sellerOfTheMonth, setSellerOfTheMonth] = useState<Seller | null>(null);
 
   const itemsPerPage = 10;
 
-  const fetchSellers = async () => {
+  const fetchSellers = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/sellers?page=${currentPage}&limit=${itemsPerPage}`, {
@@ -74,11 +70,11 @@ const AdminSellerListPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, token]);
 
   useEffect(() => {
     fetchSellers();
-  }, [currentPage, token]);
+  }, [fetchSellers]);
 
   // Fetch vehicles and calculate seller performance
   useEffect(() => {
@@ -89,20 +85,19 @@ const AdminSellerListPage: React.FC = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           const vehiclesData = data.vehicles || data || [];
-          setVehicles(vehiclesData);
-          
+
           // Calculate seller performance
           const performance = calculateSellerPerformance(vehiclesData, sellers);
           setSellerPerformance(performance);
-          
+
           // Find seller of the month
           const topSeller = performance.length > 0 ? performance[0] : null;
           if (topSeller) {
-            const seller = sellers.find(s => (s._id || s.id) === topSeller.sellerId);
+            const seller = sellers.find((s) => (s._id || s.id) === topSeller.sellerId);
             setSellerOfTheMonth(seller || null);
           }
         }
@@ -118,17 +113,19 @@ const AdminSellerListPage: React.FC = () => {
 
   const calculateSellerPerformance = (vehicles: any[], sellers: Seller[]) => {
     const performance: any[] = [];
-    
-    sellers.forEach(seller => {
+
+    sellers.forEach((seller) => {
       const sellerId = seller._id || seller.id;
-      const soldVehicles = vehicles.filter(v => v.sellerId === sellerId && v.status === "vendido");
+      const soldVehicles = vehicles.filter(
+        (v) => v.sellerId === sellerId && v.status === "vendido"
+      );
       const totalSales = soldVehicles.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
       const totalProfit = soldVehicles.reduce((sum, v) => {
         const revenue = v.soldPrice || v.price || 0;
         const cost = v.cost || 0;
         return sum + (revenue - cost);
       }, 0);
-      
+
       if (soldVehicles.length > 0) {
         performance.push({
           sellerId,
@@ -139,7 +136,7 @@ const AdminSellerListPage: React.FC = () => {
         });
       }
     });
-    
+
     // Sort by profit (descending)
     return performance.sort((a, b) => b.profit - a.profit);
   };
@@ -171,11 +168,13 @@ const AdminSellerListPage: React.FC = () => {
 
   const filteredSellers = useMemo(() => {
     return sellers.filter((seller) => {
-      const matchesSearch = seller.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch =
+        seller.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (seller.email && seller.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (seller.phone && seller.phone.includes(searchTerm));
 
-      const matchesActive = activeFilter === "all" ||
+      const matchesActive =
+        activeFilter === "all" ||
         (activeFilter === "active" && seller.active !== false) ||
         (activeFilter === "inactive" && seller.active === false);
 
@@ -185,8 +184,8 @@ const AdminSellerListPage: React.FC = () => {
 
   const sellerStats = useMemo(() => {
     const total = sellers.length;
-    const active = sellers.filter(s => s.active !== false).length;
-    const inactive = sellers.filter(s => s.active === false).length;
+    const active = sellers.filter((s) => s.active !== false).length;
+    const inactive = sellers.filter((s) => s.active === false).length;
 
     return { total, active, inactive };
   }, [sellers]);
@@ -233,7 +232,9 @@ const AdminSellerListPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{sellerStats.total}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {sellerStats.total}
+              </p>
             </div>
             <FiUsers className="text-2xl text-main-red" />
           </div>
@@ -284,11 +285,14 @@ const AdminSellerListPage: React.FC = () => {
           </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={sellerPerformance.slice(0, 5)} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <BarChart
+                data={sellerPerformance.slice(0, 5)}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                <XAxis 
-                  dataKey="sellerName" 
-                  tick={{ fill: "#6B7280", fontSize: 12 }} 
+                <XAxis
+                  dataKey="sellerName"
+                  tick={{ fill: "#6B7280", fontSize: 12 }}
                   angle={-45}
                   textAnchor="end"
                   height={80}
@@ -306,7 +310,7 @@ const AdminSellerListPage: React.FC = () => {
                       style: "currency",
                       currency: "BRL",
                     }).format(value),
-                    "Lucro"
+                    "Lucro",
                   ]}
                 />
                 <Bar dataKey="profit" fill="#10B981" radius={[4, 4, 0, 0]} />
@@ -328,7 +332,7 @@ const AdminSellerListPage: React.FC = () => {
               <FiUsers className="text-2xl" />
             </div>
           </div>
-          
+
           {sellerOfTheMonth ? (
             <div>
               <h4 className="text-2xl font-bold mb-2">{sellerOfTheMonth.name}</h4>
@@ -336,7 +340,9 @@ const AdminSellerListPage: React.FC = () => {
                 <div className="flex justify-between">
                   <span className="text-yellow-100">Vendas:</span>
                   <span className="font-semibold">
-                    {sellerPerformance.find(p => p.sellerId === (sellerOfTheMonth._id || sellerOfTheMonth.id))?.sales || 0}
+                    {sellerPerformance.find(
+                      (p) => p.sellerId === (sellerOfTheMonth._id || sellerOfTheMonth.id)
+                    )?.sales || 0}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -345,7 +351,11 @@ const AdminSellerListPage: React.FC = () => {
                     {new Intl.NumberFormat("pt-BR", {
                       style: "currency",
                       currency: "BRL",
-                    }).format(sellerPerformance.find(p => p.sellerId === (sellerOfTheMonth._id || sellerOfTheMonth.id))?.revenue || 0)}
+                    }).format(
+                      sellerPerformance.find(
+                        (p) => p.sellerId === (sellerOfTheMonth._id || sellerOfTheMonth.id)
+                      )?.revenue || 0
+                    )}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -354,7 +364,11 @@ const AdminSellerListPage: React.FC = () => {
                     {new Intl.NumberFormat("pt-BR", {
                       style: "currency",
                       currency: "BRL",
-                    }).format(sellerPerformance.find(p => p.sellerId === (sellerOfTheMonth._id || sellerOfTheMonth.id))?.profit || 0)}
+                    }).format(
+                      sellerPerformance.find(
+                        (p) => p.sellerId === (sellerOfTheMonth._id || sellerOfTheMonth.id)
+                      )?.profit || 0
+                    )}
                   </span>
                 </div>
               </div>
