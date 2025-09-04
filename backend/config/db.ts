@@ -7,7 +7,13 @@ const connectDB = async (): Promise<void> => {
 
   const connect = async (): Promise<void> => {
     try {
-      const mongoURI = process.env.MONGO_URI || process.env.MONGODB_URI;
+      // Use local mongo service hostname if SKIP_DB is not true and MONGO_URI is not set
+      let mongoURI = process.env.MONGO_URI || process.env.MONGODB_URI;
+
+      if (!mongoURI && process.env.SKIP_DB !== "true") {
+        mongoURI = "mongodb://localhost:27017/JaAutomoveis";
+        console.log("Using local MongoDB URI:", mongoURI);
+      }
 
       if (!mongoURI) {
         throw new Error("MONGO_URI/MONGODB_URI environment variable is not defined");

@@ -5,6 +5,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import FloatingSocialButtons from "./FloatingSocialButtons.tsx";
 import { analytics } from "../utils/analytics.ts";
 const CookieConsent = React.lazy(() => import("./CookieConsent.tsx"));
+const JivoSite = React.lazy(() => import("./JivoSite.tsx"));
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
@@ -68,6 +69,7 @@ const MainLayout: React.FC = () => {
       <FloatingSocialButtons page={location.pathname} />
       <React.Suspense fallback={null}>
         <CookieConsent />
+        <JivoSite />
       </React.Suspense>
     </div>
   );
