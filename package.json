@@ -9,6 +9,8 @@
     "start:nodb": "cross-env NODE_ENV=production SKIP_DB=true node dist/server.js",
     "start:full": "bash -lc \"docker compose up -d --build mongo app nginx || docker-compose up -d --build mongo app nginx\"",
     "stop:full": "bash -lc \"docker compose down || docker-compose down\"",
+    "docker:deploy": "./scripts/docker-deploy.sh",
+    "docker:test": "./scripts/test-docker.sh",
     "docker:seed": "docker compose --profile tools run --rm seeder",
     "docker:seed:destroy": "docker compose --profile tools run --rm seeder npx ts-node seeder.ts -d",
     "db:up": "bash -lc \"docker compose up -d mongo || docker-compose up -d mongo\"",

@@ -28,10 +28,13 @@ ALLOWED_ORIGINS=http://localhost:80,http://localhost:5000
 ### 2. Executar o Projeto
 
 ```bash
-# Iniciar todos os serviços
+# Opção 1: Deploy completo (recomendado)
+npm run docker:deploy
+
+# Opção 2: Iniciar todos os serviços
 npm run start:full
 
-# Ou usando docker-compose diretamente
+# Opção 3: Comandos manuais
 docker compose up -d --build
 ```
 
@@ -157,11 +160,11 @@ docker compose up -d --build
 
 ## 🌐 Acessos
 
-- **Aplicação**: http://localhost:80
-- **Admin**: http://localhost:80/admin
+- **Aplicação**: http://localhost/
+- **Admin**: http://localhost/admin
 - **API**: http://localhost:5000
 - **MongoDB**: localhost:27017
-- **Nginx**: http://localhost:80
+- **Nginx**: http://localhost/
 
 ## 🔒 Segurança
 
