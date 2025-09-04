@@ -40,11 +40,12 @@ const AdminVehicleFormPage: React.FC = () => {
   const [uploadError, setUploadError] = useState("");
 
   const [vehicle, setVehicle] = useState<
-    Omit<Vehicle, "id" | "price" | "year" | "km" | "doors"> & {
+    Omit<Vehicle, "id" | "price" | "year" | "km" | "doors" | "cost"> & {
       price: string;
       year: string;
       km: string;
       doors: string;
+      cost: string;
     }
   >({
     name: "",
@@ -61,6 +62,7 @@ const AdminVehicleFormPage: React.FC = () => {
     optionals: [],
     images: [],
     views: 0,
+    cost: "",
   });
 
   useEffect(() => {
@@ -74,6 +76,7 @@ const AdminVehicleFormPage: React.FC = () => {
             year: existingVehicle.year.toString(),
             km: existingVehicle.km.toString(),
             doors: existingVehicle.doors.toString(),
+            cost: existingVehicle.cost?.toString() || "",
           });
         }
       })();
@@ -175,6 +178,7 @@ const AdminVehicleFormPage: React.FC = () => {
       year: Number(vehicle.year) || 0,
       km: Number(vehicle.km) || 0,
       doors: Number(vehicle.doors) || 0,
+      cost: Number(vehicle.cost) || 0,
     };
 
     try {
@@ -252,6 +256,12 @@ const AdminVehicleFormPage: React.FC = () => {
                   name: "price",
                   type: "number",
                   required: true,
+                },
+                {
+                  label: "Custo",
+                  name: "cost",
+                  type: "number",
+                  required: false,
                 },
                 {
                   label: "Marca",

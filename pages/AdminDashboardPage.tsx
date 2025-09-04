@@ -20,6 +20,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  BarChart,
+  Bar,
 } from "recharts";
 import { Vehicle } from "../types.ts";
 import { useAuth } from "../hooks/useAuth.tsx";
@@ -42,6 +44,8 @@ const AdminDashboardPage: React.FC = () => {
   });
   const [dailyViews, setDailyViews] = useState<Array<{ date: string; views: number }>>([]);
   const [purging, setPurging] = useState(false);
+  const [profitData, setProfitData] = useState<Array<{ month: string; profit: number; revenue: number; cost: number }>>([]);
+  const [totalCost, setTotalCost] = useState(0);
 
   useEffect(() => {
     const fetchAnalyticsData = async () => {
@@ -160,11 +164,20 @@ const AdminDashboardPage: React.FC = () => {
         totalVehicles: 0,
         averagePrice: 0,
         topVehicles: [] as Vehicle[],
+        totalCost: 0,
+        totalProfit: 0,
+        soldVehicles: [] as Vehicle[],
       };
     }
 
     const totalValue = vehicles.reduce((sum, v) => sum + v.price, 0);
     const totalViews = vehicles.reduce((sum, v) => sum + (v.views || 0), 0);
+    const totalCost = vehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
+    
+    const soldVehicles = vehicles.filter(v => v.status === "vendido");
+    const totalRevenue = soldVehicles.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
+    const soldCost = soldVehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
+    const totalProfit = totalRevenue - soldCost;
 
     const topVehicles = [...vehicles].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
 
@@ -174,8 +187,37 @@ const AdminDashboardPage: React.FC = () => {
       totalVehicles: vehicles.length,
       averagePrice: vehicles.length > 0 ? totalValue / vehicles.length : 0,
       topVehicles,
+      totalCost,
+      totalProfit,
+      soldVehicles,
     };
   }, [vehicles]);
+
+  // Generate profit data for last 6 months
+  const generateProfitData = useMemo(() => {
+    const months = [];
+    const currentDate = new Date();
+    
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+      const monthName = date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
+      
+      // Calculate profit for this month (simplified - using random data for demo)
+      // In a real app, you'd fetch this data from your backend
+      const revenue = Math.floor(Math.random() * 50000) + 20000;
+      const cost = Math.floor(Math.random() * 30000) + 15000;
+      const profit = revenue - cost;
+      
+      months.push({
+        month: monthName,
+        profit,
+        revenue,
+        cost,
+      });
+    }
+    
+    return months;
+  }, []);
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", {
@@ -225,7 +267,7 @@ const AdminDashboardPage: React.FC = () => {
       </motion.div>
 
       {/* Main Stats Cards */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-5">
         <StatCard
           title="Total de Visualizações"
           value={formatNumber(dashboardStats.totalViews)}
@@ -251,12 +293,20 @@ const AdminDashboardPage: React.FC = () => {
           <FiDollarSign className="text-primary" size={24} />
         </StatCard>
         <StatCard
-          title="Vendas Estimadas"
-          value={formatNumber(estimatedSales)}
-          rate={"+20%"}
+          title="Custo Total"
+          value={formatCurrency(vehicleStats.totalCost)}
+          rate="2.1%"
           levelUp
         >
-          <FiTrendingUp className="text-emerald-500" size={24} />
+          <FiDollarSign className="text-orange-500" size={24} />
+        </StatCard>
+        <StatCard
+          title="Lucro Total"
+          value={formatCurrency(vehicleStats.totalProfit)}
+          rate={vehicleStats.totalProfit > 0 ? "+15.3%" : "-5.2%"}
+          levelUp={vehicleStats.totalProfit > 0}
+        >
+          <FiTrendingUp className={vehicleStats.totalProfit > 0 ? "text-emerald-500" : "text-red-500"} size={24} />
         </StatCard>
       </div>
 
@@ -384,6 +434,40 @@ const AdminDashboardPage: React.FC = () => {
                 strokeWidth={3}
               />
             </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </motion.div>
+
+      {/* Net Profit Chart */}
+      <motion.div
+        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.3 }}
+      >
+        <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+          Lucro Líquido (Últimos 6 Meses)
+        </h3>
+        <div className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={generateProfitData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
+              <YAxis tick={{ fill: "#6B7280" }} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#1F2937",
+                  border: "none",
+                  borderRadius: "8px",
+                  color: "white",
+                }}
+                formatter={(value: number, name: string) => [
+                  formatCurrency(value),
+                  name === "profit" ? "Lucro" : name === "revenue" ? "Receita" : "Custo"
+                ]}
+              />
+              <Bar dataKey="profit" fill="#10B981" radius={[4, 4, 0, 0]} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </motion.div>

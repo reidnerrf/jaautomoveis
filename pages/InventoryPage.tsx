@@ -134,6 +134,7 @@ const InventoryPage: React.FC = () => {
         (priceFilter === "30000-60000" && vehicle.price >= 30000 && vehicle.price <= 60000) ||
         (priceFilter === "60000-100000" && vehicle.price >= 60000 && vehicle.price <= 100000) ||
         (priceFilter === "100000" && vehicle.price > 100000);
+      const isAvailable = !vehicle.status || vehicle.status === "disponivel";
 
       return (
         matchesSearch &&
@@ -142,7 +143,8 @@ const InventoryPage: React.FC = () => {
         passesColor &&
         passesFuel &&
         passesTransmission &&
-        passesPrice
+        passesPrice &&
+        isAvailable
       );
     });
 

@@ -23,6 +23,8 @@ const AdminLoginPage = lazy(() => import("./pages/AdminLoginPage.tsx"));
 const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage.tsx"));
 const AdminVehicleListPage = lazy(() => import("./pages/AdminVehicleListPage.tsx"));
 const AdminVehicleFormPage = lazy(() => import("./pages/AdminVehicleFormPage.tsx"));
+const AdminSellerListPage = lazy(() => import("./pages/AdminSellerListPage.tsx"));
+const AdminSellerFormPage = lazy(() => import("./pages/AdminSellerFormPage.tsx"));
 const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage.tsx"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage.tsx"));
 const MainLayout = lazy(() => import("./components/MainLayout.tsx"));
@@ -157,6 +159,9 @@ const App: React.FC = () => {
                         <Route path="vehicles" element={<AdminVehicleListPage />} />
                         <Route path="vehicles/new" element={<AdminVehicleFormPage />} />
                         <Route path="vehicles/edit/:id" element={<AdminVehicleFormPage />} />
+                        <Route path="sellers" element={<AdminSellerListPage />} />
+                        <Route path="sellers/new" element={<AdminSellerFormPage />} />
+                        <Route path="sellers/edit/:id" element={<AdminSellerFormPage />} />
                       </Route>
                     </Route>
                   </Routes>

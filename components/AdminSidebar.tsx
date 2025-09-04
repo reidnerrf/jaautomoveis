@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { FiGrid, FiList, FiLogOut } from "react-icons/fi";
+import { FiGrid, FiList, FiLogOut, FiUsers } from "react-icons/fi";
 import { useAuth } from "../hooks/useAuth.tsx";
 
 interface AdminSidebarProps {
@@ -112,6 +112,12 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, setSidebarOpen
               <NavLink to="/admin/vehicles" className={getNavLinkClass}>
                 <FiList className="text-lg" />
                 Veículos
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/admin/sellers" className={getNavLinkClass}>
+                <FiUsers className="text-lg" />
+                Vendedores
               </NavLink>
             </li>
           </ul>

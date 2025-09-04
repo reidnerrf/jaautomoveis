@@ -16,9 +16,13 @@ import {
   FiBarChart2,
   FiTrendingUp,
   FiDollarSign,
+  FiCheck,
+  FiX,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaCarSide, FaCalendarAlt } from "react-icons/fa";
+import { Seller } from "../types.ts";
+import toast from "react-hot-toast";
 
 const AdminVehicleListPage: React.FC = () => {
   const { vehicles = [], deleteVehicle, loading } = useVehicleData();
@@ -35,6 +39,14 @@ const AdminVehicleListPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedVehicles, setSelectedVehicles] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sellers, setSellers] = useState<Seller[]>([]);
+  const [showSellModal, setShowSellModal] = useState(false);
+  const [selectedVehicleForSale, setSelectedVehicleForSale] = useState<any>(null);
+  const [sellForm, setSellForm] = useState({
+    sellerId: "",
+    soldPrice: "",
+  });
+  const [selling, setSelling] = useState(false);
 
   const itemsPerPage = 10;
 
@@ -87,6 +99,29 @@ const AdminVehicleListPage: React.FC = () => {
           : null,
     };
   }, [vehicles]);
+
+  // Fetch sellers
+  React.useEffect(() => {
+    const fetchSellers = async () => {
+      try {
+        const response = await fetch("/api/sellers", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setSellers(data.sellers || []);
+        }
+      } catch (error) {
+        console.error("Error fetching sellers:", error);
+      }
+    };
+
+    if (token) {
+      fetchSellers();
+    }
+  }, [token]);
 
   const filteredVehicles = useMemo(() => {
     return vehicles
@@ -154,6 +189,59 @@ const AdminVehicleListPage: React.FC = () => {
     if (window.confirm(`Tem certeza que deseja excluir "${name}"?`)) {
       deleteVehicle(id);
     }
+  };
+
+  const handleSellClick = (vehicle: any) => {
+    setSelectedVehicleForSale(vehicle);
+    setSellForm({
+      sellerId: "",
+      soldPrice: vehicle.price?.toString() || "",
+    });
+    setShowSellModal(true);
+  };
+
+  const handleSellSubmit = async () => {
+    if (!sellForm.sellerId || !sellForm.soldPrice) {
+      toast.error("Selecione um vendedor e informe o preço de venda");
+      return;
+    }
+
+    try {
+      setSelling(true);
+      const response = await fetch(`/api/vehicles/${selectedVehicleForSale.id}/sell`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          sellerId: sellForm.sellerId,
+          soldPrice: parseFloat(sellForm.soldPrice),
+        }),
+      });
+
+      if (response.ok) {
+        toast.success("Veículo marcado como vendido com sucesso!");
+        setShowSellModal(false);
+        setSelectedVehicleForSale(null);
+        setSellForm({ sellerId: "", soldPrice: "" });
+        // Refresh the vehicle list
+        window.location.reload();
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.message || "Erro ao marcar veículo como vendido");
+      }
+    } catch (error) {
+      toast.error("Erro ao marcar veículo como vendido");
+    } finally {
+      setSelling(false);
+    }
+  };
+
+  const closeSellModal = () => {
+    setShowSellModal(false);
+    setSelectedVehicleForSale(null);
+    setSellForm({ sellerId: "", soldPrice: "" });
   };
 
   const handleBulkDelete = () => {
@@ -621,6 +709,13 @@ const AdminVehicleListPage: React.FC = () => {
                             <FiEdit size={18} />
                           </Link>
                           <button
+                            onClick={() => handleSellClick(vehicle)}
+                            className="p-2 rounded-lg bg-green-100 text-green-600 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 transition-colors"
+                            title="Marcar como Vendido"
+                          >
+                            <FiCheck size={18} />
+                          </button>
+                          <button
                             onClick={() => handleDelete(vehicle.id, vehicle.name)}
                             className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 transition-colors"
                             title="Excluir"
@@ -699,6 +794,13 @@ const AdminVehicleListPage: React.FC = () => {
                       <FiEdit size={16} />
                     </Link>
                     <button
+                      onClick={() => handleSellClick(vehicle)}
+                      className="p-2 rounded-lg bg-green-100 text-green-600 hover:bg-green-200 transition-colors"
+                      title="Marcar como Vendido"
+                    >
+                      <FiCheck size={16} />
+                    </button>
+                    <button
                       onClick={() => handleDelete(vehicle.id, vehicle.name)}
                       className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
                     >
@@ -758,6 +860,115 @@ const AdminVehicleListPage: React.FC = () => {
           </div>
         </motion.div>
       )}
+
+      {/* Sell Modal */}
+      <AnimatePresence>
+        {showSellModal && selectedVehicleForSale && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            onClick={closeSellModal}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Marcar como Vendido
+                </h3>
+                <button
+                  onClick={closeSellModal}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <FiX size={20} />
+                </button>
+              </div>
+
+              <div className="mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  Veículo: <span className="font-medium">{selectedVehicleForSale.name}</span>
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Preço original:{" "}
+                  <span className="font-medium">
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(selectedVehicleForSale.price)}
+                  </span>
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Vendedor *
+                  </label>
+                  <select
+                    value={sellForm.sellerId}
+                    onChange={(e) => setSellForm({ ...sellForm, sellerId: e.target.value })}
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-main-red focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    required
+                  >
+                    <option value="">Selecione um vendedor</option>
+                    {sellers
+                      .filter((seller) => seller.active !== false)
+                      .map((seller) => (
+                        <option key={seller._id || seller.id} value={seller._id || seller.id}>
+                          {seller.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Preço de Venda *
+                  </label>
+                  <input
+                    type="number"
+                    value={sellForm.soldPrice}
+                    onChange={(e) => setSellForm({ ...sellForm, soldPrice: e.target.value })}
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-main-red focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={closeSellModal}
+                  className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSellSubmit}
+                  disabled={selling}
+                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {selling ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  ) : (
+                    <FiCheck size={16} />
+                  )}
+                  {selling ? "Processando..." : "Confirmar Venda"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
