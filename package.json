@@ -11,6 +11,8 @@
     "stop:full": "bash -lc \"docker compose down || docker-compose down\"",
     "docker:deploy": "./scripts/docker-deploy.sh",
     "docker:test": "./scripts/test-docker.sh",
+    "docker:ssl": "./scripts/setup-ssl.sh",
+    "docker:test-https": "./scripts/test-https.sh",
     "docker:seed": "docker compose --profile tools run --rm seeder",
     "docker:seed:destroy": "docker compose --profile tools run --rm seeder npx ts-node seeder.ts -d",
     "db:up": "bash -lc \"docker compose up -d mongo || docker-compose up -d mongo\"",

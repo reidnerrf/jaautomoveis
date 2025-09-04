@@ -57,6 +57,31 @@ check_ports() {
     done
 }
 
+# Configurar SSL
+setup_ssl() {
+    log "Configurando SSL..."
+    
+    # Criar diretório SSL
+    mkdir -p ssl
+    
+    # Verificar se já existe certificado
+    if [ ! -f "ssl/cert.pem" ] || [ ! -f "ssl/key.pem" ]; then
+        echo -e "${YELLOW}⚠️  Certificados SSL não encontrados${NC}"
+        echo -e "${YELLOW}Criando certificados auto-assinados para desenvolvimento...${NC}"
+        
+        # Gerar certificado auto-assinado
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+            -keyout ssl/key.pem \
+            -out ssl/cert.pem \
+            -subj "/C=BR/ST=SP/L=SaoPaulo/O=JA-Automoveis/CN=localhost"
+        
+        echo -e "${GREEN}✅ Certificados SSL criados${NC}"
+        echo -e "${YELLOW}⚠️  Para produção, use Let's Encrypt ou certificado válido${NC}"
+    else
+        echo -e "${GREEN}✅ Certificados SSL encontrados${NC}"
+    fi
+}
+
 # Configurar variáveis de ambiente
 setup_env() {
     log "Configurando variáveis de ambiente..."
@@ -75,6 +100,13 @@ setup_env() {
         JWT_SECRET=$(openssl rand -base64 32)
         sed -i.bak "s/JWT_SECRET=.*/JWT_SECRET=$JWT_SECRET/" .env
         echo -e "${GREEN}✅ JWT_SECRET configurado${NC}"
+    fi
+    
+    # Atualizar ALLOWED_ORIGINS para HTTPS
+    if ! grep -q "https://" .env; then
+        echo -e "${YELLOW}⚠️  Atualizando ALLOWED_ORIGINS para incluir HTTPS${NC}"
+        sed -i.bak "s|ALLOWED_ORIGINS=.*|ALLOWED_ORIGINS=http://localhost,https://localhost,http://localhost:5000|" .env
+        echo -e "${GREEN}✅ ALLOWED_ORIGINS atualizado${NC}"
     fi
     
     echo -e "${GREEN}✅ Variáveis de ambiente configuradas${NC}"
@@ -236,14 +268,20 @@ show_status() {
     echo -e "${GREEN}🎉 DEPLOY CONCLUÍDO COM SUCESSO!${NC}"
     echo ""
     echo -e "${BLUE}🌐 URLs de Acesso:${NC}"
-    echo -e "  • Frontend: http://localhost/"
+    echo -e "  • Frontend HTTP: http://localhost/ (redireciona para HTTPS)"
+    echo -e "  • Frontend HTTPS: https://localhost/"
     echo -e "  • API: http://localhost:5000"
-    echo -e "  • Admin: http://localhost/admin"
-    echo -e "  • Inventário: http://localhost/inventory"
+    echo -e "  • Admin: https://localhost/admin"
+    echo -e "  • Inventário: https://localhost/inventory"
     echo ""
     echo -e "${BLUE}🔑 Credenciais Admin:${NC}"
     echo -e "  • Username: admin"
     echo -e "  • Password: adminja2025"
+    echo ""
+    echo -e "${BLUE}🔒 SSL/HTTPS:${NC}"
+    echo -e "  • Certificados: ssl/cert.pem e ssl/key.pem"
+    echo -e "  • Para produção: Substitua por certificados válidos"
+    echo -e "  • Let's Encrypt: Use certbot para certificados gratuitos"
     echo ""
     echo -e "${BLUE}📋 Comandos Úteis:${NC}"
     echo -e "  • Ver logs: docker-compose logs -f"
@@ -271,6 +309,7 @@ main() {
     # 1. Verificações
     check_docker
     check_ports
+    setup_ssl
     setup_env
     
     # 2. Build
