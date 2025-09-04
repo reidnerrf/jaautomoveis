@@ -6,6 +6,8 @@ import {
   getLikesByVehicle,
   getDailyViewsLast30Days,
   purgeOldAnalytics,
+  getNetSalesLastSixMonths,
+  getTopSellersLastSixMonths,
 } from "../controllers/analyticsController";
 import { protect } from "../middleware/authMiddleware";
 
@@ -49,5 +51,8 @@ router.get("/likes/by-vehicle", getLikesByVehicle);
 router.get("/views/last-30-days", protect, getDailyViewsLast30Days);
 // Limpeza de analytics > 3 meses (protegido)
 router.delete("/purge-old", protect, purgeOldAnalytics);
+// Novos endpoints
+router.get("/sales/net-last-6-months", protect, getNetSalesLastSixMonths);
+router.get("/sellers/top-last-6-months", protect, getTopSellersLastSixMonths);
 
 export default router;
