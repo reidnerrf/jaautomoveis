@@ -2,6 +2,9 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useVehicleData } from "../hooks/useVehicleData.tsx";
 import StatCard from "../components/StatCard.tsx";
+import AdvancedMetrics from "../components/AdvancedMetrics.tsx";
+import DashboardAlerts from "../components/DashboardAlerts.tsx";
+import RecentActivity from "../components/RecentActivity.tsx";
 import toast from "react-hot-toast";
 import {
   FiEye,
@@ -11,6 +14,9 @@ import {
   FiActivity,
   FiHeart,
   FiTrash2,
+  FiUsers,
+  FiCar,
+  FiTarget,
 } from "react-icons/fi";
 import {
   AreaChart,
@@ -31,6 +37,7 @@ import { analytics } from "../utils/analytics";
 const AdminDashboardPage: React.FC = () => {
   const { vehicles, loading, refreshVehicles } = useVehicleData();
   const { token } = useAuth();
+  const [sellers, setSellers] = useState<any[]>([]);
   const [monthlyViews, setMonthlyViews] = useState<
     Array<{ month: string; ["Visualizações"]: number }>
   >([]);
@@ -44,6 +51,30 @@ const AdminDashboardPage: React.FC = () => {
   });
   const [dailyViews, setDailyViews] = useState<Array<{ date: string; views: number }>>([]);
   const [purging, setPurging] = useState(false);
+
+  // Buscar vendedores
+  useEffect(() => {
+    const fetchSellers = async () => {
+      if (!token) return;
+      
+      try {
+        const response = await fetch("/api/sellers", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setSellers(data.sellers || []);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar vendedores:", error);
+      }
+    };
+
+    fetchSellers();
+  }, [token]);
 
   useEffect(() => {
     const fetchAnalyticsData = async () => {
@@ -579,6 +610,40 @@ const AdminDashboardPage: React.FC = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* Advanced Metrics */}
+      <motion.div
+        className="col-span-full"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.1 }}
+      >
+        <AdvancedMetrics
+          vehicles={vehicles}
+          sellers={sellers}
+          monthlyData={generateProfitData}
+          performanceData={[]}
+        />
+      </motion.div>
+
+      {/* Alerts and Recent Activity */}
+      <div className="col-span-full grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.2 }}
+        >
+          <DashboardAlerts vehicles={vehicles} sellers={sellers} />
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.3 }}
+        >
+          <RecentActivity vehicles={vehicles} sellers={sellers} />
+        </motion.div>
+      </div>
     </div>
   );
 };

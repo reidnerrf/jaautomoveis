@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.tsx";
+import SellerStats from "../components/SellerStats.tsx";
 import {
   FiEdit,
   FiTrash2,
@@ -38,6 +39,7 @@ interface Seller {
 const AdminSellerListPage: React.FC = () => {
   const { token } = useAuth();
   const [sellers, setSellers] = useState<Seller[]>([]);
+  const [vehicles, setVehicles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState<"all" | "active" | "inactive">("all");
@@ -72,9 +74,27 @@ const AdminSellerListPage: React.FC = () => {
     }
   }, [currentPage, token]);
 
+  const fetchVehicles = useCallback(async () => {
+    try {
+      const response = await fetch("/api/vehicles", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setVehicles(data.vehicles || []);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar veículos:", error);
+    }
+  }, [token]);
+
   useEffect(() => {
     fetchSellers();
-  }, [fetchSellers]);
+    fetchVehicles();
+  }, [fetchSellers, fetchVehicles]);
 
   // Fetch vehicles and calculate seller performance
   useEffect(() => {
@@ -568,6 +588,16 @@ const AdminSellerListPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Advanced Seller Statistics */}
+      <motion.div
+        className="mt-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
+        <SellerStats sellers={sellers} vehicles={vehicles} />
+      </motion.div>
     </div>
   );
 };

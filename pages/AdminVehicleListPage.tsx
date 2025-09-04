@@ -2,6 +2,8 @@ import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useVehicleData } from "../hooks/useVehicleData.tsx";
 import { useAuth } from "../hooks/useAuth.tsx";
+import VehicleFilters from "../components/VehicleFilters.tsx";
+import VehicleStats from "../components/VehicleStats.tsx";
 import {
   FiEdit,
   FiTrash2,
@@ -27,6 +29,54 @@ import toast from "react-hot-toast";
 const AdminVehicleListPage: React.FC = () => {
   const { vehicles = [], deleteVehicle, loading } = useVehicleData();
   const { token } = useAuth();
+  
+  // Estados para filtros
+  const [filters, setFilters] = useState({
+    search: "",
+    make: "",
+    model: "",
+    year: "",
+    priceMin: "",
+    priceMax: "",
+    status: "",
+    fuel: "",
+    transmission: "",
+  });
+
+  // Funções para filtros
+  const handleFiltersChange = (newFilters: any) => {
+    setFilters(newFilters);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      search: "",
+      make: "",
+      model: "",
+      year: "",
+      priceMin: "",
+      priceMax: "",
+      status: "",
+      fuel: "",
+      transmission: "",
+    });
+  };
+
+  // Dados para filtros
+  const makes = useMemo(() => {
+    const uniqueMakes = [...new Set(vehicles.map(v => v.make).filter(Boolean))];
+    return uniqueMakes.sort();
+  }, [vehicles]);
+
+  const models = useMemo(() => {
+    const uniqueModels = [...new Set(vehicles.map(v => v.model).filter(Boolean))];
+    return uniqueModels.sort();
+  }, [vehicles]);
+
+  const years = useMemo(() => {
+    const uniqueYears = [...new Set(vehicles.map(v => v.year).filter(Boolean))];
+    return uniqueYears.sort((a, b) => b - a);
+  }, [vehicles]);
 
   const [nameFilter, setNameFilter] = useState("");
   const [yearFilter, setYearFilter] = useState("");
@@ -969,6 +1019,33 @@ const AdminVehicleListPage: React.FC = () => {
           </motion.div>
         ) : null}
       </AnimatePresence>
+
+      {/* Advanced Filters */}
+      <motion.div
+        className="mt-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <VehicleFilters
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={handleClearFilters}
+          makes={makes}
+          models={models}
+          years={years}
+        />
+      </motion.div>
+
+      {/* Vehicle Statistics */}
+      <motion.div
+        className="mt-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
+        <VehicleStats vehicles={vehicles} />
+      </motion.div>
     </div>
   );
 };
