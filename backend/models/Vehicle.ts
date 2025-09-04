@@ -21,6 +21,11 @@ const vehicleSchema = new mongoose.Schema<Omit<IVehicle, "id">>(
     optionals: [{ type: String }],
     images: [{ type: String }],
     views: { type: Number, default: 0 },
+    status: { type: String, enum: ["disponivel", "vendido"], default: "disponivel", index: true },
+    cost: { type: Number, default: 0 },
+    soldAt: { type: Date },
+    soldPrice: { type: Number },
+    sellerId: { type: mongoose.Schema.Types.ObjectId, ref: "Seller" },
   },
   {
     id: false, // Disable the default virtual id

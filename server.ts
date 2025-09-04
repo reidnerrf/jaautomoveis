@@ -16,6 +16,7 @@ import UAParser from "ua-parser-js";
 import cron from "node-cron";
 import connectDB from "./backend/config/db";
 import vehicleRoutes from "./backend/routes/vehicleRoutes";
+import sellerRoutes from "./backend/routes/sellerRoutes";
 import authRoutes from "./backend/routes/authRoutes";
 import uploadRoutes from "./backend/routes/uploadRoutes";
 import analyticsRoutes from "./backend/routes/analyticsRoutes";
@@ -255,6 +256,7 @@ app.use("/assets", vehicleImageOptimization);
 
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/vehicles", vehicleListCacheMiddleware, vehicleRoutes);
+app.use("/api/sellers", sellerRoutes);
 app.use("/api/upload", autoImageOptimization, uploadRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/push", pushRoutes);
