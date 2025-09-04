@@ -1,0 +1,88 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/JaAutomoveis
+      - JWT_SECRET=${JWT_SECRET}
+      - PORT=5000
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+    depends_on:
+      - mongo
+    volumes:
+      - ./uploads:/app/uploads
+      - ./assets:/app/assets
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:5000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "127.0.0.1:27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=JaAutomoveis
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-ssl.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./dist:/usr/share/nginx/html:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  seeder:
+    build: .
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/JaAutomoveis
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - mongo
+    command: ["npx", "ts-node", "--project", "tsconfig.server.json", "seeder.ts"]
+    profiles:
+      - tools
+
+volumes:
+  mongodb_data:
