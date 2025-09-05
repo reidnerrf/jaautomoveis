@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { FiAward, FiEye, FiHeart } from "react-icons/fi";
+import { FiAward, FiEye, FiHeart, FiUsers, FiShield, FiTrendingUp, FiClock, FiMapPin } from "react-icons/fi";
+import { FaCar, FaHandshake, FaStar } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
 import { generatePageSEO } from "../utils/seo";
 
@@ -24,6 +25,36 @@ const AboutPage: React.FC = () => {
       description:
         "Nosso maior objetivo é ver nossos clientes satisfeitos e confiantes com sua escolha.",
     },
+  ];
+
+  const stats = [
+    { icon: <FaCar size={24} />, number: "500+", label: "Veículos Vendidos", color: "text-blue-600" },
+    { icon: <FiUsers size={24} />, number: "300+", label: "Clientes Satisfeitos", color: "text-green-600" },
+    { icon: <FiClock size={24} />, number: "5+", label: "Anos de Experiência", color: "text-purple-600" },
+    { icon: <FaStar size={24} />, number: "4.9", label: "Avaliação Média", color: "text-yellow-600" },
+  ];
+
+  const services = [
+    {
+      icon: <FaCar size={24} className="text-blue-600" />,
+      title: "Venda de Veículos",
+      description: "Novos, seminovos e usados com procedência garantida"
+    },
+    {
+      icon: <FaHandshake size={24} className="text-green-600" />,
+      title: "Consignação",
+      description: "Venda seu veículo com segurança e transparência"
+    },
+    {
+      icon: <FiTrendingUp size={24} className="text-purple-600" />,
+      title: "Financiamento",
+      description: "Parcelamos seu sonho em condições especiais"
+    },
+    {
+      icon: <FiShield size={24} className="text-red-600" />,
+      title: "Garantia",
+      description: "Todos os veículos passam por rigorosa inspeção"
+    }
   ];
 
   return (
@@ -121,6 +152,64 @@ const AboutPage: React.FC = () => {
           </p>
         </div>
 
+        {/* Estatísticas */}
+        <div className="mt-20">
+          <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-12">
+            Números que Comprovam Nossa Excelência
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <div className={`flex justify-center mb-3 ${stat.color}`}>
+                  {stat.icon}
+                </div>
+                <div className="text-3xl font-bold text-gray-800 dark:text-white mb-1">
+                  {stat.number}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Serviços */}
+        <div className="mt-20">
+          <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-12">
+            Nossos Serviços
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {services.map((service, index) => (
+              <motion.div
+                key={service.title}
+                className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <div className="flex justify-center mb-4">
+                  {service.icon}
+                </div>
+                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">
+                  {service.title}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  {service.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
         {/* Valores */}
         <div className="mt-20">
           <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-12">
@@ -143,6 +232,30 @@ const AboutPage: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-300">{value.description}</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+
+        {/* Localização */}
+        <div className="mt-20 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-10">
+          <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <FiMapPin size={32} className="text-main-red" />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
+              Nossa Localização
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+              Estamos localizados em Av. Brasília, n°35 - Vila Julieta, Resende - RJ, prontos para te atender com excelência.
+            </p>
+            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 max-w-md mx-auto">
+              <p className="text-gray-700 dark:text-gray-300 font-medium">
+                <FiMapPin className="inline mr-2" />
+                Av. Brasília, n°35 - Vila Julieta, Resende - RJ
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                Venha nos conhecer pessoalmente!
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -19,24 +19,25 @@ const StatCard: React.FC<StatCardProps> = ({
   children,
 }) => {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300">
+    <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700 p-6 shadow-md hover:shadow-xl transition-all duration-300">
       {/* Ícone com destaque */}
       <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-indigo-400 text-white shadow-md">
         {children}
       </div>
 
       {/* Conteúdo */}
-      <div className="mt-5 flex items-end justify-between">
+      <div className="mt-5 flex flex-col space-y-3">
         <div className="min-w-0">
-          <h4 className="text-3xl font-extrabold text-gray-900">{value}</h4>
-          <span className="text-sm font-medium text-gray-500">{title}</span>
+          <h4 className="text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white break-words leading-tight">{value}</h4>
+          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</span>
         </div>
 
         {/* Indicador de variação */}
         <span
-          className={`shrink-0 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm
-            ${levelUp ? "bg-green-100 text-green-600" : ""}
-            ${levelDown ? "bg-red-100 text-red-600" : ""}
+          className={`self-start flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm
+            ${levelUp ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300" : ""}
+            ${levelDown ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300" : ""}
+            ${!levelUp && !levelDown ? "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300" : ""}
           `}
         >
           {rate}

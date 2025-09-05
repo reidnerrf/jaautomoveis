@@ -11,6 +11,8 @@ import {
   FiChevronDown,
   FiTag,
   FiTrendingUp,
+  FiCalendar,
+  FiShield,
 } from "react-icons/fi";
 import { FaCarSide, FaGasPump, FaCog, FaCalendarAlt } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
@@ -245,6 +247,132 @@ const InventoryPage: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen transition-colors duration-300">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white py-10">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 via-transparent to-blue-500/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        
+        {/* Floating Elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <motion.div
+            className="absolute top-20 left-10 text-white/10"
+            animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <FaCarSide size={40} />
+          </motion.div>
+          <motion.div
+            className="absolute top-40 right-20 text-white/8"
+            animate={{ y: [0, 15, 0], rotate: [0, -3, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          >
+            <FaCarSide size={30} />
+          </motion.div>
+          <motion.div
+            className="absolute bottom-40 left-20 text-white/6"
+            animate={{ y: [0, -10, 0], rotate: [0, 2, 0] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          >
+            <FaCarSide size={25} />
+          </motion.div>
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            className="text-center max-w-5xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 tracking-tight">
+              Encontre o Carro dos Seus{" "}
+              <span className="bg-gradient-to-r from-red-400 to-rose-400 bg-clip-text text-transparent">
+                Sonhos
+              </span>
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-200 mb-12 leading-relaxed max-w-3xl mx-auto">
+              {filteredAndSortedVehicles.length} veículos selecionados com qualidade garantida e preços imperdíveis
+            </p>
+            
+            {/* Quick Stats Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+              <motion.div
+                className="group relative"
+                whileHover={{ scale: 1.05, y: -5 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-center hover:bg-white/20 transition-all duration-300 shadow-lg hover:shadow-2xl">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-full mb-3 group-hover:bg-white/30 transition-colors duration-300">
+                    <FaCarSide className="text-white text-xl" />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-2 group-hover:text-yellow-300 transition-colors duration-300">
+                    {filteredAndSortedVehicles.length}
+                  </div>
+                  <div className="text-sm text-gray-200 group-hover:text-white transition-colors duration-300">
+                    Veículos Disponíveis
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="group relative"
+                whileHover={{ scale: 1.05, y: -5 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-center hover:bg-white/20 transition-all duration-300 shadow-lg hover:shadow-2xl">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-full mb-3 group-hover:bg-white/30 transition-colors duration-300">
+                    <FiTag className="text-white text-xl" />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-2 group-hover:text-yellow-300 transition-colors duration-300">
+                    {uniqueMakes.length}
+                  </div>
+                  <div className="text-sm text-gray-200 group-hover:text-white transition-colors duration-300">
+                    Marcas
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="group relative"
+                whileHover={{ scale: 1.05, y: -5 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-center hover:bg-white/20 transition-all duration-300 shadow-lg hover:shadow-2xl">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-full mb-3 group-hover:bg-white/30 transition-colors duration-300">
+                    <FiCalendar className="text-white text-xl" />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-2 group-hover:text-yellow-300 transition-colors duration-300">
+                    {uniqueYears.length}
+                  </div>
+                  <div className="text-sm text-gray-200 group-hover:text-white transition-colors duration-300">
+                    Anos Diferentes
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="group relative"
+                whileHover={{ scale: 1.05, y: -5 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-center hover:bg-white/20 transition-all duration-300 shadow-lg hover:shadow-2xl">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-full mb-3 group-hover:bg-white/30 transition-colors duration-300">
+                    <FiShield className="text-white text-xl" />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-2 group-hover:text-yellow-300 transition-colors duration-300">
+                    100%
+                  </div>
+                  <div className="text-sm text-gray-200 group-hover:text-white transition-colors duration-300">
+                    Garantia
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <SEOHead
           title={`Estoque de Veículos | JA Automóveis`}
@@ -306,40 +434,6 @@ const InventoryPage: React.FC = () => {
             })}
           </script>
         </SEOHead>
-        {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12 relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 via-gray-800 to-black p-12 text-white shadow-2xl"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-transparent to-blue-500/10"></div>
-          <div className="relative z-10">
-            <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight">
-              Encontre o Carro dos Seus
-              <span className="block bg-gradient-to-r from-red-400 to-rose-400 bg-clip-text text-transparent">
-                Sonhos
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto mb-8 leading-relaxed">
-              {filteredAndSortedVehicles.length} veículos selecionados com qualidade garantida e
-              preços imperdíveis
-            </p>
-            <div className="flex flex-wrap justify-center items-center gap-6 text-gray-200">
-              <div className="flex items-center gap-2">
-                <FiTag className="text-yellow-300" />
-                <span>Melhores Preços</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaCarSide className="text-green-300" />
-                <span>Qualidade Garantida</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FiTrendingUp className="text-pink-300" />
-                <span>Financiamento Fácil</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
 
         {/* Search and View Controls */}
         <motion.div

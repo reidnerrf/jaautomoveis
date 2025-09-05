@@ -126,7 +126,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
 
               {/* Disponível */}
               <div className="absolute top-3 left-3">
-                <span className="bg-red-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md flex items-center gap-1">
+                <span className="bg-green-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md flex items-center gap-1">
                   <FiCheckCircle className="w-3 h-3" />
                   Disponível
                 </span>
@@ -252,7 +252,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
         )}
 
         <div className="absolute top-3 left-3 z-10">
-          <span className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md">
+          <span className="flex items-center gap-1 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md">
             <FiCheckCircle className="w-3 h-3" />
             Disponível
           </span>

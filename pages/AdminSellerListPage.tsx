@@ -538,9 +538,17 @@ const AdminSellerListPage: React.FC = () => {
                                   </div>
                                 ))}
                                 {soldVehicles.length > 2 && (
-                                  <div className="text-gray-500">
+                                  <button
+                                    onClick={() => {
+                                      const modal = document.getElementById(`seller-vehicles-${sellerId}`);
+                                      if (modal) {
+                                        (modal as any).showModal();
+                                      }
+                                    }}
+                                    className="text-blue-600 hover:text-blue-800 font-medium"
+                                  >
                                     +{soldVehicles.length - 2} mais...
-                                  </div>
+                                  </button>
                                 )}
                               </div>
                             </div>
@@ -633,6 +641,105 @@ const AdminSellerListPage: React.FC = () => {
       >
         <SellerStats sellers={sellers} vehicles={vehicles} />
       </motion.div>
+
+      {/* Modals for Seller Vehicles */}
+      {sellers.map((seller) => {
+        const sellerId = seller._id || seller.id;
+        const soldVehicles = vehicles.filter(
+          (v) => v.sellerId === sellerId && v.status === "vendido"
+        );
+        
+        if (soldVehicles.length === 0) return null;
+        
+        return (
+          <dialog key={sellerId} id={`seller-vehicles-${sellerId}`} className="modal">
+            <div className="modal-box max-w-4xl">
+              <h3 className="font-bold text-lg mb-4">
+                Veículos Vendidos por {seller.name}
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="table table-zebra w-full">
+                  <thead>
+                    <tr>
+                      <th>Veículo</th>
+                      <th>Ano</th>
+                      <th>Preço de Venda</th>
+                      <th>Custo</th>
+                      <th>Lucro</th>
+                      <th>Data da Venda</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {soldVehicles.map((vehicle) => {
+                      const salePrice = vehicle.soldPrice || vehicle.price || 0;
+                      const cost = vehicle.cost || 0;
+                      const profit = salePrice - cost;
+                      
+                      return (
+                        <tr key={vehicle.id}>
+                          <td>
+                            <div className="flex items-center space-x-3">
+                              <div className="avatar">
+                                <div className="mask mask-squircle w-12 h-12">
+                                  <img
+                                    src={vehicle.images?.[0] || '/placeholder-car.jpg'}
+                                    alt={vehicle.name}
+                                    className="object-cover"
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                <div className="font-bold">{vehicle.make} {vehicle.model}</div>
+                                <div className="text-sm opacity-50">{vehicle.name}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td>{vehicle.year}</td>
+                          <td>
+                            <span className="font-semibold text-green-600">
+                              {new Intl.NumberFormat("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                              }).format(salePrice)}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="font-semibold text-orange-600">
+                              {new Intl.NumberFormat("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                              }).format(cost)}
+                            </span>
+                          </td>
+                          <td>
+                            <span className={`font-semibold ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              {new Intl.NumberFormat("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                              }).format(profit)}
+                            </span>
+                          </td>
+                          <td>
+                            {vehicle.soldDate 
+                              ? new Date(vehicle.soldDate).toLocaleDateString("pt-BR")
+                              : "-"
+                            }
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <div className="modal-action">
+                <form method="dialog">
+                  <button className="btn">Fechar</button>
+                </form>
+              </div>
+            </div>
+          </dialog>
+        );
+      })}
     </div>
   );
 };

@@ -1,10 +1,59 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { FiMapPin, FiPhone, FiMail } from "react-icons/fi";
+import { FiMapPin, FiPhone, FiMail, FiClock, FiMessageCircle, FiSend } from "react-icons/fi";
+import { FaWhatsapp, FaInstagram, FaFacebook } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
 import { generatePageSEO } from "../utils/seo";
 
 const ContactPage: React.FC = () => {
+  const contactInfo = [
+    {
+      icon: <FiMapPin size={24} className="text-main-red" />,
+      title: "Endereço",
+      info: "Av. Brasília, n°35 - Vila Julieta, Resende - RJ",
+      description: "Venha nos visitar!"
+    },
+    {
+      icon: <FiPhone size={24} className="text-green-600" />,
+      title: "Telefone",
+      info: "(24) 99903-7716",
+      description: "WhatsApp disponível"
+    },
+    {
+      icon: <FiMail size={24} className="text-blue-600" />,
+      title: "Email",
+      info: "contato@jaautomoveis.com",
+      description: "Respondemos rapidamente"
+    },
+    {
+      icon: <FiClock size={24} className="text-purple-600" />,
+      title: "Horário",
+      info: "Seg - Sex: 8h às 18:30h",
+      description: "Sáb: 8h às 13h"
+    }
+  ];
+
+  const socialLinks = [
+    {
+      icon: <FaWhatsapp size={24} />,
+      name: "WhatsApp",
+      url: "https://wa.me/5524999037716",
+      color: "bg-green-500 hover:bg-green-600"
+    },
+    {
+      icon: <FaInstagram size={24} />,
+      name: "Instagram",
+      url: "#",
+      color: "bg-pink-500 hover:bg-pink-600"
+    },
+    {
+      icon: <FaFacebook size={24} />,
+      name: "Facebook",
+      url: "#",
+      color: "bg-blue-600 hover:bg-blue-700"
+    }
+  ];
+
   return (
     <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 transition-colors">
       <SEOHead
@@ -175,23 +224,62 @@ const ContactPage: React.FC = () => {
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
               Nossas Informações
             </h2>
-            <div className="space-y-4 text-gray-600 dark:text-gray-300">
-              {[
-                {
-                  icon: FiMapPin,
-                  text: "Av. Brasília, n°35 - Vila Julieta, Resende - RJ, 27521-060",
-                },
-                { icon: FiPhone, text: "(24) 99903-7716" },
-                { icon: FiMail, text: "contato@jaautomoveis.com" },
-              ].map(({ icon: Icon, text }) => (
-                <p key={text} className="flex items-center group">
-                  <Icon
-                    className="mr-3 text-main-red group-hover:text-red-700 transition-colors duration-300"
-                    size={20}
-                  />
-                  {text}
-                </p>
+            {/* Cards de Informações */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              {contactInfo.map((info, index) => (
+                <motion.div
+                  key={info.title}
+                  className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-600 hover:shadow-lg transition-shadow duration-300"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0">
+                      {info.icon}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-800 dark:text-white text-sm">
+                        {info.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-300 font-medium">
+                        {info.info}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {info.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
               ))}
+            </div>
+
+            {/* Redes Sociais */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                Siga-nos nas Redes Sociais
+              </h3>
+              <div className="flex space-x-3">
+                {socialLinks.map((social, index) => (
+                  <motion.a
+                    key={social.name}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${social.color} text-white p-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center space-x-2`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  >
+                    {social.icon}
+                    <span className="text-sm font-medium">{social.name}</span>
+                  </motion.a>
+                ))}
+              </div>
             </div>
             <div className="mt-8 h-80 rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
               <iframe

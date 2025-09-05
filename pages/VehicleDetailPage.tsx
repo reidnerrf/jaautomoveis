@@ -293,8 +293,13 @@ const VehicleDetailPage: React.FC = () => {
 
       <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Seta para voltar ao estoque */}
-          <div className="mb-4">
+          {/* Breadcrumb Navigation */}
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <Link
               to="/inventory"
               className="inline-flex items-center text-main-red font-medium relative group"
@@ -303,7 +308,9 @@ const VehicleDetailPage: React.FC = () => {
               Voltar ao estoque
               <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-main-red transition-all duration-300 group-hover:w-full"></span>
             </Link>
-          </div>
+          </motion.div>
+
+          
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Galeria de imagens */}
             <div className="lg:col-span-3">
@@ -370,9 +377,9 @@ const VehicleDetailPage: React.FC = () => {
               <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
                 {vehicle.name}
               </h1>
-              <div className="flex items-center gap-1 mt-2 mb-6">
+              <div className="flex items-center gap-1 mt-2 mb-6 ">
                 <span className="text-sm text-gray-500">R$</span>
-                <p className="text-4xl font-bold text-main-red drop-shadow-sm">
+                <p className="text-5xl font-bold text-main-red drop-shadow-sm">
                   {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
                 </p>
               </div>
@@ -383,10 +390,10 @@ const VehicleDetailPage: React.FC = () => {
                   {/* hide scrollbar in webkit */}
                   <style>{`.scrollbar-none::-webkit-scrollbar{display:none;}`}</style>
                   <div className="flex items-center text-gray-700 dark:text-gray-300">
-                    <FiAward className="mr-2 text-main-red" /> Revisado
+                    <FiAward className="mr-1 text-main-red" /> Revisado
                   </div>
                   <div className="flex items-center text-gray-700 dark:text-gray-300">
-                    <FiShield className="mr-2 text-main-red" /> Garantia
+                    <FiShield className="mr-1 text-main-red" /> Garantia
                   </div>
                   {/* Compartilhar simples, só texto + ícone, sem contorno */}
                   <ShareButton vehicle={vehicle} className="!p-0 !m-0" />

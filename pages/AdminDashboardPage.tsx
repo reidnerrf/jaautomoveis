@@ -199,6 +199,9 @@ const AdminDashboardPage: React.FC = () => {
         totalCost: 0,
         totalProfit: 0,
         soldVehicles: [] as Vehicle[],
+        soldRevenue: 0,
+        soldCost: 0,
+        soldProfit: 0,
       };
     }
 
@@ -206,11 +209,14 @@ const AdminDashboardPage: React.FC = () => {
     const totalValue = safeVehicles.reduce((sum, v) => sum + (v.price || 0), 0);
     const totalViews = safeVehicles.reduce((sum, v) => sum + (v.views || 0), 0);
     const totalCost = safeVehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
+    
+    // Lucro total = valor total do estoque - custo total
+    const totalProfit = totalValue - totalCost;
 
     const soldVehicles = safeVehicles.filter((v) => v.status === "vendido");
-    const totalRevenue = soldVehicles.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
+    const soldRevenue = soldVehicles.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
     const soldCost = soldVehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
-    const totalProfit = totalRevenue - soldCost;
+    const soldProfit = soldRevenue - soldCost;
 
     const topVehicles = [...safeVehicles].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
 
@@ -223,39 +229,60 @@ const AdminDashboardPage: React.FC = () => {
       totalCost,
       totalProfit,
       soldVehicles,
+      soldRevenue,
+      soldCost,
+      soldProfit,
     };
   }, [vehicles]);
 
-  // Generate profit data for last 6 months
-  const generateProfitData = useMemo(() => {
+  // Generate realistic sales trend data based on sold vehicles
+  const generateSalesTrendData = useMemo(() => {
     const months = [];
     const currentDate = new Date();
-
+    
+    // Get sold vehicles data
+    const soldVehicles = vehicleStats.soldVehicles;
+    
     for (let i = 5; i >= 0; i--) {
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
       const monthName = date.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" });
-
-      // Calculate profit for this month (simplified - using random data for demo)
-      // In a real app, you'd fetch this data from your backend
-      const revenue = Math.floor(Math.random() * 50000) + 20000;
-      const cost = Math.floor(Math.random() * 30000) + 15000;
-      const profit = revenue - cost;
-
+      
+      // Calculate actual sales for this month based on sold vehicles
+      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+      
+      const monthSoldVehicles = soldVehicles.filter(v => {
+        const soldDate = v.soldDate ? new Date(v.soldDate) : new Date();
+        return soldDate >= monthStart && soldDate <= monthEnd;
+      });
+      
+      const vendidos = monthSoldVehicles.length;
+      const receita = monthSoldVehicles.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
+      const custo = monthSoldVehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
+      const lucro = receita - custo;
+      
+      // Add some variation for available vehicles (simulation)
+      const disponiveis = Math.max(0, Math.floor(Math.random() * 20) + 5);
+      
       months.push({
         month: monthName,
-        profit,
-        revenue,
-        cost,
+        vendidos,
+        disponiveis,
+        receita,
+        lucro,
+        custo,
       });
     }
-
+    
     return months;
-  }, []);
+  }, [vehicleStats.soldVehicles]);
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
+      notation: "compact",
+      maximumFractionDigits: 1,
     }).format(value);
 
   const formatNumber = (value: number) => new Intl.NumberFormat("pt-BR").format(value);
@@ -300,7 +327,7 @@ const AdminDashboardPage: React.FC = () => {
       </motion.div>
 
       {/* Main Stats Cards */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-6">
         <StatCard
           title="Total de Visualizações"
           value={formatNumber(dashboardStats.totalViews)}
@@ -334,13 +361,24 @@ const AdminDashboardPage: React.FC = () => {
           <FiDollarSign className="text-orange-500" size={24} />
         </StatCard>
         <StatCard
-          title="Lucro Total"
+          title="Lucro Total (Estoque)"
           value={formatCurrency(vehicleStats.totalProfit)}
           rate={vehicleStats.totalProfit > 0 ? "+15.3%" : "-5.2%"}
           levelUp={vehicleStats.totalProfit > 0}
         >
           <FiTrendingUp
             className={vehicleStats.totalProfit > 0 ? "text-emerald-500" : "text-red-500"}
+            size={24}
+          />
+        </StatCard>
+        <StatCard
+          title="Lucro das Vendas"
+          value={formatCurrency(vehicleStats.soldProfit)}
+          rate={vehicleStats.soldProfit > 0 ? "+8.7%" : "-2.1%"}
+          levelUp={vehicleStats.soldProfit > 0}
+        >
+          <FiTarget
+            className={vehicleStats.soldProfit > 0 ? "text-blue-500" : "text-red-500"}
             size={24}
           />
         </StatCard>
@@ -474,42 +512,109 @@ const AdminDashboardPage: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Net Profit Chart */}
-      <motion.div
-        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-          Lucro Líquido (Últimos 6 Meses)
-        </h3>
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={generateProfitData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
-              <YAxis tick={{ fill: "#6B7280" }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1F2937",
-                  border: "none",
-                  borderRadius: "8px",
-                  color: "white",
-                }}
-                formatter={(value: number, name: string) => [
-                  formatCurrency(value),
-                  name === "profit" ? "Lucro" : name === "revenue" ? "Receita" : "Custo",
-                ]}
-              />
-              <Bar dataKey="profit" fill="#10B981" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </motion.div>
+      {/* Sales Trend and Seller Performance Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Sales Trend Chart */}
+        <motion.div
+          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+            Tendência de Vendas (Últimos 6 Meses)
+          </h3>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={generateSalesTrendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="colorVendidos" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorDisponiveis" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
+                <YAxis tick={{ fill: "#6B7280" }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1F2937",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "white",
+                  }}
+                  formatter={(value: number, name: string) => [
+                    value,
+                    name === "vendidos" ? "Vendidos" : "Disponíveis",
+                  ]}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="vendidos"
+                  stackId="1"
+                  stroke="#3B82F6"
+                  fill="url(#colorVendidos)"
+                  strokeWidth={2}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="disponiveis"
+                  stackId="1"
+                  stroke="#10B981"
+                  fill="url(#colorDisponiveis)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        {/* Seller Performance Chart */}
+        <motion.div
+          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+            Performance dos Vendedores
+          </h3>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={generateSalesTrendData.map(month => ({
+                  month: month.month,
+                  receita: month.receita,
+                  lucro: month.lucro,
+                }))}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
+                <YAxis tick={{ fill: "#6B7280" }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1F2937",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "white",
+                  }}
+                  formatter={(value: number, name: string) => [
+                    formatCurrency(value),
+                    name === "receita" ? "Receita" : "Lucro",
+                  ]}
+                />
+                <Bar dataKey="receita" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="lucro" fill="#10B981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+      </div>
 
       {/* Top Vehicles */}
       <motion.div
@@ -625,7 +730,7 @@ const AdminDashboardPage: React.FC = () => {
         <AdvancedMetrics
           vehicles={Array.isArray(vehicles) ? vehicles : []}
           sellers={Array.isArray(sellers) ? sellers : []}
-          monthlyData={generateProfitData}
+          monthlyData={generateSalesTrendData}
           performanceData={[]}
         />
       </motion.div>

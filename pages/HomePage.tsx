@@ -318,20 +318,64 @@ const HomePage: React.FC = () => {
         </div>
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70"></div>
+        
+        {/* Floating elements for visual appeal */}
+        <div className="absolute inset-0 z-10 pointer-events-none">
+          {/* Floating car icons */}
+          <motion.div
+            className="absolute top-20 left-10 text-white/20"
+            animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <FaCar size={40} />
+          </motion.div>
+          <motion.div
+            className="absolute top-40 right-20 text-white/15"
+            animate={{ y: [0, 15, 0], rotate: [0, -3, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          >
+            <FaCar size={30} />
+          </motion.div>
+          <motion.div
+            className="absolute bottom-40 left-20 text-white/10"
+            animate={{ y: [0, -10, 0], rotate: [0, 2, 0] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          >
+            <FaCar size={25} />
+          </motion.div>
+        </div>
+        
         {/* Content */}
-        <div className="relative z-10 text-center px-6">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg">
-            Seu Próximo Carro Está Aqui
-          </h1>
-          <p className="mt-4 text-lg md:text-xl text-gray-200 max-w-3xl mx-auto">
-            Ofertas imperdíveis, atendimento de qualidade e as melhores condições do mercado.
-          </p>
+        <div className="relative z-20 text-center px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white drop-shadow-lg mb-6">
+              Seu Próximo{" "}
+              <span className="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+                Carro
+              </span>{" "}
+              Está Aqui
+            </h1>
+            <p className="text-lg md:text-xl lg:text-2xl text-gray-200 max-w-3xl mx-auto leading-relaxed">
+              Ofertas imperdíveis, atendimento de qualidade e as melhores condições do mercado.
+            </p>
+          </motion.div>
           
-          <div className="mt-4 flex justify-center gap-4">
+          <motion.div
+            className="mt-8 flex flex-col sm:flex-row justify-center gap-4"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
             <Link
               to="/inventory"
-              className="bg-main-red hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg"
+              className="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold px-8 py-4 rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
+              onClick={() => trackAction("view_inventory", "cta_button")}
             >
+              <FaCar className="group-hover:rotate-12 transition-transform duration-300" />
               Ver Estoque
             </Link>
             <a
@@ -342,12 +386,59 @@ const HomePage: React.FC = () => {
                   trackBusinessEvent("whatsapp_click", { source: "home_hero_cta" });
                 } catch {}
               }}
-              className="bg-white/90 hover:bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg shadow-lg"
+              className="group bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-4 rounded-full shadow-2xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
             >
+              <FaWhatsapp className="group-hover:scale-110 transition-transform duration-300" />
               Falar no WhatsApp
             </a>
-          </div>
+          </motion.div>
+
+          {/* Stats - Hidden on mobile */}
+          <motion.div
+            className="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto hidden md:grid"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                className="group relative"
+                whileHover={{ scale: 1.05, y: -5 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-center hover:bg-white/20 transition-all duration-300 shadow-lg hover:shadow-2xl">
+                  <div className="mb-3">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-full mb-3 group-hover:bg-white/30 transition-colors duration-300">
+                      {stat.icon}
+                    </div>
+                  </div>
+                  <div className="text-3xl lg:text-4xl font-bold text-white mb-2 group-hover:text-yellow-300 transition-colors duration-300">
+                    {stat.number}
+                  </div>
+                  <div className="text-sm lg:text-base text-gray-200 group-hover:text-white transition-colors duration-300">
+                    {stat.label}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
+            <motion.div
+              className="w-1 h-3 bg-white rounded-full mt-2"
+              animate={{ y: [0, 12, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+          </div>
+        </motion.div>
       </section>
 
       {/* PERSONALIZADOS */}
@@ -359,23 +450,96 @@ const HomePage: React.FC = () => {
       )}
 
       {/* PROVAS SOCIAIS */}
-      <section className="py-12 bg-white dark:bg-gray-900 transition-colors duration-300">
+      <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center shadow">
-              <p className="text-4xl font-extrabold text-main-red">
-                +{new Intl.NumberFormat("pt-BR").format(clientsServed)}
-              </p>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">Clientes atendidos</p>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center shadow">
-              <p className="text-4xl font-extrabold text-green-600">Garantia</p>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">Veículos com procedência</p>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center shadow">
-              <p className="text-4xl font-extrabold text-blue-600">4.8★</p>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">Avaliação no Google</p>
-            </div>
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+              Números que <span className="text-red-500">Comprovam</span> Nossa Excelência
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-red-500 to-orange-500 mx-auto rounded-full mb-6"></div>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Resultados reais que demonstram nossa qualidade e confiança no mercado
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <motion.div
+              className="group relative"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
+              <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group-hover:border-red-200 dark:group-hover:border-red-800">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <FaUsers className="text-white text-2xl" />
+                </div>
+                <div className="text-5xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-red-500 transition-colors duration-300">
+                  +{new Intl.NumberFormat("pt-BR").format(clientsServed)}
+                </div>
+                <div className="text-lg font-semibold text-gray-600 dark:text-gray-300 mb-2">
+                  Clientes Atendidos
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  Satisfação garantida em cada negociação
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="group relative"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
+              <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group-hover:border-green-200 dark:group-hover:border-green-800">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <FaShieldAlt className="text-white text-2xl" />
+                </div>
+                <div className="text-5xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-green-500 transition-colors duration-300">
+                  100%
+                </div>
+                <div className="text-lg font-semibold text-gray-600 dark:text-gray-300 mb-2">
+                  Garantia Total
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  Veículos com procedência verificada
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="group relative"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
+              <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group-hover:border-yellow-200 dark:group-hover:border-yellow-800">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <FaStar className="text-white text-2xl" />
+                </div>
+                <div className="text-5xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-yellow-500 transition-colors duration-300">
+                  4.8★
+                </div>
+                <div className="text-lg font-semibold text-gray-600 dark:text-gray-300 mb-2">
+                  Avaliação Google
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  Excelência reconhecida pelos clientes
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -808,9 +972,9 @@ const HomePage: React.FC = () => {
                     <div>
                       <h4 className="font-bold text-gray-900 dark:text-white mb-1">Endereço</h4>
                       <p className="text-gray-600 dark:text-gray-300">
-                        Rua Principal, 123
+                        Av. Brasília, n°35
                         <br />
-                        Centro, Cidade - Estado
+                        Vila Julieta, Resende - RJ
                       </p>
                     </div>
                   </div>
@@ -832,9 +996,9 @@ const HomePage: React.FC = () => {
                     <div>
                       <h4 className="font-bold text-gray-900 dark:text-white mb-1">Horário</h4>
                       <p className="text-gray-600 dark:text-gray-300">
-                        Seg-Sex: 8h às 18h
+                        Seg-Sex: 8h às 18:30h
                         <br />
-                        Sáb: 8h às 16h
+                        Sáb: 8h às 13h
                       </p>
                     </div>
                   </div>

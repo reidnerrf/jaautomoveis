@@ -219,27 +219,50 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
             Tendência de Vendas
           </h3>
           <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={salesTrendData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
+            <AreaChart data={salesTrendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <defs>
+                <linearGradient id="colorVendidos" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorDisponiveis" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis dataKey="month" tick={{ fill: "#6B7280", fontSize: 12 }} />
+              <YAxis tick={{ fill: "#6B7280", fontSize: 12 }} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#1F2937",
+                  border: "none",
+                  borderRadius: "8px",
+                  color: "white",
+                }}
+                formatter={(value: number, name: string) => [
+                  value,
+                  name === "vendidos" ? "Vendidos" : "Disponíveis",
+                ]}
+              />
               <Legend />
               <Area
                 type="monotone"
                 dataKey="vendidos"
                 stackId="1"
                 stroke="#3B82F6"
-                fill="#3B82F6"
-                fillOpacity={0.6}
+                fill="url(#colorVendidos)"
+                strokeWidth={2}
+                name="Vendidos"
               />
               <Area
                 type="monotone"
                 dataKey="disponiveis"
                 stackId="1"
                 stroke="#10B981"
-                fill="#10B981"
-                fillOpacity={0.6}
+                fill="url(#colorDisponiveis)"
+                strokeWidth={2}
+                name="Disponíveis"
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -256,14 +279,37 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
             Performance dos Vendedores
           </h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={sellerPerformanceData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
+            <BarChart data={sellerPerformanceData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis 
+                dataKey="name" 
+                tick={{ fill: "#6B7280", fontSize: 12 }}
+                angle={-45}
+                textAnchor="end"
+                height={80}
+              />
+              <YAxis tick={{ fill: "#6B7280", fontSize: 12 }} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#1F2937",
+                  border: "none",
+                  borderRadius: "8px",
+                  color: "white",
+                }}
+                formatter={(value: number, name: string) => [
+                  name === "receita" || name === "lucro" 
+                    ? new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      }).format(value)
+                    : value,
+                  name === "vendas" ? "Vendas" : name === "receita" ? "Receita" : "Lucro",
+                ]}
+              />
               <Legend />
-              <Bar dataKey="vendas" fill="#3B82F6" name="Vendas" />
-              <Bar dataKey="receita" fill="#10B981" name="Receita" />
+              <Bar dataKey="vendas" fill="#3B82F6" name="Vendas" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="receita" fill="#10B981" name="Receita" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="lucro" fill="#F59E0B" name="Lucro" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>
@@ -296,7 +342,18 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#1F2937",
+                  border: "none",
+                  borderRadius: "8px",
+                  color: "white",
+                }}
+                formatter={(value: number, name: string) => [
+                  value,
+                  name,
+                ]}
+              />
             </PieChart>
           </ResponsiveContainer>
           <div className="space-y-3">
