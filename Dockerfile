@@ -9,7 +9,7 @@ WORKDIR /app
 # Copia os manifests primeiro (melhor cache)
 COPY package*.json ./
 
-# Instala TODAS as dependências (inclui vite, next, etc.)
+# Instala TODAS as dependências (inclui vite, esbuild, etc.)
 RUN npm install
 
 # Copia o código
@@ -37,9 +37,10 @@ COPY --from=base --chown=nextjs:nodejs /app/uploads ./uploads
 COPY --from=base --chown=nextjs:nodejs /app/assets ./assets
 COPY --from=base --chown=nextjs:nodejs /app/package*.json ./
 
-# Agora sim, só deps de produção
-RUN npm install
-RUN npm ci --only=production && npm cache clean --force
+# Instala dependências de produção + esbuild (necessário para o servidor)
+RUN npm ci --only=production && \
+    npm install esbuild && \
+    npm cache clean --force
 
 USER nextjs
 

@@ -134,6 +134,7 @@ const InventoryPage: React.FC = () => {
         (priceFilter === "30000-60000" && vehicle.price >= 30000 && vehicle.price <= 60000) ||
         (priceFilter === "60000-100000" && vehicle.price >= 60000 && vehicle.price <= 100000) ||
         (priceFilter === "100000" && vehicle.price > 100000);
+      const isAvailable = !vehicle.status || vehicle.status === "disponivel";
 
       return (
         matchesSearch &&
@@ -142,7 +143,8 @@ const InventoryPage: React.FC = () => {
         passesColor &&
         passesFuel &&
         passesTransmission &&
-        passesPrice
+        passesPrice &&
+        isAvailable
       );
     });
 
@@ -289,7 +291,7 @@ const InventoryPage: React.FC = () => {
                   "@type": "ListItem",
                   position: 1,
                   name: "Início",
-                  item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
+                  item: typeof window !== "undefined" ? `${window.location.origin}/` : "/",
                 },
                 {
                   "@type": "ListItem",
@@ -297,7 +299,7 @@ const InventoryPage: React.FC = () => {
                   name: "Estoque",
                   item:
                     typeof window !== "undefined"
-                      ? window.location.origin + "/inventory"
+                      ? `${window.location.origin}/inventory`
                       : "/inventory",
                 },
               ],

@@ -138,7 +138,7 @@ export default defineConfig(({ mode }) => {
           ws: true,
         },
       },
-      strictPort: false,
+      strictPort: true, // Força usar a porta 80
     },
     preview: {
       port: 4173,
