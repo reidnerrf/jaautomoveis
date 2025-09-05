@@ -272,13 +272,14 @@ app.get("/api/place-details", async (req: Request, res: Response) => {
       return res.status(200).json({ result: { reviews: [] } });
     }
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=reviews&key=${encodeURIComponent(apiKey)}`;
-    const response = await fetch(url as any);
-    if (!(response as any).ok) {
+    const response = await fetch(url);
+    if (!response.ok) {
       return res.status(200).json({ result: { reviews: [] } });
     }
-    const data = await (response as any).json();
+    const data = await response.json();
     res.json(data);
   } catch (error) {
+    console.error("Error fetching place details:", error);
     res.status(200).json({ result: { reviews: [] } });
   }
 });
