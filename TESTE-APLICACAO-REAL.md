@@ -10,7 +10,7 @@ A aplicação JA Automóveis foi testada com sucesso em ambiente de desenvolvime
 
 ## 🎯 Configuração de Teste
 
-- **Frontend**: http://localhost:3000 (porta 80 não disponível por restrições de privilégios)
+- **Frontend**: http://localhost:80 (porta 80 não disponível por restrições de privilégios)
 - **API**: http://localhost:5000
 - **Banco de Dados**: MongoDB (MongoDB Atlas)
 - **Ambiente**: Node.js + React + TypeScript
@@ -111,10 +111,10 @@ A aplicação JA Automóveis foi testada com sucesso em ambiente de desenvolvime
 
 ## 🚀 URLs de Acesso
 
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:80
 - **API**: http://localhost:5000
-- **Admin**: http://localhost:3000/admin
-- **Inventário**: http://localhost:3000/inventory
+- **Admin**: http://localhost:80/admin
+- **Inventário**: http://localhost:80/inventory
 - **Health Check**: http://localhost:5000/health
 
 ## 🔒 Segurança

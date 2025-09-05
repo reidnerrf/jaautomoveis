@@ -5,7 +5,7 @@ import React from "react";
 export const initSentry = () => {
   if (process.env.NODE_ENV === "production") {
     Sentry.init({
-      dsn: process.env.SENTRY_DSN || "https://your-sentry-dsn@sentry.io/project",
+      dsn: process.env.SENTRY_DSN || "",
       // Evitamos integrações que variam entre versões do SDK para manter build limpo
       // Performance monitoring básico pode ser reativado futuramente conforme versão do SDK
       environment: process.env.NODE_ENV,

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Vehicle as IVehicle } from "../../types";
+import type { Vehicle as IVehicle } from "../../types";
 
 const vehicleSchema = new mongoose.Schema<Omit<IVehicle, "id">>(
   {

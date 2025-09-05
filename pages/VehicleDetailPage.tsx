@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useVehicleData } from "../hooks/useVehicleData.tsx";
 import VehicleCarousel from "../components/VehicleCarousel.tsx";
@@ -35,6 +35,7 @@ const VehicleDetailPage: React.FC = () => {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const viewIncrementedRef = useRef<string | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -43,25 +44,29 @@ const VehicleDetailPage: React.FC = () => {
         const fetchedVehicle = await getVehicleById(id);
         if (fetchedVehicle) {
           setVehicle(fetchedVehicle);
-          // Increment view count, fire and forget
-          try {
-            await fetch(`/api/vehicles/${id}/view`, { method: "POST" });
-            if ((window as any).trackBusinessEvent) {
-              (window as any).trackBusinessEvent("vehicle_view", {
-                vehicleId: fetchedVehicle.id,
-                name: fetchedVehicle.name,
-              });
+          // Increment view count only once per page load
+          if (viewIncrementedRef.current !== id) {
+            viewIncrementedRef.current = id;
+            try {
+              await fetch(`/api/vehicles/${id}/view`, { method: "POST" });
+              if ((window as any).trackBusinessEvent) {
+                (window as any).trackBusinessEvent("vehicle_view", {
+                  vehicleId: fetchedVehicle.id,
+                  name: fetchedVehicle.name,
+                });
+              }
+            } catch (error) {
+              console.warn("Failed to increment view count.", error);
             }
-          } catch (error) {
-            console.warn("Failed to increment view count.", error);
           }
         }
       };
       fetchVehicle();
     } else {
       setVehicle(null);
+      viewIncrementedRef.current = null;
     }
-  }, [id, getVehicleById]);
+  }, [id]);
 
   // Load favorite state from localStorage
   useEffect(() => {

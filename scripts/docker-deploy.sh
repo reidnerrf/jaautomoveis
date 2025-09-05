@@ -73,7 +73,7 @@ setup_ssl() {
         openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
             -keyout ssl/key.pem \
             -out ssl/cert.pem \
-            -subj "/C=BR/ST=SP/L=SaoPaulo/O=JA-Automoveis/CN=localhost"
+            -subj '/C=BR/ST=SP/L=SaoPaulo/O=JA-Automoveis/CN=localhost'
         
         echo -e "${GREEN}✅ Certificados SSL criados${NC}"
         echo -e "${YELLOW}⚠️  Para produção, use Let's Encrypt ou certificado válido${NC}"

@@ -27,7 +27,7 @@ import { Seller } from "../types.ts";
 import toast from "react-hot-toast";
 
 const AdminVehicleListPage: React.FC = () => {
-  const { vehicles = [], deleteVehicle, loading } = useVehicleData();
+  const { vehicles = [], deleteVehicle, loading, refreshVehicles } = useVehicleData();
   const { token } = useAuth();
   
   // Estados para filtros
@@ -275,8 +275,8 @@ const AdminVehicleListPage: React.FC = () => {
         setShowSellModal(false);
         setSelectedVehicleForSale(null);
         setSellForm({ sellerId: "", soldPrice: "" });
-        // Refresh the vehicle list
-        window.location.reload();
+        // Refresh the vehicle list using the hook's refresh method
+        await refreshVehicles();
       } else {
         const errorData = await response.json();
         toast.error(errorData.message || "Erro ao marcar veículo como vendido");
@@ -738,8 +738,12 @@ const AdminVehicleListPage: React.FC = () => {
                         </p>
                       </td>
                       <td className="py-4 px-6 hidden lg:table-cell">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                          Disponível
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                          vehicle.status === "vendido" 
+                            ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                            : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                        }`}>
+                          {vehicle.status === "vendido" ? "Vendido" : "Disponível"}
                         </span>
                       </td>
                       <td className="py-4 px-6">
@@ -758,13 +762,15 @@ const AdminVehicleListPage: React.FC = () => {
                           >
                             <FiEdit size={18} />
                           </Link>
-                          <button
-                            onClick={() => handleSellClick(vehicle)}
-                            className="p-2 rounded-lg bg-green-100 text-green-600 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 transition-colors"
-                            title="Marcar como Vendido"
-                          >
-                            <FiCheck size={18} />
-                          </button>
+                          {vehicle.status !== "vendido" && (
+                            <button
+                              onClick={() => handleSellClick(vehicle)}
+                              className="p-2 rounded-lg bg-green-100 text-green-600 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 transition-colors"
+                              title="Marcar como Vendido"
+                            >
+                              <FiCheck size={18} />
+                            </button>
+                          )}
                           <button
                             onClick={() => handleDelete(vehicle.id, vehicle.name)}
                             className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 transition-colors"
@@ -843,13 +849,15 @@ const AdminVehicleListPage: React.FC = () => {
                     >
                       <FiEdit size={16} />
                     </Link>
-                    <button
-                      onClick={() => handleSellClick(vehicle)}
-                      className="p-2 rounded-lg bg-green-100 text-green-600 hover:bg-green-200 transition-colors"
-                      title="Marcar como Vendido"
-                    >
-                      <FiCheck size={16} />
-                    </button>
+                    {vehicle.status !== "vendido" && (
+                      <button
+                        onClick={() => handleSellClick(vehicle)}
+                        className="p-2 rounded-lg bg-green-100 text-green-600 hover:bg-green-200 transition-colors"
+                        title="Marcar como Vendido"
+                      >
+                        <FiCheck size={16} />
+                      </button>
+                    )}
                     <button
                       onClick={() => handleDelete(vehicle.id, vehicle.name)}
                       className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
@@ -857,8 +865,12 @@ const AdminVehicleListPage: React.FC = () => {
                       <FiTrash2 size={16} />
                     </button>
                   </div>
-                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                    Disponível
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    vehicle.status === "vendido" 
+                      ? "bg-red-100 text-red-800"
+                      : "bg-green-100 text-green-800"
+                  }`}>
+                    {vehicle.status === "vendido" ? "Vendido" : "Disponível"}
                   </span>
                 </div>
               </div>

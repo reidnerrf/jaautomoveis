@@ -51,7 +51,7 @@ O objetivo é oferecer uma experiência **rápida, intuitiva e segura** tanto pa
 
 4. Acesse:
    ```
-   http://localhost:3000
+   http://localhost:80
    ```
 
 ---

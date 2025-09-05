@@ -104,6 +104,11 @@ self.addEventListener("fetch", (event) => {
   if (url.pathname.endsWith(".tsx") || url.pathname.endsWith(".ts")) {
     return;
   }
+  
+  // Do not interfere with JivoSite requests
+  if (url.hostname.includes("jivosite.com")) {
+    return;
+  }
 
   if (request.method !== "GET") return;
 

@@ -42,7 +42,7 @@ class PerformanceTester {
     firstInputDelay: 100,
   };
 
-  private baseUrl = process.env.TEST_BASE_URL || "http://localhost:3000";
+  private baseUrl = process.env.TEST_BASE_URL || "http://localhost:80";
 
   async runLighthouseTest(url: string, device: "desktop" | "mobile" = "desktop") {
     const chrome = await chromeLauncher.launch({

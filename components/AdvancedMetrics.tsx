@@ -45,9 +45,10 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
   const metrics = React.useMemo(() => {
     const totalVehicles = vehicles.length;
     const availableVehicles = vehicles.filter(v => v.status === "disponivel").length;
-    const soldVehicles = vehicles.filter(v => v.status === "vendido").length;
-    const totalRevenue = soldVehicles.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
-    const totalCost = vehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
+    const soldVehiclesArray = vehicles.filter(v => v.status === "vendido");
+    const soldVehicles = soldVehiclesArray.length;
+    const totalRevenue = soldVehiclesArray.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
+    const totalCost = soldVehiclesArray.reduce((sum, v) => sum + (v.cost || 0), 0);
     const totalProfit = totalRevenue - totalCost;
     const conversionRate = totalVehicles > 0 ? (soldVehicles / totalVehicles) * 100 : 0;
     const avgSalePrice = soldVehicles > 0 ? totalRevenue / soldVehicles : 0;

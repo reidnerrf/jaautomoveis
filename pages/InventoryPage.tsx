@@ -353,6 +353,8 @@ const InventoryPage: React.FC = () => {
             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
             <input
               type="text"
+              id="vehicle-search"
+              name="vehicle-search"
               placeholder="Buscar por marca, modelo ou nome..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

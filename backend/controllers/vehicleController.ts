@@ -238,6 +238,15 @@ export const getMostViewedVehicles = async (req: express.Request, res: express.R
       throw new Error("Most viewed vehicles aggregation did not return an array");
     }
 
+    // Fallback: if no logs in the period, return top by current views
+    if (results.length === 0) {
+      const fallback = await Vehicle.find({ status: { $ne: "vendido" } })
+        .sort({ views: -1, updatedAt: -1 })
+        .limit(+limit)
+        .lean();
+      return res.json(fallback);
+    }
+
     res.json(results);
   } catch (error) {
     console.error("Error fetching most viewed vehicles:", error);

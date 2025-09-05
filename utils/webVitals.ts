@@ -246,9 +246,14 @@ class WebVitalsMonitor {
 
   private getLCPElement(): Element | null {
     if ("PerformanceObserver" in window) {
-      const entries = performance.getEntriesByType("largest-contentful-paint");
-      const lcpEntry = entries[entries.length - 1] as any;
-      return lcpEntry?.element || null;
+      try {
+        const entries = performance.getEntriesByType("largest-contentful-paint");
+        const lcpEntry = entries[entries.length - 1] as any;
+        return lcpEntry?.element || null;
+      } catch (error) {
+        // API deprecated, retorna null silenciosamente
+        return null;
+      }
     }
     return null;
   }
@@ -274,13 +279,6 @@ class WebVitalsMonitor {
 
   // Função para otimizar recursos críticos
   optimizeCriticalResources() {
-    // Preload CSS crítico
-    const criticalCSS = document.createElement("link");
-    criticalCSS.rel = "preload";
-    criticalCSS.as = "style";
-    criticalCSS.href = "/critical.css";
-    document.head.appendChild(criticalCSS);
-
     // Preload JavaScript crítico
     const criticalJS = document.createElement("link");
     criticalJS.rel = "preload";

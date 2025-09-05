@@ -455,6 +455,9 @@ const AdminSellerListPage: React.FC = () => {
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Veículos Vendidos
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Criado em
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -512,6 +515,38 @@ const AdminSellerListPage: React.FC = () => {
                       >
                         {seller.active !== false ? "Ativo" : "Inativo"}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        {(() => {
+                          const sellerId = seller._id || seller.id;
+                          const soldVehicles = vehicles.filter(
+                            (v) => v.sellerId === sellerId && v.status === "vendido"
+                          );
+                          if (soldVehicles.length === 0) {
+                            return <span className="text-gray-400">Nenhum</span>;
+                          }
+                          return (
+                            <div className="space-y-1">
+                              <div className="font-medium text-gray-900 dark:text-white">
+                                {soldVehicles.length} veículo(s)
+                              </div>
+                              <div className="text-xs space-y-1">
+                                {soldVehicles.slice(0, 2).map((vehicle) => (
+                                  <div key={vehicle.id} className="truncate">
+                                    {vehicle.make} {vehicle.model} ({vehicle.year})
+                                  </div>
+                                ))}
+                                {soldVehicles.length > 2 && (
+                                  <div className="text-gray-500">
+                                    +{soldVehicles.length - 2} mais...
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">

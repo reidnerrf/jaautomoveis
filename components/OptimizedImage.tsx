@@ -13,6 +13,8 @@ export interface OptimizedImageProps extends BaseImgProps {
   height?: number;
   sizes?: string;
   priority?: boolean;
+  // Accept React-style camelCase prop but do not forward to DOM
+  fetchPriority?: "high" | "low" | "auto";
 }
 
 const OptimizedImage: React.FC<OptimizedImageProps> = ({
@@ -24,6 +26,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   sizes,
   priority = false,
   style,
+  fetchPriority,
   ...rest
 }) => {
   const imageRef = useRef<HTMLImageElement>(null);
@@ -45,6 +48,13 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       setCurrentSrc(getOptimizedImageUrl(src, width, height));
     }
   }, [src, width, height, priority, isInView, getOptimizedImageUrl]);
+
+  // Apply correct lowercase fetchpriority attribute without React warning
+  useEffect(() => {
+    if (imageRef.current && fetchPriority) {
+      imageRef.current.setAttribute("fetchpriority", fetchPriority);
+    }
+  }, [fetchPriority]);
 
   const handleError = () => {
     if (hasError) return;

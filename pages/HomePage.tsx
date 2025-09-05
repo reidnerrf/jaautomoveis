@@ -54,7 +54,7 @@ const HomePage: React.FC = () => {
     vehicles: mostViewedVehicles,
     loading: loadingMostViewed,
     refresh: refreshMostViewed,
-  } = useTopVehicles({ limit: 5, periodDays: 30 });
+  } = useTopVehicles({ limit: 4, periodDays: 30 });
   const { trackAction, trackBusinessEvent } = useAnalytics("HomePage");
   //const { isDarkMode } = useTheme();
   const { scrollY } = useScroll();
@@ -314,7 +314,6 @@ const HomePage: React.FC = () => {
             height={1080}
             className="sm:hidden absolute inset-0 w-full h-full object-cover"
             loading="eager"
-            fetchPriority="high"
           />
         </div>
         {/* Overlay */}

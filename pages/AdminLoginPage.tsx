@@ -6,7 +6,6 @@ import Lock from "lucide-react/dist/esm/icons/lock.js";
 import User from "lucide-react/dist/esm/icons/user.js";
 import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left.js";
 import Loader2 from "lucide-react/dist/esm/icons/loader-2.js";
-import logo from "../assets/logo.png";
 
 const phrases = [
   "Bem-vindo de volta 👋",
@@ -78,7 +77,7 @@ const AdminLoginPage: React.FC = () => {
       >
         {/* Logo */}
         <div className="flex justify-center mb-6">
-          <img src={logo} alt="Logo" className="h-14 w-auto" />
+          <img src="/assets/logo.png" alt="Logo" className="h-14 w-auto" />
         </div>
 
         {/* Título */}

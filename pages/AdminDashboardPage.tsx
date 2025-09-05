@@ -183,7 +183,10 @@ const AdminDashboardPage: React.FC = () => {
     };
   }, [refreshVehicles]);
 
-  const monthlyViewsLast3 = useMemo(() => monthlyViews.slice(-3), [monthlyViews]);
+  const monthlyViewsLast3 = useMemo(() => {
+    const safeMonthlyViews = Array.isArray(monthlyViews) ? monthlyViews : [];
+    return safeMonthlyViews.slice(-3);
+  }, [monthlyViews]);
 
   const vehicleStats = useMemo(() => {
     if (!vehicles || vehicles.length === 0) {
@@ -199,22 +202,23 @@ const AdminDashboardPage: React.FC = () => {
       };
     }
 
-    const totalValue = vehicles.reduce((sum, v) => sum + v.price, 0);
-    const totalViews = vehicles.reduce((sum, v) => sum + (v.views || 0), 0);
-    const totalCost = vehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
+    const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
+    const totalValue = safeVehicles.reduce((sum, v) => sum + (v.price || 0), 0);
+    const totalViews = safeVehicles.reduce((sum, v) => sum + (v.views || 0), 0);
+    const totalCost = safeVehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
 
-    const soldVehicles = vehicles.filter((v) => v.status === "vendido");
+    const soldVehicles = safeVehicles.filter((v) => v.status === "vendido");
     const totalRevenue = soldVehicles.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
     const soldCost = soldVehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
     const totalProfit = totalRevenue - soldCost;
 
-    const topVehicles = [...vehicles].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
+    const topVehicles = [...safeVehicles].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
 
     return {
       totalViews,
       totalValue,
-      totalVehicles: vehicles.length,
-      averagePrice: vehicles.length > 0 ? totalValue / vehicles.length : 0,
+      totalVehicles: safeVehicles.length,
+      averagePrice: safeVehicles.length > 0 ? totalValue / safeVehicles.length : 0,
       topVehicles,
       totalCost,
       totalProfit,
@@ -439,7 +443,7 @@ const AdminDashboardPage: React.FC = () => {
         </h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={dailyViews} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <AreaChart data={Array.isArray(dailyViews) ? dailyViews : []} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorDaily" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
@@ -518,7 +522,7 @@ const AdminDashboardPage: React.FC = () => {
           Top 5 Veículos Mais Visualizados
         </h3>
         <div className="space-y-3">
-          {vehicleStats.topVehicles.map((vehicle, index) => (
+          {(vehicleStats.topVehicles || []).map((vehicle, index) => (
             <Link
               to={vehicle.id ? `/vehicle/${vehicle.id}` : "#"}
               key={vehicle.id || index}
@@ -619,8 +623,8 @@ const AdminDashboardPage: React.FC = () => {
         transition={{ delay: 1.1 }}
       >
         <AdvancedMetrics
-          vehicles={vehicles}
-          sellers={sellers}
+          vehicles={Array.isArray(vehicles) ? vehicles : []}
+          sellers={Array.isArray(sellers) ? sellers : []}
           monthlyData={generateProfitData}
           performanceData={[]}
         />
@@ -633,7 +637,7 @@ const AdminDashboardPage: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.2 }}
         >
-          <DashboardAlerts vehicles={vehicles} sellers={sellers} />
+          <DashboardAlerts vehicles={Array.isArray(vehicles) ? vehicles : []} sellers={Array.isArray(sellers) ? sellers : []} />
         </motion.div>
         
         <motion.div
@@ -641,7 +645,7 @@ const AdminDashboardPage: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.3 }}
         >
-          <RecentActivity vehicles={vehicles} sellers={sellers} />
+          <RecentActivity vehicles={Array.isArray(vehicles) ? vehicles : []} sellers={Array.isArray(sellers) ? sellers : []} />
         </motion.div>
       </div>
     </div>

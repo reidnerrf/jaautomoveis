@@ -2,7 +2,8 @@ class ApiClient {
   private baseURL: string;
 
   constructor() {
-    this.baseURL = "http://localhost:3000/api";
+    // Use relative base path so it works in dev (Vite proxy) and prod (same origin)
+    this.baseURL = "/api";
   }
 
   private getAuthToken(): string | null {

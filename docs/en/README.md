@@ -51,7 +51,7 @@ The goal is to provide a **fast, intuitive, and secure** experience for both buy
 
 4. Open:
    ```
-   http://localhost:3000
+   http://localhost:80
    ```
 
 ---

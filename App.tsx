@@ -1,35 +1,36 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { VehicleProvider } from "./hooks/useVehicleData.tsx";
-import { AuthProvider } from "./hooks/useAuth.tsx";
-import { ThemeProvider } from "./contexts/ThemeContext.tsx";
+import { VehicleProvider } from "./hooks/useVehicleData";
+import { AuthProvider } from "./hooks/useAuth";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import { HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
 import toast from "react-hot-toast";
 
 // Lazy load all pages for better performance
-const HomePage = lazy(() => import("./pages/HomePage.tsx"));
-const InventoryPage = lazy(() => import("./pages/InventoryPage.tsx"));
-const VehicleDetailPage = lazy(() => import("./pages/VehicleDetailPage.tsx"));
-const FinancingPage = lazy(() => import("./pages/FinancingPage.tsx"));
-const ConsignadoPage = lazy(() => import("./pages/ConsignadoPage.tsx"));
-const ConsortiumPage = lazy(() => import("./pages/ConsortiumPage.tsx"));
-const AboutPage = lazy(() => import("./pages/AboutPage.tsx"));
-const ContactPage = lazy(() => import("./pages/ContactPage.tsx"));
-const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage.tsx"));
-const TermsOfServicePage = lazy(() => import("./pages/TermsOfServicePage.tsx"));
-const AdminLoginPage = lazy(() => import("./pages/AdminLoginPage.tsx"));
-const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage.tsx"));
-const AdminVehicleListPage = lazy(() => import("./pages/AdminVehicleListPage.tsx"));
-const AdminVehicleFormPage = lazy(() => import("./pages/AdminVehicleFormPage.tsx"));
-const AdminSellerListPage = lazy(() => import("./pages/AdminSellerListPage.tsx"));
-const AdminSellerFormPage = lazy(() => import("./pages/AdminSellerFormPage.tsx"));
-const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage.tsx"));
-const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage.tsx"));
-const MainLayout = lazy(() => import("./components/MainLayout.tsx"));
-const PrivateRoute = lazy(() => import("./components/PrivateRoute.tsx"));
-const AdminLayout = lazy(() => import("./components/AdminLayout.tsx"));
+const HomePage = lazy(() => import("./pages/HomePage"));
+const InventoryPage = lazy(() => import("./pages/InventoryPage"));
+const VehicleDetailPage = lazy(() => import("./pages/VehicleDetailPage"));
+const FinancingPage = lazy(() => import("./pages/FinancingPage"));
+const ConsignadoPage = lazy(() => import("./pages/ConsignadoPage"));
+const ConsortiumPage = lazy(() => import("./pages/ConsortiumPage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
+const TermsOfServicePage = lazy(() => import("./pages/TermsOfServicePage"));
+// Temporarily use regular import for AdminLoginPage to debug
+import AdminLoginPage from "./pages/AdminLoginPage";
+const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
+const AdminVehicleListPage = lazy(() => import("./pages/AdminVehicleListPage"));
+const AdminVehicleFormPage = lazy(() => import("./pages/AdminVehicleFormPage"));
+const AdminSellerListPage = lazy(() => import("./pages/AdminSellerListPage"));
+const AdminSellerFormPage = lazy(() => import("./pages/AdminSellerFormPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
+const MainLayout = lazy(() => import("./components/MainLayout"));
+const PrivateRoute = lazy(() => import("./components/PrivateRoute"));
+const AdminLayout = lazy(() => import("./components/AdminLayout"));
 
 // Loading component
 const LoadingSpinner = () => (

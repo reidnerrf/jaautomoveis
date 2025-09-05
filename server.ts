@@ -67,8 +67,11 @@ app.disable("x-powered-by");
 const server = createServer(app);
 // Centralized CORS allow-list
 const defaultAllowedOrigins = [
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
+  // HTTP localhost
+  "http://localhost",
+  "http://127.0.0.1",
+  "http://localhost:80",
+  "http://127.0.0.1:80",
   "http://localhost:5000",
   "http://127.0.0.1:5000",
   "http://localhost:5001",
@@ -77,6 +80,14 @@ const defaultAllowedOrigins = [
   "http://127.0.0.1:5173",
   "http://localhost:4173",
   "http://127.0.0.1:4173",
+  // Vite default dev port
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  // HTTPS localhost
+  "https://localhost",
+  "https://127.0.0.1",
+  "https://localhost:443",
+  "https://127.0.0.1:443",
 ];
 const envAllowed = (process.env.ALLOWED_ORIGINS || "")
   .split(",")
@@ -130,6 +141,7 @@ const scriptSrcDirectives = [
   "https://cdn.tailwindcss.com",
   "'sha256-yMpSFLHnSZit6gvx0eHX89rw90Bv+QXITwFYyPzBrjc='",
   "'sha256-NltRhJacRNw4BdgPSP+P8/KP9MS0BrJzNEpd27YU/YY='",
+  "'sha256-EfXc3iI8Tyd2FVwogMtAj3YaRA3oZjcfj1BNO+4V9ec='",
 ];
 if (!isProduction) {
   scriptSrcDirectives.push("data:");
@@ -173,10 +185,13 @@ app.use(
           "'self'",
           "data:",
           "https:",
+          "http:",
           "https://lh3.googleusercontent.com",
           "https://maps.gstatic.com",
           "https://maps.googleapis.com",
           "https://maps.google.com",
+          "https://picsum.photos",
+          "https://fastly.picsum.photos",
         ],
         scriptSrc: scriptSrcDirectives,
         connectSrc: [
@@ -191,6 +206,9 @@ app.use(
           "https://www.google-analytics.com",
           "https://www.googletagmanager.com",
           "https://code.jivosite.com",
+          "https://node-ya-9.jivosite.com",
+          "https://picsum.photos",
+          "https://fastly.picsum.photos",
         ],
         frameSrc: [
           "'self'",
@@ -414,6 +432,21 @@ if (!isProduction) {
     }
   });
 }
+
+// API de recomendações
+app.get("/api/recommendations", async (req: Request, res: Response) => {
+  try {
+    const userId = String(req.query.userId || "default");
+    await recommendationEngine.initialize();
+    const ids = await recommendationEngine.getHybridRecommendations(userId, 10);
+    const vehicles = await Vehicle.find({ _id: { $in: ids } }).lean();
+    res.json({ userId, recommendations: vehicles });
+  } catch (e: any) {
+    console.error("Recommendations error:", e);
+    // Retorna recomendações vazias em caso de erro
+    res.json({ userId: req.query.userId || "default", recommendations: [] });
+  }
+});
 
 app.all(["/api/*"], (req: Request, res: Response) => {
   res.status(404).json({ success: false, message: "Not Found" });
@@ -708,15 +741,4 @@ app.get("/api/queues/health", async (_req: Request, res: Response) => {
 app.get("/api/queues/stats", async (_req: Request, res: Response) => {
   const stats = await queueManager.getAllQueueStats();
   res.json(stats);
-});
-app.get("/api/recommendations", async (req: Request, res: Response) => {
-  try {
-    const userId = String(req.query.userId || "default");
-    await recommendationEngine.initialize();
-    const ids = await recommendationEngine.getHybridRecommendations(userId, 10);
-    const vehicles = await Vehicle.find({ _id: { $in: ids } }).lean();
-    res.json({ userId, recommendations: vehicles });
-  } catch (e: any) {
-    res.status(500).json({ error: e?.message || "failed" });
-  }
 });

@@ -31,7 +31,8 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
     const alertsList: Alert[] = [];
     
     // Verificar veículos com preço muito alto
-    const expensiveVehicles = vehicles.filter(v => v.price > 150000);
+    const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
+    const expensiveVehicles = safeVehicles.filter(v => v.price > 150000);
     if (expensiveVehicles.length > 0) {
       alertsList.push({
         id: "expensive-vehicles",
@@ -43,7 +44,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
     }
 
     // Verificar veículos sem custo
-    const vehiclesWithoutCost = vehicles.filter(v => !v.cost || v.cost === 0);
+    const vehiclesWithoutCost = safeVehicles.filter(v => !v.cost || v.cost === 0);
     if (vehiclesWithoutCost.length > 0) {
       alertsList.push({
         id: "no-cost",
@@ -67,7 +68,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
     }
 
     // Verificar estoque baixo
-    const availableVehicles = vehicles.filter(v => v.status === "disponivel");
+    const availableVehicles = safeVehicles.filter(v => v.status === "disponivel");
     if (availableVehicles.length < 5) {
       alertsList.push({
         id: "low-stock",
@@ -79,7 +80,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
     }
 
     // Verificar veículos antigos no estoque
-    const oldVehicles = vehicles.filter(v => {
+    const oldVehicles = safeVehicles.filter(v => {
       const addedDate = new Date(v.createdAt);
       const daysSinceAdded = (Date.now() - addedDate.getTime()) / (1000 * 60 * 60 * 24);
       return daysSinceAdded > 90 && v.status === "disponivel";
@@ -95,7 +96,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
     }
 
     // Verificar margem de lucro baixa
-    const lowMarginVehicles = vehicles.filter(v => {
+    const lowMarginVehicles = safeVehicles.filter(v => {
       if (!v.cost || v.cost === 0) return false;
       const margin = ((v.price - v.cost) / v.cost) * 100;
       return margin < 10;

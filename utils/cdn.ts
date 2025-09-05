@@ -64,7 +64,7 @@ const CDN_CONFIGS: Record<string, CDNConfig> = {
   },
   development: {
     provider: "custom",
-    domain: "localhost:3000",
+    domain: "localhost:80",
     ssl: false,
     compression: false,
     cacheHeaders: {

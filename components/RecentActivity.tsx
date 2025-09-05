@@ -32,7 +32,8 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ vehicles, sellers }) =>
     const activitiesList: Activity[] = [];
     
     // Atividades de veículos
-    vehicles.forEach(vehicle => {
+    const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
+    safeVehicles.forEach(vehicle => {
       if (vehicle.createdAt) {
         activitiesList.push({
           id: `vehicle-created-${vehicle._id}`,
@@ -74,7 +75,8 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ vehicles, sellers }) =>
     });
 
     // Atividades de vendedores
-    sellers.forEach(seller => {
+    const safeSellers = Array.isArray(sellers) ? sellers : [];
+    safeSellers.forEach(seller => {
       if (seller.createdAt) {
         activitiesList.push({
           id: `seller-created-${seller._id}`,

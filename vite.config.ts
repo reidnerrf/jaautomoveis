@@ -19,22 +19,23 @@ export default defineConfig(({ mode }) => {
       alias: {
         "@": path.resolve(__dirname, "src"),
       },
+      extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
     },
     plugins: [
       react(),
-      // Enable federation only when explicitly desired (default disabled in production)
-      !isProduction &&
-        federation({
-          name: "host",
-          remotes: {
-            // vehicles: "vehicles@http://localhost:3001/assets/remoteEntry.js",
-          },
-          shared: {
-            react: { singleton: true, eager: false, requiredVersion: false },
-            "react-dom": { singleton: true, eager: false, requiredVersion: false },
-            "react-router-dom": { singleton: true, eager: false, requiredVersion: false },
-          },
-        }),
+      // Temporarily disable federation to fix dynamic import issues
+      // !isProduction &&
+      //   federation({
+      //     name: "host",
+      //     remotes: {
+      //       // vehicles: "vehicles@http://localhost:3001/assets/remoteEntry.js",
+      //     },
+      //     shared: {
+      //       react: { singleton: true, eager: false, requiredVersion: false },
+      //       "react-dom": { singleton: true, eager: false, requiredVersion: false },
+      //       "react-router-dom": { singleton: true, eager: false, requiredVersion: false },
+      //     },
+      //   }),
       isProduction &&
         visualizer({
           filename: "dist/stats.html",
@@ -109,7 +110,7 @@ export default defineConfig(({ mode }) => {
       exclude: ["lucide-react"],
     },
     server: {
-      port: 3000,
+      port: 80,
       host: "0.0.0.0",
       hmr: true,
       headers: {
@@ -121,6 +122,10 @@ export default defineConfig(({ mode }) => {
           target: "http://localhost:5000",
           changeOrigin: true,
           ws: true,
+        },
+        "/assets": {
+          target: "http://localhost:5000",
+          changeOrigin: true,
         },
         "/uploads": {
           target: "http://localhost:5000",
