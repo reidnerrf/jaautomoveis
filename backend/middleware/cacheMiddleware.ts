@@ -100,7 +100,13 @@ async function getCache(key: string): Promise<unknown> {
       const value = await redisClient.get(key);
       if (value) {
         cacheMetrics.hits++;
-        return JSON.parse(value);
+        try {
+          return JSON.parse(value);
+        } catch (parseError) {
+          logError("Cache JSON parse error:", parseError as Error);
+          cacheMetrics.misses++;
+          return null;
+        }
       }
     } else {
       const value = localCache.get(key);
