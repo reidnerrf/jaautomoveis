@@ -6,10 +6,10 @@ import {
   FiTrash2,
   FiCheck,
   FiUser,
-  FiCar,
   FiDollarSign,
   FiClock,
 } from "react-icons/fi";
+import { FaCar } from "react-icons/fa";
 
 interface Activity {
   id: string;
@@ -127,7 +127,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ vehicles, sellers }) =>
   const getActivityIcon = (entity: Activity["entity"]) => {
     switch (entity) {
       case "vehicle":
-        return <FiCar className="text-gray-500" size={14} />;
+        return <FaCar className="text-gray-500" size={14} />;
       case "seller":
         return <FiUser className="text-gray-500" size={14} />;
       case "user":

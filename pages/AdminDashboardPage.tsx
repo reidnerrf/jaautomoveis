@@ -15,9 +15,9 @@ import {
   FiHeart,
   FiTrash2,
   FiUsers,
-  FiCar,
   FiTarget,
 } from "react-icons/fi";
+import { FaCar } from "react-icons/fa";
 import {
   AreaChart,
   Area,

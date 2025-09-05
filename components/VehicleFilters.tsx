@@ -6,10 +6,9 @@ import {
   FiSearch,
   FiDollarSign,
   FiCalendar,
-  FiCar,
   FiTag,
 } from "react-icons/fi";
-
+import { FaCar } from "react-icons/fa";
 interface VehicleFiltersProps {
   filters: {
     search: string;
@@ -118,7 +117,7 @@ const VehicleFilters: React.FC<VehicleFiltersProps> = ({
             {/* Make */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                <FiCar className="inline mr-2" size={16} />
+                <FaCar className="inline mr-2" size={16} />
                 Marca
               </label>
               <select

@@ -5,11 +5,11 @@ import {
   FiTrendingDown,
   FiDollarSign,
   FiUsers,
-  FiCar,
   FiTarget,
   FiClock,
   FiAward,
 } from "react-icons/fi";
+import { FaCar } from "react-icons/fa";
 import {
   LineChart,
   Line,

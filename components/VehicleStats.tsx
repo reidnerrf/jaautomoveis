@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  FiCar,
   FiDollarSign,
   FiTrendingUp,
   FiTrendingDown,
@@ -10,6 +9,7 @@ import {
   FiStar,
   FiUsers,
 } from "react-icons/fi";
+import { FaCar } from "react-icons/fa";
 import {
   BarChart,
   Bar,
@@ -146,7 +146,7 @@ const VehicleStats: React.FC<VehicleStatsProps> = ({ vehicles }) => {
               </p>
             </div>
             <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-              <FiCar className="text-blue-600 dark:text-blue-400" size={24} />
+              <FaCar className="text-blue-600 dark:text-blue-400" size={24} />
             </div>
           </div>
           <div className="mt-2">

@@ -6,10 +6,9 @@ import {
   FiCheckCircle,
   FiClock,
   FiDollarSign,
-  FiUsers,
-  FiCar,
+  FiUsers
 } from "react-icons/fi";
-
+import { FaCar } from "react-icons/fa";
 interface Alert {
   id: string;
   type: "warning" | "info" | "success" | "error";
@@ -75,7 +74,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
         type: "error",
         title: "Estoque Baixo",
         message: `Apenas ${availableVehicles.length} veículos disponíveis`,
-        icon: <FiCar className="text-red-500" size={20} />,
+        icon: <FaCar className="text-red-500" size={20} />,
       });
     }
 
