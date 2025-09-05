@@ -165,13 +165,19 @@ export const deleteVehicle = async (req: express.Request, res: express.Response)
 export const incrementVehicleView = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
+    
+    // Use atomic operation to prevent race conditions
     const vehicle = await Vehicle.findByIdAndUpdate(
       id,
       { $inc: { views: 1 } },
-      { new: true }
+      { new: true, upsert: false }
     ).lean();
+    
     if (vehicle) {
-      await ViewLog.create({ vehicle: vehicle._id });
+      // Create view log asynchronously to avoid blocking the response
+      ViewLog.create({ vehicle: vehicle._id }).catch((logError) => {
+        console.error("Error creating view log:", logError);
+      });
       res.status(200).json({ message: "View count updated", views: vehicle.views });
     } else {
       res.status(404).json({ message: "Vehicle not found" });
