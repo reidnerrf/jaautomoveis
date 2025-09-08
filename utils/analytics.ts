@@ -1,5 +1,5 @@
 import React from "react";
-import { io, Socket } from "socket.io-client";
+import type { Socket } from "socket.io-client";
 
 interface AnalyticsEventPayload {
   event: string;
@@ -39,8 +39,9 @@ class AnalyticsService {
     }
   }
 
-  private connectSocket() {
+  private async connectSocket() {
     // Conecta em dev e prod; servidor já permite CORS para origens locais
+    const { io } = await import("socket.io-client");
     this.socket = io("", {
       path: "/socket.io",
       transports: ["websocket"],

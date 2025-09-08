@@ -6,8 +6,10 @@ import { federation } from "@module-federation/vite";
 
 export default defineConfig(({ mode }) => {
   const isProduction = mode === "production";
+  const shouldAnalyze = process.env.ANALYZE === "true";
 
   return {
+    cacheDir: "node_modules/.vite-ja",
     define: {
       // Only define specific keys to avoid clobbering process.env entirely
       "process.env.NODE_ENV": JSON.stringify(mode),
@@ -36,7 +38,7 @@ export default defineConfig(({ mode }) => {
       //       "react-router-dom": { singleton: true, eager: false, requiredVersion: false },
       //     },
       //   }),
-      isProduction &&
+      shouldAnalyze &&
         visualizer({
           filename: "dist/stats.html",
           open: false,
@@ -47,8 +49,11 @@ export default defineConfig(({ mode }) => {
     build: {
       target: "esnext",
       outDir: "dist",
-      minify: isProduction ? "esbuild" : false, // ⚡ muito mais rápido que terser
+      minify: isProduction ? "esbuild" : false, // ⚡ rápido
+      cssMinify: isProduction ? "esbuild" : false,
       sourcemap: !isProduction,
+      reportCompressedSize: false,
+      modulePreload: { polyfill: false },
       rollupOptions: {
         external: ["@sentry/tracing"],
         output: {
@@ -100,6 +105,14 @@ export default defineConfig(({ mode }) => {
       commonjsOptions: {
         transformMixedEsModules: true,
       },
+      terserOptions: undefined,
+      // Drop consoles/debuggers in prod via esbuild
+      esbuild: isProduction
+        ? {
+            drop: ["console", "debugger"],
+            legalComments: "none",
+          }
+        : undefined,
     },
     optimizeDeps: {
       force: true, // build incremental mais confiável

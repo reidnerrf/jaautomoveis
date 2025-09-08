@@ -9,6 +9,8 @@
     "allowImportingTsExtensions": false,
     "declaration": false,
     "sourceMap": false,
+    "incremental": true,
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.server.json",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

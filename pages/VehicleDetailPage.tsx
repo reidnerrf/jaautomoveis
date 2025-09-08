@@ -443,14 +443,6 @@ const VehicleDetailPage: React.FC = () => {
                     Tenho Interesse
                   </button>
                 </a>
-                <Link
-                  to={`/financing?amount=${encodeURIComponent(String(vehicle.price))}`}
-                  className="flex-1"
-                >
-                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                    Simular Financiamento
-                  </button>
-                </Link>
               </div>
             </div>
           </div>
