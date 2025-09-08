@@ -1,26 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense, lazy } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useVehicleData } from "../hooks/useVehicleData";
-import VehicleCarousel from "../components/VehicleCarousel.tsx";
 import { useTopVehicles } from "../hooks/useTopVehicles.tsx";
-import GoogleReviewsCarousel from "../components/GoogleReviewsCarousel.tsx";
-import GoogleReviewSummary from "../components/GoogleReviewSummary.tsx";
-import {
-  FaCar,
-  FaMoneyBillWave,
-  FaHandshake,
-  FaTags,
-  FaWhatsapp,
-  FaPhone,
-  FaMapMarkerAlt,
-  FaClock,
-  FaShieldAlt,
-  FaUsers,
-  FaAward,
-  FaStar,
-  FaInstagram,
-} from "react-icons/fa";
+import { Car, BadgeDollarSign, Handshake, Tag, Phone, MapPin, Clock, Shield, Users, Award, Star } from "lucide-react";
+const VehicleCarousel = lazy(() => import("../components/VehicleCarousel.tsx"));
+const GoogleReviewsCarousel = lazy(() => import("../components/GoogleReviewsCarousel.tsx"));
+const GoogleReviewSummary = lazy(() => import("../components/GoogleReviewSummary.tsx"));
 import { GoogleReview } from "../types.ts";
 import { useAnalytics } from "../utils/analytics.ts";
 import { analytics } from "../utils/analytics";
@@ -158,25 +144,25 @@ const HomePage: React.FC = () => {
 
   const services = [
     {
-      icon: <FaCar size={32} />,
+      icon: <Car size={32} />,
       title: "Venda",
       description: "Os melhores veículos novos e seminovos do mercado com garantia de procedência.",
       gradient: "from-blue-500 to-blue-600",
     },
     {
-      icon: <FaHandshake size={32} />,
+      icon: <Handshake size={32} />,
       title: "Compra",
       description: "Compramos seu carro com avaliação justa, rápida e sem burocracia.",
       gradient: "from-green-500 to-green-600",
     },
     {
-      icon: <FaTags size={32} />,
+      icon: <Tag size={32} />,
       title: "Troca",
       description: "Use seu carro atual como entrada para um modelo mais novo.",
       gradient: "from-purple-500 to-purple-600",
     },
     {
-      icon: <FaMoneyBillWave size={32} />,
+      icon: <BadgeDollarSign size={32} />,
       title: "Financiamento",
       description: "As melhores taxas do mercado para você realizar seu sonho.",
       gradient: "from-orange-500 to-orange-600",
@@ -185,17 +171,17 @@ const HomePage: React.FC = () => {
 
   const stats = [
     {
-      icon: <FaUsers size={24} />,
+      icon: <Users size={24} />,
       number: "500+",
       label: "Clientes Satisfeitos",
     },
-    { icon: <FaCar size={24} />, number: "1000+", label: "Veículos Vendidos" },
+    { icon: <Car size={24} />, number: "1000+", label: "Veículos Vendidos" },
     {
-      icon: <FaAward size={24} />,
+      icon: <Award size={24} />,
       number: "15+",
       label: "Anos de Experiência",
     },
-    { icon: <FaStar size={24} />, number: "4.8", label: "Avaliação Google" },
+    { icon: <Star size={24} />, number: "4.8", label: "Avaliação Google" },
   ];
 
   const handleSocialClick = (platform: string) => {
@@ -278,8 +264,6 @@ const HomePage: React.FC = () => {
           <div className="hidden sm:block h-full w-full">
             <motion.video
               style={{ y }}
-              autoPlay
-              loop
               muted
               playsInline
               poster="/assets/homepageabout.webp"
@@ -327,21 +311,21 @@ const HomePage: React.FC = () => {
             animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           >
-            <FaCar size={40} />
+            <Car size={40} />
           </motion.div>
           <motion.div
             className="absolute top-40 right-20 text-white/15"
             animate={{ y: [0, 15, 0], rotate: [0, -3, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           >
-            <FaCar size={30} />
+            <Car size={30} />
           </motion.div>
           <motion.div
             className="absolute bottom-40 left-20 text-white/10"
             animate={{ y: [0, -10, 0], rotate: [0, 2, 0] }}
             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
           >
-            <FaCar size={25} />
+            <Car size={25} />
           </motion.div>
         </div>
         
@@ -375,7 +359,7 @@ const HomePage: React.FC = () => {
               className="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold px-8 py-4 rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
               onClick={() => trackAction("view_inventory", "cta_button")}
             >
-              <FaCar className="group-hover:rotate-12 transition-transform duration-300" />
+              <Car className="group-hover:rotate-12 transition-transform duration-300" />
               Ver Estoque
             </Link>
             <a
@@ -388,7 +372,10 @@ const HomePage: React.FC = () => {
               }}
               className="group bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-4 rounded-full shadow-2xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
             >
-              <FaWhatsapp className="group-hover:scale-110 transition-transform duration-300" />
+              <span className="group-hover:scale-110 transition-transform duration-300">
+                {/* inline WhatsApp icon to avoid heavy dependency */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.94 11.94 0 0 0 12.01 0C5.39 0 .03 5.36.03 11.98c0 2.11.55 4.18 1.6 6.01L0 24l6.17-1.6a11.95 11.95 0 0 0 5.84 1.49h.01c6.62 0 11.98-5.36 11.98-11.98 0-3.2-1.25-6.2-3.48-8.43ZM12.01 22.03h-.01c-1.92 0-3.8-.52-5.44-1.5l-.39-.23-3.66.95.98-3.56-.25-.37a10.02 10.02 0 0 1-1.57-5.34C1.67 6.43 6.13 1.97 12 1.97c2.67 0 5.18 1.04 7.07 2.93a10 10 0 0 1 2.94 7.07c0 5.87-4.77 10.06-9.99 10.06Zm5.8-7.53c-.31-.15-1.83-.9-2.11-1-.28-.1-.48-.15-.68.15-.2.31-.78 1-.96 1.2-.18.2-.35.23-.66.08-.31-.15-1.3-.48-2.48-1.53-.92-.82-1.54-1.84-1.72-2.15-.18-.31-.02-.48.13-.63.13-.13.31-.35.46-.53.15-.18.2-.31.31-.51.1-.2.05-.38-.03-.53-.08-.15-.68-1.64-.93-2.24-.24-.57-.49-.49-.68-.5h-.58c-.2 0-.53.08-.81.38-.28.31-1.07 1.04-1.07 2.56s1.1 2.97 1.25 3.17c.15.2 2.16 3.29 5.23 4.61.73.32 1.3.5 1.75.64.73.23 1.4.2 1.93.12.59-.09 1.83-.75 2.09-1.47.26-.72.26-1.33.18-1.47-.08-.14-.28-.22-.59-.37Z"/></svg>
+              </span>
               Falar no WhatsApp
             </a>
           </motion.div>
@@ -445,7 +432,9 @@ const HomePage: React.FC = () => {
       {personalized.length > 0 && (
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <h2 className="text-2xl font-bold mb-4">Recomendados para você</h2>
-          <VehicleCarousel vehicles={personalized as any} />
+          <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div></div>}>
+            <VehicleCarousel vehicles={personalized as any} />
+          </Suspense>
         </section>
       )}
 
@@ -479,7 +468,7 @@ const HomePage: React.FC = () => {
             >
               <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group-hover:border-red-200 dark:group-hover:border-red-800">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <FaUsers className="text-white text-2xl" />
+                  <Users className="text-white" size={24} />
                 </div>
                 <div className="text-5xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-red-500 transition-colors duration-300">
                   +{new Intl.NumberFormat("pt-BR").format(clientsServed)}
@@ -503,7 +492,7 @@ const HomePage: React.FC = () => {
             >
               <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group-hover:border-green-200 dark:group-hover:border-green-800">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <FaShieldAlt className="text-white text-2xl" />
+                  <Shield className="text-white" size={24} />
                 </div>
                 <div className="text-5xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-green-500 transition-colors duration-300">
                   100%
@@ -527,7 +516,7 @@ const HomePage: React.FC = () => {
             >
               <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group-hover:border-yellow-200 dark:group-hover:border-yellow-800">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <FaStar className="text-white text-2xl" />
+                  <Star className="text-white" size={24} />
                 </div>
                 <div className="text-5xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-yellow-500 transition-colors duration-300">
                   4.8★
@@ -564,7 +553,9 @@ const HomePage: React.FC = () => {
           </motion.div>
 
           {vehicles && vehicles.length > 0 ? (
-            <VehicleCarousel vehicles={vehicles.slice(0, 6)} />
+            <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div></div>}>
+              <VehicleCarousel vehicles={vehicles.slice(0, 6)} />
+            </Suspense>
           ) : (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
@@ -638,7 +629,9 @@ const HomePage: React.FC = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
             </div>
           ) : mostViewedVehicles && mostViewedVehicles.length > 0 ? (
-            <VehicleCarousel vehicles={mostViewedVehicles} />
+            <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div></div>}>
+              <VehicleCarousel vehicles={mostViewedVehicles} />
+            </Suspense>
           ) : (
             <div className="text-center text-gray-600 dark:text-gray-300 py-12">
               Ainda não há dados suficientes para exibir os mais visitados. Confira nossos destaques
@@ -712,14 +705,14 @@ const HomePage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-6 my-8">
                 <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl">
-                  <FaShieldAlt className="text-red-500 text-2xl mb-3" />
+                  <Shield className="text-red-500" size={24} />
                   <h3 className="font-bold text-gray-900 dark:text-white mb-2">Garantia Total</h3>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">
                     Todos os veículos com garantia e procedência verificada
                   </p>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl">
-                  <FaUsers className="text-red-500 text-2xl mb-3" />
+                  <Users className="text-red-500" size={24} />
                   <h3 className="font-bold text-gray-900 dark:text-white mb-2">
                     Atendimento Premium
                   </h3>
@@ -895,7 +888,11 @@ const HomePage: React.FC = () => {
             </p>
           </motion.div>
 
-          {!isLoading && <GoogleReviewsCarousel reviews={googleReviews} />}
+          {!isLoading && (
+            <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div></div>}>
+              <GoogleReviewsCarousel reviews={googleReviews} />
+            </Suspense>
+          )}
 
           <motion.div
             className="mt-12"
@@ -904,11 +901,13 @@ const HomePage: React.FC = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <GoogleReviewSummary
+            <Suspense fallback={<div className="flex items-center justify-center py-6"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div></div>}>
+              <GoogleReviewSummary
               rating={4.8}
               reviewCount={28}
               reviewsPageUrl="https://www.google.com/maps/place/JA+Autom%C3%B3veis"
-            />
+              />
+            </Suspense>
           </motion.div>
         </div>
       </section>
@@ -967,7 +966,7 @@ const HomePage: React.FC = () => {
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center text-white flex-shrink-0">
-                      <FaMapMarkerAlt size={20} />
+                      <MapPin size={20} />
                     </div>
                     <div>
                       <h4 className="font-bold text-gray-900 dark:text-white mb-1">Endereço</h4>
@@ -981,7 +980,7 @@ const HomePage: React.FC = () => {
 
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center text-white flex-shrink-0">
-                      <FaPhone size={18} />
+                      <Phone size={18} />
                     </div>
                     <div>
                       <h4 className="font-bold text-gray-900 dark:text-white mb-1">Telefone</h4>
@@ -991,7 +990,7 @@ const HomePage: React.FC = () => {
 
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-white flex-shrink-0">
-                      <FaClock size={18} />
+                      <Clock size={18} />
                     </div>
                     <div>
                       <h4 className="font-bold text-gray-900 dark:text-white mb-1">Horário</h4>
@@ -1037,7 +1036,7 @@ const HomePage: React.FC = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-3">
-                    <FaWhatsapp size={24} />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.94 11.94 0 0 0 12.01 0C5.39 0 .03 5.36.03 11.98c0 2.11.55 4.18 1.6 6.01L0 24l6.17-1.6a11.95 11.95 0 0 0 5.84 1.49h.01c6.62 0 11.98-5.36 11.98-11.98 0-3.2-1.25-6.2-3.48-8.43ZM12.01 22.03h-.01c-1.92 0-3.8-.52-5.44-1.5l-.39-.23-3.66.95.98-3.56-.25-.37a10.02 10.02 0 0 1-1.57-5.34C1.67 6.43 6.13 1.97 12 1.97c2.67 0 5.18 1.04 7.07 2.93a10 10 0 0 1 2.94 7.07c0 5.87-4.77 10.06-9.99 10.06Zm5.8-7.53c-.31-.15-1.83-.9-2.11-1-.28-.1-.48-.15-.68.15-.2.31-.78 1-.96 1.2-.18.2-.35.23-.66.08-.31-.15-1.3-.48-2.48-1.53-.92-.82-1.54-1.84-1.72-2.15-.18-.31-.02-.48.13-.63.13-.13.31-.35.46-.53.15-.18.2-.31.31-.51.1-.2.05-.38-.03-.53-.08-.15-.68-1.64-.93-2.24-.24-.57-.49-.49-.68-.5h-.58c-.2 0-.53.08-.81.38-.28.31-1.07 1.04-1.07 2.56s1.1 2.97 1.25 3.17c.15.2 2.16 3.29 5.23 4.61.73.32 1.3.5 1.75.64.73.23 1.4.2 1.93.12.59-.09 1.83-.75 2.09-1.47.26-.72.26-1.33.18-1.47-.08-.14-.28-.22-.59-.37Z"/></svg>
                     WhatsApp
                   </span>
                   <div className="absolute inset-0 bg-green-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -1056,7 +1055,7 @@ const HomePage: React.FC = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-3">
-                    <FaInstagram size={24} />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm6.5-.75a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z"/></svg>
                     Instagram
                   </span>
                   <div className="absolute inset-0 bg-pink-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
