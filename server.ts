@@ -20,7 +20,6 @@ const loadEsbuildTransform = async () => {
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { setSocketServer } from "./backend/socket";
-import UAParser from "ua-parser-js";
 import cron from "node-cron";
 import connectDB from "./backend/config/db";
 import vehicleRoutes from "./backend/routes/vehicleRoutes";
