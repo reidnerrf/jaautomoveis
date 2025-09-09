@@ -706,7 +706,7 @@ const AdminVehicleListPage: React.FC = () => {
                       }
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setSelectedVehicles(currentVehicles.map((v) => v.id));
+                          setSelectedVehicles(currentVehicles.map((v) => v.id).filter((id): id is string => id !== undefined));
                         } else {
                           setSelectedVehicles([]);
                         }
@@ -740,11 +740,11 @@ const AdminVehicleListPage: React.FC = () => {
                       <td className="py-4 px-6">
                         <input
                           type="checkbox"
-                          checked={selectedVehicles.includes(vehicle.id)}
+                          checked={vehicle.id ? selectedVehicles.includes(vehicle.id) : false}
                           onChange={(e) => {
-                            if (e.target.checked) {
+                            if (e.target.checked && vehicle.id) {
                               setSelectedVehicles([...selectedVehicles, vehicle.id]);
-                            } else {
+                            } else if (vehicle.id) {
                               setSelectedVehicles(
                                 selectedVehicles.filter((id) => id !== vehicle.id)
                               );
@@ -756,7 +756,7 @@ const AdminVehicleListPage: React.FC = () => {
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-4">
                           <img
-                            src={vehicle.images[0]}
+                            src={vehicle.images?.[0] || "/placeholder-car.jpg"}
                             alt={vehicle.name}
                             className="h-16 w-24 rounded-lg object-cover shadow-md"
                           />
@@ -828,7 +828,7 @@ const AdminVehicleListPage: React.FC = () => {
                             </button>
                           )}
                           <button
-                            onClick={() => handleDelete(vehicle.id, vehicle.name)}
+                            onClick={() => vehicle.id && handleDelete(vehicle.id, vehicle.name)}
                             className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 transition-colors"
                             title="Excluir"
                           >
@@ -859,18 +859,18 @@ const AdminVehicleListPage: React.FC = () => {
             >
               <div className="relative">
                 <img
-                  src={vehicle.images[0]}
+                  src={vehicle.images?.[0] || "/placeholder-car.jpg"}
                   alt={vehicle.name}
                   className="w-full h-48 object-cover"
                 />
                 <div className="absolute top-3 left-3">
                   <input
                     type="checkbox"
-                    checked={selectedVehicles.includes(vehicle.id)}
+                    checked={vehicle.id ? selectedVehicles.includes(vehicle.id) : false}
                     onChange={(e) => {
-                      if (e.target.checked) {
+                      if (e.target.checked && vehicle.id) {
                         setSelectedVehicles([...selectedVehicles, vehicle.id]);
-                      } else {
+                      } else if (vehicle.id) {
                         setSelectedVehicles(selectedVehicles.filter((id) => id !== vehicle.id));
                       }
                     }}
@@ -915,7 +915,7 @@ const AdminVehicleListPage: React.FC = () => {
                       </button>
                     )}
                     <button
-                      onClick={() => handleDelete(vehicle.id, vehicle.name)}
+                      onClick={() => vehicle.id && handleDelete(vehicle.id, vehicle.name)}
                       className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
                     >
                       <FiTrash2 size={16} />

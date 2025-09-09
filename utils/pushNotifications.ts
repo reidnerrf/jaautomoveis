@@ -163,13 +163,13 @@ class PushNotificationManager {
       data: {
         url: "/",
       },
-      actions: [
-        {
-          action: "explore",
-          title: "Ver mais",
-          icon: "/assets/favicon-32x32.png",
-        },
-      ],
+      // actions: [
+      //   {
+      //     action: "explore",
+      //     title: "Ver mais",
+      //     icon: "/assets/favicon-32x32.png",
+      //   },
+      // ],
     });
   }
 }

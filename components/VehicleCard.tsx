@@ -74,7 +74,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
     };
 
     const handleCardClick = () => {
-      if (onView) {
+      if (onView && vehicle.id) {
         onView(vehicle.id);
       }
       if (vehicle.id) {
@@ -84,7 +84,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
 
     const handleFavoriteClick = (e: React.MouseEvent) => {
       e.stopPropagation();
-      if (onFavorite) {
+      if (onFavorite && vehicle.id) {
         onFavorite(vehicle.id);
       } else {
         const newFavoriteState = !localFavorite;
@@ -94,9 +94,9 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
         try {
           const current: string[] = JSON.parse(localStorage.getItem("likedVehicles") || "[]");
           const set = new Set<string>(current);
-          if (newFavoriteState) {
+          if (newFavoriteState && vehicle.id) {
             set.add(vehicle.id);
-          } else {
+          } else if (vehicle.id) {
             set.delete(vehicle.id);
           }
           localStorage.setItem("likedVehicles", JSON.stringify(Array.from(set)));

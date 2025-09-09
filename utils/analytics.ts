@@ -109,13 +109,12 @@ class AnalyticsService {
       const consent = getConsent();
       if (!consent.analytics) return;
       // Dynamically import web-vitals to avoid bundle bloat
-      const { onCLS, onFID, onLCP, onINP, onTTFB } = await import("web-vitals");
+      const { onCLS, onLCP, onINP, onTTFB } = await import("web-vitals");
       const report = (name: string, value: number) => {
         this.trackUserAction("web_vital", "performance", `${name}:${Math.round(value)}`);
       };
       onCLS((m) => report("CLS", m.value));
       onLCP((m) => report("LCP", m.value));
-      onFID?.((m: any) => report("FID", m.value));
       // onINP may not exist in older versions; guard optional chaining
       try {
         onINP?.((m: any) => report("INP", m.value));

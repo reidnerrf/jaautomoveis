@@ -381,7 +381,7 @@ export function useNetworkOptimization() {
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-    const handleConnectionChange = () => setConnection(navigator.connection);
+    const handleConnectionChange = () => setConnection((navigator as any).connection);
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);

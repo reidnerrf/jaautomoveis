@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { Vehicle } from "../types/common";
+import { Vehicle } from "../types";
 
 interface VirtualizedListProps<T> {
   items: T[];
@@ -219,7 +219,7 @@ export const VirtualizedVehicleList: React.FC<VehicleListProps> = ({
   const renderVehicleItem = useCallback(
     (vehicle: Vehicle, index: number) => (
       <div
-        key={vehicle._id || index}
+        key={vehicle.id || index}
         className="p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors"
         onClick={() => onVehicleClick?.(vehicle)}
       >
@@ -228,14 +228,14 @@ export const VirtualizedVehicleList: React.FC<VehicleListProps> = ({
             {vehicle.images?.[0] ? (
               <img
                 src={vehicle.images[0]}
-                alt={vehicle.title}
+                alt={vehicle.title || vehicle.name || "Vehicle"}
                 className="w-full h-full object-cover"
                 loading="lazy"
               />
             ) : null}
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-gray-900">{vehicle.title}</h3>
+            <h3 className="font-semibold text-gray-900">{vehicle.title || vehicle.name || "Vehicle"}</h3>
             <p className="text-sm text-gray-600">
               {vehicle.brand} {vehicle.model}
             </p>
@@ -245,7 +245,7 @@ export const VirtualizedVehicleList: React.FC<VehicleListProps> = ({
           </div>
           <div className="text-right">
             <span className="text-xs text-gray-500">{vehicle.year}</span>
-            <p className="text-sm text-gray-600">{vehicle.mileage}km</p>
+            <p className="text-sm text-gray-600">{vehicle.km}km</p>
           </div>
         </div>
       </div>

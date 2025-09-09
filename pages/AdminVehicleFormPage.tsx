@@ -121,7 +121,7 @@ const AdminVehicleFormPage: React.FC = () => {
       const newImagePaths = await response.json();
       setVehicle((prev) => ({
         ...prev,
-        images: [...prev.images, ...newImagePaths],
+        images: [...(prev.images || []), ...newImagePaths],
       }));
     } catch (error: any) {
       setUploadError(error.message);
@@ -141,7 +141,7 @@ const AdminVehicleFormPage: React.FC = () => {
     // Optimistically update UI
     setVehicle((prev) => ({
       ...prev,
-      images: prev.images.filter((url) => url !== imageUrl),
+      images: (prev.images || []).filter((url) => url !== imageUrl),
     }));
 
     // Persist deletion on backend and filesystem if editing existing vehicle
@@ -164,7 +164,7 @@ const AdminVehicleFormPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (vehicle.images.length === 0) {
+    if (!vehicle.images || vehicle.images.length === 0) {
       console.warn("Validação: pelo menos uma imagem é necessária.");
       return;
     }
@@ -356,7 +356,7 @@ const AdminVehicleFormPage: React.FC = () => {
               <label className={labelStyles}>Imagens</label>
               <div className="p-4 border-2 border-dashed border-gray-300 rounded-md bg-gray-50 hover:bg-gray-100 transition">
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 mb-4">
-                  {vehicle.images.map((imageUrl) => (
+                  {(vehicle.images || []).map((imageUrl) => (
                     <motion.div
                       key={imageUrl}
                       initial={{ opacity: 0, scale: 0.9 }}
@@ -421,7 +421,7 @@ const AdminVehicleFormPage: React.FC = () => {
               <label className={labelStyles}>Opcionais (separados por vírgula)</label>
               <textarea
                 name="optionals"
-                value={vehicle.optionals.join(", ")}
+                value={(vehicle.optionals || []).join(", ")}
                 onChange={(e) => handleArrayChange(e, "optionals")}
                 rows={4}
                 className={inputStyles}

@@ -15,7 +15,7 @@ const PriceComparison: React.FC<PriceComparisonProps> = ({ vehicle }) => {
     }).format(value);
 
   const { advertisedPrice, fipePrice, iCarrosPrice, status, maxPrice, tag } = useMemo(() => {
-    const advertised = vehicle.price;
+    const advertised = vehicle.price || 0;
     const fipe = advertised * 0.98;
     const iCarros = advertised * 1.015;
 
