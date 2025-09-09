@@ -15,3 +15,8 @@ dist
 **/__tests__/**
 **/.vscode/**
 **/.idea/**
+uploads
+assets
+*.log
+**/pnpm-debug.log*
+**/yarn-error.log*

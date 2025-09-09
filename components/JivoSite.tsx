@@ -15,7 +15,7 @@ const JivoSite = () => {
 
     // Create and load the script dynamically
     const script = document.createElement("script");
-    script.src = "//code.jivosite.com/widget/zbKIoNfzd8";
+    script.src = "https://code.jivosite.com/widget/zbKIoNfzd8";
     script.async = true;
     script.onload = () => {
       console.log("JivoSite script loaded successfully");

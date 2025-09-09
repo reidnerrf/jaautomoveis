@@ -244,13 +244,20 @@ export const getMostViewedVehicles = async (req: express.Request, res: express.R
       throw new Error("Most viewed vehicles aggregation did not return an array");
     }
 
-    // Fallback: if no logs in the period, return top by current views
-    if (results.length === 0) {
-      const fallback = await Vehicle.find({ status: { $ne: "vendido" } })
+    // Fallback: if not enough logs in the period, supplement with top by current views
+    if (results.length < +limit) {
+      const existingIds = results.map((r: any) => r._id);
+      const fallback = await Vehicle.find({ 
+        status: { $ne: "vendido" },
+        _id: { $nin: existingIds }
+      })
         .sort({ views: -1, updatedAt: -1 })
-        .limit(+limit)
+        .limit(+limit - results.length)
         .lean();
-      return res.json(fallback);
+      
+      // Combine results with fallback
+      const combined = [...results, ...fallback];
+      return res.json(combined);
     }
 
     res.json(results);

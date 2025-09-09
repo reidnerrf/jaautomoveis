@@ -16,23 +16,24 @@ import {
   FiTrash2,
   FiUsers,
   FiTarget,
+  FiDownload,
 } from "react-icons/fi";
 import { FaCar } from "react-icons/fa";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-} from "recharts";
+const MonthlyViewsArea = React.lazy(() => import("../components/charts/MonthlyViewsArea"));
+const ResponsiveContainer = React.lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const AreaChart = React.lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const Area = React.lazy(() => import("recharts").then(m => ({ default: m.Area })));
+const XAxis = React.lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = React.lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = React.lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = React.lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const BarChart = React.lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
+const Bar = React.lazy(() => import("recharts").then(m => ({ default: m.Bar })));
 import { Vehicle } from "../types.ts";
 import { useAuth } from "../hooks/useAuth.tsx";
 import { motion } from "framer-motion";
 import { analytics } from "../utils/analytics";
+import { exportFullPageToPDF } from "../utils/exportUtils.ts";
 
 const AdminDashboardPage: React.FC = () => {
   const { vehicles, loading, refreshVehicles } = useVehicleData();
@@ -237,7 +238,14 @@ const AdminDashboardPage: React.FC = () => {
 
   // Generate realistic sales trend data based on sold vehicles
   const generateSalesTrendData = useMemo(() => {
-    const months = [];
+    const months: Array<{
+      month: string;
+      vendidos: number;
+      disponiveis: number;
+      receita: number;
+      lucro: number;
+      custo: number;
+    }> = [];
     const currentDate = new Date();
     
     // Get sold vehicles data
@@ -252,7 +260,7 @@ const AdminDashboardPage: React.FC = () => {
       const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
       
       const monthSoldVehicles = soldVehicles.filter(v => {
-        const soldDate = v.soldDate ? new Date(v.soldDate) : new Date();
+        const soldDate = v.soldAt ? new Date(v.soldAt) : new Date();
         return soldDate >= monthStart && soldDate <= monthEnd;
       });
       
@@ -308,6 +316,13 @@ const AdminDashboardPage: React.FC = () => {
     }
   };
 
+  // Funções de exportação
+  const handleExportFullDashboardPDF = async () => {
+    const result = await exportFullPageToPDF('dashboard_completo.pdf', 'Dashboard Completo - Relatório', 'admin-dashboard-root');
+    if (result.success) toast.success(result.message);
+    else toast.error(result.message);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -316,14 +331,30 @@ const AdminDashboardPage: React.FC = () => {
     );
   }
 
+  const [showAllActivities, setShowAllActivities] = useState(false);
+
   return (
-    <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10 space-y-8">
+    <div id="admin-dashboard-root" className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10 space-y-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Dashboard Administrativo
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300">Visão geral do desempenho</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              Dashboard Administrativo
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300">Visão geral do desempenho</p>
+          </div>
+          
+          <div className="flex gap-3">
+            <button
+              onClick={handleExportFullDashboardPDF}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
+            >
+              <FiDownload className="text-lg" />
+              Exportar Dashboard PDF
+            </button>
+          </div>
+        </div>
       </motion.div>
 
       {/* Main Stats Cards */}
@@ -418,6 +449,7 @@ const AdminDashboardPage: React.FC = () => {
 
       {/* Monthly Views Chart */}
       <motion.div
+        id="monthly-views-chart"
         className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -437,35 +469,9 @@ const AdminDashboardPage: React.FC = () => {
           </button>
         </div>
         <div className="h-96">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={monthlyViewsLast3} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3C50E0" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#3C50E0" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
-              <YAxis tick={{ fill: "#6B7280" }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1F2937",
-                  border: "none",
-                  borderRadius: "8px",
-                  color: "white",
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="Visualizações"
-                stroke="#3C50E0"
-                fillOpacity={1}
-                fill="url(#colorViews)"
-                strokeWidth={3}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <React.Suspense fallback={<div className="h-full flex items-center justify-center text-sm text-gray-500">Carregando gráficos…</div>}>
+            <MonthlyViewsArea data={monthlyViewsLast3 as any} dataKey="Visualizações" />
+          </React.Suspense>
         </div>
       </motion.div>
 
@@ -480,35 +486,9 @@ const AdminDashboardPage: React.FC = () => {
           Visualizações Diárias (Últimos 30 Dias)
         </h3>
         <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={Array.isArray(dailyViews) ? dailyViews : []} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorDaily" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <XAxis dataKey="date" tick={{ fill: "#6B7280" }} />
-              <YAxis tick={{ fill: "#6B7280" }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1F2937",
-                  border: "none",
-                  borderRadius: "8px",
-                  color: "white",
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="views"
-                stroke="#10B981"
-                fillOpacity={1}
-                fill="url(#colorDaily)"
-                strokeWidth={3}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <React.Suspense fallback={<div className="h-full flex items-center justify-center text-sm text-gray-500">Carregando gráficos…</div>}>
+            <MonthlyViewsArea data={Array.isArray(dailyViews) ? dailyViews : [] as any} dataKey="views" xKey="date" color="#10B981" gradientId="areaDaily" />
+          </React.Suspense>
         </div>
       </motion.div>
 
@@ -516,6 +496,7 @@ const AdminDashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sales Trend Chart */}
         <motion.div
+          id="dashboard-main-chart"
           className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -525,56 +506,15 @@ const AdminDashboardPage: React.FC = () => {
             Tendência de Vendas (Últimos 6 Meses)
           </h3>
           <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={generateSalesTrendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <defs>
-                  <linearGradient id="colorVendidos" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorDisponiveis" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
-                <YAxis tick={{ fill: "#6B7280" }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1F2937",
-                    border: "none",
-                    borderRadius: "8px",
-                    color: "white",
-                  }}
-                  formatter={(value: number, name: string) => [
-                    value,
-                    name === "vendidos" ? "Vendidos" : "Disponíveis",
-                  ]}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="vendidos"
-                  stackId="1"
-                  stroke="#3B82F6"
-                  fill="url(#colorVendidos)"
-                  strokeWidth={2}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="disponiveis"
-                  stackId="1"
-                  stroke="#10B981"
-                  fill="url(#colorDisponiveis)"
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            <React.Suspense fallback={<div className="h-full flex items-center justify-center text-sm text-gray-500">Carregando gráficos…</div>}>
+              <MonthlyViewsArea data={generateSalesTrendData as any} dataKey="vendidos" xKey="month" color="#3B82F6" gradientId="areaVendidos" />
+            </React.Suspense>
           </div>
         </motion.div>
 
         {/* Seller Performance Chart */}
         <motion.div
+          id="seller-performance-chart"
           className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-6"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -584,6 +524,7 @@ const AdminDashboardPage: React.FC = () => {
             Performance dos Vendedores
           </h3>
           <div className="h-80">
+            <React.Suspense fallback={<div className="h-full flex items-center justify-center text-sm text-gray-500">Carregando gráficos…</div>}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={generateSalesTrendData.map(month => ({
@@ -603,15 +544,16 @@ const AdminDashboardPage: React.FC = () => {
                     borderRadius: "8px",
                     color: "white",
                   }}
-                  formatter={(value: number, name: string) => [
-                    formatCurrency(value),
-                    name === "receita" ? "Receita" : "Lucro",
+                  formatter={(value) => [
+                    formatCurrency(Number(value as number)),
+                    'Valor',
                   ]}
                 />
                 <Bar dataKey="receita" fill="#3B82F6" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="lucro" fill="#10B981" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
+            </React.Suspense>
           </div>
         </motion.div>
       </div>
@@ -636,7 +578,7 @@ const AdminDashboardPage: React.FC = () => {
               <div className="flex items-center">
                 <div className="w-12 h-12 flex-shrink-0 mr-3">
                   <img
-                    src={vehicle.images[0]}
+                    src={vehicle.images?.[0] || '/placeholder-car.jpg'}
                     alt={vehicle.name}
                     className="w-full h-full rounded-lg object-cover"
                   />
@@ -750,9 +692,22 @@ const AdminDashboardPage: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.3 }}
         >
-          <RecentActivity vehicles={Array.isArray(vehicles) ? vehicles : []} sellers={Array.isArray(sellers) ? sellers : []} />
+          <RecentActivity compact onOpenAll={() => setShowAllActivities(true)} vehicles={Array.isArray(vehicles) ? vehicles : []} sellers={Array.isArray(sellers) ? sellers : []} />
         </motion.div>
       </div>
+
+      {showAllActivities && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowAllActivities(false)} />
+          <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-3xl max-h-[85vh] overflow-auto border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Todas as atividades</h3>
+              <button onClick={() => setShowAllActivities(false)} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">✕</button>
+            </div>
+            <RecentActivity vehicles={Array.isArray(vehicles) ? vehicles : []} sellers={Array.isArray(sellers) ? sellers : []} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

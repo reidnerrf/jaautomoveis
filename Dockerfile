@@ -6,8 +6,7 @@ RUN apk add --no-cache python3 make g++
 
 WORKDIR /app
 
-# Copia os manifests primeiro (melhor cache)
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
 # Instala TODAS as dependências (inclui vite, esbuild, etc.)
 RUN npm install
@@ -15,7 +14,7 @@ RUN npm install
 # Copia o código
 COPY . .
 
-# Faz o build
+# Faz o build (usa cache de deps)
 RUN npm run build
 
 
@@ -33,14 +32,12 @@ WORKDIR /app
 # Copia só o necessário do estágio anterior
 COPY --from=base --chown=nextjs:nodejs /app/dist ./dist
 COPY --from=base --chown=nextjs:nodejs /app/public ./public
-COPY --from=base --chown=nextjs:nodejs /app/uploads ./uploads
-COPY --from=base --chown=nextjs:nodejs /app/assets ./assets
-COPY --from=base --chown=nextjs:nodejs /app/package*.json ./
+# uploads e assets não são necessários na imagem (montados por volume em runtime)
+COPY --from=base --chown=nextjs:nodejs /app/package.json ./
+COPY --from=base --chown=nextjs:nodejs /app/package-lock.json ./
 
-# Instala dependências de produção + esbuild (necessário para o servidor)
-RUN npm ci --only=production && \
-    npm install esbuild && \
-    npm cache clean --force
+# Instala dependências de produção + esbuild (necessário para middleware dev e build tools)
+RUN npm ci --omit=dev && npm install esbuild && npm cache clean --force
 
 USER nextjs
 

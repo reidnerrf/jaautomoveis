@@ -7,30 +7,31 @@ import { HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { Toaster } from "react-hot-toast";
 import toast from "react-hot-toast";
+import { createLazyComponentWithRetry } from "./utils/dynamicImports";
 
-// Lazy load all pages for better performance
-const HomePage = lazy(() => import("./pages/HomePage"));
-const InventoryPage = lazy(() => import("./pages/InventoryPage"));
-const VehicleDetailPage = lazy(() => import("./pages/VehicleDetailPage"));
-const FinancingPage = lazy(() => import("./pages/FinancingPage"));
-const ConsignadoPage = lazy(() => import("./pages/ConsignadoPage"));
-const ConsortiumPage = lazy(() => import("./pages/ConsortiumPage"));
-const AboutPage = lazy(() => import("./pages/AboutPage"));
-const ContactPage = lazy(() => import("./pages/ContactPage"));
-const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
-const TermsOfServicePage = lazy(() => import("./pages/TermsOfServicePage"));
+// Lazy load all pages for better performance with retry mechanism
+const HomePage = createLazyComponentWithRetry(() => import("./pages/HomePage"));
+const InventoryPage = createLazyComponentWithRetry(() => import("./pages/InventoryPage"));
+const VehicleDetailPage = createLazyComponentWithRetry(() => import("./pages/VehicleDetailPage"));
+const FinancingPage = createLazyComponentWithRetry(() => import("./pages/FinancingPage"));
+const ConsignadoPage = createLazyComponentWithRetry(() => import("./pages/ConsignadoPage"));
+const ConsortiumPage = createLazyComponentWithRetry(() => import("./pages/ConsortiumPage"));
+const AboutPage = createLazyComponentWithRetry(() => import("./pages/AboutPage"));
+const ContactPage = createLazyComponentWithRetry(() => import("./pages/ContactPage"));
+const PrivacyPolicyPage = createLazyComponentWithRetry(() => import("./pages/PrivacyPolicyPage"));
+const TermsOfServicePage = createLazyComponentWithRetry(() => import("./pages/TermsOfServicePage"));
 // Temporarily use regular import for AdminLoginPage to debug
 import AdminLoginPage from "./pages/AdminLoginPage";
-const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
-const AdminVehicleListPage = lazy(() => import("./pages/AdminVehicleListPage"));
-const AdminVehicleFormPage = lazy(() => import("./pages/AdminVehicleFormPage"));
-const AdminSellerListPage = lazy(() => import("./pages/AdminSellerListPage"));
-const AdminSellerFormPage = lazy(() => import("./pages/AdminSellerFormPage"));
-const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
-const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
-const MainLayout = lazy(() => import("./components/MainLayout"));
-const PrivateRoute = lazy(() => import("./components/PrivateRoute"));
-const AdminLayout = lazy(() => import("./components/AdminLayout"));
+const AdminDashboardPage = createLazyComponentWithRetry(() => import("./pages/AdminDashboardPage"));
+const AdminVehicleListPage = createLazyComponentWithRetry(() => import("./pages/AdminVehicleListPage"));
+const AdminVehicleFormPage = createLazyComponentWithRetry(() => import("./pages/AdminVehicleFormPage"));
+const AdminSellerListPage = createLazyComponentWithRetry(() => import("./pages/AdminSellerListPage"));
+const AdminSellerFormPage = createLazyComponentWithRetry(() => import("./pages/AdminSellerFormPage"));
+const ForgotPasswordPage = createLazyComponentWithRetry(() => import("./pages/ForgotPasswordPage"));
+const ResetPasswordPage = createLazyComponentWithRetry(() => import("./pages/ResetPasswordPage"));
+const MainLayout = createLazyComponentWithRetry(() => import("./components/MainLayout"));
+const PrivateRoute = createLazyComponentWithRetry(() => import("./components/PrivateRoute"));
+const AdminLayout = createLazyComponentWithRetry(() => import("./components/AdminLayout"));
 
 // Loading component
 const LoadingSpinner = () => (

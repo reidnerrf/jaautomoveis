@@ -10,7 +10,19 @@ import {
   FiAward,
 } from "react-icons/fi";
 import { FaCar } from "react-icons/fa";
-const Recharts = React.lazy(() => import("recharts"));
+const ResponsiveContainer = React.lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const AreaChart = React.lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const Area = React.lazy(() => import("recharts").then(m => ({ default: m.Area })));
+const XAxis = React.lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = React.lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = React.lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = React.lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const Legend = React.lazy(() => import("recharts").then(m => ({ default: m.Legend })));
+const PieChart = React.lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
+const Pie = React.lazy(() => import("recharts").then(m => ({ default: m.Pie })));
+const Cell = React.lazy(() => import("recharts").then(m => ({ default: m.Cell })));
+const BarChart = React.lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
+const Bar = React.lazy(() => import("recharts").then(m => ({ default: m.Bar })));
 
 interface AdvancedMetricsProps {
   vehicles: any[];
@@ -203,8 +215,8 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
             Tendência de Vendas
           </h3>
           <React.Suspense fallback={<div className="h-[300px] animate-pulse bg-gray-100 dark:bg-gray-800 rounded-md" />}> 
-          <Recharts.ResponsiveContainer width="100%" height={300}>
-            <Recharts.AreaChart data={salesTrendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={salesTrendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <defs>
                 <linearGradient id="colorVendidos" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
@@ -215,10 +227,10 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                   <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <Recharts.CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <Recharts.XAxis dataKey="month" tick={{ fill: "#6B7280", fontSize: 12 }} />
-              <Recharts.YAxis tick={{ fill: "#6B7280", fontSize: 12 }} />
-              <Recharts.Tooltip
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis dataKey="month" tick={{ fill: "#6B7280", fontSize: 12 }} />
+              <YAxis tick={{ fill: "#6B7280", fontSize: 12 }} />
+              <Tooltip
                 contentStyle={{
                   backgroundColor: "#1F2937",
                   border: "none",
@@ -230,8 +242,8 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                   name === "vendidos" ? "Vendidos" : "Disponíveis",
                 ]}
               />
-              <Recharts.Legend />
-              <Recharts.Area
+              <Legend />
+              <Area
                 type="monotone"
                 dataKey="vendidos"
                 stackId="1"
@@ -240,7 +252,7 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                 strokeWidth={2}
                 name="Vendidos"
               />
-              <Recharts.Area
+              <Area
                 type="monotone"
                 dataKey="disponiveis"
                 stackId="1"
@@ -249,8 +261,8 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                 strokeWidth={2}
                 name="Disponíveis"
               />
-            </Recharts.AreaChart>
-          </Recharts.ResponsiveContainer>
+            </AreaChart>
+          </ResponsiveContainer>
           </React.Suspense>
         </motion.div>
 
@@ -265,18 +277,18 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
             Performance dos Vendedores
           </h3>
           <React.Suspense fallback={<div className="h-[300px] animate-pulse bg-gray-100 dark:bg-gray-800 rounded-md" />}> 
-          <Recharts.ResponsiveContainer width="100%" height={300}>
-            <Recharts.BarChart data={sellerPerformanceData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <Recharts.CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <Recharts.XAxis 
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={sellerPerformanceData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis 
                 dataKey="name" 
                 tick={{ fill: "#6B7280", fontSize: 12 }}
                 angle={-45}
                 textAnchor="end"
                 height={80}
               />
-              <Recharts.YAxis tick={{ fill: "#6B7280", fontSize: 12 }} />
-              <Recharts.Tooltip
+              <YAxis tick={{ fill: "#6B7280", fontSize: 12 }} />
+              <Tooltip
                 contentStyle={{
                   backgroundColor: "#1F2937",
                   border: "none",
@@ -293,12 +305,12 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                   name === "vendas" ? "Vendas" : name === "receita" ? "Receita" : "Lucro",
                 ]}
               />
-              <Recharts.Legend />
-              <Recharts.Bar dataKey="vendas" fill="#3B82F6" name="Vendas" radius={[4, 4, 0, 0]} />
-              <Recharts.Bar dataKey="receita" fill="#10B981" name="Receita" radius={[4, 4, 0, 0]} />
-              <Recharts.Bar dataKey="lucro" fill="#F59E0B" name="Lucro" radius={[4, 4, 0, 0]} />
-            </Recharts.BarChart>
-          </Recharts.ResponsiveContainer>
+              <Legend />
+              <Bar dataKey="vendas" fill="#3B82F6" name="Vendas" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="receita" fill="#10B981" name="Receita" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="lucro" fill="#F59E0B" name="Lucro" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
           </React.Suspense>
         </motion.div>
       </div>
@@ -315,9 +327,9 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <React.Suspense fallback={<div className="h-[250px] animate-pulse bg-gray-100 dark:bg-gray-800 rounded-md" />}> 
-          <Recharts.ResponsiveContainer width="100%" height={250}>
-            <Recharts.PieChart>
-              <Recharts.Pie
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart>
+              <Pie
                 data={statusDistribution}
                 cx="50%"
                 cy="50%"
@@ -328,10 +340,10 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                 dataKey="value"
               >
                 {statusDistribution.map((entry, index) => (
-                  <Recharts.Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
-              </Recharts.Pie>
-              <Recharts.Tooltip
+              </Pie>
+              <Tooltip
                 contentStyle={{
                   backgroundColor: "#1F2937",
                   border: "none",
@@ -343,8 +355,8 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                   name,
                 ]}
               />
-            </Recharts.PieChart>
-          </Recharts.ResponsiveContainer>
+            </PieChart>
+          </ResponsiveContainer>
           </React.Suspense>
           <div className="space-y-3">
             {statusDistribution.map((item, index) => (

@@ -35,6 +35,8 @@ interface PerformanceMetrics {
   timestamp: string;
 }
 
+const LazyResponseTimeChart = React.lazy(() => import("../components/charts/ResponseTimeChart"));
+
 const PerformanceDashboardPage: React.FC = () => {
   const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -244,8 +246,9 @@ const PerformanceDashboardPage: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Response Time Distribution
                 </h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart
+                {/* Wrap heavy charts with Suspense and lazy-load */}
+                <React.Suspense fallback={<div className="h-[300px] flex items-center justify-center text-sm text-gray-500">Carregando gráficos…</div>}>
+                  <LazyResponseTimeChart
                     data={[
                       { name: "Min", value: metrics.routeStats.minDuration },
                       { name: "Avg", value: metrics.routeStats.avgDuration },
@@ -253,14 +256,9 @@ const PerformanceDashboardPage: React.FC = () => {
                       { name: "P99", value: metrics.routeStats.p99Duration },
                       { name: "Max", value: metrics.routeStats.maxDuration },
                     ]}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip formatter={(value) => formatDuration(value as number)} />
-                    <Bar dataKey="value" fill="#3B82F6" />
-                  </BarChart>
-                </ResponsiveContainer>
+                    formatDuration={formatDuration}
+                  />
+                </React.Suspense>
               </motion.div>
 
               {/* Top Slow Routes */}

@@ -7,7 +7,7 @@ RUN apk add --no-cache python3 make g++
 WORKDIR /app
 
 # Copia os manifests primeiro (melhor cache)
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
 # Instala TODAS as dependências (inclui vite, esbuild, etc.)
 RUN npm install

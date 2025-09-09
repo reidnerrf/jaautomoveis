@@ -71,7 +71,7 @@ class RecommendationEngine {
         userPref.viewHistory.push(vehicleId);
       });
 
-      console.log(`Loaded preferences for ${this.userPreferences.size} users`);
+      // log suprimido: carregamento de preferências de usuários
     } catch (error) {
       console.error("Error loading user preferences:", error);
     }
@@ -99,7 +99,7 @@ class RecommendationEngine {
         });
       });
 
-      console.log(`Loaded features for ${this.vehicleFeatures.size} vehicles`);
+      // log suprimido: carregamento de features de veículos
     } catch (error) {
       console.error("Error loading vehicle features:", error);
     }

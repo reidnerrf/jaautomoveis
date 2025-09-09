@@ -25,6 +25,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaCarSide, FaCalendarAlt } from "react-icons/fa";
 import { Seller } from "../types.ts";
 import toast from "react-hot-toast";
+import { exportVehiclesToExcel, exportChartToPDF, VehicleExportData } from "../utils/exportUtils.ts";
 
 const AdminVehicleListPage: React.FC = () => {
   const { vehicles = [], deleteVehicle, loading, refreshVehicles } = useVehicleData();
@@ -241,6 +242,47 @@ const AdminVehicleListPage: React.FC = () => {
     }
   };
 
+  // Funções de exportação
+  const handleExportVehiclesToExcel = () => {
+    const vehicleData: VehicleExportData[] = vehicles.map(vehicle => ({
+      id: vehicle.id || vehicle._id || '',
+      name: vehicle.name || vehicle.title || '',
+      make: vehicle.make || '',
+      model: vehicle.model || '',
+      year: vehicle.year || 0,
+      price: vehicle.price || 0,
+      cost: vehicle.cost || 0,
+      status: vehicle.status || 'disponivel',
+      fuel: vehicle.fuel || '',
+      transmission: vehicle.transmission || '',
+      mileage: vehicle.km || 0,
+      color: vehicle.color || '',
+      description: vehicle.description || '',
+      createdAt: vehicle.createdAt || new Date().toISOString()
+    }));
+
+    const result = exportVehiclesToExcel(vehicleData, 'veiculos_disponiveis.xlsx');
+    if (result.success) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+  };
+
+  const handleExportChartToPDF = async () => {
+    const result = await exportChartToPDF(
+      'vehicle-stats-chart',
+      'grafico_veiculos.pdf',
+      'Relatório de Veículos - Estatísticas'
+    );
+    
+    if (result.success) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+  };
+
   const handleSellClick = (vehicle: any) => {
     setSelectedVehicleForSale(vehicle);
     setSellForm({
@@ -356,11 +398,19 @@ const AdminVehicleListPage: React.FC = () => {
 
           <div className="flex flex-wrap gap-3">
             <button
-              onClick={exportToCSV}
+              onClick={handleExportVehiclesToExcel}
               className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <FiDownload />
-              Exportar CSV
+              Exportar Excel
+            </button>
+            
+            <button
+              onClick={handleExportChartToPDF}
+              className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              <FiDownload />
+              Exportar Gráfico PDF
             </button>
 
             {selectedVehicles.length > 0 && (
@@ -1051,6 +1101,7 @@ const AdminVehicleListPage: React.FC = () => {
 
       {/* Vehicle Statistics */}
       <motion.div
+        id="vehicle-stats-chart"
         className="mt-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

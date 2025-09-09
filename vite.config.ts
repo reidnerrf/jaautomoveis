@@ -22,6 +22,9 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "src"),
       },
       extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
+      // Ensure proper module resolution for dynamic imports
+      preserveSymlinks: false,
+      conditions: ['import', 'module', 'browser', 'default'],
     },
     plugins: [
       react(),
@@ -61,6 +64,9 @@ export default defineConfig(({ mode }) => {
             if (id.includes("react") || id.includes("react-dom")) {
               return "react-vendor";
             }
+            if (id.includes("react-router-dom")) {
+              return "router";
+            }
             if (id.includes("framer-motion")) {
               return "motion";
             }
@@ -70,14 +76,17 @@ export default defineConfig(({ mode }) => {
             if (id.includes("recharts")) {
               return "recharts";
             }
+            if (id.includes("lucide-react")) {
+              return "icons";
+            }
+            if (id.includes("@headlessui/react") || id.includes("@heroicons")) {
+              return "headlessui";
+            }
             if (id.includes("jspdf")) {
               return "jspdf";
             }
             if (id.includes("socket.io-client")) {
               return "socket";
-            }
-            if (id.includes("@apollo/client")) {
-              return "apollo";
             }
             // Deixe o Rollup dividir o restante automaticamente
             return undefined;
@@ -115,7 +124,8 @@ export default defineConfig(({ mode }) => {
         : undefined,
     },
     optimizeDeps: {
-      force: true, // build incremental mais confiável
+      // Permite cache estável do prebundle para acelerar builds subsequentes
+      force: false,
       esbuildOptions: {
         target: "esnext",
         treeShaking: true,
@@ -130,6 +140,13 @@ export default defineConfig(({ mode }) => {
         // Ensure correct MIME for module scripts
         "Cache-Control": "no-store",
       },
+      // Ensure proper module resolution for dynamic imports
+      fs: {
+        strict: false,
+        allow: ['..', '.'],
+      },
+      // Force proper module resolution
+      middlewareMode: false,
       proxy: {
         "/api": {
           target: "http://localhost:5000",

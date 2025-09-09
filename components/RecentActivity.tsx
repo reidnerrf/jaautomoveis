@@ -25,9 +25,11 @@ interface Activity {
 interface RecentActivityProps {
   vehicles: any[];
   sellers: any[];
+  compact?: boolean;
+  onOpenAll?: () => void;
 }
 
-const RecentActivity: React.FC<RecentActivityProps> = ({ vehicles, sellers }) => {
+const RecentActivity: React.FC<RecentActivityProps> = ({ vehicles, sellers, compact = false, onOpenAll }) => {
   const activities: Activity[] = React.useMemo(() => {
     const activitiesList: Activity[] = [];
     
@@ -170,7 +172,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ vehicles, sellers }) =>
       </h3>
       
       <div className="space-y-4">
-        {activities.map((activity, index) => (
+        {(compact ? activities.slice(0, 1) : activities).map((activity, index) => (
           <motion.div
             key={activity.id}
             initial={{ opacity: 0, x: -20 }}
@@ -200,9 +202,17 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ vehicles, sellers }) =>
         ))}
       </div>
       
-      {activities.length >= 10 && (
+      {(!compact && activities.length >= 10) && (
         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
           <button className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
+            Ver todas as atividades
+          </button>
+        </div>
+      )}
+
+      {compact && (
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <button onClick={onOpenAll} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
             Ver todas as atividades
           </button>
         </div>

@@ -8,7 +8,15 @@ import helmet from "helmet";
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
 import hpp from "hpp";
-import * as esbuild from "esbuild";
+// esbuild será carregado dinamicamente apenas em desenvolvimento
+let esbuildTransform: ((source: string, options: any) => Promise<{ code: string }>) | null = null;
+const loadEsbuildTransform = async () => {
+  if (!esbuildTransform) {
+    const esbuild = await import("esbuild");
+    esbuildTransform = esbuild.transform;
+  }
+  return esbuildTransform;
+};
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { setSocketServer } from "./backend/socket";
@@ -413,7 +421,8 @@ if (!isProduction) {
         await fs.access(filePath);
 
         const source = await fs.readFile(filePath, "utf-8");
-        const { code } = await esbuild.transform(source, {
+        const transform = await loadEsbuildTransform();
+        const { code } = await transform(source, {
           loader: "tsx",
           format: "esm",
         });
@@ -525,9 +534,7 @@ const activeUsers = new Map<string, { page: string; joinTime: number }>();
 const pageViews = new Map<string, Set<string>>();
 
 io.on("connection", (socket) => {
-  if (!isProduction) {
-    console.log("User connected:", socket.id);
-  }
+  // suprime logs de conexão em produção e desenvolvimento
 
   socket.on("page-view", async (data) => {
     const { page } = data || {};
@@ -656,9 +663,7 @@ io.on("connection", (socket) => {
       }
       activeUsers.delete(socket.id);
     }
-    if (!isProduction) {
-      console.log("User disconnected:", socket.id);
-    }
+    // suprime logs de desconexão em produção e desenvolvimento
   });
 
   socket.on("join-admin", () => {

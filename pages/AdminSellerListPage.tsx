@@ -12,9 +12,11 @@ import {
   FiMail,
   FiPhone,
   FiCalendar,
+  FiDownload,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
+import { exportSellersToExcel, exportChartToPDF, SellerExportData } from "../utils/exportUtils.ts";
 import {
   BarChart,
   Bar,
@@ -186,6 +188,56 @@ const AdminSellerListPage: React.FC = () => {
     }
   };
 
+  // Funções de exportação
+  const handleExportSellersToExcel = () => {
+    const sellerData: SellerExportData[] = sellers.map(seller => {
+      const sellerId = seller._id || seller.id;
+      const soldVehicles = vehicles.filter(
+        (v) => v.sellerId === sellerId && v.status === "vendido"
+      );
+      const totalSales = soldVehicles.length;
+      const totalRevenue = soldVehicles.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
+      const totalProfit = soldVehicles.reduce((sum, v) => {
+        const revenue = v.soldPrice || v.price || 0;
+        const cost = v.cost || 0;
+        return sum + (revenue - cost);
+      }, 0);
+
+      return {
+        id: sellerId || '',
+        name: seller.name,
+        email: seller.email || '',
+        phone: seller.phone || '',
+        active: seller.active !== false,
+        totalSales,
+        totalRevenue,
+        totalProfit,
+        createdAt: seller.createdAt || new Date().toISOString()
+      };
+    });
+
+    const result = exportSellersToExcel(sellerData, 'vendedores.xlsx');
+    if (result.success) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+  };
+
+  const handleExportChartToPDF = async () => {
+    const result = await exportChartToPDF(
+      'seller-stats-chart',
+      'grafico_vendedores.pdf',
+      'Relatório de Vendedores - Estatísticas'
+    );
+    
+    if (result.success) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+  };
+
   const filteredSellers = useMemo(() => {
     return sellers.filter((seller) => {
       const matchesSearch =
@@ -232,13 +284,31 @@ const AdminSellerListPage: React.FC = () => {
               Gerencie os vendedores da concessionária
             </p>
           </div>
-          <Link
-            to="/admin/sellers/new"
-            className="bg-main-red hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
-          >
-            <FiPlus className="text-lg" />
-            Novo Vendedor
-          </Link>
+          <div className="flex gap-3">
+            <button
+              onClick={handleExportSellersToExcel}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
+            >
+              <FiDownload className="text-lg" />
+              Exportar Excel
+            </button>
+            
+            <button
+              onClick={handleExportChartToPDF}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
+            >
+              <FiDownload className="text-lg" />
+              Exportar Gráfico PDF
+            </button>
+
+            <Link
+              to="/admin/sellers/new"
+              className="bg-main-red hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
+            >
+              <FiPlus className="text-lg" />
+              Novo Vendedor
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -634,6 +704,7 @@ const AdminSellerListPage: React.FC = () => {
 
       {/* Advanced Seller Statistics */}
       <motion.div
+        id="seller-stats-chart"
         className="mt-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

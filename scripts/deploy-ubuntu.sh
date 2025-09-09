@@ -109,6 +109,16 @@ check_system_dependencies() {
     success "Todas as dependências encontradas"
 }
 
+# Selecionar comando docker compose compatível (v1 ou v2)
+select_compose_cmd() {
+    if docker compose version &> /dev/null; then
+        DOCKER_COMPOSE="docker compose"
+    else
+        DOCKER_COMPOSE="docker-compose"
+    fi
+    export DOCKER_COMPOSE
+}
+
 # Função para verificar permissões Docker
 check_docker_permissions() {
     log "Verificando permissões Docker..."
@@ -263,9 +273,9 @@ build_application() {
 stop_containers() {
     log "Parando containers existentes..."
     
-    if docker-compose ps -q | grep -q .; then
+    if $DOCKER_COMPOSE ps -q | grep -q .; then
         info "Parando containers existentes..."
-        docker-compose down --volumes --remove-orphans
+        $DOCKER_COMPOSE down --volumes --remove-orphans
         success "Containers parados"
     else
         success "Nenhum container rodando"
@@ -277,7 +287,7 @@ build_docker_images() {
     log "Fazendo build das imagens Docker..."
     
     info "Build das imagens Docker..."
-    if docker-compose build --no-cache; then
+    if $DOCKER_COMPOSE build --no-cache; then
         success "Imagens Docker construídas"
     else
         error "Falha no build das imagens Docker"
@@ -290,7 +300,7 @@ start_containers() {
     log "Iniciando containers..."
     
     info "Iniciando serviços..."
-    if docker-compose up -d; then
+    if $DOCKER_COMPOSE up -d; then
         success "Containers iniciados"
     else
         error "Falha ao iniciar containers"
@@ -305,7 +315,7 @@ wait_for_services() {
     # Aguardar MongoDB
     info "Aguardando MongoDB..."
     for i in {1..30}; do
-        if docker-compose exec -T mongo mongosh --eval "db.runCommand('ping')" &>/dev/null; then
+        if $DOCKER_COMPOSE exec -T mongo mongosh --eval "db.runCommand('ping')" &>/dev/null; then
             success "MongoDB disponível"
             break
         fi
@@ -341,7 +351,14 @@ seed_database() {
     log "Populando banco de dados..."
     
     info "Executando seeder..."
-    if docker-compose --profile tools run --rm seeder; then
+    # Executar seeder garantindo admin. Para idempotência, forçar recriação (-d) e depois popular
+    if $DOCKER_COMPOSE --profile tools run --rm seeder npx ts-node --project tsconfig.server.json seeder.ts -d; then
+        success "Banco limpo"
+    else
+        warning "Não foi possível limpar o banco (pode estar vazio)"
+    fi
+
+    if $DOCKER_COMPOSE --profile tools run --rm seeder npx ts-node --project tsconfig.server.json seeder.ts; then
         success "Banco de dados populado"
     else
         warning "Falha ao popular banco de dados (opcional)"
@@ -398,7 +415,7 @@ test_application() {
 # Função para mostrar status
 show_status() {
     log "Status dos containers:"
-    docker-compose ps
+    $DOCKER_COMPOSE ps
     
     echo ""
     echo -e "${GREEN}🎉 DEPLOY COM SSH CONCLUÍDO COM SUCESSO!${NC}"
@@ -419,10 +436,10 @@ show_status() {
     echo -e "  • MongoDB: ssh -L $LOCAL_MONGO_PORT:localhost:$LOCAL_MONGO_PORT $SSH_USER@$SSH_HOST"
     echo ""
     echo -e "${BLUE}📋 Comandos Úteis:${NC}"
-    echo -e "  • Ver logs: docker-compose logs -f"
-    echo -e "  • Parar: docker-compose down"
-    echo -e "  • Reiniciar: docker-compose restart"
-    echo -e "  • Popular banco: docker-compose --profile tools run --rm seeder"
+    echo -e "  • Ver logs: $DOCKER_COMPOSE logs -f"
+    echo -e "  • Parar: $DOCKER_COMPOSE down"
+    echo -e "  • Reiniciar: $DOCKER_COMPOSE restart"
+    echo -e "  • Popular banco: $DOCKER_COMPOSE --profile tools run --rm seeder"
     echo ""
     echo -e "${YELLOW}💡 Dicas:${NC}"
     echo -e "  • Use túneis SSH para acessar remotamente"
@@ -448,6 +465,7 @@ main() {
     echo ""
     
     # 1. Verificações
+    select_compose_cmd
     check_system_dependencies
     check_docker_permissions
     check_ports

@@ -45,7 +45,8 @@ const MainLayout: React.FC = () => {
       <FloatingSocialButtons page={location.pathname} />
       <React.Suspense fallback={null}>
         <CookieConsent />
-        <JivoSite />
+        {/* Oculta o JivoChat em rotas administrativas */}
+        {!(location.pathname.startsWith('/admin')) && <JivoSite />}
       </React.Suspense>
     </div>
   );

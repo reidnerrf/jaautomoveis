@@ -111,142 +111,9 @@ const ConsortiumPage: React.FC = () => {
       </SEOHead>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-          {/* Simulador */}
-          <div className="lg:col-span-2">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg sticky top-24"
-            >
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
-                📊 Simulação de Consórcio
-              </h1>
-              <p className="text-gray-500 dark:text-gray-300 mb-6">
-                Planeje sua compra sem juros bancários.
-              </p>
-
-              <form onSubmit={handleSimulate} className="space-y-6">
-                {/* Valor de crédito */}
-                <div>
-                  <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Valor do Crédito:{" "}
-                    <span className="font-bold">{formatCurrency(creditAmount)}</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="30000"
-                    max="300000"
-                    step="1000"
-                    value={creditAmount}
-                    onChange={(e) => setCreditAmount(Number(e.target.value))}
-                    className="w-full accent-red-500"
-                  />
-                </div>
-
-                {/* Prazo */}
-                <div>
-                  <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Prazo (meses): <span className="font-bold">{term}</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="24"
-                    max="84"
-                    step="1"
-                    value={term}
-                    onChange={(e) => setTerm(Number(e.target.value))}
-                    className="w-full accent-red-500"
-                  />
-                </div>
-
-                {/* Taxa de administração */}
-                <div>
-                  <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Taxa de Administração (%):{" "}
-                    <span className="font-bold">{adminFee.toFixed(2)}%</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="5"
-                    max="20"
-                    step="0.1"
-                    value={adminFee}
-                    onChange={(e) => setAdminFee(Number(e.target.value))}
-                    className="w-full accent-red-500"
-                  />
-                </div>
-
-                {/* Fundo de reserva */}
-                <div>
-                  <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Fundo de Reserva (%):{" "}
-                    <span className="font-bold">{reserveFund.toFixed(2)}%</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="5"
-                    step="0.1"
-                    value={reserveFund}
-                    onChange={(e) => setReserveFund(Number(e.target.value))}
-                    className="w-full accent-red-500"
-                  />
-                </div>
-
-                {/* Seguro */}
-                <div>
-                  <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Seguro Anual (%): <span className="font-bold">{insurance.toFixed(2)}%</span>
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="2"
-                    step="0.05"
-                    value={insurance}
-                    onChange={(e) => setInsurance(Number(e.target.value))}
-                    className="w-full accent-red-500"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-red-500 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-red-600 transition-all"
-                >
-                  Simular
-                </button>
-              </form>
-
-              {simulation ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-8 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-700 text-center"
-                >
-                  <h2 className="text-xl font-bold text-blue-900 dark:text-blue-300 mb-3">
-                    Resultado da Simulação
-                  </h2>
-                  <p className="text-gray-700 dark:text-gray-300">💳 Parcelas de:</p>
-                  <p className="text-3xl font-extrabold text-blue-800 dark:text-blue-400">
-                    {formatCurrency(simulation.installment)}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                    Total a pagar: {formatCurrency(simulation.total)}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Custo adicional: {formatCurrency(simulation.extra)}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-3">
-                    *Valores aproximados. Sujeitos à formação de grupo.
-                  </p>
-                </motion.div>
-              ) : null}
-            </motion.div>
-          </div>
-
+          
           {/* Texto informativo */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-5">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -257,8 +124,10 @@ const ConsortiumPage: React.FC = () => {
                 Consórcio – Conquiste seu sonho sem pagar juros 🚀
               </h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                O consórcio é a forma planejada de adquirir bens de alto valor, sem juros bancários
-                e com taxas reduzidas.
+                Uma das grandes vantagens de fazer consórcio com a JA Automóveis é que 
+                ao contrário do financiamento, as parcelas não possuem juros. Isso garante que, 
+                ao final do plano, você pague praticamente o valor integral do bem acordado em 
+                contrato, sem os acréscimos de juros elevados que costumam encarecer outras modalidades de compra.
               </p>
               <p className="text-gray-600 dark:text-gray-300 mb-8">
                 Na JA Automóveis, você participa de um grupo, contribui mensalmente e pode ser
