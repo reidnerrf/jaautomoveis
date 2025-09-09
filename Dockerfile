@@ -36,6 +36,12 @@ COPY --from=base --chown=nextjs:nodejs /app/public ./public
 COPY --from=base --chown=nextjs:nodejs /app/package.json ./
 COPY --from=base --chown=nextjs:nodejs /app/package-lock.json ./
 
+# Copia arquivos necessários para o seeder
+COPY --from=base --chown=nextjs:nodejs /app/seeder.ts ./
+COPY --from=base --chown=nextjs:nodejs /app/backend ./backend
+COPY --from=base --chown=nextjs:nodejs /app/types ./types
+COPY --from=base --chown=nextjs:nodejs /app/tsconfig.server.json ./
+
 # Instala dependências de produção + esbuild (necessário para middleware dev e build tools)
 RUN npm ci --omit=dev && npm install esbuild && npm cache clean --force
 
