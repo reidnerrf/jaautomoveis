@@ -261,7 +261,7 @@ const VehicleDetailPage: React.FC = () => {
                 "@type": "ListItem",
                 position: 1,
                 name: "Início",
-                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
+                item: typeof window !== "undefined" ? `${window.location.origin}/` : "/",
               },
               {
                 "@type": "ListItem",
@@ -269,7 +269,7 @@ const VehicleDetailPage: React.FC = () => {
                 name: "Estoque",
                 item:
                   typeof window !== "undefined"
-                    ? window.location.origin + "/inventory"
+                    ? `${window.location.origin}/inventory`
                     : "/inventory",
               },
               {
@@ -278,7 +278,7 @@ const VehicleDetailPage: React.FC = () => {
                 name: vehicle.name,
                 item:
                   typeof window !== "undefined"
-                    ? window.location.origin + `/vehicle/${vehicle.id}`
+                    ? `${window.location.origin}/vehicle/${vehicle.id}`
                     : `/vehicle/${vehicle.id}`,
               },
             ],
@@ -310,7 +310,6 @@ const VehicleDetailPage: React.FC = () => {
             </Link>
           </motion.div>
 
-          
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Galeria de imagens */}
             <div className="lg:col-span-3">

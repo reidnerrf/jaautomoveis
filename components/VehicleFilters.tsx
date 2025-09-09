@@ -1,13 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import {
-  FiFilter,
-  FiX,
-  FiSearch,
-  FiDollarSign,
-  FiCalendar,
-  FiTag,
-} from "react-icons/fi";
+import { FiFilter, FiX, FiSearch, FiDollarSign, FiCalendar, FiTag } from "react-icons/fi";
 import { FaCar } from "react-icons/fa";
 interface VehicleFiltersProps {
   filters: {
@@ -45,23 +38,16 @@ const VehicleFilters: React.FC<VehicleFiltersProps> = ({
     });
   };
 
-  const activeFiltersCount = Object.values(filters).filter(
-    (value) => value && value !== ""
-  ).length;
+  const activeFiltersCount = Object.values(filters).filter((value) => value && value !== "").length;
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
       {/* Filter Header */}
-      <div
-        className="p-4 cursor-pointer"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
+      <div className="p-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <FiFilter className="text-gray-500" size={20} />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Filtros
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filtros</h3>
             {activeFiltersCount > 0 && (
               <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full text-sm font-medium">
                 {activeFiltersCount}
@@ -80,10 +66,7 @@ const VehicleFilters: React.FC<VehicleFiltersProps> = ({
                 Limpar
               </button>
             )}
-            <motion.div
-              animate={{ rotate: isExpanded ? 180 : 0 }}
-              transition={{ duration: 0.2 }}
-            >
+            <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
               <FiX className="text-gray-500" size={20} />
             </motion.div>
           </div>

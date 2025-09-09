@@ -28,7 +28,9 @@ const StatCard: React.FC<StatCardProps> = ({
       {/* Conteúdo */}
       <div className="mt-5 flex flex-col space-y-3">
         <div className="min-w-0">
-          <h4 className="text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white break-words leading-tight">{value}</h4>
+          <h4 className="text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white break-words leading-tight">
+            {value}
+          </h4>
           <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</span>
         </div>
 

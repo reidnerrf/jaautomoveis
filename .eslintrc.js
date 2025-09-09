@@ -19,6 +19,32 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: "module",
   },
+  overrides: [
+    {
+      files: ["server.ts", "backend/**/*.ts", "seeder.ts"],
+      parserOptions: {
+        project: ["./tsconfig.server.json"],
+        tsconfigRootDir: __dirname,
+      },
+      env: { node: true, browser: false },
+    },
+    {
+      files: [
+        "components/**/*.{ts,tsx}",
+        "pages/**/*.{ts,tsx}",
+        "utils/**/*.{ts,tsx}",
+        "index.tsx",
+        "App.tsx",
+        "hooks/**/*.{ts,tsx}",
+        "contexts/**/*.{ts,tsx}",
+      ],
+      parserOptions: {
+        project: ["./tsconfig.json"],
+        tsconfigRootDir: __dirname,
+      },
+      env: { browser: true, node: false },
+    },
+  ],
   plugins: ["react", "@typescript-eslint", "react-hooks"],
   rules: {
     // Performance-related rules

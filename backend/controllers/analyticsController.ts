@@ -212,10 +212,7 @@ export const getDailyViewsLast30Days = async (req: express.Request, res: express
 };
 
 // Lucro líquido por mês (últimos 6 meses) considerando veículos vendidos
-export const getNetSalesLastSixMonths = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const getNetSalesLastSixMonths = async (req: express.Request, res: express.Response) => {
   try {
     const since = new Date();
     since.setMonth(since.getMonth() - 5); // inclusive month
@@ -251,10 +248,7 @@ export const getNetSalesLastSixMonths = async (
 };
 
 // Top vendedores por valor vendido (últimos 6 meses) e vendedor do mês
-export const getTopSellersLastSixMonths = async (
-  req: express.Request,
-  res: express.Response
-) => {
+export const getTopSellersLastSixMonths = async (req: express.Request, res: express.Response) => {
   try {
     const since = new Date();
     since.setMonth(since.getMonth() - 5);

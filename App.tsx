@@ -23,10 +23,18 @@ const TermsOfServicePage = createLazyComponentWithRetry(() => import("./pages/Te
 // Temporarily use regular import for AdminLoginPage to debug
 import AdminLoginPage from "./pages/AdminLoginPage";
 const AdminDashboardPage = createLazyComponentWithRetry(() => import("./pages/AdminDashboardPage"));
-const AdminVehicleListPage = createLazyComponentWithRetry(() => import("./pages/AdminVehicleListPage"));
-const AdminVehicleFormPage = createLazyComponentWithRetry(() => import("./pages/AdminVehicleFormPage"));
-const AdminSellerListPage = createLazyComponentWithRetry(() => import("./pages/AdminSellerListPage"));
-const AdminSellerFormPage = createLazyComponentWithRetry(() => import("./pages/AdminSellerFormPage"));
+const AdminVehicleListPage = createLazyComponentWithRetry(
+  () => import("./pages/AdminVehicleListPage")
+);
+const AdminVehicleFormPage = createLazyComponentWithRetry(
+  () => import("./pages/AdminVehicleFormPage")
+);
+const AdminSellerListPage = createLazyComponentWithRetry(
+  () => import("./pages/AdminSellerListPage")
+);
+const AdminSellerFormPage = createLazyComponentWithRetry(
+  () => import("./pages/AdminSellerFormPage")
+);
 const ForgotPasswordPage = createLazyComponentWithRetry(() => import("./pages/ForgotPasswordPage"));
 const ResetPasswordPage = createLazyComponentWithRetry(() => import("./pages/ResetPasswordPage"));
 const MainLayout = createLazyComponentWithRetry(() => import("./components/MainLayout"));

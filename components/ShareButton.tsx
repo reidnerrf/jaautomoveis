@@ -22,7 +22,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = "" }) =>
   const [copied, setCopied] = useState(false);
 
   const shareUrl = window.location.href;
-  const title = `Confira este ${vehicle?.name || 'veículo'} na JA Automóveis!`;
+  const title = `Confira este ${vehicle?.name || "veículo"} na JA Automóveis!`;
 
   const copyToClipboard = async () => {
     try {

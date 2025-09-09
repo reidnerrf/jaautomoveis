@@ -76,7 +76,7 @@ class AnalyticsService {
   private initGA() {
     if (this.gaInitialized) return;
     try {
-      // @ts-ignore
+      // @ts-expect-error gtag may not be defined in non-browser environments
       if (typeof window !== "undefined" && typeof window.gtag === "function") {
         this.gaInitialized = true;
       }

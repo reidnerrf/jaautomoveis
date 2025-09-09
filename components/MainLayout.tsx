@@ -15,9 +15,9 @@ const MainLayout: React.FC = () => {
     analytics.trackPageView(location.pathname);
     try {
       // GA4 SPA page_view
-      // @ts-ignore
+      // @ts-expect-error gtag may not be present in some environments
       if (typeof window !== "undefined" && typeof window.gtag === "function") {
-        // @ts-ignore
+        // @ts-expect-error gtag may not be present in some environments
         window.gtag("event", "page_view", {
           page_title: document.title,
           page_location: window.location.href,
@@ -40,13 +40,13 @@ const MainLayout: React.FC = () => {
         <Outlet />
       </main>
       {/* CTA fixo mobile */}
-      
+
       <Footer />
       <FloatingSocialButtons page={location.pathname} />
       <React.Suspense fallback={null}>
         <CookieConsent />
         {/* Oculta o JivoChat em rotas administrativas */}
-        {!(location.pathname.startsWith('/admin')) && <JivoSite />}
+        {!location.pathname.startsWith("/admin") && <JivoSite />}
       </React.Suspense>
     </div>
   );

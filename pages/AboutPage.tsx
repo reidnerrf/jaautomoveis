@@ -1,6 +1,15 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { FiAward, FiEye, FiHeart, FiUsers, FiShield, FiTrendingUp, FiClock, FiMapPin } from "react-icons/fi";
+import {
+  FiAward,
+  FiEye,
+  FiHeart,
+  FiUsers,
+  FiShield,
+  FiTrendingUp,
+  FiClock,
+  FiMapPin,
+} from "react-icons/fi";
 import { FaCar, FaHandshake, FaStar } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
 import { generatePageSEO } from "../utils/seo";
@@ -28,33 +37,53 @@ const AboutPage: React.FC = () => {
   ];
 
   const stats = [
-    { icon: <FaCar size={24} />, number: "500+", label: "Veículos Vendidos", color: "text-blue-600" },
-    { icon: <FiUsers size={24} />, number: "300+", label: "Clientes Satisfeitos", color: "text-green-600" },
-    { icon: <FiClock size={24} />, number: "5+", label: "Anos de Experiência", color: "text-purple-600" },
-    { icon: <FaStar size={24} />, number: "4.9", label: "Avaliação Média", color: "text-yellow-600" },
+    {
+      icon: <FaCar size={24} />,
+      number: "500+",
+      label: "Veículos Vendidos",
+      color: "text-blue-600",
+    },
+    {
+      icon: <FiUsers size={24} />,
+      number: "300+",
+      label: "Clientes Satisfeitos",
+      color: "text-green-600",
+    },
+    {
+      icon: <FiClock size={24} />,
+      number: "5+",
+      label: "Anos de Experiência",
+      color: "text-purple-600",
+    },
+    {
+      icon: <FaStar size={24} />,
+      number: "4.9",
+      label: "Avaliação Média",
+      color: "text-yellow-600",
+    },
   ];
 
   const services = [
     {
       icon: <FaCar size={24} className="text-blue-600" />,
       title: "Venda de Veículos",
-      description: "Novos, seminovos e usados com procedência garantida"
+      description: "Novos, seminovos e usados com procedência garantida",
     },
     {
       icon: <FaHandshake size={24} className="text-green-600" />,
       title: "Consignação",
-      description: "Venda seu veículo com segurança e transparência"
+      description: "Venda seu veículo com segurança e transparência",
     },
     {
       icon: <FiTrendingUp size={24} className="text-purple-600" />,
       title: "Financiamento",
-      description: "Parcelamos seu sonho em condições especiais"
+      description: "Parcelamos seu sonho em condições especiais",
     },
     {
       icon: <FiShield size={24} className="text-red-600" />,
       title: "Garantia",
-      description: "Todos os veículos passam por rigorosa inspeção"
-    }
+      description: "Todos os veículos passam por rigorosa inspeção",
+    },
   ];
 
   return (
@@ -73,13 +102,13 @@ const AboutPage: React.FC = () => {
                 "@type": "ListItem",
                 position: 1,
                 name: "Início",
-                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
+                item: typeof window !== "undefined" ? `${window.location.origin}/` : "/",
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Sobre Nós",
-                item: typeof window !== "undefined" ? window.location.origin + "/about" : "/about",
+                item: typeof window !== "undefined" ? `${window.location.origin}/about` : "/about",
               },
             ],
           })}
@@ -167,15 +196,11 @@ const AboutPage: React.FC = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <div className={`flex justify-center mb-3 ${stat.color}`}>
-                  {stat.icon}
-                </div>
+                <div className={`flex justify-center mb-3 ${stat.color}`}>{stat.icon}</div>
                 <div className="text-3xl font-bold text-gray-800 dark:text-white mb-1">
                   {stat.number}
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">
-                  {stat.label}
-                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -196,15 +221,11 @@ const AboutPage: React.FC = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <div className="flex justify-center mb-4">
-                  {service.icon}
-                </div>
+                <div className="flex justify-center mb-4">{service.icon}</div>
                 <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">
                   {service.title}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {service.description}
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{service.description}</p>
               </motion.div>
             ))}
           </div>
@@ -245,7 +266,8 @@ const AboutPage: React.FC = () => {
               Nossa Localização
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Estamos localizados em Av. Brasília, n°35 - Vila Julieta, Resende - RJ, prontos para te atender com excelência.
+              Estamos localizados em Av. Brasília, n°35 - Vila Julieta, Resende - RJ, prontos para
+              te atender com excelência.
             </p>
             <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 max-w-md mx-auto">
               <p className="text-gray-700 dark:text-gray-300 font-medium">

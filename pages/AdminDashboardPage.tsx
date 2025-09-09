@@ -20,15 +20,19 @@ import {
 } from "react-icons/fi";
 import { FaCar } from "react-icons/fa";
 const MonthlyViewsArea = React.lazy(() => import("../components/charts/MonthlyViewsArea"));
-const ResponsiveContainer = React.lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const AreaChart = React.lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
-const Area = React.lazy(() => import("recharts").then(m => ({ default: m.Area })));
-const XAxis = React.lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = React.lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = React.lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = React.lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const BarChart = React.lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
-const Bar = React.lazy(() => import("recharts").then(m => ({ default: m.Bar })));
+const ResponsiveContainer = React.lazy(() =>
+  import("recharts").then((m) => ({ default: m.ResponsiveContainer }))
+);
+const AreaChart = React.lazy(() => import("recharts").then((m) => ({ default: m.AreaChart })));
+const Area = React.lazy(() => import("recharts").then((m) => ({ default: m.Area })));
+const XAxis = React.lazy(() => import("recharts").then((m) => ({ default: m.XAxis })));
+const YAxis = React.lazy(() => import("recharts").then((m) => ({ default: m.YAxis })));
+const CartesianGrid = React.lazy(() =>
+  import("recharts").then((m) => ({ default: m.CartesianGrid }))
+);
+const Tooltip = React.lazy(() => import("recharts").then((m) => ({ default: m.Tooltip })));
+const BarChart = React.lazy(() => import("recharts").then((m) => ({ default: m.BarChart })));
+const Bar = React.lazy(() => import("recharts").then((m) => ({ default: m.Bar })));
 import { Vehicle } from "../types.ts";
 import { useAuth } from "../hooks/useAuth.tsx";
 import { motion } from "framer-motion";
@@ -57,14 +61,14 @@ const AdminDashboardPage: React.FC = () => {
   useEffect(() => {
     const fetchSellers = async () => {
       if (!token) return;
-      
+
       try {
         const response = await fetch("/api/sellers", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           setSellers(data.sellers || []);
@@ -210,7 +214,7 @@ const AdminDashboardPage: React.FC = () => {
     const totalValue = safeVehicles.reduce((sum, v) => sum + (v.price || 0), 0);
     const totalViews = safeVehicles.reduce((sum, v) => sum + (v.views || 0), 0);
     const totalCost = safeVehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
-    
+
     // Lucro total = valor total do estoque - custo total
     const totalProfit = totalValue - totalCost;
 
@@ -219,7 +223,9 @@ const AdminDashboardPage: React.FC = () => {
     const soldCost = soldVehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
     const soldProfit = soldRevenue - soldCost;
 
-    const topVehicles = [...safeVehicles].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
+    const topVehicles = [...safeVehicles]
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 5);
 
     return {
       totalViews,
@@ -247,31 +253,31 @@ const AdminDashboardPage: React.FC = () => {
       custo: number;
     }> = [];
     const currentDate = new Date();
-    
+
     // Get sold vehicles data
-    const soldVehicles = vehicleStats.soldVehicles;
-    
+    const { soldVehicles } = vehicleStats;
+
     for (let i = 5; i >= 0; i--) {
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
       const monthName = date.toLocaleDateString("pt-BR", { month: "short", year: "2-digit" });
-      
+
       // Calculate actual sales for this month based on sold vehicles
       const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
       const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      
-      const monthSoldVehicles = soldVehicles.filter(v => {
+
+      const monthSoldVehicles = soldVehicles.filter((v) => {
         const soldDate = v.soldAt ? new Date(v.soldAt) : new Date();
         return soldDate >= monthStart && soldDate <= monthEnd;
       });
-      
+
       const vendidos = monthSoldVehicles.length;
       const receita = monthSoldVehicles.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
       const custo = monthSoldVehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
       const lucro = receita - custo;
-      
+
       // Add some variation for available vehicles (simulation)
       const disponiveis = Math.max(0, Math.floor(Math.random() * 20) + 5);
-      
+
       months.push({
         month: monthName,
         vendidos,
@@ -281,7 +287,7 @@ const AdminDashboardPage: React.FC = () => {
         custo,
       });
     }
-    
+
     return months;
   }, [vehicleStats.soldVehicles]);
 
@@ -318,7 +324,11 @@ const AdminDashboardPage: React.FC = () => {
 
   // Funções de exportação
   const handleExportFullDashboardPDF = async () => {
-    const result = await exportFullPageToPDF('dashboard_completo.pdf', 'Dashboard Completo - Relatório', 'admin-dashboard-root');
+    const result = await exportFullPageToPDF(
+      "dashboard_completo.pdf",
+      "Dashboard Completo - Relatório",
+      "admin-dashboard-root"
+    );
     if (result.success) toast.success(result.message);
     else toast.error(result.message);
   };
@@ -334,7 +344,10 @@ const AdminDashboardPage: React.FC = () => {
   const [showAllActivities, setShowAllActivities] = useState(false);
 
   return (
-    <div id="admin-dashboard-root" className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10 space-y-8">
+    <div
+      id="admin-dashboard-root"
+      className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10 space-y-8"
+    >
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -344,7 +357,7 @@ const AdminDashboardPage: React.FC = () => {
             </h1>
             <p className="text-gray-600 dark:text-gray-300">Visão geral do desempenho</p>
           </div>
-          
+
           <div className="flex gap-3">
             <button
               onClick={handleExportFullDashboardPDF}
@@ -469,7 +482,13 @@ const AdminDashboardPage: React.FC = () => {
           </button>
         </div>
         <div className="h-96">
-          <React.Suspense fallback={<div className="h-full flex items-center justify-center text-sm text-gray-500">Carregando gráficos…</div>}>
+          <React.Suspense
+            fallback={
+              <div className="h-full flex items-center justify-center text-sm text-gray-500">
+                Carregando gráficos…
+              </div>
+            }
+          >
             <MonthlyViewsArea data={monthlyViewsLast3 as any} dataKey="Visualizações" />
           </React.Suspense>
         </div>
@@ -486,8 +505,20 @@ const AdminDashboardPage: React.FC = () => {
           Visualizações Diárias (Últimos 30 Dias)
         </h3>
         <div className="h-80">
-          <React.Suspense fallback={<div className="h-full flex items-center justify-center text-sm text-gray-500">Carregando gráficos…</div>}>
-            <MonthlyViewsArea data={Array.isArray(dailyViews) ? dailyViews : [] as any} dataKey="views" xKey="date" color="#10B981" gradientId="areaDaily" />
+          <React.Suspense
+            fallback={
+              <div className="h-full flex items-center justify-center text-sm text-gray-500">
+                Carregando gráficos…
+              </div>
+            }
+          >
+            <MonthlyViewsArea
+              data={Array.isArray(dailyViews) ? dailyViews : ([] as any)}
+              dataKey="views"
+              xKey="date"
+              color="#10B981"
+              gradientId="areaDaily"
+            />
           </React.Suspense>
         </div>
       </motion.div>
@@ -506,8 +537,20 @@ const AdminDashboardPage: React.FC = () => {
             Tendência de Vendas (Últimos 6 Meses)
           </h3>
           <div className="h-80">
-            <React.Suspense fallback={<div className="h-full flex items-center justify-center text-sm text-gray-500">Carregando gráficos…</div>}>
-              <MonthlyViewsArea data={generateSalesTrendData as any} dataKey="vendidos" xKey="month" color="#3B82F6" gradientId="areaVendidos" />
+            <React.Suspense
+              fallback={
+                <div className="h-full flex items-center justify-center text-sm text-gray-500">
+                  Carregando gráficos…
+                </div>
+              }
+            >
+              <MonthlyViewsArea
+                data={generateSalesTrendData as any}
+                dataKey="vendidos"
+                xKey="month"
+                color="#3B82F6"
+                gradientId="areaVendidos"
+              />
             </React.Suspense>
           </div>
         </motion.div>
@@ -524,35 +567,38 @@ const AdminDashboardPage: React.FC = () => {
             Performance dos Vendedores
           </h3>
           <div className="h-80">
-            <React.Suspense fallback={<div className="h-full flex items-center justify-center text-sm text-gray-500">Carregando gráficos…</div>}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={generateSalesTrendData.map(month => ({
-                  month: month.month,
-                  receita: month.receita,
-                  lucro: month.lucro,
-                }))}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
-                <YAxis tick={{ fill: "#6B7280" }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1F2937",
-                    border: "none",
-                    borderRadius: "8px",
-                    color: "white",
-                  }}
-                  formatter={(value) => [
-                    formatCurrency(Number(value as number)),
-                    'Valor',
-                  ]}
-                />
-                <Bar dataKey="receita" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="lucro" fill="#10B981" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <React.Suspense
+              fallback={
+                <div className="h-full flex items-center justify-center text-sm text-gray-500">
+                  Carregando gráficos…
+                </div>
+              }
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={generateSalesTrendData.map((month) => ({
+                    month: month.month,
+                    receita: month.receita,
+                    lucro: month.lucro,
+                  }))}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                  <XAxis dataKey="month" tick={{ fill: "#6B7280" }} />
+                  <YAxis tick={{ fill: "#6B7280" }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#1F2937",
+                      border: "none",
+                      borderRadius: "8px",
+                      color: "white",
+                    }}
+                    formatter={(value) => [formatCurrency(Number(value as number)), "Valor"]}
+                  />
+                  <Bar dataKey="receita" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="lucro" fill="#10B981" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </React.Suspense>
           </div>
         </motion.div>
@@ -578,7 +624,7 @@ const AdminDashboardPage: React.FC = () => {
               <div className="flex items-center">
                 <div className="w-12 h-12 flex-shrink-0 mr-3">
                   <img
-                    src={vehicle.images?.[0] || '/placeholder-car.jpg'}
+                    src={vehicle.images?.[0] || "/placeholder-car.jpg"}
                     alt={vehicle.name}
                     className="w-full h-full rounded-lg object-cover"
                   />
@@ -684,30 +730,51 @@ const AdminDashboardPage: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.2 }}
         >
-          <DashboardAlerts vehicles={Array.isArray(vehicles) ? vehicles : []} sellers={Array.isArray(sellers) ? sellers : []} />
+          <DashboardAlerts
+            vehicles={Array.isArray(vehicles) ? vehicles : []}
+            sellers={Array.isArray(sellers) ? sellers : []}
+          />
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.3 }}
         >
-          <RecentActivity compact onOpenAll={() => setShowAllActivities(true)} vehicles={Array.isArray(vehicles) ? vehicles : []} sellers={Array.isArray(sellers) ? sellers : []} />
+          <RecentActivity
+            compact
+            onOpenAll={() => setShowAllActivities(true)}
+            vehicles={Array.isArray(vehicles) ? vehicles : []}
+            sellers={Array.isArray(sellers) ? sellers : []}
+          />
         </motion.div>
       </div>
 
-      {showAllActivities && (
+      {showAllActivities ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowAllActivities(false)} />
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowAllActivities(false)}
+          />
           <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-3xl max-h-[85vh] overflow-auto border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Todas as atividades</h3>
-              <button onClick={() => setShowAllActivities(false)} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">✕</button>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Todas as atividades
+              </h3>
+              <button
+                onClick={() => setShowAllActivities(false)}
+                className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+              >
+                ✕
+              </button>
             </div>
-            <RecentActivity vehicles={Array.isArray(vehicles) ? vehicles : []} sellers={Array.isArray(sellers) ? sellers : []} />
+            <RecentActivity
+              vehicles={Array.isArray(vehicles) ? vehicles : []}
+              sellers={Array.isArray(sellers) ? sellers : []}
+            />
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

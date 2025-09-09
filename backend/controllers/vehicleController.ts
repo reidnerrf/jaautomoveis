@@ -165,14 +165,14 @@ export const deleteVehicle = async (req: express.Request, res: express.Response)
 export const incrementVehicleView = async (req: express.Request, res: express.Response) => {
   try {
     const { id } = req.params;
-    
+
     // Use atomic operation to prevent race conditions
     const vehicle = await Vehicle.findByIdAndUpdate(
       id,
       { $inc: { views: 1 } },
       { new: true, upsert: false }
     ).lean();
-    
+
     if (vehicle) {
       // Create view log asynchronously to avoid blocking the response
       ViewLog.create({ vehicle: vehicle._id }).catch((logError) => {
@@ -247,14 +247,14 @@ export const getMostViewedVehicles = async (req: express.Request, res: express.R
     // Fallback: if not enough logs in the period, supplement with top by current views
     if (results.length < +limit) {
       const existingIds = results.map((r: any) => r._id);
-      const fallback = await Vehicle.find({ 
+      const fallback = await Vehicle.find({
         status: { $ne: "vendido" },
-        _id: { $nin: existingIds }
+        _id: { $nin: existingIds },
       })
         .sort({ views: -1, updatedAt: -1 })
         .limit(+limit - results.length)
         .lean();
-      
+
       // Combine results with fallback
       const combined = [...results, ...fallback];
       return res.json(combined);

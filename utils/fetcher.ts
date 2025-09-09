@@ -41,24 +41,15 @@ export async function httpRequest<T = any>(
   input: string | URL | Request,
   init: RequestOptions = {}
 ): Promise<T> {
-  const {
-    expectJson = true,
-    retry = {},
-    headers,
-    ...rest
-  } = init;
+  const { expectJson = true, retry = {}, headers, ...rest } = init;
 
-  const {
-    maxRetries = 2,
-    baseDelayMs = 500,
-    maxDelayMs = 5000,
-    jitter = true,
-  } = retry;
+  const { maxRetries = 2, baseDelayMs = 500, maxDelayMs = 5000, jitter = true } = retry;
 
   let attempt = 0;
   // Merge headers without forcing cache-bypass by default
   const mergedHeaders = new Headers(headers || {});
-  if (!mergedHeaders.has("Accept")) mergedHeaders.set("Accept", "application/json, text/plain;q=0.9,*/*;q=0.8");
+  if (!mergedHeaders.has("Accept"))
+    mergedHeaders.set("Accept", "application/json, text/plain;q=0.9,*/*;q=0.8");
 
   while (true) {
     const response = await fetch(input as any, { ...rest, headers: mergedHeaders });
@@ -71,9 +62,10 @@ export async function httpRequest<T = any>(
         const body = await response.text().catch(() => "");
         throw new Error(`HTTP 429 Too Many Requests. Body: ${body.slice(0, 200)}`);
       }
-      const delay = typeof retryAfterSeconds === "number" && !Number.isNaN(retryAfterSeconds)
-        ? Math.min(maxDelayMs, retryAfterSeconds * 1000)
-        : computeBackoff(attempt, baseDelayMs, maxDelayMs, jitter);
+      const delay =
+        typeof retryAfterSeconds === "number" && !Number.isNaN(retryAfterSeconds)
+          ? Math.min(maxDelayMs, retryAfterSeconds * 1000)
+          : computeBackoff(attempt, baseDelayMs, maxDelayMs, jitter);
       attempt += 1;
       await sleep(delay);
       continue;
@@ -92,9 +84,18 @@ export async function httpGetJson<T = any>(url: string, init: RequestInit = {}):
   return httpRequest<T>(url, { ...init, expectJson: true });
 }
 
-export async function httpPostJson<T = any>(url: string, body: unknown, init: RequestInit = {}): Promise<T> {
+export async function httpPostJson<T = any>(
+  url: string,
+  body: unknown,
+  init: RequestInit = {}
+): Promise<T> {
   const headers = new Headers(init.headers || {});
   headers.set("Content-Type", "application/json");
-  return httpRequest<T>(url, { ...init, method: "POST", headers, body: JSON.stringify(body), expectJson: true });
+  return httpRequest<T>(url, {
+    ...init,
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+    expectJson: true,
+  });
 }
-
