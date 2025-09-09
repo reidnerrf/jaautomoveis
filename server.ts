@@ -165,13 +165,21 @@ const uploadsDirRoot = path.join(process.cwd(), "uploads");
 fs.access(uploadsDirBuild).catch(() => fs.mkdir(uploadsDirBuild));
 fs.access(uploadsDirRoot).catch(() => fs.mkdir(uploadsDirRoot));
 
+// Rate limit configuration with environment overrides to prevent accidental 429s in local deploys
+const rateLimitWindowMs = Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS || "", 10)
+  || (isProduction ? 15 * 60 * 1000 : 60 * 1000);
+const rateLimitMaxRequests = Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || "", 10)
+  || (isProduction ? 300 : 1000);
+const shouldSkipGetRateLimit = (process.env.RATE_LIMIT_SKIP_GET || "false").toLowerCase() === "true";
+
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
+  windowMs: rateLimitWindowMs,
+  max: rateLimitMaxRequests,
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"),
+  skip: (req) => shouldSkipGetRateLimit && req.method === "GET",
 });
 
 const authLimiter = rateLimit({
