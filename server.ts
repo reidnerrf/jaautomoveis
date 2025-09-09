@@ -73,6 +73,9 @@ const PORT = getAvailablePort(5000);
 const app: Application = express();
 app.disable("x-powered-by");
 const server = createServer(app);
+// Simple in-memory cache for Google Place Details to reduce upstream 429s
+const placeDetailsCache = new Map<string, { expires: number; data: any }>();
+const PLACE_DETAILS_TTL_MS = Number.parseInt(process.env.PLACE_DETAILS_TTL_MS || "", 10) || 6 * 60 * 60 * 1000;
 // Centralized CORS allow-list
 const defaultAllowedOrigins = [
   // HTTP localhost
@@ -179,7 +182,13 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"),
-  skip: (req) => shouldSkipGetRateLimit && req.method === "GET",
+  skip: (req) => {
+    // In development, skip rate limiting for GETs to avoid 429 during local testing
+    if (!isProduction && req.method === "GET") return true;
+    // Allow env override to skip GETs even in production if explicitly enabled
+    if (shouldSkipGetRateLimit && req.method === "GET") return true;
+    return false;
+  },
 });
 
 const authLimiter = rateLimit({
@@ -267,7 +276,11 @@ app.use(
   })
 );
 
-app.use("/api", limiter);
+// Skip rate limiting for analytics ingestion to avoid cascading 429s from metrics
+app.use((req, _res, next) => {
+  if (req.path.startsWith("/api/analytics")) return next();
+  return limiter(req, _res, next as any);
+});
 
 app.use(
   cors({
@@ -305,12 +318,23 @@ app.get("/api/place-details", async (req: Request, res: Response) => {
     if (!apiKey) {
       return res.status(200).json({ result: { reviews: [] } });
     }
+    // Serve from cache when available
+    const cacheKey = placeId;
+    const now = Date.now();
+    const cached = placeDetailsCache.get(cacheKey);
+    if (cached && cached.expires > now) {
+      return res.json(cached.data);
+    }
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=reviews&key=${encodeURIComponent(apiKey)}`;
     const response = await fetch(url);
     if (!response.ok) {
       return res.status(200).json({ result: { reviews: [] } });
     }
     const data = await response.json();
+    // Cache successful responses
+    try {
+      placeDetailsCache.set(cacheKey, { expires: now + PLACE_DETAILS_TTL_MS, data });
+    } catch {}
     res.json(data);
   } catch (error) {
     console.error("Error fetching place details:", error);

@@ -10,6 +10,7 @@ const GoogleReviewSummary = lazy(() => import("../components/GoogleReviewSummary
 import { GoogleReview } from "../types.ts";
 import { useAnalytics } from "../utils/analytics.ts";
 import { analytics } from "../utils/analytics";
+import { httpGetJson } from "../utils/fetcher";
 import SEOHead from "../components/SEOHead.tsx";
 //import { useTheme } from "../contexts/ThemeContext.tsx";
 
@@ -61,10 +62,9 @@ const HomePage: React.FC = () => {
     const fetchRecs = async () => {
       try {
         const userId = getUserId();
-        const res = await fetch(`/api/recommendations?userId=${encodeURIComponent(userId)}`, {
+        const json = await httpGetJson(`/api/recommendations?userId=${encodeURIComponent(userId)}`, {
           signal: controller.signal,
         });
-        const json = await res.json();
         const items = Array.isArray(json?.recommendations) ? json.recommendations : [];
         // Ensure id field exists
         const normalized = items.map((v: any) => ({ ...v, id: v.id || v._id }));
@@ -117,8 +117,7 @@ const HomePage: React.FC = () => {
     // Buscar avaliações do Google via backend (evita CORS e expõe menos a API key)
     const fetchGoogleReviews = async () => {
       try {
-        const response = await fetch("/api/place-details?place_id=ChIJBfuB6mR_ngARsAmwbVRKdto");
-        const data = await response.json();
+        const data = await httpGetJson("/api/place-details?place_id=ChIJBfuB6mR_ngARsAmwbVRKdto");
         const raw: any[] = data?.result?.reviews || [];
         const filteredSorted = raw
           .filter((r: any) => Number(r?.rating) >= 4 && String(r?.text || "").trim().length > 0)
