@@ -1,12 +1,11 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { VehicleProvider } from "./hooks/useVehicleData";
 import { AuthProvider } from "./hooks/useAuth";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { Toaster } from "react-hot-toast";
-import toast from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 import { createLazyComponentWithRetry } from "./utils/dynamicImports";
 
 // Lazy load all pages for better performance with retry mechanism
