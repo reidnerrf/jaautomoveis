@@ -102,7 +102,7 @@ const App: React.FC = () => {
         const existing = await reg.pushManager.getSubscription();
         if (Notification.permission === "granted" && existing) return;
 
-        const id = toast.custom(
+        toast.custom(
           (t) => (
             <div className="rounded-xl shadow-lg bg-gray-800 text-white p-4 flex items-center gap-3">
               <div className="flex-1 text-sm">Quer receber notificações de novos veículos?</div>

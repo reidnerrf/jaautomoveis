@@ -58,10 +58,7 @@ export function createLazyComponentWithRetry<T extends ComponentType<any>>(
         lastError = error as Error;
         if (import.meta && (import.meta as any).env?.MODE !== "production") {
           // eslint-disable-next-line no-console
-          console.warn(
-            `Tentativa ${attempt}/${maxRetries} falhou ao carregar componente:`,
-            error
-          );
+          console.warn(`Tentativa ${attempt}/${maxRetries} falhou ao carregar componente:`, error);
         }
 
         if (attempt < maxRetries) {
