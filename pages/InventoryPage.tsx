@@ -252,7 +252,7 @@ const InventoryPage: React.FC = () => {
         {/* Background Effects */}
         <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 via-transparent to-blue-500/20"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-        
+
         {/* Floating Elements */}
         <div className="absolute inset-0 pointer-events-none">
           <motion.div
@@ -292,9 +292,10 @@ const InventoryPage: React.FC = () => {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-200 mb-12 leading-relaxed max-w-3xl mx-auto">
-              {filteredAndSortedVehicles.length} veículos selecionados com qualidade garantida e preços imperdíveis
+              {filteredAndSortedVehicles.length} veículos selecionados com qualidade garantida e
+              preços imperdíveis
             </p>
-            
+
             {/* Quick Stats Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
               <motion.div

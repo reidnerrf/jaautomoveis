@@ -32,51 +32,57 @@ const VehicleStats: React.FC<VehicleStatsProps> = ({ vehicles }) => {
   // Cálculos de estatísticas
   const stats = React.useMemo(() => {
     const totalVehicles = vehicles.length;
-    const availableVehicles = vehicles.filter(v => v.status === "disponivel").length;
-    const soldVehicles = vehicles.filter(v => v.status === "vendido").length;
-    const reservedVehicles = vehicles.filter(v => v.status === "reservado").length;
-    
+    const availableVehicles = vehicles.filter((v) => v.status === "disponivel").length;
+    const soldVehicles = vehicles.filter((v) => v.status === "vendido").length;
+    const reservedVehicles = vehicles.filter((v) => v.status === "reservado").length;
+
     const totalValue = vehicles.reduce((sum, v) => sum + (v.price || 0), 0);
     const totalCost = vehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
     const totalProfit = totalValue - totalCost;
-    
+
     const avgPrice = totalVehicles > 0 ? totalValue / totalVehicles : 0;
     const avgCost = totalVehicles > 0 ? totalCost / totalVehicles : 0;
     const avgProfit = totalVehicles > 0 ? totalProfit / totalVehicles : 0;
-    
+
     const conversionRate = totalVehicles > 0 ? (soldVehicles / totalVehicles) * 100 : 0;
-    
+
     // Top marcas
-    const makeStats = vehicles.reduce((acc, v) => {
-      const make = v.make || "Outros";
-      acc[make] = (acc[make] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
+    const makeStats = vehicles.reduce(
+      (acc, v) => {
+        const make = v.make || "Outros";
+        acc[make] = (acc[make] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
     const topMakes = Object.entries(makeStats)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([make, count]) => ({ make, count }));
-    
+
     // Top modelos
-    const modelStats = vehicles.reduce((acc, v) => {
-      const model = v.model || "Outros";
-      acc[model] = (acc[model] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
+    const modelStats = vehicles.reduce(
+      (acc, v) => {
+        const model = v.model || "Outros";
+        acc[model] = (acc[model] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
     const topModels = Object.entries(modelStats)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([model, count]) => ({ model, count }));
-    
+
     // Distribuição por status
     const statusDistribution = [
       { name: "Disponíveis", value: availableVehicles, color: "#10B981" },
       { name: "Vendidos", value: soldVehicles, color: "#3B82F6" },
       { name: "Reservados", value: reservedVehicles, color: "#F59E0B" },
     ];
-    
+
     // Distribuição por faixa de preço
     const priceRanges = [
       { range: "Até R$ 50k", min: 0, max: 50000, color: "#10B981" },
@@ -84,26 +90,28 @@ const VehicleStats: React.FC<VehicleStatsProps> = ({ vehicles }) => {
       { range: "R$ 100k - R$ 200k", min: 100000, max: 200000, color: "#F59E0B" },
       { range: "Acima de R$ 200k", min: 200000, max: Infinity, color: "#EF4444" },
     ];
-    
-    const priceDistribution = priceRanges.map(range => ({
+
+    const priceDistribution = priceRanges.map((range) => ({
       range: range.range,
-      count: vehicles.filter(v => {
+      count: vehicles.filter((v) => {
         const price = v.price || 0;
         return price >= range.min && price < range.max;
       }).length,
       color: range.color,
     }));
-    
+
     // Veículos mais antigos no estoque
     const oldVehicles = vehicles
-      .filter(v => v.status === "disponivel" && v.createdAt)
-      .map(v => ({
+      .filter((v) => v.status === "disponivel" && v.createdAt)
+      .map((v) => ({
         ...v,
-        daysInStock: Math.floor((Date.now() - new Date(v.createdAt).getTime()) / (1000 * 60 * 60 * 24))
+        daysInStock: Math.floor(
+          (Date.now() - new Date(v.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+        ),
       }))
       .sort((a, b) => b.daysInStock - a.daysInStock)
       .slice(0, 5);
-    
+
     return {
       totalVehicles,
       availableVehicles,
@@ -190,9 +198,7 @@ const VehicleStats: React.FC<VehicleStatsProps> = ({ vehicles }) => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Valor Total
-              </p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Valor Total</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 R$ {stats.totalValue.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
               </p>
@@ -270,10 +276,7 @@ const VehicleStats: React.FC<VehicleStatsProps> = ({ vehicles }) => {
             <div className="space-y-3">
               {stats.statusDistribution.map((item, index) => (
                 <div key={index} className="flex items-center space-x-3">
-                  <div
-                    className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: item.color }}
-                  />
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }} />
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     {item.name}: {item.value} veículos
                   </span>
@@ -290,9 +293,7 @@ const VehicleStats: React.FC<VehicleStatsProps> = ({ vehicles }) => {
           transition={{ delay: 0.6 }}
           className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700"
         >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Top 5 Marcas
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top 5 Marcas</h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={stats.topMakes}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -318,11 +319,12 @@ const VehicleStats: React.FC<VehicleStatsProps> = ({ vehicles }) => {
           </h3>
           <div className="space-y-3">
             {stats.oldVehicles.map((vehicle, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white">
-                    {vehicle.name}
-                  </h4>
+                  <h4 className="font-medium text-gray-900 dark:text-white">{vehicle.name}</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {vehicle.make} {vehicle.model} - {vehicle.year}
                   </p>

@@ -94,7 +94,7 @@ const ConsortiumPage: React.FC = () => {
                 "@type": "ListItem",
                 position: 1,
                 name: "Início",
-                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
+                item: typeof window !== "undefined" ? `${window.location.origin}/` : "/",
               },
               {
                 "@type": "ListItem",
@@ -102,7 +102,7 @@ const ConsortiumPage: React.FC = () => {
                 name: "Consórcio",
                 item:
                   typeof window !== "undefined"
-                    ? window.location.origin + "/consortium"
+                    ? `${window.location.origin}/consortium`
                     : "/consortium",
               },
             ],
@@ -111,7 +111,6 @@ const ConsortiumPage: React.FC = () => {
       </SEOHead>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-          
           {/* Texto informativo */}
           <div className="lg:col-span-5">
             <motion.div
@@ -124,10 +123,10 @@ const ConsortiumPage: React.FC = () => {
                 Consórcio – Conquiste seu sonho sem pagar juros 🚀
               </h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Uma das grandes vantagens de fazer consórcio com a JA Automóveis é que 
-                ao contrário do financiamento, as parcelas não possuem juros. Isso garante que, 
-                ao final do plano, você pague praticamente o valor integral do bem acordado em 
-                contrato, sem os acréscimos de juros elevados que costumam encarecer outras modalidades de compra.
+                Uma das grandes vantagens de fazer consórcio com a JA Automóveis é que ao contrário
+                do financiamento, as parcelas não possuem juros. Isso garante que, ao final do
+                plano, você pague praticamente o valor integral do bem acordado em contrato, sem os
+                acréscimos de juros elevados que costumam encarecer outras modalidades de compra.
               </p>
               <p className="text-gray-600 dark:text-gray-300 mb-8">
                 Na JA Automóveis, você participa de um grupo, contribui mensalmente e pode ser
@@ -157,11 +156,7 @@ const ConsortiumPage: React.FC = () => {
               </div>
 
               <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-lg mb-8 flex items-start gap-4">
-                <img
-                  src="/assets/logo-rodobens.png"
-                  alt="Rodobens Logo"
-                  className="h-10 mt-1"
-                />
+                <img src="/assets/logo-rodobens.png" alt="Rodobens Logo" className="h-10 mt-1" />
                 <div>
                   <h3 className="text-lg font-bold text-blue-900 dark:text-blue-300">
                     Parceria com a Rodobens

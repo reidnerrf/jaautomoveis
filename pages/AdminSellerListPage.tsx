@@ -17,15 +17,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { exportSellersToExcel, exportChartToPDF, SellerExportData } from "../utils/exportUtils.ts";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface Seller {
   _id?: string;
@@ -190,7 +182,7 @@ const AdminSellerListPage: React.FC = () => {
 
   // Funções de exportação
   const handleExportSellersToExcel = () => {
-    const sellerData: SellerExportData[] = sellers.map(seller => {
+    const sellerData: SellerExportData[] = sellers.map((seller) => {
       const sellerId = seller._id || seller.id;
       const soldVehicles = vehicles.filter(
         (v) => v.sellerId === sellerId && v.status === "vendido"
@@ -204,19 +196,19 @@ const AdminSellerListPage: React.FC = () => {
       }, 0);
 
       return {
-        id: sellerId || '',
+        id: sellerId || "",
         name: seller.name,
-        email: seller.email || '',
-        phone: seller.phone || '',
+        email: seller.email || "",
+        phone: seller.phone || "",
         active: seller.active !== false,
         totalSales,
         totalRevenue,
         totalProfit,
-        createdAt: seller.createdAt || new Date().toISOString()
+        createdAt: seller.createdAt || new Date().toISOString(),
       };
     });
 
-    const result = exportSellersToExcel(sellerData, 'vendedores.xlsx');
+    const result = exportSellersToExcel(sellerData, "vendedores.xlsx");
     if (result.success) {
       toast.success(result.message);
     } else {
@@ -226,11 +218,11 @@ const AdminSellerListPage: React.FC = () => {
 
   const handleExportChartToPDF = async () => {
     const result = await exportChartToPDF(
-      'seller-stats-chart',
-      'grafico_vendedores.pdf',
-      'Relatório de Vendedores - Estatísticas'
+      "seller-stats-chart",
+      "grafico_vendedores.pdf",
+      "Relatório de Vendedores - Estatísticas"
     );
-    
+
     if (result.success) {
       toast.success(result.message);
     } else {
@@ -292,7 +284,7 @@ const AdminSellerListPage: React.FC = () => {
               <FiDownload className="text-lg" />
               Exportar Excel
             </button>
-            
+
             <button
               onClick={handleExportChartToPDF}
               className="bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
@@ -610,7 +602,9 @@ const AdminSellerListPage: React.FC = () => {
                                 {soldVehicles.length > 2 && (
                                   <button
                                     onClick={() => {
-                                      const modal = document.getElementById(`seller-vehicles-${sellerId}`);
+                                      const modal = document.getElementById(
+                                        `seller-vehicles-${sellerId}`
+                                      );
                                       if (modal) {
                                         (modal as any).showModal();
                                       }
@@ -719,15 +713,13 @@ const AdminSellerListPage: React.FC = () => {
         const soldVehicles = vehicles.filter(
           (v) => v.sellerId === sellerId && v.status === "vendido"
         );
-        
+
         if (soldVehicles.length === 0) return null;
-        
+
         return (
           <dialog key={sellerId} id={`seller-vehicles-${sellerId}`} className="modal">
             <div className="modal-box max-w-4xl">
-              <h3 className="font-bold text-lg mb-4">
-                Veículos Vendidos por {seller.name}
-              </h3>
+              <h3 className="font-bold text-lg mb-4">Veículos Vendidos por {seller.name}</h3>
               <div className="overflow-x-auto">
                 <table className="table table-zebra w-full">
                   <thead>
@@ -745,7 +737,7 @@ const AdminSellerListPage: React.FC = () => {
                       const salePrice = vehicle.soldPrice || vehicle.price || 0;
                       const cost = vehicle.cost || 0;
                       const profit = salePrice - cost;
-                      
+
                       return (
                         <tr key={vehicle.id}>
                           <td>
@@ -753,14 +745,16 @@ const AdminSellerListPage: React.FC = () => {
                               <div className="avatar">
                                 <div className="mask mask-squircle w-12 h-12">
                                   <img
-                                    src={vehicle.images?.[0] || '/placeholder-car.jpg'}
+                                    src={vehicle.images?.[0] || "/placeholder-car.jpg"}
                                     alt={vehicle.name}
                                     className="object-cover"
                                   />
                                 </div>
                               </div>
                               <div>
-                                <div className="font-bold">{vehicle.make} {vehicle.model}</div>
+                                <div className="font-bold">
+                                  {vehicle.make} {vehicle.model}
+                                </div>
                                 <div className="text-sm opacity-50">{vehicle.name}</div>
                               </div>
                             </div>
@@ -783,7 +777,9 @@ const AdminSellerListPage: React.FC = () => {
                             </span>
                           </td>
                           <td>
-                            <span className={`font-semibold ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            <span
+                              className={`font-semibold ${profit >= 0 ? "text-green-600" : "text-red-600"}`}
+                            >
                               {new Intl.NumberFormat("pt-BR", {
                                 style: "currency",
                                 currency: "BRL",
@@ -791,10 +787,9 @@ const AdminSellerListPage: React.FC = () => {
                             </span>
                           </td>
                           <td>
-                            {vehicle.soldDate 
+                            {vehicle.soldDate
                               ? new Date(vehicle.soldDate).toLocaleDateString("pt-BR")
-                              : "-"
-                            }
+                              : "-"}
                           </td>
                         </tr>
                       );

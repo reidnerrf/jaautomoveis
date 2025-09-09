@@ -10,19 +10,23 @@ import {
   FiAward,
 } from "react-icons/fi";
 import { FaCar } from "react-icons/fa";
-const ResponsiveContainer = React.lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const AreaChart = React.lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
-const Area = React.lazy(() => import("recharts").then(m => ({ default: m.Area })));
-const XAxis = React.lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = React.lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = React.lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = React.lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const Legend = React.lazy(() => import("recharts").then(m => ({ default: m.Legend })));
-const PieChart = React.lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
-const Pie = React.lazy(() => import("recharts").then(m => ({ default: m.Pie })));
-const Cell = React.lazy(() => import("recharts").then(m => ({ default: m.Cell })));
-const BarChart = React.lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
-const Bar = React.lazy(() => import("recharts").then(m => ({ default: m.Bar })));
+const ResponsiveContainer = React.lazy(() =>
+  import("recharts").then((m) => ({ default: m.ResponsiveContainer }))
+);
+const AreaChart = React.lazy(() => import("recharts").then((m) => ({ default: m.AreaChart })));
+const Area = React.lazy(() => import("recharts").then((m) => ({ default: m.Area })));
+const XAxis = React.lazy(() => import("recharts").then((m) => ({ default: m.XAxis })));
+const YAxis = React.lazy(() => import("recharts").then((m) => ({ default: m.YAxis })));
+const CartesianGrid = React.lazy(() =>
+  import("recharts").then((m) => ({ default: m.CartesianGrid }))
+);
+const Tooltip = React.lazy(() => import("recharts").then((m) => ({ default: m.Tooltip })));
+const Legend = React.lazy(() => import("recharts").then((m) => ({ default: m.Legend })));
+const PieChart = React.lazy(() => import("recharts").then((m) => ({ default: m.PieChart })));
+const Pie = React.lazy(() => import("recharts").then((m) => ({ default: m.Pie })));
+const Cell = React.lazy(() => import("recharts").then((m) => ({ default: m.Cell })));
+const BarChart = React.lazy(() => import("recharts").then((m) => ({ default: m.BarChart })));
+const Bar = React.lazy(() => import("recharts").then((m) => ({ default: m.Bar })));
 
 interface AdvancedMetricsProps {
   vehicles: any[];
@@ -40,16 +44,19 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
   // Cálculos avançados
   const metrics = React.useMemo(() => {
     const totalVehicles = vehicles.length;
-    const availableVehicles = vehicles.filter(v => v.status === "disponivel").length;
-    const soldVehiclesArray = vehicles.filter(v => v.status === "vendido");
+    const availableVehicles = vehicles.filter((v) => v.status === "disponivel").length;
+    const soldVehiclesArray = vehicles.filter((v) => v.status === "vendido");
     const soldVehicles = soldVehiclesArray.length;
-    const totalRevenue = soldVehiclesArray.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
+    const totalRevenue = soldVehiclesArray.reduce(
+      (sum, v) => sum + (v.soldPrice || v.price || 0),
+      0
+    );
     const totalCost = soldVehiclesArray.reduce((sum, v) => sum + (v.cost || 0), 0);
     const totalProfit = totalRevenue - totalCost;
     const conversionRate = totalVehicles > 0 ? (soldVehicles / totalVehicles) * 100 : 0;
     const avgSalePrice = soldVehicles > 0 ? totalRevenue / soldVehicles : 0;
     const avgProfit = soldVehicles > 0 ? totalProfit / soldVehicles : 0;
-    const activeSellers = sellers.filter(s => s.active).length;
+    const activeSellers = sellers.filter((s) => s.active).length;
     const totalSellers = sellers.length;
 
     return {
@@ -68,7 +75,7 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
   }, [vehicles, sellers]);
 
   // Dados para gráficos
-  const salesTrendData = monthlyData.map(item => ({
+  const salesTrendData = monthlyData.map((item) => ({
     month: item.month,
     vendidos: item.vendidos || 0,
     disponiveis: item.disponiveis || 0,
@@ -76,7 +83,7 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
     lucro: item.lucro || 0,
   }));
 
-  const sellerPerformanceData = performanceData.map(seller => ({
+  const sellerPerformanceData = performanceData.map((seller) => ({
     name: seller.name,
     vendas: seller.sales || 0,
     receita: seller.revenue || 0,
@@ -169,9 +176,7 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
             </div>
           </div>
           <div className="mt-2">
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Margem de lucro
-            </span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">Margem de lucro</span>
           </div>
         </motion.div>
 
@@ -214,55 +219,59 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Tendência de Vendas
           </h3>
-          <React.Suspense fallback={<div className="h-[300px] animate-pulse bg-gray-100 dark:bg-gray-800 rounded-md" />}> 
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={salesTrendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <defs>
-                <linearGradient id="colorVendidos" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="colorDisponiveis" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <XAxis dataKey="month" tick={{ fill: "#6B7280", fontSize: 12 }} />
-              <YAxis tick={{ fill: "#6B7280", fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1F2937",
-                  border: "none",
-                  borderRadius: "8px",
-                  color: "white",
-                }}
-                formatter={(value: number, name: string) => [
-                  value,
-                  name === "vendidos" ? "Vendidos" : "Disponíveis",
-                ]}
-              />
-              <Legend />
-              <Area
-                type="monotone"
-                dataKey="vendidos"
-                stackId="1"
-                stroke="#3B82F6"
-                fill="url(#colorVendidos)"
-                strokeWidth={2}
-                name="Vendidos"
-              />
-              <Area
-                type="monotone"
-                dataKey="disponiveis"
-                stackId="1"
-                stroke="#10B981"
-                fill="url(#colorDisponiveis)"
-                strokeWidth={2}
-                name="Disponíveis"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <React.Suspense
+            fallback={
+              <div className="h-[300px] animate-pulse bg-gray-100 dark:bg-gray-800 rounded-md" />
+            }
+          >
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={salesTrendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="colorVendidos" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorDisponiveis" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                <XAxis dataKey="month" tick={{ fill: "#6B7280", fontSize: 12 }} />
+                <YAxis tick={{ fill: "#6B7280", fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1F2937",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "white",
+                  }}
+                  formatter={(value: number, name: string) => [
+                    value,
+                    name === "vendidos" ? "Vendidos" : "Disponíveis",
+                  ]}
+                />
+                <Legend />
+                <Area
+                  type="monotone"
+                  dataKey="vendidos"
+                  stackId="1"
+                  stroke="#3B82F6"
+                  fill="url(#colorVendidos)"
+                  strokeWidth={2}
+                  name="Vendidos"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="disponiveis"
+                  stackId="1"
+                  stroke="#10B981"
+                  fill="url(#colorDisponiveis)"
+                  strokeWidth={2}
+                  name="Disponíveis"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </React.Suspense>
         </motion.div>
 
@@ -276,41 +285,48 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Performance dos Vendedores
           </h3>
-          <React.Suspense fallback={<div className="h-[300px] animate-pulse bg-gray-100 dark:bg-gray-800 rounded-md" />}> 
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={sellerPerformanceData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <XAxis 
-                dataKey="name" 
-                tick={{ fill: "#6B7280", fontSize: 12 }}
-                angle={-45}
-                textAnchor="end"
-                height={80}
-              />
-              <YAxis tick={{ fill: "#6B7280", fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1F2937",
-                  border: "none",
-                  borderRadius: "8px",
-                  color: "white",
-                }}
-                formatter={(value: number, name: string) => [
-                  name === "receita" || name === "lucro" 
-                    ? new Intl.NumberFormat("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      }).format(value)
-                    : value,
-                  name === "vendas" ? "Vendas" : name === "receita" ? "Receita" : "Lucro",
-                ]}
-              />
-              <Legend />
-              <Bar dataKey="vendas" fill="#3B82F6" name="Vendas" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="receita" fill="#10B981" name="Receita" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="lucro" fill="#F59E0B" name="Lucro" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <React.Suspense
+            fallback={
+              <div className="h-[300px] animate-pulse bg-gray-100 dark:bg-gray-800 rounded-md" />
+            }
+          >
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={sellerPerformanceData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fill: "#6B7280", fontSize: 12 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                />
+                <YAxis tick={{ fill: "#6B7280", fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1F2937",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "white",
+                  }}
+                  formatter={(value: number, name: string) => [
+                    name === "receita" || name === "lucro"
+                      ? new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(value)
+                      : value,
+                    name === "vendas" ? "Vendas" : name === "receita" ? "Receita" : "Lucro",
+                  ]}
+                />
+                <Legend />
+                <Bar dataKey="vendas" fill="#3B82F6" name="Vendas" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="receita" fill="#10B981" name="Receita" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="lucro" fill="#F59E0B" name="Lucro" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </React.Suspense>
         </motion.div>
       </div>
@@ -326,45 +342,43 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
           Distribuição de Veículos
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <React.Suspense fallback={<div className="h-[250px] animate-pulse bg-gray-100 dark:bg-gray-800 rounded-md" />}> 
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie
-                data={statusDistribution}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {statusDistribution.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1F2937",
-                  border: "none",
-                  borderRadius: "8px",
-                  color: "white",
-                }}
-                formatter={(value: number, name: string) => [
-                  value,
-                  name,
-                ]}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+          <React.Suspense
+            fallback={
+              <div className="h-[250px] animate-pulse bg-gray-100 dark:bg-gray-800 rounded-md" />
+            }
+          >
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie
+                  data={statusDistribution}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {statusDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1F2937",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "white",
+                  }}
+                  formatter={(value: number, name: string) => [value, name]}
+                />
+              </PieChart>
+            </ResponsiveContainer>
           </React.Suspense>
           <div className="space-y-3">
             {statusDistribution.map((item, index) => (
               <div key={index} className="flex items-center space-x-3">
-                <div
-                  className="w-4 h-4 rounded-full"
-                  style={{ backgroundColor: item.color }}
-                />
+                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }} />
                 <span className="text-sm text-gray-600 dark:text-gray-400">
                   {item.name}: {item.value} veículos
                 </span>

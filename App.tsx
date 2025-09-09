@@ -1,12 +1,11 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { VehicleProvider } from "./hooks/useVehicleData";
 import { AuthProvider } from "./hooks/useAuth";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { Toaster } from "react-hot-toast";
-import toast from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 import { createLazyComponentWithRetry } from "./utils/dynamicImports";
 
 // Lazy load all pages for better performance with retry mechanism
@@ -23,10 +22,18 @@ const TermsOfServicePage = createLazyComponentWithRetry(() => import("./pages/Te
 // Temporarily use regular import for AdminLoginPage to debug
 import AdminLoginPage from "./pages/AdminLoginPage";
 const AdminDashboardPage = createLazyComponentWithRetry(() => import("./pages/AdminDashboardPage"));
-const AdminVehicleListPage = createLazyComponentWithRetry(() => import("./pages/AdminVehicleListPage"));
-const AdminVehicleFormPage = createLazyComponentWithRetry(() => import("./pages/AdminVehicleFormPage"));
-const AdminSellerListPage = createLazyComponentWithRetry(() => import("./pages/AdminSellerListPage"));
-const AdminSellerFormPage = createLazyComponentWithRetry(() => import("./pages/AdminSellerFormPage"));
+const AdminVehicleListPage = createLazyComponentWithRetry(
+  () => import("./pages/AdminVehicleListPage")
+);
+const AdminVehicleFormPage = createLazyComponentWithRetry(
+  () => import("./pages/AdminVehicleFormPage")
+);
+const AdminSellerListPage = createLazyComponentWithRetry(
+  () => import("./pages/AdminSellerListPage")
+);
+const AdminSellerFormPage = createLazyComponentWithRetry(
+  () => import("./pages/AdminSellerFormPage")
+);
 const ForgotPasswordPage = createLazyComponentWithRetry(() => import("./pages/ForgotPasswordPage"));
 const ResetPasswordPage = createLazyComponentWithRetry(() => import("./pages/ResetPasswordPage"));
 const MainLayout = createLazyComponentWithRetry(() => import("./components/MainLayout"));
@@ -41,6 +48,23 @@ const LoadingSpinner = () => (
 );
 
 const App: React.FC = () => {
+  React.useEffect(() => {
+    // Global 429 handler: show a friendly toast when backoff happens
+    const onTooMany = (e: any) => {
+      const ms = e?.detail?.retryAfterMs ?? 0;
+      const secs = Math.ceil(ms / 1000);
+      toast.error(`Muitas requisições. Tentando novamente em ${secs}s...`);
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("too-many-requests", onTooMany as any);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("too-many-requests", onTooMany as any);
+      }
+    };
+  }, []);
+
   React.useEffect(() => {
     if (typeof window === "undefined") return;
     const hasBrowserSupport =
@@ -95,7 +119,7 @@ const App: React.FC = () => {
         const existing = await reg.pushManager.getSubscription();
         if (Notification.permission === "granted" && existing) return;
 
-        const id = toast.custom(
+        toast.custom(
           (t) => (
             <div className="rounded-xl shadow-lg bg-gray-800 text-white p-4 flex items-center gap-3">
               <div className="flex-1 text-sm">Quer receber notificações de novos veículos?</div>

@@ -35,7 +35,10 @@ class AnalyticsService {
       this.initSentry();
       this.initWebVitals();
     } catch (e) {
-      console.error("Analytics init error", e);
+      if ((import.meta as any)?.env?.MODE !== "production") {
+        // eslint-disable-next-line no-console
+        console.error("Analytics init error", e);
+      }
     }
   }
 
@@ -76,7 +79,7 @@ class AnalyticsService {
   private initGA() {
     if (this.gaInitialized) return;
     try {
-      // @ts-ignore
+      // @ts-expect-error gtag may not be defined in non-browser environments
       if (typeof window !== "undefined" && typeof window.gtag === "function") {
         this.gaInitialized = true;
       }
@@ -112,6 +115,7 @@ class AnalyticsService {
       };
       onCLS((m) => report("CLS", m.value));
       onLCP((m) => report("LCP", m.value));
+      onFID?.((m: any) => report("FID", m.value));
       // onINP may not exist in older versions; guard optional chaining
       try {
         onINP?.((m: any) => report("INP", m.value));

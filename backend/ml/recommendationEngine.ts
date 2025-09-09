@@ -48,7 +48,7 @@ class RecommendationEngine {
         if (!log.vehicle) {
           return;
         }
-        
+
         const vehicleId = (log.vehicle as any)._id?.toString?.() ?? log.vehicle.toString();
         // Since ViewLog doesn't have userId, we'll use a default user or skip user-specific logic
         const userId = "default";

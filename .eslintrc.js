@@ -19,6 +19,46 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: "module",
   },
+  overrides: [
+    {
+      files: ["server.ts", "backend/**/*.ts", "seeder.ts"],
+      parserOptions: {
+        project: ["./tsconfig.server.json"],
+        tsconfigRootDir: __dirname,
+      },
+      env: { node: true, browser: false },
+      rules: {
+        // Backend code: allow console and broad types during ops/logging
+        "no-console": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+      },
+    },
+    {
+      files: [
+        "components/**/*.{ts,tsx}",
+        "pages/**/*.{ts,tsx}",
+        "utils/**/*.{ts,tsx}",
+        "index.tsx",
+        "App.tsx",
+        "hooks/**/*.{ts,tsx}",
+        "contexts/**/*.{ts,tsx}",
+      ],
+      parserOptions: {
+        project: ["./tsconfig.json"],
+        tsconfigRootDir: __dirname,
+      },
+      env: { browser: true, node: false },
+    },
+    {
+      files: ["tests/**/*.ts", "tests/**/*.tsx", "scripts/**/*.ts"],
+      rules: {
+        // Tests/scripts: allow console and any for flexibility
+        "no-console": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      },
+    },
+  ],
   plugins: ["react", "@typescript-eslint", "react-hooks"],
   rules: {
     // Performance-related rules

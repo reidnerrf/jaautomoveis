@@ -37,22 +37,23 @@ const SellerStats: React.FC<SellerStatsProps> = ({ sellers, vehicles }) => {
   // Cálculos de estatísticas
   const stats = React.useMemo(() => {
     const totalSellers = sellers.length;
-    const activeSellers = sellers.filter(s => s.active).length;
+    const activeSellers = sellers.filter((s) => s.active).length;
     const inactiveSellers = totalSellers - activeSellers;
-    
+
     // Calcular performance de cada vendedor
-    const sellerPerformance = sellers.map(seller => {
+    const sellerPerformance = sellers.map((seller) => {
       const sellerId = seller._id || seller.id;
-      const sellerVehicles = vehicles.filter(v => v.sellerId === sellerId);
-      const soldVehicles = sellerVehicles.filter(v => v.status === "vendido");
-      
+      const sellerVehicles = vehicles.filter((v) => v.sellerId === sellerId);
+      const soldVehicles = sellerVehicles.filter((v) => v.status === "vendido");
+
       const totalSales = soldVehicles.length;
       const totalRevenue = soldVehicles.reduce((sum, v) => sum + (v.soldPrice || v.price || 0), 0);
       const totalCost = soldVehicles.reduce((sum, v) => sum + (v.cost || 0), 0);
       const totalProfit = totalRevenue - totalCost;
       const avgSalePrice = totalSales > 0 ? totalRevenue / totalSales : 0;
-      const conversionRate = sellerVehicles.length > 0 ? (totalSales / sellerVehicles.length) * 100 : 0;
-      
+      const conversionRate =
+        sellerVehicles.length > 0 ? (totalSales / sellerVehicles.length) * 100 : 0;
+
       return {
         ...seller,
         totalSales,
@@ -67,7 +68,7 @@ const SellerStats: React.FC<SellerStatsProps> = ({ sellers, vehicles }) => {
 
     // Top performers
     const topPerformers = sellerPerformance
-      .filter(s => s.totalSales > 0)
+      .filter((s) => s.totalSales > 0)
       .sort((a, b) => b.totalProfit - a.totalProfit)
       .slice(0, 5);
 
@@ -97,7 +98,7 @@ const SellerStats: React.FC<SellerStatsProps> = ({ sellers, vehicles }) => {
   }, [sellers, vehicles]);
 
   // Dados para gráficos
-  const performanceData = stats.topPerformers.map(seller => ({
+  const performanceData = stats.topPerformers.map((seller) => ({
     name: seller.name.split(" ")[0], // Primeiro nome
     vendas: seller.totalSales,
     receita: seller.totalRevenue,
@@ -152,9 +153,7 @@ const SellerStats: React.FC<SellerStatsProps> = ({ sellers, vehicles }) => {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 Total de Vendas
               </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {stats.totalSales}
-              </p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalSales}</p>
             </div>
             <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
               <FiTarget className="text-green-600 dark:text-green-400" size={24} />
@@ -175,9 +174,7 @@ const SellerStats: React.FC<SellerStatsProps> = ({ sellers, vehicles }) => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Receita Total
-              </p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Receita Total</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 R$ {stats.totalRevenue.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
               </p>
@@ -188,7 +185,8 @@ const SellerStats: React.FC<SellerStatsProps> = ({ sellers, vehicles }) => {
           </div>
           <div className="mt-2">
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              R$ {stats.avgRevenuePerSeller.toLocaleString("pt-BR", { maximumFractionDigits: 0 })} por vendedor
+              R$ {stats.avgRevenuePerSeller.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}{" "}
+              por vendedor
             </span>
           </div>
         </motion.div>
@@ -201,9 +199,7 @@ const SellerStats: React.FC<SellerStatsProps> = ({ sellers, vehicles }) => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Lucro Total
-              </p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Lucro Total</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 R$ {stats.totalProfit.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
               </p>
@@ -213,15 +209,13 @@ const SellerStats: React.FC<SellerStatsProps> = ({ sellers, vehicles }) => {
             </div>
           </div>
           <div className="mt-2">
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Margem de lucro
-            </span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">Margem de lucro</span>
           </div>
         </motion.div>
       </div>
 
       {/* Vendedor do Mês */}
-      {stats.sellerOfTheMonth && (
+      {stats.sellerOfTheMonth ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -233,9 +227,7 @@ const SellerStats: React.FC<SellerStatsProps> = ({ sellers, vehicles }) => {
               <FiAward className="text-yellow-600 dark:text-yellow-400" size={32} />
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                Vendedor do Mês
-              </h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Vendedor do Mês</h3>
               <p className="text-2xl font-semibold text-yellow-700 dark:text-yellow-300">
                 {stats.sellerOfTheMonth.name}
               </p>
@@ -249,20 +241,26 @@ const SellerStats: React.FC<SellerStatsProps> = ({ sellers, vehicles }) => {
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Receita</p>
                   <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                    R$ {stats.sellerOfTheMonth.totalRevenue.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
+                    R${" "}
+                    {stats.sellerOfTheMonth.totalRevenue.toLocaleString("pt-BR", {
+                      maximumFractionDigits: 0,
+                    })}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Lucro</p>
                   <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                    R$ {stats.sellerOfTheMonth.totalProfit.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
+                    R${" "}
+                    {stats.sellerOfTheMonth.totalProfit.toLocaleString("pt-BR", {
+                      maximumFractionDigits: 0,
+                    })}
                   </p>
                 </div>
               </div>
             </div>
           </div>
         </motion.div>
-      )}
+      ) : null}
 
       {/* Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -322,10 +320,7 @@ const SellerStats: React.FC<SellerStatsProps> = ({ sellers, vehicles }) => {
             <div className="space-y-3">
               {statusDistribution.map((item, index) => (
                 <div key={index} className="flex items-center space-x-3">
-                  <div
-                    className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: item.color }}
-                  />
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }} />
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     {item.name}: {item.value} vendedores
                   </span>

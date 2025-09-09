@@ -25,4 +25,3 @@ sellerSchema.index({ name: 1 });
 const Seller = mongoose.model<ISeller>("Seller", sellerSchema);
 
 export default Seller;
-

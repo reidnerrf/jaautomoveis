@@ -21,5 +21,3 @@ const ResponseTimeChart: React.FC<Props> = ({ data, formatDuration }) => {
 };
 
 export default ResponseTimeChart;
-
-

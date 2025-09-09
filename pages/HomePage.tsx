@@ -3,7 +3,19 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useVehicleData } from "../hooks/useVehicleData";
 import { useTopVehicles } from "../hooks/useTopVehicles.tsx";
-import { Car, BadgeDollarSign, Handshake, Tag, Phone, MapPin, Clock, Shield, Users, Award, Star } from "lucide-react";
+import {
+  Car,
+  BadgeDollarSign,
+  Handshake,
+  Tag,
+  Phone,
+  MapPin,
+  Clock,
+  Shield,
+  Users,
+  Award,
+  Star,
+} from "lucide-react";
 const VehicleCarousel = lazy(() => import("../components/VehicleCarousel.tsx"));
 const GoogleReviewsCarousel = lazy(() => import("../components/GoogleReviewsCarousel.tsx"));
 const GoogleReviewSummary = lazy(() => import("../components/GoogleReviewSummary.tsx"));
@@ -62,9 +74,12 @@ const HomePage: React.FC = () => {
     const fetchRecs = async () => {
       try {
         const userId = getUserId();
-        const json = await httpGetJson(`/api/recommendations?userId=${encodeURIComponent(userId)}`, {
-          signal: controller.signal,
-        });
+        const json = await httpGetJson(
+          `/api/recommendations?userId=${encodeURIComponent(userId)}`,
+          {
+            signal: controller.signal,
+          }
+        );
         const items = Array.isArray(json?.recommendations) ? json.recommendations : [];
         // Ensure id field exists
         const normalized = items.map((v: any) => ({ ...v, id: v.id || v._id }));
@@ -208,7 +223,7 @@ const HomePage: React.FC = () => {
                 "@type": "ListItem",
                 position: 1,
                 name: "Início",
-                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
+                item: typeof window !== "undefined" ? `${window.location.origin}/` : "/",
               },
             ],
           })}
@@ -301,7 +316,7 @@ const HomePage: React.FC = () => {
         </div>
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70"></div>
-        
+
         {/* Floating elements for visual appeal */}
         <div className="absolute inset-0 z-10 pointer-events-none">
           {/* Floating car icons */}
@@ -327,7 +342,7 @@ const HomePage: React.FC = () => {
             <Car size={25} />
           </motion.div>
         </div>
-        
+
         {/* Content */}
         <div className="relative z-20 text-center px-6">
           <motion.div
@@ -346,7 +361,7 @@ const HomePage: React.FC = () => {
               Ofertas imperdíveis, atendimento de qualidade e as melhores condições do mercado.
             </p>
           </motion.div>
-          
+
           <motion.div
             className="mt-8 flex flex-col sm:flex-row justify-center gap-4"
             initial={{ opacity: 0, y: 30 }}
@@ -373,7 +388,16 @@ const HomePage: React.FC = () => {
             >
               <span className="group-hover:scale-110 transition-transform duration-300">
                 {/* inline WhatsApp icon to avoid heavy dependency */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.94 11.94 0 0 0 12.01 0C5.39 0 .03 5.36.03 11.98c0 2.11.55 4.18 1.6 6.01L0 24l6.17-1.6a11.95 11.95 0 0 0 5.84 1.49h.01c6.62 0 11.98-5.36 11.98-11.98 0-3.2-1.25-6.2-3.48-8.43ZM12.01 22.03h-.01c-1.92 0-3.8-.52-5.44-1.5l-.39-.23-3.66.95.98-3.56-.25-.37a10.02 10.02 0 0 1-1.57-5.34C1.67 6.43 6.13 1.97 12 1.97c2.67 0 5.18 1.04 7.07 2.93a10 10 0 0 1 2.94 7.07c0 5.87-4.77 10.06-9.99 10.06Zm5.8-7.53c-.31-.15-1.83-.9-2.11-1-.28-.1-.48-.15-.68.15-.2.31-.78 1-.96 1.2-.18.2-.35.23-.66.08-.31-.15-1.3-.48-2.48-1.53-.92-.82-1.54-1.84-1.72-2.15-.18-.31-.02-.48.13-.63.13-.13.31-.35.46-.53.15-.18.2-.31.31-.51.1-.2.05-.38-.03-.53-.08-.15-.68-1.64-.93-2.24-.24-.57-.49-.49-.68-.5h-.58c-.2 0-.53.08-.81.38-.28.31-1.07 1.04-1.07 2.56s1.1 2.97 1.25 3.17c.15.2 2.16 3.29 5.23 4.61.73.32 1.3.5 1.75.64.73.23 1.4.2 1.93.12.59-.09 1.83-.75 2.09-1.47.26-.72.26-1.33.18-1.47-.08-.14-.28-.22-.59-.37Z"/></svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M20.52 3.48A11.94 11.94 0 0 0 12.01 0C5.39 0 .03 5.36.03 11.98c0 2.11.55 4.18 1.6 6.01L0 24l6.17-1.6a11.95 11.95 0 0 0 5.84 1.49h.01c6.62 0 11.98-5.36 11.98-11.98 0-3.2-1.25-6.2-3.48-8.43ZM12.01 22.03h-.01c-1.92 0-3.8-.52-5.44-1.5l-.39-.23-3.66.95.98-3.56-.25-.37a10.02 10.02 0 0 1-1.57-5.34C1.67 6.43 6.13 1.97 12 1.97c2.67 0 5.18 1.04 7.07 2.93a10 10 0 0 1 2.94 7.07c0 5.87-4.77 10.06-9.99 10.06Zm5.8-7.53c-.31-.15-1.83-.9-2.11-1-.28-.1-.48-.15-.68.15-.2.31-.78 1-.96 1.2-.18.2-.35.23-.66.08-.31-.15-1.3-.48-2.48-1.53-.92-.82-1.54-1.84-1.72-2.15-.18-.31-.02-.48.13-.63.13-.13.31-.35.46-.53.15-.18.2-.31.31-.51.1-.2.05-.38-.03-.53-.08-.15-.68-1.64-.93-2.24-.24-.57-.49-.49-.68-.5h-.58c-.2 0-.53.08-.81.38-.28.31-1.07 1.04-1.07 2.56s1.1 2.97 1.25 3.17c.15.2 2.16 3.29 5.23 4.61.73.32 1.3.5 1.75.64.73.23 1.4.2 1.93.12.59-.09 1.83-.75 2.09-1.47.26-.72.26-1.33.18-1.47-.08-.14-.28-.22-.59-.37Z" />
+                </svg>
               </span>
               Falar no WhatsApp
             </a>
@@ -431,7 +455,13 @@ const HomePage: React.FC = () => {
       {personalized.length > 0 && (
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <h2 className="text-2xl font-bold mb-4">Recomendados para você</h2>
-          <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div></div>}>
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
+              </div>
+            }
+          >
             <VehicleCarousel vehicles={personalized as any} />
           </Suspense>
         </section>
@@ -552,7 +582,13 @@ const HomePage: React.FC = () => {
           </motion.div>
 
           {vehicles && vehicles.length > 0 ? (
-            <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div></div>}>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
+                </div>
+              }
+            >
               <VehicleCarousel vehicles={vehicles.slice(0, 6)} />
             </Suspense>
           ) : (
@@ -628,7 +664,13 @@ const HomePage: React.FC = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
             </div>
           ) : mostViewedVehicles && mostViewedVehicles.length > 0 ? (
-            <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div></div>}>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
+                </div>
+              }
+            >
               <VehicleCarousel vehicles={mostViewedVehicles} />
             </Suspense>
           ) : (
@@ -888,7 +930,13 @@ const HomePage: React.FC = () => {
           </motion.div>
 
           {!isLoading && (
-            <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div></div>}>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
+                </div>
+              }
+            >
               <GoogleReviewsCarousel reviews={googleReviews} />
             </Suspense>
           )}
@@ -900,11 +948,17 @@ const HomePage: React.FC = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <Suspense fallback={<div className="flex items-center justify-center py-6"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div></div>}>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center py-6">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
+                </div>
+              }
+            >
               <GoogleReviewSummary
-              rating={4.8}
-              reviewCount={28}
-              reviewsPageUrl="https://www.google.com/maps/place/JA+Autom%C3%B3veis"
+                rating={4.8}
+                reviewCount={28}
+                reviewsPageUrl="https://www.google.com/maps/place/JA+Autom%C3%B3veis"
               />
             </Suspense>
           </motion.div>
@@ -1035,7 +1089,16 @@ const HomePage: React.FC = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.94 11.94 0 0 0 12.01 0C5.39 0 .03 5.36.03 11.98c0 2.11.55 4.18 1.6 6.01L0 24l6.17-1.6a11.95 11.95 0 0 0 5.84 1.49h.01c6.62 0 11.98-5.36 11.98-11.98 0-3.2-1.25-6.2-3.48-8.43ZM12.01 22.03h-.01c-1.92 0-3.8-.52-5.44-1.5l-.39-.23-3.66.95.98-3.56-.25-.37a10.02 10.02 0 0 1-1.57-5.34C1.67 6.43 6.13 1.97 12 1.97c2.67 0 5.18 1.04 7.07 2.93a10 10 0 0 1 2.94 7.07c0 5.87-4.77 10.06-9.99 10.06Zm5.8-7.53c-.31-.15-1.83-.9-2.11-1-.28-.1-.48-.15-.68.15-.2.31-.78 1-.96 1.2-.18.2-.35.23-.66.08-.31-.15-1.3-.48-2.48-1.53-.92-.82-1.54-1.84-1.72-2.15-.18-.31-.02-.48.13-.63.13-.13.31-.35.46-.53.15-.18.2-.31.31-.51.1-.2.05-.38-.03-.53-.08-.15-.68-1.64-.93-2.24-.24-.57-.49-.49-.68-.5h-.58c-.2 0-.53.08-.81.38-.28.31-1.07 1.04-1.07 2.56s1.1 2.97 1.25 3.17c.15.2 2.16 3.29 5.23 4.61.73.32 1.3.5 1.75.64.73.23 1.4.2 1.93.12.59-.09 1.83-.75 2.09-1.47.26-.72.26-1.33.18-1.47-.08-.14-.28-.22-.59-.37Z"/></svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M20.52 3.48A11.94 11.94 0 0 0 12.01 0C5.39 0 .03 5.36.03 11.98c0 2.11.55 4.18 1.6 6.01L0 24l6.17-1.6a11.95 11.95 0 0 0 5.84 1.49h.01c6.62 0 11.98-5.36 11.98-11.98 0-3.2-1.25-6.2-3.48-8.43ZM12.01 22.03h-.01c-1.92 0-3.8-.52-5.44-1.5l-.39-.23-3.66.95.98-3.56-.25-.37a10.02 10.02 0 0 1-1.57-5.34C1.67 6.43 6.13 1.97 12 1.97c2.67 0 5.18 1.04 7.07 2.93a10 10 0 0 1 2.94 7.07c0 5.87-4.77 10.06-9.99 10.06Zm5.8-7.53c-.31-.15-1.83-.9-2.11-1-.28-.1-.48-.15-.68.15-.2.31-.78 1-.96 1.2-.18.2-.35.23-.66.08-.31-.15-1.3-.48-2.48-1.53-.92-.82-1.54-1.84-1.72-2.15-.18-.31-.02-.48.13-.63.13-.13.31-.35.46-.53.15-.18.2-.31.31-.51.1-.2.05-.38-.03-.53-.08-.15-.68-1.64-.93-2.24-.24-.57-.49-.49-.68-.5h-.58c-.2 0-.53.08-.81.38-.28.31-1.07 1.04-1.07 2.56s1.1 2.97 1.25 3.17c.15.2 2.16 3.29 5.23 4.61.73.32 1.3.5 1.75.64.73.23 1.4.2 1.93.12.59-.09 1.83-.75 2.09-1.47.26-.72.26-1.33.18-1.47-.08-.14-.28-.22-.59-.37Z" />
+                    </svg>
                     WhatsApp
                   </span>
                   <div className="absolute inset-0 bg-green-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -1054,7 +1117,16 @@ const HomePage: React.FC = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm6.5-.75a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z"/></svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm6.5-.75a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z" />
+                    </svg>
                     Instagram
                   </span>
                   <div className="absolute inset-0 bg-pink-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
