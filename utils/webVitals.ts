@@ -170,14 +170,51 @@ class WebVitalsMonitor {
       });
     }
 
-    // Enviar para servidor (somente em produção e se a rota existir)
+    // Enviar para servidor (somente em produção) com amostragem e deduplicação por sessão
     try {
-      if (import.meta.env.MODE === "production") {
+      const isProd = (() => {
+        try {
+          return ((import.meta as any)?.env?.MODE) === "production";
+        } catch {
+          return false;
+        }
+      })();
+      if (isProd) {
+        const sampleRate = 0.2; // 20% das sessões
+        const sessionKey = "webVitalsSampleV1";
+        let sampled = false;
+        try {
+          const existing = sessionStorage.getItem(sessionKey);
+          if (existing === null) {
+            sampled = Math.random() < sampleRate;
+            sessionStorage.setItem(sessionKey, sampled ? "1" : "0");
+          } else {
+            sampled = existing === "1";
+          }
+        } catch {}
+
+        if (!sampled) return;
+
+        const sentSetKey = "webVitalsSentSetV1";
+        let sent: Record<string, true> = {};
+        try {
+          sent = JSON.parse(sessionStorage.getItem(sentSetKey) || "{}");
+        } catch {}
+        const key = metric?.name ? String(metric.name) : "unknown";
+        if (sent[key]) return;
+
         fetch("/api/analytics/web-vitals", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(metric),
-        }).catch(() => {});
+        })
+          .then(() => {
+            try {
+              sent[key] = true;
+              sessionStorage.setItem(sentSetKey, JSON.stringify(sent));
+            } catch {}
+          })
+          .catch(() => {});
       }
     } catch {
       // ignore
@@ -245,16 +282,7 @@ class WebVitalsMonitor {
   }
 
   private getLCPElement(): Element | null {
-    if ("PerformanceObserver" in window) {
-      try {
-        const entries = performance.getEntriesByType("largest-contentful-paint");
-        const lcpEntry = entries[entries.length - 1] as any;
-        return lcpEntry?.element || null;
-      } catch (error) {
-        // API deprecated, retorna null silenciosamente
-        return null;
-      }
-    }
+    // Evita usar propriedades potencialmente deprecadas do LCP entry
     return null;
   }
 
@@ -294,7 +322,8 @@ export const webVitalsMonitor = new WebVitalsMonitor();
 // Função para inicializar monitoramento
 export const initWebVitalsMonitoring = (callback?: WebVitalsCallback) => {
   if (callback) {
-    webVitalsMonitor.callback = callback;
+    // expose setter to avoid private access error in TS
+    (webVitalsMonitor as any).callback = callback;
   }
 
   webVitalsMonitor.startMonitoring();

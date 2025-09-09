@@ -73,6 +73,9 @@ const PORT = getAvailablePort(5000);
 const app: Application = express();
 app.disable("x-powered-by");
 const server = createServer(app);
+// Simple in-memory cache for Google Place Details to reduce upstream 429s
+const placeDetailsCache = new Map<string, { expires: number; data: any }>();
+const PLACE_DETAILS_TTL_MS = Number.parseInt(process.env.PLACE_DETAILS_TTL_MS || "", 10) || 6 * 60 * 60 * 1000;
 // Centralized CORS allow-list
 const defaultAllowedOrigins = [
   // HTTP localhost
@@ -165,12 +168,13 @@ const uploadsDirRoot = path.join(process.cwd(), "uploads");
 fs.access(uploadsDirBuild).catch(() => fs.mkdir(uploadsDirBuild));
 fs.access(uploadsDirRoot).catch(() => fs.mkdir(uploadsDirRoot));
 
-// Rate limit configuration with environment overrides to prevent accidental 429s in local deploys
+// Rate limit configuration with environment overrides to prevent accidental 429s
 const rateLimitWindowMs = Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS || "", 10)
   || (isProduction ? 15 * 60 * 1000 : 60 * 1000);
 const rateLimitMaxRequests = Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || "", 10)
   || (isProduction ? 300 : 1000);
-const shouldSkipGetRateLimit = (process.env.RATE_LIMIT_SKIP_GET || "false").toLowerCase() === "true";
+// Default: in development skip GETs by default unless explicitly disabled via env
+const shouldSkipGetRateLimit = ((process.env.RATE_LIMIT_SKIP_GET ?? String(!isProduction)).toLowerCase()) === "true";
 
 const limiter = rateLimit({
   windowMs: rateLimitWindowMs,
@@ -179,14 +183,21 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"),
-  skip: (req) => shouldSkipGetRateLimit && req.method === "GET",
+  skip: (req) => {
+    // Skip analytics ingestion and internal performance endpoints
+    if (req.path.startsWith("/api/analytics")) return true;
+    if (req.path.startsWith("/api/performance")) return true;
+    // Optionally skip GET requests (useful in development or via env flag)
+    if (shouldSkipGetRateLimit && req.method === "GET") return true;
+    return false;
+  },
 });
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
+  windowMs: Number.parseInt(process.env.AUTH_LIMIT_WINDOW_MS || "", 10) || 15 * 60 * 1000, // 15 minutos
+  max: Number.parseInt(process.env.AUTH_LIMIT_MAX || "", 10) || 10, // 10 tentativas de login por IP
   message: "Too many authentication attempts, please try again later.",
-  skipSuccessfulRequests: true,
+  skipSuccessfulRequests: true, // só conta falhas
   keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"),
 });
 
@@ -267,7 +278,11 @@ app.use(
   })
 );
 
-app.use("/api", limiter);
+// Skip rate limiting for analytics ingestion to avoid cascading 429s from metrics
+app.use((req, _res, next) => {
+  if (req.path.startsWith("/api/analytics")) return next();
+  return limiter(req, _res, next as any);
+});
 
 app.use(
   cors({
@@ -305,12 +320,23 @@ app.get("/api/place-details", async (req: Request, res: Response) => {
     if (!apiKey) {
       return res.status(200).json({ result: { reviews: [] } });
     }
+    // Serve from cache when available
+    const cacheKey = placeId;
+    const now = Date.now();
+    const cached = placeDetailsCache.get(cacheKey);
+    if (cached && cached.expires > now) {
+      return res.json(cached.data);
+    }
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=reviews&key=${encodeURIComponent(apiKey)}`;
     const response = await fetch(url);
     if (!response.ok) {
       return res.status(200).json({ result: { reviews: [] } });
     }
     const data = await response.json();
+    // Cache successful responses
+    try {
+      placeDetailsCache.set(cacheKey, { expires: now + PLACE_DETAILS_TTL_MS, data });
+    } catch {}
     res.json(data);
   } catch (error) {
     console.error("Error fetching place details:", error);

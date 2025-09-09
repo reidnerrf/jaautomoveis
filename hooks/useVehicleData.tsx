@@ -11,6 +11,7 @@ import { Vehicle } from "../types.ts";
 import { useAuth } from "./useAuth.tsx";
 import { apiCache, createCacheKey } from "../utils/cache";
 import { analytics } from "../utils/analytics";
+import { httpGetJson } from "../utils/fetcher";
 
 interface VehicleContextType {
   vehicles: Vehicle[] | undefined;
@@ -50,17 +51,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
         return;
       }
 
-      const response = await fetch("/api/vehicles?limit=1000", {
-        // Force fresh data: bypass SW/server caches
-        headers: { "Cache-Control": "no-store", "x-skip-cache": "true" },
-        cache: "no-store",
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await httpGetJson<any>("/api/vehicles?limit=100");
 
       const items = Array.isArray(data)
         ? data
@@ -118,25 +109,12 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
       }
 
       try {
-        const response = await fetch(`/api/vehicles/${id}`, {
+        const data = await httpGetJson<Vehicle | undefined>(`/api/vehicles/${id}`, {
           headers: {
-            "Cache-Control": "no-store",
-            "x-skip-cache": "true",
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          cache: "no-store",
         });
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            console.warn(`Vehicle with ID ${id} not found`);
-            return undefined;
-          }
-          throw new Error(`Erro HTTP: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data;
+        return data as any;
       } catch (err: any) {
         console.error("Error fetching vehicle by ID:", err);
         setError(err.message || "Erro ao carregar veículo");
