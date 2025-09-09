@@ -49,6 +49,23 @@ const LoadingSpinner = () => (
 
 const App: React.FC = () => {
   React.useEffect(() => {
+    // Global 429 handler: show a friendly toast when backoff happens
+    const onTooMany = (e: any) => {
+      const ms = e?.detail?.retryAfterMs ?? 0;
+      const secs = Math.ceil(ms / 1000);
+      toast.error(`Muitas requisições. Tentando novamente em ${secs}s...`);
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("too-many-requests", onTooMany as any);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("too-many-requests", onTooMany as any);
+      }
+    };
+  }, []);
+
+  React.useEffect(() => {
     if (typeof window === "undefined") return;
     const hasBrowserSupport =
       "Notification" in window && "serviceWorker" in navigator && "PushManager" in window;

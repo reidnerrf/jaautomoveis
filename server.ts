@@ -169,6 +169,20 @@ fs.access(uploadsDirBuild).catch(() => fs.mkdir(uploadsDirBuild));
 fs.access(uploadsDirRoot).catch(() => fs.mkdir(uploadsDirRoot));
 
 // Rate limit configuration with environment overrides to prevent accidental 429s
+// Unified handler to set Retry-After and return JSON payloads on 429
+const rateLimitHandler = (req: Request, res: Response, _next: NextFunction, options: any) => {
+  const retryAfterSeconds = Math.ceil((options?.windowMs ?? rateLimitWindowMs) / 1000);
+  res.setHeader("Retry-After", String(retryAfterSeconds));
+  res.status(options?.statusCode ?? 429).json({
+    success: false,
+    error: "too_many_requests",
+    message:
+      typeof options?.message === "string"
+        ? options.message
+        : "Too many requests from this IP, please try again later.",
+    retryAfterSeconds,
+  });
+};
 const rateLimitWindowMs =
   Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS || "", 10) ||
   (isProduction ? 15 * 60 * 1000 : 60 * 1000);
@@ -193,6 +207,8 @@ const limiter = rateLimit({
     if (shouldSkipGetRateLimit && req.method === "GET") return true;
     return false;
   },
+  statusCode: 429,
+  handler: rateLimitHandler as any,
 });
 
 const authLimiter = rateLimit({
@@ -201,10 +217,33 @@ const authLimiter = rateLimit({
   message: "Too many authentication attempts, please try again later.",
   skipSuccessfulRequests: true, // só conta falhas
   keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"),
+  statusCode: 429,
+  handler: rateLimitHandler as any,
+});
+
+// Stricter limiter for write operations (POST/PUT/PATCH/DELETE)
+const writeLimiterWindowMs =
+  Number.parseInt(process.env.WRITE_LIMIT_WINDOW_MS || "", 10) || 60 * 1000; // 1 min
+const writeLimiterMax = Number.parseInt(process.env.WRITE_LIMIT_MAX || "", 10) || 30;
+const writeLimiter = rateLimit({
+  windowMs: writeLimiterWindowMs,
+  max: writeLimiterMax,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"),
+  statusCode: 429,
+  message: "Too many write requests, please slow down.",
+  handler: rateLimitHandler as any,
 });
 
 app.use(
   helmet({
+    hsts:
+      isProduction && (process.env.ENABLE_HSTS ?? "true").toLowerCase() === "true"
+        ? { maxAge: 15552000, includeSubDomains: true, preload: false }
+        : false,
+    referrerPolicy: { policy: "no-referrer" },
+    frameguard: { action: "sameorigin" },
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
@@ -293,6 +332,7 @@ app.use(
     },
     credentials: true,
     optionsSuccessStatus: 204,
+    maxAge: 86400,
   })
 );
 
@@ -306,11 +346,24 @@ app.use("/uploads", vehicleImageOptimization);
 app.use("/assets", vehicleImageOptimization);
 
 app.use("/api/auth", authLimiter, authRoutes);
+// Apply stricter rate limits to write operations across API
+app.use("/api", (req: Request, res: Response, next: NextFunction) => {
+  const m = req.method;
+  if (m === "GET" || m === "HEAD" || m === "OPTIONS") return next();
+  return writeLimiter(req, res, next as any);
+});
 app.use("/api/vehicles", vehicleListCacheMiddleware, vehicleRoutes);
 app.use("/api/sellers", sellerRoutes);
 app.use("/api/upload", autoImageOptimization, uploadRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/push", pushRoutes);
+
+// Test-only endpoint to validate rate limiting without side effects
+if (process.env.NODE_ENV === "test") {
+  app.post("/api/limit-test", (req: Request, res: Response) => {
+    res.json({ ok: true });
+  });
+}
 
 app.get("/api/place-details", async (req: Request, res: Response) => {
   try {

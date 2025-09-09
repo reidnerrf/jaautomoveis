@@ -68,6 +68,17 @@ export async function httpRequest<T = any>(
           ? Math.min(maxDelayMs, retryAfterSeconds * 1000)
           : computeBackoff(attempt, baseDelayMs, maxDelayMs, jitter);
       attempt += 1;
+      if (typeof window !== "undefined") {
+        try {
+          const evt = new CustomEvent("too-many-requests", {
+            detail: {
+              attempt,
+              retryAfterMs: delay,
+            },
+          });
+          window.dispatchEvent(evt);
+        } catch {}
+      }
       await sleep(delay);
       continue;
     }

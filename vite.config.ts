@@ -15,8 +15,8 @@ export default defineConfig(({ mode }) => {
       "process.env.NODE_ENV": JSON.stringify(mode),
       "import.meta.env.MODE": JSON.stringify(mode),
     },
-    // Add base to support CDN asset prefix
-    base: process.env.CDN_BASE_URL || "/",
+    // Add base to support CDN asset prefix; allow override via VITE_CDN_BASE too
+    base: process.env.CDN_BASE_URL || process.env.VITE_CDN_BASE || "/",
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
