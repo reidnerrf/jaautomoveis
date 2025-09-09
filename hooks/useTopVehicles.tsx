@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Vehicle } from "../types.ts";
 import { apiCache, createCacheKey } from "../utils/cache";
+import { httpGetJson } from "../utils/fetcher";
 
 interface UseTopVehiclesOptions {
   limit?: number;
@@ -43,12 +44,7 @@ export const useTopVehicles = (options: UseTopVehiclesOptions = {}): UseTopVehic
         periodDays: String(periodDays),
       });
 
-      const response = await fetch(`/api/vehicles/most-viewed?${params.toString()}`, {
-        headers: { "Cache-Control": "no-store", "x-skip-cache": "true" },
-        cache: "no-store",
-      });
-      if (!response.ok) throw new Error("Falha ao carregar veículos mais vistos");
-      const data: Vehicle[] = await response.json();
+      const data: Vehicle[] = await httpGetJson(`/api/vehicles/most-viewed?${params.toString()}`);
 
       // 🔹 Normaliza id (garante que sempre exista)
       const normalized = data.map((v: any) => ({
