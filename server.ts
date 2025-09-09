@@ -168,12 +168,13 @@ const uploadsDirRoot = path.join(process.cwd(), "uploads");
 fs.access(uploadsDirBuild).catch(() => fs.mkdir(uploadsDirBuild));
 fs.access(uploadsDirRoot).catch(() => fs.mkdir(uploadsDirRoot));
 
-// Rate limit configuration with environment overrides to prevent accidental 429s in local deploys
+// Rate limit configuration with environment overrides to prevent accidental 429s
 const rateLimitWindowMs = Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS || "", 10)
   || (isProduction ? 15 * 60 * 1000 : 60 * 1000);
 const rateLimitMaxRequests = Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || "", 10)
   || (isProduction ? 300 : 1000);
-const shouldSkipGetRateLimit = (process.env.RATE_LIMIT_SKIP_GET || "false").toLowerCase() === "true";
+// Default: in development skip GETs by default unless explicitly disabled via env
+const shouldSkipGetRateLimit = ((process.env.RATE_LIMIT_SKIP_GET ?? String(!isProduction)).toLowerCase()) === "true";
 
 const limiter = rateLimit({
   windowMs: rateLimitWindowMs,
@@ -183,19 +184,20 @@ const limiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"),
   skip: (req) => {
-    // In development, skip rate limiting for GETs to avoid 429 during local testing
-    if (!isProduction && req.method === "GET") return true;
-    // Allow env override to skip GETs even in production if explicitly enabled
+    // Skip analytics ingestion and internal performance endpoints
+    if (req.path.startsWith("/api/analytics")) return true;
+    if (req.path.startsWith("/api/performance")) return true;
+    // Optionally skip GET requests (useful in development or via env flag)
     if (shouldSkipGetRateLimit && req.method === "GET") return true;
     return false;
   },
 });
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
+  windowMs: Number.parseInt(process.env.AUTH_LIMIT_WINDOW_MS || "", 10) || 15 * 60 * 1000, // 15 minutos
+  max: Number.parseInt(process.env.AUTH_LIMIT_MAX || "", 10) || 10, // 10 tentativas de login por IP
   message: "Too many authentication attempts, please try again later.",
-  skipSuccessfulRequests: true,
+  skipSuccessfulRequests: true, // só conta falhas
   keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"),
 });
 
