@@ -9,7 +9,10 @@ export function createLazyComponent<T extends ComponentType<any>>(
     try {
       return await importFn();
     } catch (error) {
-      console.error("Erro ao carregar componente dinamicamente:", error);
+      if (import.meta && (import.meta as any).env?.MODE !== "production") {
+        // eslint-disable-next-line no-console
+        console.error("Erro ao carregar componente dinamicamente:", error);
+      }
 
       // Retornar componente de fallback ou componente de erro padrão
       if (fallbackComponent) {
@@ -53,7 +56,13 @@ export function createLazyComponentWithRetry<T extends ComponentType<any>>(
         return await importFn();
       } catch (error) {
         lastError = error as Error;
-        console.warn(`Tentativa ${attempt}/${maxRetries} falhou ao carregar componente:`, error);
+        if (import.meta && (import.meta as any).env?.MODE !== "production") {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `Tentativa ${attempt}/${maxRetries} falhou ao carregar componente:`,
+            error
+          );
+        }
 
         if (attempt < maxRetries) {
           // Aguardar um pouco antes da próxima tentativa
@@ -62,7 +71,10 @@ export function createLazyComponentWithRetry<T extends ComponentType<any>>(
       }
     }
 
-    console.error("Todas as tentativas falharam ao carregar componente:", lastError);
+    if (import.meta && (import.meta as any).env?.MODE !== "production") {
+      // eslint-disable-next-line no-console
+      console.error("Todas as tentativas falharam ao carregar componente:", lastError);
+    }
 
     // Retornar componente de fallback ou erro
     if (fallbackComponent) {
