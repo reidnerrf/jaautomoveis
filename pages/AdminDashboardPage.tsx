@@ -333,6 +333,8 @@ const AdminDashboardPage: React.FC = () => {
     else toast.error(result.message);
   };
 
+  const [showAllActivities, setShowAllActivities] = useState(false);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -340,8 +342,6 @@ const AdminDashboardPage: React.FC = () => {
       </div>
     );
   }
-
-  const [showAllActivities, setShowAllActivities] = useState(false);
 
   return (
     <div

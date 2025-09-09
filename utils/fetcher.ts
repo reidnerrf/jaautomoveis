@@ -51,7 +51,8 @@ export async function httpRequest<T = any>(
   if (!mergedHeaders.has("Accept"))
     mergedHeaders.set("Accept", "application/json, text/plain;q=0.9,*/*;q=0.8");
 
-  while (true) {
+  let shouldRetry = true;
+  while (shouldRetry) {
     const response = await fetch(input as any, { ...rest, headers: mergedHeaders });
 
     if (response.status === 429) {
@@ -76,6 +77,7 @@ export async function httpRequest<T = any>(
       throw new Error(`HTTP ${response.status}: ${body.slice(0, 200)}`);
     }
 
+    shouldRetry = false;
     return parseResponse(response, expectJson);
   }
 }
