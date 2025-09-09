@@ -6,7 +6,7 @@ import {
   FiCheckCircle,
   FiClock,
   FiDollarSign,
-  FiUsers
+  FiUsers,
 } from "react-icons/fi";
 import { FaCar } from "react-icons/fa";
 interface Alert {
@@ -29,10 +29,10 @@ interface DashboardAlertsProps {
 const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) => {
   const alerts: Alert[] = React.useMemo(() => {
     const alertsList: Alert[] = [];
-    
+
     // Verificar veículos com preço muito alto
     const safeVehicles = Array.isArray(vehicles) ? vehicles : [];
-    const expensiveVehicles = safeVehicles.filter(v => v.price > 150000);
+    const expensiveVehicles = safeVehicles.filter((v) => v.price > 150000);
     if (expensiveVehicles.length > 0) {
       alertsList.push({
         id: "expensive-vehicles",
@@ -44,7 +44,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
     }
 
     // Verificar veículos sem custo
-    const vehiclesWithoutCost = safeVehicles.filter(v => !v.cost || v.cost === 0);
+    const vehiclesWithoutCost = safeVehicles.filter((v) => !v.cost || v.cost === 0);
     if (vehiclesWithoutCost.length > 0) {
       alertsList.push({
         id: "no-cost",
@@ -56,7 +56,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
     }
 
     // Verificar vendedores inativos
-    const inactiveSellers = sellers.filter(s => !s.active);
+    const inactiveSellers = sellers.filter((s) => !s.active);
     if (inactiveSellers.length > 0) {
       alertsList.push({
         id: "inactive-sellers",
@@ -68,7 +68,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
     }
 
     // Verificar estoque baixo
-    const availableVehicles = safeVehicles.filter(v => v.status === "disponivel");
+    const availableVehicles = safeVehicles.filter((v) => v.status === "disponivel");
     if (availableVehicles.length < 5) {
       alertsList.push({
         id: "low-stock",
@@ -80,7 +80,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
     }
 
     // Verificar veículos antigos no estoque
-    const oldVehicles = safeVehicles.filter(v => {
+    const oldVehicles = safeVehicles.filter((v) => {
       const addedDate = new Date(v.createdAt);
       const daysSinceAdded = (Date.now() - addedDate.getTime()) / (1000 * 60 * 60 * 24);
       return daysSinceAdded > 90 && v.status === "disponivel";
@@ -96,7 +96,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
     }
 
     // Verificar margem de lucro baixa
-    const lowMarginVehicles = safeVehicles.filter(v => {
+    const lowMarginVehicles = safeVehicles.filter((v) => {
       if (!v.cost || v.cost === 0) return false;
       const margin = ((v.price - v.cost) / v.cost) * 100;
       return margin < 10;
@@ -154,9 +154,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
         <div className="flex items-center space-x-3">
           <FiCheckCircle className="text-green-500" size={24} />
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Tudo em Ordem!
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Tudo em Ordem!</h3>
             <p className="text-gray-600 dark:text-gray-400">
               Não há alertas ou notificações no momento.
             </p>
@@ -181,7 +179,7 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
           {alerts.length}
         </span>
       </div>
-      
+
       <div className="space-y-3">
         {alerts.map((alert, index) => (
           <motion.div
@@ -194,20 +192,16 @@ const DashboardAlerts: React.FC<DashboardAlertsProps> = ({ vehicles, sellers }) 
             <div className="flex items-start space-x-3">
               {alert.icon}
               <div className="flex-1">
-                <h4 className={`font-medium ${getTextStyles(alert.type)}`}>
-                  {alert.title}
-                </h4>
-                <p className={`text-sm mt-1 ${getTextStyles(alert.type)}`}>
-                  {alert.message}
-                </p>
-                {alert.action && (
+                <h4 className={`font-medium ${getTextStyles(alert.type)}`}>{alert.title}</h4>
+                <p className={`text-sm mt-1 ${getTextStyles(alert.type)}`}>{alert.message}</p>
+                {alert.action ? (
                   <button
                     onClick={alert.action.onClick}
                     className="mt-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                   >
                     {alert.action.label}
                   </button>
-                )}
+                ) : null}
               </div>
             </div>
           </motion.div>

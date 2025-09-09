@@ -247,7 +247,13 @@ const PerformanceDashboardPage: React.FC = () => {
                   Response Time Distribution
                 </h3>
                 {/* Wrap heavy charts with Suspense and lazy-load */}
-                <React.Suspense fallback={<div className="h-[300px] flex items-center justify-center text-sm text-gray-500">Carregando gráficos…</div>}>
+                <React.Suspense
+                  fallback={
+                    <div className="h-[300px] flex items-center justify-center text-sm text-gray-500">
+                      Carregando gráficos…
+                    </div>
+                  }
+                >
                   <LazyResponseTimeChart
                     data={[
                       { name: "Min", value: metrics.routeStats.minDuration },

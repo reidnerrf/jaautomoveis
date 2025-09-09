@@ -147,10 +147,7 @@ class WebVitalsMonitor {
     this.sendToAnalytics(metric);
 
     // Logging opcional controlado por env (desativado por padrão)
-    const shouldLog =
-      ((import.meta as any) &&
-        (import.meta as any).env &&
-        (import.meta as any).env.VITE_LOG_WEB_VITALS) === "true";
+    const shouldLog = ((import.meta as any)?.env?.VITE_LOG_WEB_VITALS as string) === "true";
     if (shouldLog) {
       // eslint-disable-next-line no-console
       console.log(`Web Vital: ${name} = ${value.toFixed(2)}ms`);
@@ -159,9 +156,9 @@ class WebVitalsMonitor {
 
   private sendToAnalytics(metric: any) {
     // Enviar para Google Analytics 4
-    // @ts-ignore - gtag may not be defined in all environments
+    // @ts-expect-error gtag may not be defined in all environments
     if (typeof (window as any).gtag !== "undefined") {
-      // @ts-ignore
+      // @ts-expect-error gtag may not be defined in all environments
       (window as any).gtag("event", "web_vitals", {
         event_category: "Web Vitals",
         event_label: metric.name,
@@ -174,7 +171,7 @@ class WebVitalsMonitor {
     try {
       const isProd = (() => {
         try {
-          return ((import.meta as any)?.env?.MODE) === "production";
+          return ((import.meta as any)?.env?.MODE as string) === "production";
         } catch {
           return false;
         }

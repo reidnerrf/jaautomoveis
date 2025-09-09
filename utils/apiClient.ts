@@ -10,7 +10,10 @@ class ApiClient {
     return localStorage.getItem("authToken");
   }
 
-  private async request(endpoint: string, options: RequestInit = {}) {
+  private async request<TResponse>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<TResponse> {
     const token = this.getAuthToken();
 
     const headers: Record<string, string> = {
@@ -37,29 +40,29 @@ class ApiClient {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return response.json();
+    return (await response.json()) as TResponse;
   }
 
-  async get(endpoint: string) {
-    return this.request(endpoint, { method: "GET" });
+  async get<TResponse>(endpoint: string): Promise<TResponse> {
+    return this.request<TResponse>(endpoint, { method: "GET" });
   }
 
-  async post(endpoint: string, data: any) {
-    return this.request(endpoint, {
+  async post<TBody extends object, TResponse>(endpoint: string, data: TBody): Promise<TResponse> {
+    return this.request<TResponse>(endpoint, {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async put(endpoint: string, data: any) {
-    return this.request(endpoint, {
+  async put<TBody extends object, TResponse>(endpoint: string, data: TBody): Promise<TResponse> {
+    return this.request<TResponse>(endpoint, {
       method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
-  async delete(endpoint: string) {
-    return this.request(endpoint, { method: "DELETE" });
+  async delete<TResponse>(endpoint: string): Promise<TResponse> {
+    return this.request<TResponse>(endpoint, { method: "DELETE" });
   }
 }
 

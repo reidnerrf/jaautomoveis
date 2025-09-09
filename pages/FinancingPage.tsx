@@ -94,7 +94,7 @@ const FinancingPage: React.FC = () => {
                 "@type": "ListItem",
                 position: 1,
                 name: "Início",
-                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
+                item: typeof window !== "undefined" ? `${window.location.origin}/` : "/",
               },
               {
                 "@type": "ListItem",
@@ -102,7 +102,7 @@ const FinancingPage: React.FC = () => {
                 name: "Financiamento",
                 item:
                   typeof window !== "undefined"
-                    ? window.location.origin + "/financing"
+                    ? `${window.location.origin}/financing`
                     : "/financing",
               },
             ],

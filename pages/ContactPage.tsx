@@ -11,26 +11,26 @@ const ContactPage: React.FC = () => {
       icon: <FiMapPin size={24} className="text-main-red" />,
       title: "Endereço",
       info: "Av. Brasília, n°35 - Vila Julieta, Resende - RJ",
-      description: "Venha nos visitar!"
+      description: "Venha nos visitar!",
     },
     {
       icon: <FiPhone size={24} className="text-green-600" />,
       title: "Telefone",
       info: "(24) 99903-7716",
-      description: "WhatsApp disponível"
+      description: "WhatsApp disponível",
     },
     {
       icon: <FiMail size={24} className="text-blue-600" />,
       title: "Email",
       info: "contato@jaautomoveis.com",
-      description: "Respondemos rapidamente"
+      description: "Respondemos rapidamente",
     },
     {
       icon: <FiClock size={24} className="text-purple-600" />,
       title: "Horário",
       info: "Seg - Sex: 8h às 18:30h",
-      description: "Sáb: 8h às 13h"
-    }
+      description: "Sáb: 8h às 13h",
+    },
   ];
 
   const socialLinks = [
@@ -38,20 +38,20 @@ const ContactPage: React.FC = () => {
       icon: <FaWhatsapp size={24} />,
       name: "WhatsApp",
       url: "https://wa.me/5524999037716",
-      color: "bg-green-500 hover:bg-green-600"
+      color: "bg-green-500 hover:bg-green-600",
     },
     {
       icon: <FaInstagram size={24} />,
       name: "Instagram",
       url: "#",
-      color: "bg-pink-500 hover:bg-pink-600"
+      color: "bg-pink-500 hover:bg-pink-600",
     },
     {
       icon: <FaFacebook size={24} />,
       name: "Facebook",
       url: "#",
-      color: "bg-blue-600 hover:bg-blue-700"
-    }
+      color: "bg-blue-600 hover:bg-blue-700",
+    },
   ];
 
   return (
@@ -70,14 +70,14 @@ const ContactPage: React.FC = () => {
                 "@type": "ListItem",
                 position: 1,
                 name: "Início",
-                item: typeof window !== "undefined" ? window.location.origin + "/" : "/",
+                item: typeof window !== "undefined" ? `${window.location.origin}/` : "/",
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Contato",
                 item:
-                  typeof window !== "undefined" ? window.location.origin + "/contact" : "/contact",
+                  typeof window !== "undefined" ? `${window.location.origin}/contact` : "/contact",
               },
             ],
           })}
@@ -236,19 +236,13 @@ const ContactPage: React.FC = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
                   <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0">
-                      {info.icon}
-                    </div>
+                    <div className="flex-shrink-0">{info.icon}</div>
                     <div>
                       <h3 className="font-semibold text-gray-800 dark:text-white text-sm">
                         {info.title}
                       </h3>
-                      <p className="text-gray-600 dark:text-gray-300 font-medium">
-                        {info.info}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {info.description}
-                      </p>
+                      <p className="text-gray-600 dark:text-gray-300 font-medium">{info.info}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{info.description}</p>
                     </div>
                   </div>
                 </motion.div>

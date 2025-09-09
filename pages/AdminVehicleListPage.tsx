@@ -25,12 +25,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaCarSide, FaCalendarAlt } from "react-icons/fa";
 import { Seller } from "../types.ts";
 import toast from "react-hot-toast";
-import { exportVehiclesToExcel, exportChartToPDF, VehicleExportData } from "../utils/exportUtils.ts";
+import {
+  exportVehiclesToExcel,
+  exportChartToPDF,
+  VehicleExportData,
+} from "../utils/exportUtils.ts";
 
 const AdminVehicleListPage: React.FC = () => {
   const { vehicles = [], deleteVehicle, loading, refreshVehicles } = useVehicleData();
   const { token } = useAuth();
-  
+
   // Estados para filtros
   const [filters, setFilters] = useState({
     search: "",
@@ -65,17 +69,17 @@ const AdminVehicleListPage: React.FC = () => {
 
   // Dados para filtros
   const makes = useMemo(() => {
-    const uniqueMakes = [...new Set(vehicles.map(v => v.make).filter(Boolean))];
+    const uniqueMakes = [...new Set(vehicles.map((v) => v.make).filter(Boolean))];
     return uniqueMakes.sort();
   }, [vehicles]);
 
   const models = useMemo(() => {
-    const uniqueModels = [...new Set(vehicles.map(v => v.model).filter(Boolean))];
+    const uniqueModels = [...new Set(vehicles.map((v) => v.model).filter(Boolean))];
     return uniqueModels.sort();
   }, [vehicles]);
 
   const years = useMemo(() => {
-    const uniqueYears = [...new Set(vehicles.map(v => v.year).filter(Boolean))];
+    const uniqueYears = [...new Set(vehicles.map((v) => v.year).filter(Boolean))];
     return uniqueYears.sort((a, b) => b - a);
   }, [vehicles]);
 
@@ -244,24 +248,24 @@ const AdminVehicleListPage: React.FC = () => {
 
   // Funções de exportação
   const handleExportVehiclesToExcel = () => {
-    const vehicleData: VehicleExportData[] = vehicles.map(vehicle => ({
-      id: vehicle.id || vehicle._id || '',
-      name: vehicle.name || vehicle.title || '',
-      make: vehicle.make || '',
-      model: vehicle.model || '',
+    const vehicleData: VehicleExportData[] = vehicles.map((vehicle) => ({
+      id: vehicle.id || vehicle._id || "",
+      name: vehicle.name || vehicle.title || "",
+      make: vehicle.make || "",
+      model: vehicle.model || "",
       year: vehicle.year || 0,
       price: vehicle.price || 0,
       cost: vehicle.cost || 0,
-      status: vehicle.status || 'disponivel',
-      fuel: vehicle.fuel || '',
-      transmission: vehicle.transmission || '',
+      status: vehicle.status || "disponivel",
+      fuel: vehicle.fuel || "",
+      transmission: vehicle.transmission || "",
       mileage: vehicle.km || 0,
-      color: vehicle.color || '',
-      description: vehicle.description || '',
-      createdAt: vehicle.createdAt || new Date().toISOString()
+      color: vehicle.color || "",
+      description: vehicle.description || "",
+      createdAt: vehicle.createdAt || new Date().toISOString(),
     }));
 
-    const result = exportVehiclesToExcel(vehicleData, 'veiculos_disponiveis.xlsx');
+    const result = exportVehiclesToExcel(vehicleData, "veiculos_disponiveis.xlsx");
     if (result.success) {
       toast.success(result.message);
     } else {
@@ -271,11 +275,11 @@ const AdminVehicleListPage: React.FC = () => {
 
   const handleExportChartToPDF = async () => {
     const result = await exportChartToPDF(
-      'vehicle-stats-chart',
-      'grafico_veiculos.pdf',
-      'Relatório de Veículos - Estatísticas'
+      "vehicle-stats-chart",
+      "grafico_veiculos.pdf",
+      "Relatório de Veículos - Estatísticas"
     );
-    
+
     if (result.success) {
       toast.success(result.message);
     } else {
@@ -404,7 +408,7 @@ const AdminVehicleListPage: React.FC = () => {
               <FiDownload />
               Exportar Excel
             </button>
-            
+
             <button
               onClick={handleExportChartToPDF}
               className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -788,11 +792,13 @@ const AdminVehicleListPage: React.FC = () => {
                         </p>
                       </td>
                       <td className="py-4 px-6 hidden lg:table-cell">
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                          vehicle.status === "vendido" 
-                            ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                            : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                        }`}>
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                            vehicle.status === "vendido"
+                              ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                              : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                          }`}
+                        >
                           {vehicle.status === "vendido" ? "Vendido" : "Disponível"}
                         </span>
                       </td>
@@ -915,11 +921,13 @@ const AdminVehicleListPage: React.FC = () => {
                       <FiTrash2 size={16} />
                     </button>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    vehicle.status === "vendido" 
-                      ? "bg-red-100 text-red-800"
-                      : "bg-green-100 text-green-800"
-                  }`}>
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      vehicle.status === "vendido"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-green-100 text-green-800"
+                    }`}
+                  >
                     {vehicle.status === "vendido" ? "Vendido" : "Disponível"}
                   </span>
                 </div>

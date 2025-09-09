@@ -68,4 +68,3 @@ export const deleteSeller = async (req: express.Request, res: express.Response) 
     res.status(500).json({ message: "Server Error" });
   }
 };
-

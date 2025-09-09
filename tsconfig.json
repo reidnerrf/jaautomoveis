@@ -22,12 +22,29 @@
     "noEmit": true
   },
   "include": [
-    "components/PrivateRoute.tsx",
-    "components/LoadingSpinner.tsx",
-    "components/DarkModeToggle.tsx",
-    "hooks/useAuth.tsx",
+    "index.tsx",
+    "App.tsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "pages/**/*.ts",
+    "pages/**/*.tsx",
+    "hooks/**/*.ts",
+    "hooks/**/*.tsx",
+    "contexts/**/*.ts",
     "contexts/**/*.tsx",
+    "utils/**/*.ts",
+    "utils/**/*.tsx",
+    "types/**/*.ts",
+    "types/**/*.tsx",
     "types.ts"
   ],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx", "backend/**"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "backend/**",
+    "server.ts",
+    "seeder.ts"
+  ]
 }

@@ -216,9 +216,7 @@ const SEED_VEHICLES: Omit<VehicleType, "id">[] = [
     doors: 4,
     additionalInfo: "Veículo vendido - exemplo de histórico.",
     optionals: ["Ar Condicionado", "Direção Hidráulica"],
-    images: [
-      "https://picsum.photos/seed/car8/800/600",
-    ],
+    images: ["https://picsum.photos/seed/car8/800/600"],
     views: 180,
     status: "vendido",
     soldPrice: 42000,
@@ -243,7 +241,11 @@ const importData = async () => {
     // Drop collections to ensure a clean state and remove old indexes
     const collections = await mongoose.connection.db!.collections();
     for (const collection of collections) {
-      if (collection.collectionName === "vehicles" || collection.collectionName === "users" || collection.collectionName === "sellers") {
+      if (
+        collection.collectionName === "vehicles" ||
+        collection.collectionName === "users" ||
+        collection.collectionName === "sellers"
+      ) {
         await collection.drop();
         console.log(`Dropped ${collection.collectionName} collection.`);
       }
@@ -254,12 +256,12 @@ const importData = async () => {
     console.log(`Created ${createdSellers.length} sellers.`);
 
     // Atualizar os IDs dos vendedores nos veículos vendidos
-    const vehiclesWithSellerIds = SEED_VEHICLES.map(vehicle => {
+    const vehiclesWithSellerIds = SEED_VEHICLES.map((vehicle) => {
       if (vehicle.status === "vendido" && vehicle.sellerId) {
         const sellerIndex = vehicle.sellerId === "seller1" ? 0 : 1;
         return {
           ...vehicle,
-          sellerId: createdSellers[sellerIndex]._id.toString()
+          sellerId: createdSellers[sellerIndex]._id.toString(),
         };
       }
       return vehicle;
@@ -294,7 +296,11 @@ const destroyData = async () => {
   try {
     const collections = await mongoose.connection.db!.collections();
     for (const collection of collections) {
-      if (collection.collectionName === "vehicles" || collection.collectionName === "users" || collection.collectionName === "sellers") {
+      if (
+        collection.collectionName === "vehicles" ||
+        collection.collectionName === "users" ||
+        collection.collectionName === "sellers"
+      ) {
         await collection.drop();
         console.log(`Dropped ${collection.collectionName} collection.`);
       }

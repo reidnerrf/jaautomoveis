@@ -11,7 +11,7 @@ async function fetchWithTimeout(url: string, timeoutMs: number): Promise<Respons
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    // @ts-ignore Node18 global fetch
+    // @ts-expect-error Node18 global fetch
     const res: Response = await fetch(url, { signal: controller.signal } as any);
     return res;
   } finally {
