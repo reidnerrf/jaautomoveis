@@ -52,6 +52,7 @@ export default defineConfig(({ mode }) => {
     build: {
       target: "esnext",
       outDir: "dist",
+      emptyOutDir: false, // Don't clean the output directory to preserve server files
       minify: isProduction ? "esbuild" : false, // ⚡ rápido
       cssMinify: isProduction ? "esbuild" : false,
       sourcemap: !isProduction,
