@@ -451,13 +451,15 @@ if (!isProduction) {
   app.use(async (req: Request, res: Response, next: NextFunction) => {
     if (req.path.endsWith(".tsx") || req.path.endsWith(".ts")) {
       try {
-        const filePath = path.join(__dirname, req.path);
+        // Resolve the requested TS/TSX file relative to the project root.
+        // Using process.cwd() ensures '/index.tsx' -> '<project>/index.tsx' instead of '/index.tsx'.
+        const filePath = path.resolve(process.cwd(), "." + req.path);
         await fs.access(filePath);
 
         const source = await fs.readFile(filePath, "utf-8");
         const transform = await loadEsbuildTransform();
         const { code } = await transform(source, {
-          loader: "tsx",
+          loader: req.path.endsWith(".tsx") ? "tsx" : "ts",
           format: "esm",
         });
 
