@@ -57,7 +57,7 @@ const VehicleStats: React.FC<VehicleStatsProps> = ({ vehicles }) => {
     );
 
     const topMakes = Object.entries(makeStats)
-      .sort(([, a], [, b]) => b - a)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
       .slice(0, 5)
       .map(([make, count]) => ({ make, count }));
 
@@ -72,7 +72,7 @@ const VehicleStats: React.FC<VehicleStatsProps> = ({ vehicles }) => {
     );
 
     const topModels = Object.entries(modelStats)
-      .sort(([, a], [, b]) => b - a)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
       .slice(0, 5)
       .map(([model, count]) => ({ model, count }));
 
@@ -261,7 +261,7 @@ const VehicleStats: React.FC<VehicleStatsProps> = ({ vehicles }) => {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"

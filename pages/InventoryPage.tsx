@@ -153,7 +153,7 @@ const InventoryPage: React.FC = () => {
     // Sorting
     switch (sortBy) {
       case "likes-desc":
-        tempVehicles.sort((a, b) => (likeCounts[b.id] || 0) - (likeCounts[a.id] || 0));
+        tempVehicles.sort((a, b) => (likeCounts[b.id || ""] || 0) - (likeCounts[a.id || ""] || 0));
         break;
       case "price-asc":
         tempVehicles.sort((a, b) => a.price - b.price);

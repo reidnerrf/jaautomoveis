@@ -246,7 +246,7 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                     borderRadius: "8px",
                     color: "white",
                   }}
-                  formatter={(value: number, name: string) => [
+                  formatter={(value: any, name: any) => [
                     value,
                     name === "vendidos" ? "Vendidos" : "Disponíveis",
                   ]}
@@ -311,7 +311,7 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                     borderRadius: "8px",
                     color: "white",
                   }}
-                  formatter={(value: number, name: string) => [
+                  formatter={(value: any, name: any) => [
                     name === "receita" || name === "lucro"
                       ? new Intl.NumberFormat("pt-BR", {
                           style: "currency",
@@ -354,7 +354,7 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
@@ -370,7 +370,7 @@ const AdvancedMetrics: React.FC<AdvancedMetricsProps> = ({
                     borderRadius: "8px",
                     color: "white",
                   }}
-                  formatter={(value: number, name: string) => [value, name]}
+                  formatter={(value: any, name: any) => [value, name]}
                 />
               </PieChart>
             </ResponsiveContainer>

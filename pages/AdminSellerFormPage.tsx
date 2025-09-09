@@ -22,12 +22,6 @@ const AdminSellerFormPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (isEditing && id) {
-      fetchSeller();
-    }
-  }, [id, isEditing, fetchSeller]);
-
   const fetchSeller = useCallback(async () => {
     try {
       setLoading(true);
@@ -56,6 +50,12 @@ const AdminSellerFormPage: React.FC = () => {
       setLoading(false);
     }
   }, [id, token, navigate]);
+
+  useEffect(() => {
+    if (isEditing && id) {
+      fetchSeller();
+    }
+  }, [id, isEditing, fetchSeller]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;

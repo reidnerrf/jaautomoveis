@@ -70,7 +70,7 @@ class PerformanceMonitor {
         const entries = list.getEntries();
         const firstEntry = entries[0];
         if (firstEntry) {
-          const processingStart = Number(firstEntry.processingStart ?? 0);
+          const processingStart = Number((firstEntry as any).processingStart ?? firstEntry.startTime);
           this.metrics.firstInputDelay = processingStart - firstEntry.startTime;
           this.logMetric("First Input Delay", this.metrics.firstInputDelay);
         }
@@ -88,7 +88,7 @@ class PerformanceMonitor {
     });
   }
 
-  private logMetric(name: string, value: number) {
+  public logMetric(name: string, value: number) {
     if (process.env.NODE_ENV === "development") {
       console.log(`🚀 ${name}: ${value.toFixed(2)}ms`);
     }

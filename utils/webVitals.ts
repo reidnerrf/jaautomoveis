@@ -156,9 +156,7 @@ class WebVitalsMonitor {
 
   private sendToAnalytics(metric: any) {
     // Enviar para Google Analytics 4
-    // @ts-expect-error gtag may not be defined in all environments
     if (typeof (window as any).gtag !== "undefined") {
-      // @ts-expect-error gtag may not be defined in all environments
       (window as any).gtag("event", "web_vitals", {
         event_category: "Web Vitals",
         event_label: metric.name,

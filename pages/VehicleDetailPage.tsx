@@ -135,11 +135,11 @@ const VehicleDetailPage: React.FC = () => {
   };
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % vehicle.images.length);
+    setCurrentImageIndex((prev) => (prev + 1) % (vehicle.images?.length || 1));
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length);
+    setCurrentImageIndex((prev) => (prev - 1 + (vehicle.images?.length || 1)) % (vehicle.images?.length || 1));
   };
 
   const details = [
@@ -185,7 +185,7 @@ const VehicleDetailPage: React.FC = () => {
     },
   ];
 
-  const otherVehicles = allVehicles.filter((v) => v.id !== id).slice(0, 5);
+  const otherVehicles = (allVehicles || []).filter((v) => v.id !== id).slice(0, 5);
 
   const toggleFavorite = () => {
     const newFavoriteState = !isFavorite;
@@ -201,9 +201,9 @@ const VehicleDetailPage: React.FC = () => {
     try {
       const liked = JSON.parse(localStorage.getItem("likedVehicles") || "[]");
       const set = new Set<string>(liked);
-      if (newFavoriteState) {
+      if (newFavoriteState && vehicle.id) {
         set.add(vehicle.id);
-      } else {
+      } else if (vehicle.id) {
         set.delete(vehicle.id);
       }
       localStorage.setItem("likedVehicles", JSON.stringify(Array.from(set)));
@@ -218,7 +218,7 @@ const VehicleDetailPage: React.FC = () => {
         title={`${vehicle.year} ${vehicle.make} ${vehicle.model} - R$ ${vehicle.price.toLocaleString("pt-BR")} | JA Automóveis`}
         description={`${vehicle.year} ${vehicle.make} ${vehicle.model} - ${vehicle.color} - ${vehicle.km.toLocaleString("pt-BR")} km - R$ ${vehicle.price.toLocaleString("pt-BR")}. Confira este veículo na JA Automóveis.`}
         keywords={`${vehicle.make}, ${vehicle.model}, ${vehicle.year}, ${vehicle.color}, carro usado, seminovo, JA Automóveis`}
-        image={vehicle.images[0]}
+        image={vehicle.images?.[0] || "/placeholder-car.jpg"}
         url={`/vehicle/${vehicle.id}`}
         type="product"
       >
@@ -316,12 +316,12 @@ const VehicleDetailPage: React.FC = () => {
               <div className="relative rounded-2xl overflow-hidden shadow-xl ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
                 <motion.img
                   whileHover={{ scale: 1.02 }}
-                  src={`${vehicle.images[currentImageIndex]}${vehicle.images[currentImageIndex].includes("?") ? "&" : "?"}v=${encodeURIComponent(vehicle.updatedAt || "")}`}
+                  src={`${vehicle.images?.[currentImageIndex] || "/placeholder-car.jpg"}${vehicle.images?.[currentImageIndex]?.includes("?") ? "&" : "?"}v=${encodeURIComponent(vehicle.updatedAt || "")}`}
                   alt={`${vehicle.make} ${vehicle.model} ${vehicle.year} imagem ${currentImageIndex + 1}`}
                   className="w-full h-[26rem] object-cover cursor-pointer transition-all"
                   onClick={() => setIsLightboxOpen(true)}
                 />
-                {vehicle.images.length > 1 && (
+                {(vehicle.images?.length || 0) > 1 && (
                   <>
                     <button
                       onClick={prevImage}
@@ -339,7 +339,7 @@ const VehicleDetailPage: React.FC = () => {
                 )}
               </div>
               <div className="flex space-x-2 mt-4 overflow-x-auto pb-2">
-                {vehicle.images.map((img, index) => (
+                {(vehicle.images || []).map((img, index) => (
                   <img
                     key={`${img}-${index}`}
                     src={`${img}${img.includes("?") ? "&" : "?"}v=${encodeURIComponent(vehicle.updatedAt || "")}`}
@@ -448,11 +448,11 @@ const VehicleDetailPage: React.FC = () => {
 
           {/* Opcionais e Comparativo */}
           <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {vehicle.optionals?.length > 0 && vehicle.optionals[0] !== "" && (
+            {(vehicle.optionals?.length || 0) > 0 && vehicle.optionals?.[0] !== "" && (
               <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Opcionais</h2>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-600 dark:text-gray-300">
-                  {vehicle.optionals.map((opt) => (
+                  {(vehicle.optionals || []).map((opt) => (
                     <li key={opt} className="flex items-center">
                       <FiChevronRight className="text-main-red mr-2" />
                       {opt}
@@ -510,7 +510,7 @@ const VehicleDetailPage: React.FC = () => {
                 </button>
 
                 {/* Botão anterior */}
-                {vehicle.images.length > 1 && (
+                {(vehicle.images?.length || 0) > 1 && (
                   <button
                     onClick={prevImage}
                     className="absolute left-2 md:left-10 top-1/2 transform -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition z-50"
@@ -525,13 +525,13 @@ const VehicleDetailPage: React.FC = () => {
                   initial={{ opacity: 0.5, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.2 }}
-                  src={vehicle.images[currentImageIndex]}
+                  src={vehicle.images?.[currentImageIndex] || "/placeholder-car.jpg"}
                   alt={`${vehicle.name} - ${currentImageIndex + 1}`}
                   className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
                 />
 
                 {/* Botão próximo */}
-                {vehicle.images.length > 1 && (
+                {(vehicle.images?.length || 0) > 1 && (
                   <button
                     onClick={nextImage}
                     className="absolute right-2 md:right-10 top-1/2 transform -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition z-50"

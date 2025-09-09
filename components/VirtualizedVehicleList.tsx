@@ -111,9 +111,9 @@ export const useVirtualizedList = (vehicles: Vehicle[]) => {
     if (searchTerm) {
       filtered = filtered.filter(
         (vehicle) =>
-          vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          vehicle.model.toLowerCase().includes(searchTerm.toLowerCase())
+          vehicle.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          vehicle.make?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          vehicle.model?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -123,8 +123,8 @@ export const useVirtualizedList = (vehicles: Vehicle[]) => {
       let bValue: any = b[sortBy];
 
       if (sortBy === "name") {
-        aValue = a.name.toLowerCase();
-        bValue = b.name.toLowerCase();
+        aValue = a.name?.toLowerCase() || "";
+        bValue = b.name?.toLowerCase() || "";
       }
 
       if (sortOrder === "asc") {

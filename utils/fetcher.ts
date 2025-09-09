@@ -91,6 +91,9 @@ export async function httpRequest<T = any>(
     shouldRetry = false;
     return parseResponse(response, expectJson);
   }
+  
+  // This should never be reached, but TypeScript needs it
+  throw new Error("Unexpected end of function");
 }
 
 export async function httpGetJson<T = any>(url: string, init: RequestInit = {}): Promise<T> {
