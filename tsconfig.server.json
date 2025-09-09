@@ -18,6 +18,6 @@
     "types": ["node"],
     "lib": ["ES2020"]
   },
-  "include": ["server.ts", "backend/**/*.ts"],
+  "include": ["server.ts", "backend/**/*.ts", "seeder.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.tsx", "components", "pages", "utils"]
 }
