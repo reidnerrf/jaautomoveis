@@ -63,7 +63,8 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - /etc/letsencrypt/live/jaautomoveisresende.com.br:/etc/nginx/ssl:ro
+      - /etc/letsencrypt/live/jaautomoveisresende.com.br:/etc/nginx/ssl/live:ro
+      - /etc/letsencrypt/archive/jaautomoveisresende.com.br:/etc/nginx/ssl/archive:ro
       - ./dist:/usr/share/nginx/html:ro
     depends_on:
       - app
