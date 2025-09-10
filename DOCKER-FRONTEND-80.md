@@ -80,7 +80,7 @@ docker-compose restart
 
 - **Username**: `admin`
 - **Password**: `adminja2025`
-- **Email**: `reidner.red@gmail.com`
+- **Email**: `contato@jaautomoveisresende.com.br`
 
 ## 📋 Fluxo de Funcionamento
 

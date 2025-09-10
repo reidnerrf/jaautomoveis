@@ -6,7 +6,7 @@ import PushSubscription from "../models/PushSubscription";
 const vapidKeys = webpush.generateVAPIDKeys();
 
 webpush.setVapidDetails(
-  "mailto:contato@jaautomoveis.com.br",
+  "mailto:contato@jaautomoveisresende.com.br.br",
   process.env.VAPID_PUBLIC_KEY || vapidKeys.publicKey,
   process.env.VAPID_PRIVATE_KEY || vapidKeys.privateKey
 );

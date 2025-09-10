@@ -224,7 +224,7 @@ setup_ssh() {
     if ! ssh -o ConnectTimeout=5 -o BatchMode=yes $SSH_USER@$SSH_HOST exit 2>/dev/null; then
         warning "Não foi possível conectar via SSH sem senha"
         info "Configure chaves SSH para autenticação automática:"
-        echo "  ssh-keygen -t rsa -b 4096 -C 'reidner.red@gmail.com'"
+        echo "  ssh-keygen -t rsa -b 4096 -C 'contato@jaautomoveisresende.com.br'"
         echo "  ssh-copy-id $SSH_USER@$SSH_HOST"
         echo ""
         read -p "Deseja continuar com autenticação por senha? (y/N): " -n 1 -r

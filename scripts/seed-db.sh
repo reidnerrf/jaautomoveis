@@ -98,7 +98,7 @@ else
     echo -e "${BLUE}Credenciais do admin:${NC}"
     echo -e "  • Username: ${YELLOW}admin${NC}"
     echo -e "  • Password: ${YELLOW}adminja2025${NC}"
-    echo -e "  • Email: ${YELLOW}reidner.red@gmail.com${NC}"
+    echo -e "  • Email: ${YELLOW}contato@jaautomoveisresende.com.br${NC}"
 fi
 
 echo -e "${GREEN}Seeder concluído!${NC}"

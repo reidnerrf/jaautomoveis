@@ -131,7 +131,7 @@ npx ts-node --project tsconfig.server.json seeder.ts
 
 - **Username**: `admin`
 - **Password**: `adminja2025`
-- **Email**: `reidner.red@gmail.com`
+- **Email**: `contato@jaautomoveisresende.com.br`
 
 ## 📁 Estrutura do Projeto
 

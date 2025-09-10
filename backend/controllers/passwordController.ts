@@ -4,12 +4,12 @@ import User from "../models/User";
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  host: process.env.SMTP_HOST || "smtp.hostinger.com",
   port: Number(process.env.SMTP_PORT || 465),
   secure: (process.env.SMTP_SECURE || "true") === "true",
   auth: {
-    user: process.env.EMAIL_USERNAME,
-    pass: process.env.EMAIL_PASSWORD,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
@@ -36,7 +36,7 @@ export const forgotPassword = async (req: express.Request, res: express.Response
     // Send email with reset link
     const resetUrl = `${req.protocol}://${req.get("host")}/#/admin/reset-password/${resetToken}`;
     const mailOptions = {
-      from: process.env.EMAIL_USERNAME,
+      from: process.env.SMTP_USER,
       to: email,
       subject: "Redefinir senha",
       html: `<p>Clique <a href="${resetUrl}">aqui</a> para redefinir sua senha.</p>`,

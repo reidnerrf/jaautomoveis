@@ -22,7 +22,7 @@ const ContactPage: React.FC = () => {
     {
       icon: <FiMail size={24} className="text-blue-600" />,
       title: "Email",
-      info: "contato@jaautomoveis.com",
+      info: "contato@jaautomoveisresende.com.br",
       description: "Respondemos rapidamente",
     },
     {

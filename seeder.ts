@@ -275,7 +275,7 @@ const importData = async () => {
 
     await User.create({
       username: "admin",
-      email: "reidner.red@gmail.com",
+      email: "contato@jaautomoveisresende.com.br",
       password: hashedPassword,
       role: "admin",
     });
@@ -284,7 +284,7 @@ const importData = async () => {
     console.log("Admin user created:");
     console.log("  Username: admin");
     console.log("  Password: adminja2025");
-    console.log("  Email: reidner.red@gmail.com");
+    console.log("  Email: contato@jaautomoveisresende.com.br");
     (process as any).exit();
   } catch (error) {
     console.error(`${error}`);

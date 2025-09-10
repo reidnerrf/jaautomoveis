@@ -28,6 +28,7 @@ import authRoutes from "./backend/routes/authRoutes";
 import uploadRoutes from "./backend/routes/uploadRoutes";
 import analyticsRoutes from "./backend/routes/analyticsRoutes";
 import pushRoutes from "./backend/routes/pushRoutes";
+import contactRoutes from "./backend/routes/contactRoutes";
 import Analytics from "./backend/models/Analytics";
 import Vehicle from "./backend/models/Vehicle";
 import ViewLog from "./backend/models/ViewLog";
@@ -357,6 +358,7 @@ app.use("/api/sellers", sellerRoutes);
 app.use("/api/upload", autoImageOptimization, uploadRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/push", pushRoutes);
+app.use("/api/contact", contactRoutes);
 
 // Test-only endpoint to validate rate limiting without side effects
 if (process.env.NODE_ENV === "test") {

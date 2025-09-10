@@ -111,7 +111,7 @@ O seeder cria os seguintes dados:
 ### 👤 Usuário Admin
 - **Username**: `admin`
 - **Password**: `adminja2025`
-- **Email**: `reidner.red@gmail.com`
+- **Email**: `contato@jaautomoveisresende.com.br`
 
 ## 🔧 Solução de Problemas
 

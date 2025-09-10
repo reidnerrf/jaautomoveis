@@ -1,12 +1,17 @@
-# JivoSite Widget Fix - TODO
+# TODO: Fix 500 Error on /api/contact Endpoint
 
-## Completed Tasks
-- [x] Create JivoSite component that loads the script dynamically
-- [x] Remove JivoSite script from index.html
-- [x] Add JivoSite component to MainLayout
-- [x] Start development server successfully
+## Tasks
+- [x] Update backend/routes/contactRoutes.ts to add better error logging and SMTP config validation
+- [x] Test the contact form after fixes
+- [ ] Verify SMTP environment variables are set correctly
 
-## Next Steps
-- [ ] Test the application in production to verify the widget works
-- [ ] Run npm start and check if JivoSite loads properly
-- [ ] If issues persist, consider alternative approaches (e.g., load script in useEffect without lazy loading)
+## Test Results
+- [x] Endpoint responds correctly with detailed error message
+- [x] Error identified: Missing SMTP credentials (SMTP_USER and/or SMTP_PASS not set)
+- [x] Confirmed issue persists - SMTP credentials need to be configured in .env file
+
+## Details
+- The 500 error is caused by SMTP email sending failure
+- Mismatch between SMTP_PORT (587) and SMTP_SECURE (default true) may cause connection issues
+- Need to add detailed error logging to diagnose the exact SMTP problem
+- Add transporter verification before sending emails

@@ -106,7 +106,7 @@ A aplicação JA Automóveis foi testada com sucesso em ambiente de desenvolvime
 ### **Usuário Admin**
 - Username: `admin`
 - Password: `adminja2025`
-- Email: `reidner.red@gmail.com`
+- Email: `contato@jaautomoveisresende.com.br`
 - Role: `admin`
 
 ## 🚀 URLs de Acesso

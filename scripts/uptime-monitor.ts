@@ -38,13 +38,13 @@ async function writeState(status: "up" | "down") {
 }
 
 function buildTransport() {
-  const host = process.env.SMTP_HOST || "smtp.gmail.com";
+  const host = process.env.SMTP_HOST || "smtp.hostinger.com";
   const port = Number(process.env.SMTP_PORT || 465);
   const secure = (process.env.SMTP_SECURE || "true") === "true";
-  const user = process.env.EMAIL_USERNAME || "";
-  const pass = process.env.EMAIL_PASSWORD || "";
+  const user = process.env.SMTP_USER || "";
+  const pass = process.env.SMTP_PASS || "";
   if (!user || !pass) {
-    throw new Error("EMAIL_USERNAME and EMAIL_PASSWORD must be set for uptime monitor");
+    throw new Error("SMTP_USER and SMTP_PASS must be set for uptime monitor");
   }
   return nodemailer.createTransport({ host, port, secure, auth: { user, pass } });
 }
@@ -54,7 +54,7 @@ async function sendEmail(subject: string, html: string) {
     throw new Error("ADMIN_EMAIL is required to send uptime notifications");
   }
   const transporter = buildTransport();
-  const from = process.env.EMAIL_FROM || process.env.EMAIL_USERNAME || ADMIN_EMAIL;
+  const from = process.env.EMAIL_FROM || process.env.SMTP_USER || ADMIN_EMAIL;
   await transporter.sendMail({ from, to: ADMIN_EMAIL, subject, html });
 }
 

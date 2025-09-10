@@ -136,7 +136,7 @@ Após o deploy, a aplicação estará disponível em:
 #### 1. Configurar Chaves SSH (Recomendado)
 ```bash
 # Gerar chave SSH
-ssh-keygen -t rsa -b 4096 -C "reidner.red@gmail.com"
+ssh-keygen -t rsa -b 4096 -C "contato@jaautomoveisresende.com.br"
 
 # Copiar chave para localhost
 ssh-copy-id $USER@localhost

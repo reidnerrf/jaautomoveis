@@ -122,7 +122,7 @@ const Footer: React.FC = () => {
                         <FaMapMarkerAlt /> Av. Brasília, n°35 - Vila Julieta, Resende - RJ
                       </p>
                       <p className="flex items-center gap-2">
-                        <FaEnvelope /> contato@jaautomoveis.com
+                        <FaEnvelope /> contato@jaautomoveisresende.com.br
                       </p>
                       <p className="flex items-center gap-2">
                         <FaPhone /> (24) 99903-7716
@@ -141,7 +141,7 @@ const Footer: React.FC = () => {
                   <FaMapMarkerAlt /> Av. Brasília, n°35 - Vila Julieta, Resende - RJ
                 </p>
                 <p className="flex items-center gap-2">
-                  <FaEnvelope /> contato@jaautomoveis.com
+                  <FaEnvelope /> contato@jaautomoveisresende.com.br
                 </p>
                 <p className="flex items-center gap-2">
                   <FaPhone /> (24) 99903-7716
