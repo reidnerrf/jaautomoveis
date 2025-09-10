@@ -168,25 +168,6 @@ const ConsortiumPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Exemplos de cartas contempladas */}
-              <div className="grid md:grid-cols-3 gap-4 mb-8">
-                <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900/40">
-                  <p className="text-sm text-gray-500">Crédito</p>
-                  <p className="text-xl font-extrabold text-gray-900 dark:text-white">R$ 60.000</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Prazo: 60 meses</p>
-                </div>
-                <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900/40">
-                  <p className="text-sm text-gray-500">Crédito</p>
-                  <p className="text-xl font-extrabold text-gray-900 dark:text-white">R$ 90.000</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Prazo: 72 meses</p>
-                </div>
-                <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900/40">
-                  <p className="text-sm text-gray-500">Crédito</p>
-                  <p className="text-xl font-extrabold text-gray-900 dark:text-white">R$ 120.000</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Prazo: 84 meses</p>
-                </div>
-              </div>
-
               {/* Timeline do processo */}
               <div className="mb-8">
                 <h3 className="text-xl font-bold mb-3">Como funciona o processo</h3>

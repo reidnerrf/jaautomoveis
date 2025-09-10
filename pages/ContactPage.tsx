@@ -22,7 +22,7 @@ const ContactPage: React.FC = () => {
     {
       icon: <FiMail size={24} className="text-blue-600" />,
       title: "Email",
-      info: "contato@jaautomoveisresende.com.br",
+      info: "contato@jaautomoveisresende .com.br",
       description: "Respondemos rapidamente",
     },
     {
@@ -241,7 +241,9 @@ const ContactPage: React.FC = () => {
                       <h3 className="font-semibold text-gray-800 dark:text-white text-sm">
                         {info.title}
                       </h3>
-                      <p className="text-gray-600 dark:text-gray-300 font-medium">{info.info}</p>
+                      <p className="text-gray-600 dark:text-gray-300 font-medium break-words">
+                        {info.info}
+                      </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{info.description}</p>
                     </div>
                   </div>

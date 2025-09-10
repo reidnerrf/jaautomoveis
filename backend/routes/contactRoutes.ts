@@ -1,8 +1,6 @@
 import express from "express";
 import nodemailer from "nodemailer";
-import dotenv from "dotenv";
 
-dotenv.config();
 
 const router = express.Router();
 
@@ -17,11 +15,6 @@ const smtpSecure =
 const smtpUser = process.env.SMTP_USER;
 const smtpPass = process.env.SMTP_PASS;
 
-// 🚨 Valida credenciais
-if (!smtpUser || !smtpPass) {
-  console.error("❌ Erro: SMTP_USER ou SMTP_PASS não definidos nas variáveis de ambiente");
-}
-
 // Configura transporte do Nodemailer
 const transporter = nodemailer.createTransport({
   host: smtpHost,
@@ -33,14 +26,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Verifica conexão com o servidor SMTP
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("❌ Falha na verificação do SMTP:", error);
-  } else {
-    console.log("✅ SMTP Transporter pronto para enviar emails");
-  }
-});
 
 // Rota de envio de contato
 router.post("/", async (req, res) => {

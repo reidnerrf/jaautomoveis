@@ -1,5 +1,6 @@
-import express, { Request, Response, NextFunction, Application } from "express";
 import dotenv from "dotenv";
+
+import express, { Request, Response, NextFunction, Application } from "express";
 import cors from "cors";
 import path from "path";
 import fs from "fs/promises";
@@ -28,7 +29,6 @@ import authRoutes from "./backend/routes/authRoutes";
 import uploadRoutes from "./backend/routes/uploadRoutes";
 import analyticsRoutes from "./backend/routes/analyticsRoutes";
 import pushRoutes from "./backend/routes/pushRoutes";
-import contactRoutes from "./backend/routes/contactRoutes";
 import Analytics from "./backend/models/Analytics";
 import Vehicle from "./backend/models/Vehicle";
 import ViewLog from "./backend/models/ViewLog";
@@ -61,6 +61,7 @@ import { queueManager } from "./backend/queues/queueManager";
 import recommendationEngine from "./backend/ml/recommendationEngine";
 
 dotenv.config();
+import contactRoutes from "./backend/routes/contactRoutes";
 
 const getAvailablePort = (preferredPort: number): number => {
   const envPort = process.env.PORT ? parseInt(process.env.PORT, 10) : preferredPort;

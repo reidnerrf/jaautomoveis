@@ -46,7 +46,6 @@ export const loginUser = async (req: express.Request, res: express.Response) => 
   if (!username || !password) {
     return res.status(400).json({ message: "Username and password are required" });
   }
-  console.log(`[AUTH] Login attempt for user: "${username}"`);
 
   try {
     const user = await User.findOne({ username }).select("+password");
@@ -55,13 +54,11 @@ export const loginUser = async (req: express.Request, res: express.Response) => 
       console.log(`[AUTH] Failure: User "${username}" not found in database.`);
       return res.status(401).json({ message: "Invalid Credentials" });
     }
-    console.log(`[AUTH] Success: User "${username}" found in database.`);
 
     const isMatch = await user.matchPassword(password);
 
     if (isMatch) {
       const token = generateToken(user._id.toString());
-      console.log(`[AUTH] Success: Password for user "${username}" matches.`);
 
       res.json({
         _id: user._id,
