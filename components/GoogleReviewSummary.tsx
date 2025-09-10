@@ -50,7 +50,7 @@ const GoogleReviewSummary: React.FC<GoogleReviewSummaryProps> = ({
       </div>
 
       <a
-        href="google.com/maps/place/JA+Automóveis/@-22.4514047,-44.4276196,15z/data=!4m6!3m5!1s0x9e7f64ea81fb05:0xda764a546db009b0!8m2!3d-22.471342!4d-44.464962!16s%2Fg%2F11h_4scynm?entry=ttu&g_ep=EgoyMDI1MDkwOC4wIKXMDSoASAFQAw%3D%3D"
+        href="https://www.google.com/maps/place/JA+Automóveis/@-22.4514047,-44.4276196,15z/data=!4m6!3m5!1s0x9e7f64ea81fb05:0xda764a546db009b0!8m2!3d-22.471342!4d-44.464962!16s%2Fg%2F11h_4scynm?entry=ttu&g_ep=EgoyMDI1MDkwOC4wIKXMDSoASAFQAw%3D%3D"
         target="_blank"
         rel="noopener noreferrer"
         className="inline-block px-5 py-2 text-sm font-medium text-white bg-red-500 rounded-full hover:bg-red-600 transition-colors duration-300"
