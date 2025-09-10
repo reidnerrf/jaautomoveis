@@ -96,6 +96,7 @@ export default defineConfig(({ mode }) => {
           entryFileNames: "assets/js/[name]-[hash].js",
           assetFileNames: (assetInfo: { name?: string }) => {
             const ext = assetInfo.name?.split(".").pop() ?? "unknown";
+    
             if (assetInfo.name === 'favicon.ico') return 'favicon.ico';
             if (/png|jpe?g|svg|gif|ico|webp/i.test(ext)) {
               return `assets/images/[name]-[hash].[ext]`;
