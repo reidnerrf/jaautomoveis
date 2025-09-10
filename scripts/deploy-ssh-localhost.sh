@@ -24,6 +24,9 @@ REMOTE_PORT="22"
 
 # Configurações da aplicação
 APP_NAME="ja-automoveis"
+DOMAIN="jaautomoveisresende.com.br"
+EMAIL="contato@jaautomoveisresende.com.br"
+USE_LETSENCRYPT=true   # true para usar Let's Encrypt
 LOCAL_APP_PORT="80"
 LOCAL_API_PORT="5000"
 LOCAL_MONGO_PORT="27017"
@@ -146,26 +149,38 @@ setup_env() {
 
 # Função para configurar SSL
 setup_ssl() {
-    log "Configurando SSL..."
-    
-    mkdir -p ssl
-    
-    if [ ! -f "ssl/cert.pem" ] || [ ! -f "ssl/key.pem" ]; then
-        warning "Certificados SSL não encontrados. Criando certificados auto-assinados..."
-        
-        # Gerar certificado auto-assinado
-        openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-            -keyout ssl/key.pem \
-            -out ssl/cert.pem \
-            -subj '/C=BR/ST=SP/L=SaoPaulo/O=JA-Automoveis/CN=localhost' 2>/dev/null || {
-            error "Falha ao gerar certificados SSL. Instale o OpenSSL primeiro."
-            exit 1
-        }
-        
-        success "Certificados SSL criados"
-        warning "Para produção, use certificados válidos (Let's Encrypt)"
+    log "Configurando SSL com Let's Encrypt..."
+
+    if [ "$USE_LETSENCRYPT" = true ]; then
+        # Instalar Certbot e plugin Nginx
+        if ! command -v certbot &>/dev/null; then
+            warning "Certbot não encontrado. Instalando..."
+            sudo apt update
+            sudo apt install -y certbot python3-certbot-nginx
+        fi
+
+        # Verificar se o domínio já possui certificado válido
+        if sudo certbot certificates | grep -q "$DOMAIN"; then
+            success "Certificado Let's Encrypt já existe para $DOMAIN"
+        else
+            info "Gerando certificado Let's Encrypt para $DOMAIN..."
+            sudo certbot --nginx -d "$DOMAIN" -d "www.$DOMAIN" \
+                --non-interactive --agree-tos -m "$EMAIL" --redirect
+            success "Certificado Let's Encrypt emitido com sucesso"
+        fi
     else
-        success "Certificados SSL encontrados"
+        # SSL autoassinado (fallback)
+        mkdir -p ssl
+        if [ ! -f "ssl/cert.pem" ] || [ ! -f "ssl/key.pem" ]; then
+            warning "Certificados SSL não encontrados. Criando certificados auto-assinados..."
+            openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+                -keyout ssl/key.pem \
+                -out ssl/cert.pem \
+                -subj "/C=BR/ST=SP/L=SaoPaulo/O=JA-Automoveis/CN=localhost"
+            success "Certificados SSL auto-assinados criados"
+        else
+            success "Certificados SSL auto-assinados encontrados"
+        fi
     fi
 }
 
