@@ -3,7 +3,7 @@ import { GoogleReview } from "../types.ts";
 import { FaStar, FaGoogle } from "react-icons/fa";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
-interface GoogleReviewsCarouselProps {
+export interface GoogleReviewsCarouselProps {
   reviews: GoogleReview[];
 }
 

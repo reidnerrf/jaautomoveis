@@ -3,7 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { motion } from "framer-motion";
 
-interface GoogleReviewSummaryProps {
+export interface GoogleReviewSummaryProps {
   rating: number;
   reviewCount: number;
   reviewsPageUrl: string;

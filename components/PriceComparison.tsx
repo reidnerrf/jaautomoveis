@@ -3,7 +3,7 @@ import { Vehicle } from "../types.ts";
 import { FiCheckCircle, FiTrendingUp, FiTrendingDown, FiInfo } from "react-icons/fi";
 import { motion } from "framer-motion";
 
-interface PriceComparisonProps {
+export interface PriceComparisonProps {
   vehicle: Vehicle;
 }
 

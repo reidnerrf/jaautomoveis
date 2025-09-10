@@ -4,7 +4,7 @@ import VehicleCard from "./VehicleCard.tsx";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { motion, useReducedMotion } from "framer-motion";
 
-interface VehicleCarouselProps {
+export interface VehicleCarouselProps {
   vehicles: Vehicle[];
 }
 

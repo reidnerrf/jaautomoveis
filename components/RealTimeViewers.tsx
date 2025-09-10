@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FiUsers } from "react-icons/fi";
 import { analytics } from "../utils/analytics";
 
-interface RealTimeViewersProps {
+export interface RealTimeViewersProps {
   page: string;
   vehicleId?: string;
   variant?: "fixed" | "inline";

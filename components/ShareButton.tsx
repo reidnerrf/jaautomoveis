@@ -12,7 +12,7 @@ import { FiShare2, FiCopy, FiCheck } from "react-icons/fi";
 import { Vehicle } from "../types";
 import toast from "react-hot-toast";
 
-interface ShareButtonProps {
+export interface ShareButtonProps {
   vehicle: Vehicle;
   className?: string;
 }
