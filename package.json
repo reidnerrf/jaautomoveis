@@ -11,7 +11,7 @@
     "stop:full": "bash -lc \"docker compose down || docker-compose down\"",
     "docker:deploy": "C:/PROGRA~1/Git/bin/bash.exe scripts/docker-deploy.sh",
     "deploy:local": "C:/PROGRA~1/Git/bin/bash.exe scripts/docker-deploy-local.sh",
-    "deploy:ssh": "./scripts/deploy-ssh-localhost.sh",
+    "deploy:ssh": "C:/PROGRA~1/Git/bin/bash.exe scripts/deploy-ssh-localhost.sh",
     "deploy:ssh:ps1": "powershell -ExecutionPolicy Bypass -File scripts/deploy-ssh-localhost.ps1",
     "deploy:ssh:bat": "scripts\\deploy-ssh-localhost.bat",
     "deploy:ubuntu": "./scripts/deploy-ubuntu.sh",

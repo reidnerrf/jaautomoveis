@@ -150,26 +150,6 @@ setup_env() {
 # Função para configurar SSL
 setup_ssl() {
     log "Configurando SSL com Let's Encrypt..."
-
-    if [ "$USE_LETSENCRYPT" = true ]; then
-        # Instalar Certbot e plugin Nginx
-        if ! command -v certbot &>/dev/null; then
-            warning "Certbot não encontrado. Instalando..."
-            sudo apt update
-            sudo apt install -y certbot python3-certbot-nginx
-        fi
-
-        # Verificar se o domínio já possui certificado válido
-        if sudo certbot certificates | grep -q "$DOMAIN"; then
-            success "Certificado Let's Encrypt já existe para $DOMAIN"
-        else
-            info "Gerando certificado Let's Encrypt para $DOMAIN..."
-            sudo certbot --nginx -d "$DOMAIN" -d "www.$DOMAIN" \
-                --non-interactive --agree-tos -m "$EMAIL" --redirect
-            success "Certificado Let's Encrypt emitido com sucesso"
-        fi
-    else
-        # SSL autoassinado (fallback)
         mkdir -p ssl
         if [ ! -f "ssl/cert.pem" ] || [ ! -f "ssl/key.pem" ]; then
             warning "Certificados SSL não encontrados. Criando certificados auto-assinados..."
