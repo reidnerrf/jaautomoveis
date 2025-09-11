@@ -57,11 +57,8 @@ FROM nginx:alpine AS frontend
 # Copia o build do frontend
 COPY --from=build /app/dist /usr/share/nginx/html
 
-<<<<<<< HEAD
 COPY public/favicon.ico /usr/share/nginx/html/assets/favicon.ico
 
-=======
->>>>>>> aae80d5db17d0d0aff047cc64522f3995ee3aa9d
 # Copia configuração do nginx
 COPY nginx.conf /etc/nginx/nginx.conf
 
