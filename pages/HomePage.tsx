@@ -958,7 +958,7 @@ const HomePage: React.FC = () => {
               <GoogleReviewSummary
                 rating={4.8}
                 reviewCount={28}
-                reviewsPageUrl="https://www.google.com/maps/place/JA+Autom%C3%B3veis"
+                reviewsPageUrl="https://www.google.com/maps/place/JA+Autom%C3%B3veis/@-22.4514047,-44.4276196,15z/data=!4m8!3m7!1s0x9e7f64ea81fb05:0xda764a546db009b0!8m2!3d-22.471342!4d-44.464962!9m1!1b1!16s%2Fg%2F11h_4scynm?entry=ttu&g_ep=EgoyMDI1MDkwOC4wIKXMDSoASAFQAw%3D%3D"
               />
             </Suspense>
           </motion.div>

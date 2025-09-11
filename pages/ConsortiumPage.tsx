@@ -242,7 +242,7 @@ const ConsortiumPage: React.FC = () => {
                 Crédito Consignado
               </h4>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                Para servidores públicos e aposentados. Taxas reduzidas com desconto em folha.
+                Para divulgação profissional do veículo nos nossos principais canais.
               </p>
             </a>
             <a
