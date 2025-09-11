@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import multer from "multer";
 import sharp from "sharp";
 import { protect, requireAdmin } from "../middleware/authMiddleware";
@@ -11,8 +12,6 @@ const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
-  // Inlining the fileFilter allows TypeScript to correctly infer parameter types
-  // from Multer's options, avoiding type conflicts.
   fileFilter: (req, file, cb) => {
     const filetypes = /jpe?g|png|webp/i;
     const mimetype = filetypes.test((file as Express.Multer.File).mimetype);
@@ -21,14 +20,11 @@ const upload = multer({
     if (mimetype && extname) {
       return cb(null, true);
     }
-    cb(new Error(`Error: Apenas são permitidos arquivos de imagem (jpeg, png, webp)!`));
+    cb(new Error("Apenas são permitidos arquivos de imagem (jpeg, png, webp)!"));
   },
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB file size limit
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
 });
 
-// @desc    Upload images, process them, and return their paths
-// @route   POST /api/upload
-// @access  Private/Admin
 router.post(
   "/",
   protect,
@@ -42,38 +38,47 @@ router.post(
     try {
       const uploadedImagePaths: string[] = [];
       const files = req.files as Express.Multer.File[];
-      // Save under project root to ensure static serving regardless of build dir
       const rootPath = process.cwd();
-      const vehicleName = req.body.vehicleName || "vehicle";
+      const uploadDir = path.join(rootPath, "uploads");
 
-      // Sanitize the vehicle name to create a URL-friendly slug
+      // Cria a pasta uploads se não existir
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      // Testa permissão de escrita
+      fs.accessSync(uploadDir, fs.constants.W_OK);
+
+      const vehicleName = req.body.vehicleName || "vehicle";
       const sanitizedVehicleName = vehicleName
         .toString()
         .toLowerCase()
-        .replace(/\s+/g, "-") // Replace spaces with -
-        .replace(/[^\w-]+/g, "") // Remove all non-word chars except -
-        .replace(/--+/g, "-") // Replace multiple - with single -
-        .replace(/^-+/, "") // Trim - from start of text
-        .replace(/-+$/, ""); // Trim - from end of text
+        .replace(/\s+/g, "-")
+        .replace(/[^\w-]+/g, "")
+        .replace(/--+/g, "-")
+        .replace(/^-+/, "")
+        .replace(/-+$/, "");
 
       for (const [index, file] of files.entries()) {
-        // Generate a unique filename using index, sanitized name, and timestamp
         const filename = `${index}-${sanitizedVehicleName}-${Date.now()}.webp`;
-        const outputPath = path.join(rootPath, "uploads", filename);
+        const outputPath = path.join(uploadDir, filename);
 
-        // Process image with Sharp: resize and convert to WebP
         await sharp(file.buffer)
-          .resize(1200, null, { fit: "inside", withoutEnlargement: true }) // Resize width to 1200px max
-          .webp({ quality: 80 }) // Convert to webp with 80% quality
+          .resize(1200, null, { fit: "inside", withoutEnlargement: true })
+          .webp({ quality: 80 })
           .toFile(outputPath);
 
         uploadedImagePaths.push(`/uploads/${filename}`);
       }
 
       res.status(201).json(uploadedImagePaths);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Image upload error:", error);
-      res.status(500).json({ message: "Erro ao processar as imagens" });
+      res.status(500).json({
+        message: "Erro ao processar as imagens",
+        error: error.message,
+        stack: error.stack,
+      });
     }
   }
 );
