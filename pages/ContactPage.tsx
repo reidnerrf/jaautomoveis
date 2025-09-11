@@ -43,13 +43,13 @@ const ContactPage: React.FC = () => {
     {
       icon: <FaInstagram size={24} />,
       name: "Instagram",
-      url: "#",
+      url: "https://www.instagram.com/_jaautomoveis/",
       color: "bg-pink-500 hover:bg-pink-600",
     },
     {
       icon: <FaFacebook size={24} />,
       name: "Facebook",
-      url: "#",
+      url: "https://www.facebook.com/jaautomoveisrj/",
       color: "bg-blue-600 hover:bg-blue-700",
     },
   ];

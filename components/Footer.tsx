@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
   const socialLinks = [
     {
       icon: <FaFacebook size={18} />,
-      href: "https://facebook.com",
+      href: "https://www.facebook.com/jaautomoveisrj/",
       color: "hover:bg-blue-500",
     },
     {
