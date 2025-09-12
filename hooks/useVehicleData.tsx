@@ -51,7 +51,11 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
         return;
       }
 
-      const data = await httpGetJson<any>("/api/vehicles?limit=100");
+      const shouldSkipServerCache =
+        typeof window !== "undefined" && window.location.pathname.startsWith("/admin");
+      const data = await httpGetJson<any>("/api/vehicles?limit=100", {
+        headers: shouldSkipServerCache ? { "x-skip-cache": "true" } : undefined,
+      });
 
       const items = Array.isArray(data)
         ? data
@@ -79,7 +83,7 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, []);
 
   const refreshVehicles = useCallback(async () => {
-    // Invalidate cache then refetch
+    // Invalidate client cache then refetch (admin fetch will also bypass server cache)
     apiCache.delete(createCacheKey("vehicles"));
     await fetchVehicles();
   }, [fetchVehicles]);

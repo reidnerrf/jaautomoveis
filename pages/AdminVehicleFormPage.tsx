@@ -32,7 +32,7 @@ const carMakes = [
 const AdminVehicleFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getVehicleById, addVehicle, updateVehicle } = useVehicleData();
+  const { getVehicleById, addVehicle, updateVehicle, refreshVehicles } = useVehicleData();
   const { token } = useAuth();
   const isEditing = Boolean(id);
 
@@ -187,6 +187,7 @@ const AdminVehicleFormPage: React.FC = () => {
       } else {
         await addVehicle(vehicleDataToSubmit);
       }
+      await refreshVehicles();
       navigate("/admin/vehicles");
     } catch (error) {
       console.error("Failed to save vehicle", error);
