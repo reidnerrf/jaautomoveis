@@ -60,10 +60,10 @@ function generateCacheKey(req: Request, prefix: string = ""): string {
   const userAgent = req.get("User-Agent") || "";
   const acceptLanguage = req.get("Accept-Language") || "";
 
-  const key = `${prefix}:${url}:${query}:${params}:${userAgent}:${acceptLanguage}`;
-  return Buffer.from(key)
-    .toString("base64")
-    .replace(/[^a-zA-Z0-9]/g, "");
+  const raw = `${prefix}:${url}:${query}:${params}:${userAgent}:${acceptLanguage}`;
+  const encoded = Buffer.from(raw).toString("base64").replace(/[^a-zA-Z0-9]/g, "");
+  // Keep a human-readable prefix to allow invalidation by pattern like 'vehicles:*'
+  return `${prefix}:${encoded}`;
 }
 
 // Função para obter TTL baseado no tipo de requisição
@@ -151,8 +151,12 @@ async function invalidateCache(pattern: string): Promise<void> {
         await redisClient.del(...keys);
       }
     } else {
+      // Support glob-like patterns (e.g., "vehicles:*" or "vehicle-detail:*<id>*")
+      // Convert simple glob to RegExp: escape regex chars, replace '*' with '.*'
+      const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
+      const regex = new RegExp("^" + escaped.replace(/\\\*/g, ".*") + "$", "i");
       const keys = localCache.keys();
-      const matchingKeys = keys.filter((key) => key.includes(pattern));
+      const matchingKeys = keys.filter((key) => regex.test(key));
       matchingKeys.forEach((key) => localCache.del(key));
     }
 
