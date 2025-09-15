@@ -217,7 +217,7 @@ const VehicleDetailPage: React.FC = () => {
       <SEOHead
         title={`${vehicle.year} ${vehicle.make} ${vehicle.model} - R$ ${vehicle.price.toLocaleString("pt-BR")} | JA Automóveis`}
         description={`${vehicle.year} ${vehicle.make} ${vehicle.model} - ${vehicle.color} - ${vehicle.km.toLocaleString("pt-BR")} km - R$ ${vehicle.price.toLocaleString("pt-BR")}. Confira este veículo na JA Automóveis.`}
-        keywords={`${vehicle.make}, ${vehicle.model}, ${vehicle.year}, ${vehicle.color}, carro usado, seminovo, JA Automóveis`}
+        keywords={`${vehicle.make}, ${vehicle.model}, ${vehicle.year}, ${vehicle.color}, carro usado, seminovo, JA Automóveis, Resende RJ`}
         image={vehicle.images?.[0] || "/placeholder-car.jpg"}
         url={`/vehicle/${vehicle.id}`}
         type="product"
