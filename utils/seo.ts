@@ -32,32 +32,32 @@ export const generatePageSEO = (page: string): SEOData => {
     home: {
       title: generateSEOTitle("Carros Usados de Qualidade"),
       description:
-        "JA Automóveis - Encontre o carro usado perfeito para você. Qualidade garantida, melhores preços e financiamento facilitado.",
-      keywords: "carros usados, automóveis, veículos, compra, venda, financiamento",
+        "JA Automóveis em Resende - Encontre o carro usado perfeito para você. Qualidade garantida, melhores preços e financiamento facilitado.",
+      keywords: "carros usados, automóveis, veículos, compra, venda, financiamento, concessionária, Resende",
     },
     inventory: {
       title: generateSEOTitle("Estoque de Veículos"),
       description:
-        "Confira nosso estoque completo de carros usados. Diversos modelos, marcas e anos disponíveis.",
-      keywords: "estoque, carros usados, veículos disponíveis, automóveis",
+        "Confira nosso estoque completo em Resende de carros usados. Diversos modelos, marcas e anos disponíveis.",
+      keywords: "estoque, carros usados, veículos disponíveis, automóveis, concessionária, Resende",
     },
     about: {
       title: generateSEOTitle("Sobre Nós"),
       description:
         "Conheça a JA Automóveis. Anos de experiência no mercado de veículos usados com qualidade e confiança.",
-      keywords: "sobre, empresa, história, confiança, experiência",
+      keywords: "sobre, empresa, história, confiança, experiência, concessionária, Resende",
     },
     contact: {
       title: generateSEOTitle("Contato"),
       description:
         "Entre em contato com a JA Automóveis. Tire suas dúvidas, agende uma visita ou solicite informações.",
-      keywords: "contato, telefone, endereço, whatsapp, atendimento",
+      keywords: "contato, telefone, endereço, whatsapp, atendimento, concessionária, Resende",
     },
     financing: {
       title: generateSEOTitle("Financiamento"),
       description:
         "Financie seu carro usado com as melhores condições. Aprovação rápida e taxas competitivas.",
-      keywords: "financiamento, crédito, aprovação, taxas, parcelamento",
+      keywords: "financiamento, crédito, aprovação, taxas, parcelamento, concessionária, Resende",
     },
   };
 
