@@ -728,7 +728,7 @@ const HomePage: React.FC = () => {
                 <p>
                   Somos uma{" "}
                   <strong className="text-gray-900 dark:text-white">
-                    agência de veículos premium
+                    concessinária de veículos em Resende RJ
                   </strong>{" "}
                   que oferece uma experiência completa em serviços automotivos. Com mais de 15 anos
                   no mercado, nos especializamos na venda e troca de veículos novos, seminovos e
@@ -739,7 +739,7 @@ const HomePage: React.FC = () => {
                   <strong className="text-gray-900 dark:text-white">
                     transparência, qualidade e confiança
                   </strong>
-                  em cada negociação. Todos os nossos veículos passam por rigorosa inspeção técnica
+                   em cada negociação. Todos os nossos veículos passam por rigorosa inspeção técnica
                   e oferecemos garantia de procedência.
                 </p>
               </div>
