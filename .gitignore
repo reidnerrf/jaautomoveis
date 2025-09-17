@@ -15,6 +15,12 @@ playwright-report
 test-results
 .npm-cache
 
+# Ignorar todos os arquivos .webp dentro de uploads
+/uploads/*.webp
+
+# Manter a pasta uploads e outros arquivos dentro dela
+!/uploads/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
