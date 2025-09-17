@@ -42,7 +42,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ sidebarOpen, setSidebarOpen }
   };
 
   const adminName = "Ja Automóveis Admin"; // Aqui você pode definir o nome do admin, se houver
-  const adminImage = "../assets/semavatar.png"; // Aqui você pode definir a URL da imagem do admin, se houver
+  const adminImage = "/assets/semavatar.png"; // Aqui você pode definir a URL da imagem do admin, se houver
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200 dark:bg-gray-900/70 dark:border-gray-800 shadow-sm">

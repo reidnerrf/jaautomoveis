@@ -210,8 +210,8 @@ const HomePage: React.FC = () => {
   return (
     <div className="w-full bg-white dark:bg-gray-900 transition-colors duration-300 overflow-x-hidden ">
       <SEOHead
-        title="JA Automóveis - Seu Próximo Carro Está Aqui"
-        description="Encontre seu próximo carro com as melhores ofertas e financiamento facilitado na JA Automóveis"
+        title="JA Automóveis - Carros em Resende (RJ) com as melhores ofertas"
+        description="Compre carros seminovos e usados em Resende, Rio de Janeiro. Melhores ofertas, financiamento facilitado e atendimento premium na JA Automóveis."
         image="/assets/logo.png"
       >
         <script type="application/ld+json">

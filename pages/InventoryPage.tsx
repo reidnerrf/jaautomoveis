@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useDeferredValue } from "react";
 import { useVehicleData } from "../hooks/useVehicleData";
 import VehicleCard from "../components/VehicleCard.tsx";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,7 +23,16 @@ const InventoryPage: React.FC = () => {
   const safeVehicles = React.useMemo(() => (Array.isArray(vehicles) ? vehicles : []), [vehicles]);
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const deferredSearchTerm = useDeferredValue(debouncedSearchTerm);
+  // Debounce para busca (reduz recomputes pesados)
+  useEffect(() => {
+    const id = window.setTimeout(() => setDebouncedSearchTerm(searchTerm), 250);
+    return () => window.clearTimeout(id);
+  }, [searchTerm]);
   const [makeFilter, setMakeFilter] = useState("");
+  const [cityFilter, setCityFilter] = useState("Resende");
+  const [stateFilter, setStateFilter] = useState("RJ");
   const [yearFilter, setYearFilter] = useState("");
   const [priceFilter, setPriceFilter] = useState("");
   const [colorFilter, setColorFilter] = useState("");
@@ -121,9 +130,9 @@ const InventoryPage: React.FC = () => {
   const filteredAndSortedVehicles = useMemo(() => {
     const tempVehicles = safeVehicles.filter((vehicle) => {
       const matchesSearch =
-        vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vehicle.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vehicle.model.toLowerCase().includes(searchTerm.toLowerCase());
+        vehicle.name.toLowerCase().includes(deferredSearchTerm.toLowerCase()) ||
+        vehicle.make.toLowerCase().includes(deferredSearchTerm.toLowerCase()) ||
+        vehicle.model.toLowerCase().includes(deferredSearchTerm.toLowerCase());
       const passesMake = !makeFilter || vehicle.make === makeFilter;
       const passesYear = !yearFilter || vehicle.year === parseInt(yearFilter, 10);
       const passesColor = !colorFilter || vehicle.color === colorFilter;
@@ -137,6 +146,9 @@ const InventoryPage: React.FC = () => {
         (priceFilter === "60000-100000" && vehicle.price >= 60000 && vehicle.price <= 100000) ||
         (priceFilter === "100000" && vehicle.price > 100000);
       const isAvailable = !vehicle.status || vehicle.status === "disponivel";
+      // Filtros geográficos simples (quando houver metadados)
+      const matchesCity = !cityFilter || String((vehicle as any).city || "Resende").toLowerCase() === cityFilter.toLowerCase();
+      const matchesState = !stateFilter || String((vehicle as any).state || "RJ").toUpperCase() === stateFilter.toUpperCase();
 
       return (
         matchesSearch &&
@@ -146,7 +158,9 @@ const InventoryPage: React.FC = () => {
         passesFuel &&
         passesTransmission &&
         passesPrice &&
-        isAvailable
+        isAvailable &&
+        matchesCity &&
+        matchesState
       );
     });
 
@@ -183,7 +197,7 @@ const InventoryPage: React.FC = () => {
     return tempVehicles;
   }, [
     safeVehicles,
-    searchTerm,
+    deferredSearchTerm,
     makeFilter,
     yearFilter,
     colorFilter,
@@ -192,6 +206,8 @@ const InventoryPage: React.FC = () => {
     priceFilter,
     sortBy,
     likeCounts,
+    cityFilter,
+    stateFilter,
   ]);
 
   const totalPages = Math.ceil(filteredAndSortedVehicles.length / itemsPerPage) || 1;
@@ -376,11 +392,15 @@ const InventoryPage: React.FC = () => {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <SEOHead
-          title={`Estoque de Veículos | JA Automóveis`}
-          description={`Confira o estoque atualizado de carros seminovos e usados na JA Automóveis. Modelos selecionados com garantia e ótimos preços.`}
-          keywords={`estoque de carros, veículos usados, seminovos, comprar carro, JA Automóveis`}
+          title={`Estoque de Veículos em Resende, RJ | JA Automóveis`}
+          description={`Confira o estoque atualizado de carros seminovos e usados em Resende (RJ) e região do Sul Fluminense. Modelos selecionados com garantia e ótimos preços na JA Automóveis.`}
+          keywords={`estoque de carros em Resende RJ, veículos usados Resende, seminovos Resende, comprar carro Resende, carros Rio de Janeiro, Sul Fluminense, JA Automóveis`}
           image={`/assets/logo.png`}
         >
+          <link
+            rel="canonical"
+            href={typeof window !== "undefined" ? `${window.location.origin}/inventory` : "/inventory"}
+          />
           <script type="application/ld+json">
             {JSON.stringify({
               "@context": "https://schema.org",
@@ -530,6 +550,33 @@ const InventoryPage: React.FC = () => {
                         </option>
                       ))}
                     </select>
+                  </div>
+
+                  {/* Cidade */}
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      Cidade
+                    </label>
+                    <input
+                      value={cityFilter}
+                      onChange={(e) => setCityFilter(e.target.value)}
+                      placeholder="Ex.: Resende"
+                      className="w-full p-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-300"
+                    />
+                  </div>
+
+                  {/* Estado */}
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      Estado
+                    </label>
+                    <input
+                      value={stateFilter}
+                      maxLength={2}
+                      onChange={(e) => setStateFilter(e.target.value.toUpperCase())}
+                      placeholder="RJ"
+                      className="w-full p-3 uppercase border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-300"
+                    />
                   </div>
 
                   {/* Ano */}

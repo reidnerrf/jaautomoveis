@@ -745,7 +745,7 @@ const AdminSellerListPage: React.FC = () => {
                               <div className="avatar">
                                 <div className="mask mask-squircle w-12 h-12">
                                   <img
-                                    src={vehicle.images?.[0] || "/placeholder-car.jpg"}
+                                    src={vehicle.images?.[0] || "/assets/empreparacao.jpg"}
                                     alt={vehicle.name}
                                     className="object-cover"
                                   />

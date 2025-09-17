@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useDeferredValue, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useVehicleData } from "../hooks/useVehicleData.tsx";
 import { useAuth } from "../hooks/useAuth.tsx";
@@ -84,6 +84,12 @@ const AdminVehicleListPage: React.FC = () => {
   }, [vehicles]);
 
   const [nameFilter, setNameFilter] = useState("");
+  const [debouncedName, setDebouncedName] = useState("");
+  const deferredName = useDeferredValue(debouncedName);
+  useEffect(() => {
+    const id = window.setTimeout(() => setDebouncedName(nameFilter), 250);
+    return () => window.clearTimeout(id);
+  }, [nameFilter]);
   const [yearFilter, setYearFilter] = useState("");
   const [colorFilter, setColorFilter] = useState("");
   const [makeFilter, setMakeFilter] = useState("");
@@ -182,9 +188,9 @@ const AdminVehicleListPage: React.FC = () => {
     return vehicles
       .filter((vehicle) => {
         const nameMatch =
-          (vehicle.name || vehicle.title || "").toLowerCase().includes(nameFilter.toLowerCase()) ||
-          (vehicle.make || "").toLowerCase().includes(nameFilter.toLowerCase()) ||
-          (vehicle.model || "").toLowerCase().includes(nameFilter.toLowerCase());
+          (vehicle.name || vehicle.title || "").toLowerCase().includes(deferredName.toLowerCase()) ||
+          (vehicle.make || "").toLowerCase().includes(deferredName.toLowerCase()) ||
+          (vehicle.model || "").toLowerCase().includes(deferredName.toLowerCase());
         const yearMatch = !yearFilter || (vehicle.year || 0) === parseInt(yearFilter, 10);
         const colorMatch = !colorFilter || vehicle.color === colorFilter;
         const makeMatch = !makeFilter || (vehicle.make || "") === makeFilter;
@@ -221,7 +227,7 @@ const AdminVehicleListPage: React.FC = () => {
             return 0;
         }
       });
-  }, [vehicles, nameFilter, yearFilter, colorFilter, makeFilter, priceRangeFilter, sortBy]);
+  }, [vehicles, deferredName, yearFilter, colorFilter, makeFilter, priceRangeFilter, sortBy]);
 
   const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
   const currentVehicles = filteredVehicles.slice(
@@ -756,9 +762,10 @@ const AdminVehicleListPage: React.FC = () => {
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-4">
                           <img
-                            src={vehicle.images?.[0] || "/placeholder-car.jpg"}
+                            src={`${vehicle.images?.[0] || "/assets/empreparacao.jpg"}${(vehicle.images?.[0] || "").includes("?") ? "&" : "?"}v=${encodeURIComponent((vehicle as any).updatedAt || "")}`}
                             alt={vehicle.name}
                             className="h-16 w-24 rounded-lg object-cover shadow-md"
+                            loading="lazy"
                           />
                           <div>
                             <p className="font-bold text-gray-900 dark:text-white text-lg">
@@ -808,6 +815,13 @@ const AdminVehicleListPage: React.FC = () => {
                             to={vehicle.id ? `/vehicle/${vehicle.id}` : "#"}
                             className="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 transition-colors"
                             title="Visualizar"
+                            onMouseEnter={() => {
+                              try {
+                                if (vehicle.id) {
+                                  fetch(`/api/vehicles/${vehicle.id}`, { headers: { "Cache-Control": "no-store" } });
+                                }
+                              } catch {}
+                            }}
                           >
                             <FiEye size={18} />
                           </Link>
@@ -815,6 +829,13 @@ const AdminVehicleListPage: React.FC = () => {
                             to={`/admin/vehicles/edit/${vehicle.id}`}
                             className="p-2 rounded-lg bg-yellow-100 text-yellow-600 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 transition-colors"
                             title="Editar"
+                            onMouseEnter={() => {
+                              try {
+                                if (vehicle.id) {
+                                  fetch(`/api/vehicles/${vehicle.id}`, { headers: { "Cache-Control": "no-store" } });
+                                }
+                              } catch {}
+                            }}
                           >
                             <FiEdit size={18} />
                           </Link>
@@ -859,9 +880,10 @@ const AdminVehicleListPage: React.FC = () => {
             >
               <div className="relative">
                 <img
-                  src={vehicle.images?.[0] || "/placeholder-car.jpg"}
+                  src={`${vehicle.images?.[0] || "/assets/empreparacao.jpg"}${(vehicle.images?.[0] || "").includes("?") ? "&" : "?"}v=${encodeURIComponent((vehicle as any).updatedAt || "")}`}
                   alt={vehicle.name}
                   className="w-full h-48 object-cover"
+                  loading="lazy"
                 />
                 <div className="absolute top-3 left-3">
                   <input
@@ -896,12 +918,26 @@ const AdminVehicleListPage: React.FC = () => {
                     <Link
                       to={vehicle.id ? `/vehicle/${vehicle.id}` : "#"}
                       className="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+                      onMouseEnter={() => {
+                        try {
+                          if (vehicle.id) {
+                            fetch(`/api/vehicles/${vehicle.id}`, { headers: { "Cache-Control": "no-store" } });
+                          }
+                        } catch {}
+                      }}
                     >
                       <FiEye size={16} />
                     </Link>
                     <Link
                       to={`/admin/vehicles/edit/${vehicle.id}`}
                       className="p-2 rounded-lg bg-yellow-100 text-yellow-600 hover:bg-yellow-200 transition-colors"
+                      onMouseEnter={() => {
+                        try {
+                          if (vehicle.id) {
+                            fetch(`/api/vehicles/${vehicle.id}`, { headers: { "Cache-Control": "no-store" } });
+                          }
+                        } catch {}
+                      }}
                     >
                       <FiEdit size={16} />
                     </Link>

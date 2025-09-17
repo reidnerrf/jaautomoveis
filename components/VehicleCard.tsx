@@ -37,8 +37,9 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
 
     // Build image src with cache-busting using updatedAt to avoid stale images
     const imageSrc = useMemo(() => {
-      const base = vehicle.images?.[0] || "";
-      if (!base) return "";
+      const DEFAULT_IMAGE = "/assets/empreparacao.jpg";
+      const base = vehicle.images?.[0] || DEFAULT_IMAGE;
+      if (!base) return DEFAULT_IMAGE;
       const version = vehicle.updatedAt ? new Date(vehicle.updatedAt).getTime() : 0;
       if (!version) return base;
       return `${base}${base.includes("?") ? "&" : "?"}v=${version}`;
@@ -82,6 +83,16 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
       }
     };
 
+    // Prefetch leve da rota e dados ao passar o mouse
+    const handleMouseEnter = () => {
+      try {
+        if (!vehicle.id) return;
+        fetch(`/api/vehicles/${vehicle.id}`, { headers: { "Cache-Control": "no-store" } }).catch(
+          () => {}
+        );
+      } catch {}
+    };
+
     const handleFavoriteClick = (e: React.MouseEvent) => {
       e.stopPropagation();
       if (onFavorite && vehicle.id) {
@@ -114,6 +125,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 cursor-pointer group ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20"
           whileHover={{ scale: 1.01 }}
           onClick={handleCardClick}
+          onMouseEnter={handleMouseEnter}
         >
           <div className="flex flex-col md:flex-row">
             {/* Imagem */}
@@ -209,6 +221,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
               <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
                 <Link
                   to={`/vehicle/${vehicle.id}`}
+                  onMouseEnter={handleMouseEnter}
                   aria-label={`Ver detalhes do ${vehicle.make} ${vehicle.model} ${vehicle.year}`}
                   className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 focus:ring-2 focus:ring-blue-400"
                 >
@@ -242,6 +255,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
         transition={{ duration: 0.5, delay: index * 0.1 }}
         className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 cursor-pointer ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20"
         onClick={handleCardClick}
+        onMouseEnter={handleMouseEnter}
         whileHover={{ y: -5 }}
       >
         {/* Featured Badge */}
@@ -328,6 +342,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
 
             <Link
               to={`/vehicle/${vehicle.id}`}
+              onMouseEnter={handleMouseEnter}
               className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md text-sm"
             >
               <FiEye className="w-4 h-4" />

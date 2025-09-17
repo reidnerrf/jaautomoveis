@@ -624,7 +624,7 @@ const AdminDashboardPage: React.FC = () => {
               <div className="flex items-center">
                 <div className="w-12 h-12 flex-shrink-0 mr-3">
                   <img
-                    src={vehicle.images?.[0] || "/placeholder-car.jpg"}
+                    src={vehicle.images?.[0] || "/assets/empreparacao.jpg"}
                     alt={vehicle.name}
                     className="w-full h-full rounded-lg object-cover"
                   />

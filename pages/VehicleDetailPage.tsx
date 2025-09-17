@@ -218,7 +218,7 @@ const VehicleDetailPage: React.FC = () => {
         title={`${vehicle.year} ${vehicle.make} ${vehicle.model} - R$ ${vehicle.price.toLocaleString("pt-BR")} | JA Automóveis`}
         description={`${vehicle.year} ${vehicle.make} ${vehicle.model} - ${vehicle.color} - ${vehicle.km.toLocaleString("pt-BR")} km - R$ ${vehicle.price.toLocaleString("pt-BR")}. Confira este veículo na JA Automóveis.`}
         keywords={`${vehicle.make}, ${vehicle.model}, ${vehicle.year}, ${vehicle.color}, carro usado, seminovo, JA Automóveis, Resende RJ`}
-        image={vehicle.images?.[0] || "/placeholder-car.jpg"}
+        image={vehicle.images?.[0] || "/assets/empreparacao.jpg"}
         url={`/vehicle/${vehicle.id}`}
         type="product"
       >
@@ -316,7 +316,7 @@ const VehicleDetailPage: React.FC = () => {
               <div className="relative rounded-2xl overflow-hidden shadow-xl ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
                 <motion.img
                   whileHover={{ scale: 1.02 }}
-                  src={`${vehicle.images?.[currentImageIndex] || "/placeholder-car.jpg"}${vehicle.images?.[currentImageIndex]?.includes("?") ? "&" : "?"}v=${encodeURIComponent(vehicle.updatedAt || "")}`}
+                  src={`${vehicle.images?.[currentImageIndex] || "/assets/empreparacao.jpg"}${(vehicle.images?.[currentImageIndex] || "").includes("?") ? "&" : "?"}v=${encodeURIComponent(vehicle.updatedAt || "")}`}
                   alt={`${vehicle.make} ${vehicle.model} ${vehicle.year} imagem ${currentImageIndex + 1}`}
                   className="w-full h-[26rem] object-cover cursor-pointer transition-all"
                   onClick={() => setIsLightboxOpen(true)}
@@ -342,7 +342,7 @@ const VehicleDetailPage: React.FC = () => {
                 {(vehicle.images || []).map((img, index) => (
                   <img
                     key={`${img}-${index}`}
-                    src={`${img}${img.includes("?") ? "&" : "?"}v=${encodeURIComponent(vehicle.updatedAt || "")}`}
+                  src={`${img || "/assets/empreparacao.jpg"}${(img || "").includes("?") ? "&" : "?"}v=${encodeURIComponent(vehicle.updatedAt || "")}`}
                     alt={`${vehicle.name} thumbnail ${index + 1}`}
                     width={96}
                     height={80}
@@ -525,7 +525,7 @@ const VehicleDetailPage: React.FC = () => {
                   initial={{ opacity: 0.5, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.2 }}
-                  src={vehicle.images?.[currentImageIndex] || "/placeholder-car.jpg"}
+                  src={vehicle.images?.[currentImageIndex] || "/assets/empreparacao.jpg"}
                   alt={`${vehicle.name} - ${currentImageIndex + 1}`}
                   className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
                 />

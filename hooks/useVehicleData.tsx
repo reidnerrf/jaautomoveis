@@ -37,13 +37,13 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const clearError = useCallback(() => setError(null), []);
 
-  const fetchVehicles = useCallback(async () => {
+  const fetchVehicles = useCallback(async (options?: { forceNetwork?: boolean }) => {
     try {
       setLoading(true);
       setError(null);
 
       const cacheKey = createCacheKey("vehicles");
-      const cachedData = apiCache.get<Vehicle[]>(cacheKey);
+      const cachedData = options?.forceNetwork ? undefined : apiCache.get<Vehicle[]>(cacheKey);
 
       if (cachedData) {
         setVehicles(cachedData);
@@ -51,8 +51,9 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
         return;
       }
 
-      const shouldSkipServerCache =
+      const isAdminPath =
         typeof window !== "undefined" && window.location.pathname.startsWith("/admin");
+      const shouldSkipServerCache = Boolean(options?.forceNetwork || isAdminPath);
       const data = await httpGetJson<any>("/api/vehicles?limit=100", {
         headers: shouldSkipServerCache ? { "x-skip-cache": "true" } : undefined,
       });
@@ -83,9 +84,9 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, []);
 
   const refreshVehicles = useCallback(async () => {
-    // Invalidate client cache then refetch (admin fetch will also bypass server cache)
+    // Invalidate client cache then refetch bypassing server cache
     apiCache.delete(createCacheKey("vehicles"));
-    await fetchVehicles();
+    await fetchVehicles({ forceNetwork: true });
   }, [fetchVehicles]);
 
   useEffect(() => {
@@ -95,7 +96,30 @@ export const VehicleProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     // subscribe to real-time updates using shared socket
     const offCreated = analytics.on("vehicle-created", () => refreshVehicles());
-    const offUpdated = analytics.on("vehicle-updated", () => refreshVehicles());
+    const offUpdated = analytics.on("vehicle-updated", (payload: any) => {
+      // Atualização otimista imediata no estado local
+      try {
+        const updated = payload as Partial<Vehicle> & { _id?: string; id?: string };
+        const updatedId = (updated.id as string) || (updated._id as string) || "";
+        if (updatedId) {
+          setVehicles((prev) => {
+            const list = prev || [];
+            const index = list.findIndex((v) => v.id === updatedId || (v as any)._id === updatedId);
+            if (index === -1) return prev;
+            const merged: Vehicle = {
+              ...list[index],
+              ...(updated as any),
+              id: updatedId,
+            } as Vehicle;
+            const next = [...list];
+            next[index] = merged;
+            return next;
+          });
+        }
+      } catch {}
+      // E depois busca de rede para garantir consistência e bust de cache do servidor
+      refreshVehicles();
+    });
     const offDeleted = analytics.on("vehicle-deleted", () => refreshVehicles());
 
     return () => {
