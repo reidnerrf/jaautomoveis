@@ -7,26 +7,14 @@ import { useAuth } from "../hooks/useAuth.tsx";
 import { motion } from "framer-motion";
 
 const carMakes = [
-  "Fiat",
-  "Volkswagen",
-  "Chevrolet",
-  "Toyota",
-  "Hyundai",
-  "Renault",
-  "Jeep",
-  "Honda",
-  "BYD",
-  "Nissan",
-  "Caoa Chery",
-  "Ford",
-  "Citroën",
-  "GWM",
-  "RAM",
-  "Mitsubishi",
-  "Peugeot",
-  "BMW",
-  "Mercedes-Benz",
-  "Volvo",
+  "Fiat", "Volkswagen", "Chevrolet", "Toyota", "Hyundai", "Renault",
+  "Jeep", "Honda", "BYD", "Nissan", "Caoa Chery", "Ford", "Citroen",
+  "GWM", "RAM", "Mitsubishi", "Peugeot", "BMW", "Mercedes-Benz",
+  "Volvo", "KIA", "Audi", "Land Rover", "Porsche", "Mini", "Subaru",
+  "Lexus", "JAC Motors", "Tesla", "Alfa Romeo", "Changan", "Suzuki",
+  "Yamaha", "Kawasaki", "Harley-Davidson", "Royal Enfield", "Triumph", "Ducati",
+  "Suzuki Motors", "BMW Motorrad", "KTM", "MV Agusta", "Husqvarna", "Aprilia",
+  "Bajaj", "GasGas", "Benelli", "Hero MotoCorp"
 ];
 
 const AdminVehicleFormPage: React.FC = () => {
