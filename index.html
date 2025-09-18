@@ -51,6 +51,17 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-P8BNCWX706"></script>
     <script src="/ga.js"></script>
     <script>
+      // Apply a11y preferences from localStorage
+      try {
+        if (localStorage.getItem('pref_reduce_motion') === '1') {
+          document.documentElement.classList.add('reduce-motion');
+        }
+        if (localStorage.getItem('pref_text_spacing') === '1') {
+          document.documentElement.classList.add('text-spacing');
+        }
+      } catch (e) {}
+    </script>
+    <script>
       (function() {
         try {
           var stored = localStorage.getItem('theme');

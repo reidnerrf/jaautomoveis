@@ -706,7 +706,8 @@ const InventoryPage: React.FC = () => {
           className="mb-8 flex flex-col lg:flex-row gap-4 items-center justify-between"
         >
           {/* Search Bar */}
-          <div className="relative flex-1 max-w-md">
+          <div className="relative flex-1 max-w-md" onClick={() => analytics.sendClickHeatmap('inventory_search_click')}
+          >
             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
             <input
               type="text"
@@ -1164,9 +1165,9 @@ const InventoryPage: React.FC = () => {
 
         {/* Comparison Table (compact) */}
         {compareVehicles.length > 0 && (
-          <div className="mt-10 border-2 border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
+          <div className="mt-10 border-2 border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden" role="region" aria-labelledby="compare-heading">
             <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
-              <div className="font-bold">Comparando ({compareVehicles.length}/3)</div>
+              <div id="compare-heading" className="font-bold">Comparando ({compareVehicles.length}/3)</div>
               <button
                 onClick={() => {
                   localStorage.removeItem("compareIds");
@@ -1179,16 +1180,16 @@ const InventoryPage: React.FC = () => {
               </button>
             </div>
             <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
-                <thead className="bg-gray-100 dark:bg-gray-900">
-                  <tr>
-                    <th className="text-left p-3">Atributo</th>
+              <table className="min-w-full text-sm" role="table" aria-describedby="compare-heading">
+                <thead className="bg-gray-100 dark:bg-gray-900" role="rowgroup">
+                  <tr role="row">
+                    <th scope="col" className="text-left p-3">Atributo</th>
                     {compareVehicles.map((v: any) => (
-                      <th key={v.id} className="text-left p-3">{v.name}</th>
+                      <th scope="col" key={v.id} className="text-left p-3">{v.name}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody>
+                <tbody role="rowgroup">
                   {[
                     { k: "price", label: "Preço", format: (x: any) => `R$ ${new Intl.NumberFormat("pt-BR").format(x)}` },
                     { k: "year", label: "Ano" },
@@ -1197,10 +1198,10 @@ const InventoryPage: React.FC = () => {
                     { k: "gearbox", label: "Câmbio" },
                     { k: "doors", label: "Portas" },
                   ].map((row) => (
-                    <tr key={row.k} className="border-t border-gray-200 dark:border-gray-700">
+                    <tr role="row" key={row.k} className="border-t border-gray-200 dark:border-gray-700">
                       <th scope="row" className="p-3 font-semibold bg-gray-50 dark:bg-gray-800">{row.label}</th>
                       {compareVehicles.map((v: any) => (
-                        <td key={`${v.id}-${row.k}`} className="p-3">
+                        <td role="cell" key={`${v.id}-${row.k}`} className="p-3">
                           {row.format ? row.format((v as any)[row.k]) : String((v as any)[row.k] ?? "-")}
                         </td>
                       ))}

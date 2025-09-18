@@ -181,6 +181,25 @@ class AnalyticsService {
     this.emitUserAction(payload);
   }
 
+  // Sampled client-side click heatmap sender
+  sendClickHeatmap(eventName: string, extra?: Record<string, any>) {
+    try {
+      const consent = getConsent();
+      if (!consent.analytics) return;
+      if (Math.random() > 0.1) return; // 10% sampling
+      const payload = {
+        action: "click_heatmap",
+        label: JSON.stringify({ eventName, path: location.pathname, ...extra }),
+        timestamp: Date.now(),
+      };
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon("/api/analytics", new Blob([JSON.stringify(payload)], { type: "application/json" }));
+      } else {
+        fetch("/api/analytics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), keepalive: true as any });
+      }
+    } catch {}
+  }
+
   // Track business events (respeita consentimento)
   trackBusinessEvent(
     eventType:

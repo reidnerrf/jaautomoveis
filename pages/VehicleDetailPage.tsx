@@ -675,6 +675,7 @@ const VehicleDetailPage: React.FC = () => {
                             businessOpen: isOpen,
                           });
                         }
+                        try { (window as any).analytics?.sendClickHeatmap?.('detail_whatsapp_click', { isOpen }); } catch {}
                       }}
                     >
                       <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors">

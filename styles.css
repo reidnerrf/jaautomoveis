@@ -59,3 +59,10 @@
 /* Body colors bound to CSS variables for refined palette */
 body { background-color: var(--bg); color: var(--text); }
 .bg-surface { background-color: var(--bg-muted); }
+
+/* Accessibility preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+.text-spacing { letter-spacing: 0.02em; line-height: 1.7; word-spacing: 0.06em; }
