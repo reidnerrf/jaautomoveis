@@ -1,5 +1,6 @@
 import Vehicle from "../models/Vehicle";
 import ViewLog from "../models/ViewLog";
+import Analytics from "../models/Analytics";
 
 interface UserPreferences {
   userId: string;
@@ -81,6 +82,22 @@ class RecommendationEngine {
     try {
       const vehicles = await Vehicle.find({});
 
+      // Build likes count per vehicle from analytics
+      const likeDocs = await Analytics.find({ action: "like_vehicle" }).select("label").lean();
+      const likeCounts = new Map<string, number>();
+      for (const doc of likeDocs) {
+        try {
+          const parsed = (doc as any)?.label ? JSON.parse((doc as any).label) : {};
+          const vehicleId = String(parsed?.vehicleId || (doc as any).label || "");
+          if (!vehicleId) continue;
+          likeCounts.set(vehicleId, (likeCounts.get(vehicleId) || 0) + 1);
+        } catch {
+          const vehicleId = String((doc as any)?.label || "");
+          if (!vehicleId) continue;
+          likeCounts.set(vehicleId, (likeCounts.get(vehicleId) || 0) + 1);
+        }
+      }
+
       vehicles.forEach((vehicle) => {
         this.vehicleFeatures.set(vehicle.id, {
           id: vehicle.id,
@@ -94,8 +111,8 @@ class RecommendationEngine {
           color: vehicle.color,
           doors: vehicle.doors ?? 0,
           views: vehicle.views || 0,
-          likes: 0, // TODO: Implement likes count
-          shares: 0, // TODO: Implement shares count
+          likes: likeCounts.get(vehicle.id) || 0,
+          shares: 0,
         });
       });
 

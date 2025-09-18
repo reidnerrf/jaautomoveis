@@ -18,6 +18,7 @@ import {
 import { FaCarSide, FaGasPump, FaCog, FaCalendarAlt } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
 import MiniLeadForm from "../components/MiniLeadForm.tsx";
+import Recommendations from "../components/Recommendations.tsx";
 import { analytics } from "../utils/analytics";
 
 const InventoryPage: React.FC = () => {
@@ -619,6 +620,9 @@ const InventoryPage: React.FC = () => {
         >
           <MiniLeadForm context="inventory" />
         </motion.div>
+
+        {/* Recomendações (IA) */}
+        <Recommendations title="Sugestões para você" limit={6} />
 
         {/* Advanced Filters */}
         <AnimatePresence>

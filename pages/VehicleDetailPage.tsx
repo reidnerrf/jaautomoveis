@@ -28,6 +28,7 @@ import RealTimeViewers from "../components/RealTimeViewers.tsx";
 import SEOHead from "../components/SEOHead.tsx";
 import MiniLeadForm from "../components/MiniLeadForm.tsx";
 import OptimizedImage from "../components/OptimizedImage.tsx";
+import Recommendations from "../components/Recommendations.tsx";
 
 const VehicleDetailPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -595,6 +596,9 @@ const VehicleDetailPage: React.FC = () => {
               </p>
             </div>
           ) : null}
+
+          {/* Recomendações (IA) */}
+          <Recommendations title="Recomendados para você" limit={6} />
 
           {/* Outros veículos */}
           <div className="mt-16 space-y-16">
