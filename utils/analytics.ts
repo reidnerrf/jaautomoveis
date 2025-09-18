@@ -108,7 +108,12 @@ class AnalyticsService {
         dsn: (window as any).SENTRY_DSN || "",
         integrations: [Sentry.browserTracingIntegration()],
         tracesSampleRate: 0.1,
-        environment: (window as any).SENTRY_ENV || "production",
+        environment: (window as any).SENTRY_ENV || (import.meta as any)?.env?.MODE || "production",
+        release:
+          (window as any).SENTRY_RELEASE ||
+          ((import.meta as any)?.env?.VITE_APP_VERSION
+            ? `app@${(import.meta as any).env.VITE_APP_VERSION}`
+            : undefined),
       });
       this.sentryInitialized = true;
     } catch {
@@ -169,6 +174,10 @@ class AnalyticsService {
       label: labelWithVariant,
       page: page || window.location.pathname,
     };
+    try {
+      const Sentry: any = (window as any).Sentry || (await import("@sentry/react"));
+      Sentry?.addBreadcrumb?.({ category, message: action, data: { label: labelWithVariant } });
+    } catch {}
     this.emitUserAction(payload);
   }
 
@@ -203,6 +212,10 @@ class AnalyticsService {
       label: labelWithVariant,
       page: page || window.location.pathname,
     };
+    try {
+      const Sentry: any = (window as any).Sentry || (await import("@sentry/react"));
+      Sentry?.addBreadcrumb?.({ category: "business", message: eventType, data: { label: labelWithVariant } });
+    } catch {}
     this.emitUserAction(payload);
   }
 
