@@ -46,6 +46,7 @@ const VehicleDetailPage: React.FC = () => {
   const pinchRef = useRef<{ dist: number; zoom: number } | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const viewIncrementedRef = useRef<string | null>(null);
+  const [showExitOffer, setShowExitOffer] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -76,6 +77,48 @@ const VehicleDetailPage: React.FC = () => {
       setVehicle(null);
       viewIncrementedRef.current = null;
     }
+  }, [id]);
+
+  // Exit-intent offer (respect consent, once per session per vehicle)
+  useEffect(() => {
+    const vehId = id || "";
+    if (!vehId) return;
+    const sessionKey = `exitOffer:${vehId}`;
+    const already = sessionStorage.getItem(sessionKey);
+    if (already) return;
+    const consent = ((): string => {
+      try { return String(localStorage.getItem("cookieConsentV1") || ""); } catch { return ""; }
+    })();
+    if (consent === "denied") return;
+
+    const onMouseOut = (e: MouseEvent) => {
+      if (e.clientY <= 0) {
+        sessionStorage.setItem(sessionKey, "1");
+        setShowExitOffer(true);
+        document.body.style.overflow = "hidden";
+        window.removeEventListener("mouseout", onMouseOut as any);
+      }
+    };
+    window.addEventListener("mouseout", onMouseOut as any, { passive: true } as any);
+
+    // Mobile: try history back intent via visibility/blur fallback after inactivity
+    let timer: number | null = null;
+    const onTouchMove = () => {
+      if (timer) window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        if (!sessionStorage.getItem(sessionKey)) {
+          sessionStorage.setItem(sessionKey, "1");
+          setShowExitOffer(true);
+          document.body.style.overflow = "hidden";
+        }
+      }, 25000);
+    };
+    window.addEventListener("touchmove", onTouchMove, { passive: true } as any);
+    return () => {
+      window.removeEventListener("mouseout", onMouseOut as any);
+      window.removeEventListener("touchmove", onTouchMove as any);
+      if (timer) window.clearTimeout(timer);
+    };
   }, [id]);
 
   // Load favorite state from localStorage
@@ -998,6 +1041,77 @@ const VehicleDetailPage: React.FC = () => {
                   </div>
                 )}
               </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+
+        {/* Exit-intent Offer Modal */}
+        <AnimatePresence>
+          {showExitOffer ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
+              onClick={() => {
+                setShowExitOffer(false);
+                document.body.style.overflow = "";
+              }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Oferta antes de sair"
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="max-w-md w-full bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Vai sair? Podemos ajudar!</h3>
+                  <button
+                    onClick={() => { setShowExitOffer(false); document.body.style.overflow = ""; }}
+                    aria-label="Fechar oferta"
+                    className="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+                  >
+                    <FiX size={24} />
+                  </button>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Tire dúvidas rápidas no WhatsApp sobre o {vehicle.name}. Sem compromisso.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a
+                    href={`https://wa.me/5524999037716?text=${encodeURIComponent(
+                      `Tenho dúvidas sobre o ${vehicle.name} ${vehicle.year}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => {
+                      try {
+                        (window as any).trackBusinessEvent?.("exit_intent_offer_whatsapp", {
+                          vehicleId: vehicle.id,
+                          name: vehicle.name,
+                        });
+                      } catch {}
+                      setShowExitOffer(false);
+                      document.body.style.overflow = "";
+                    }}
+                    className="flex-1"
+                  >
+                    <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                      Falar no WhatsApp
+                    </button>
+                  </a>
+                  <button
+                    onClick={() => { setShowExitOffer(false); document.body.style.overflow = ""; }}
+                    className="flex-1 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-semibold py-3 px-6 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    Continuar navegando
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
           ) : null}
         </AnimatePresence>
