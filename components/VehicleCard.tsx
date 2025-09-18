@@ -188,11 +188,21 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">R$</span>
-                    <p className="text-3xl font-extrabold text-green-600 dark:text-green-400 drop-shadow-sm">
-                      {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
-                    </p>
+                  <div className="flex items-center gap-2 justify-end">
+                    {typeof (vehicle as any).previousPrice === "number" && (vehicle as any).previousPrice > vehicle.price ? (
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-xs text-gray-400">R$</span>
+                        <span className="text-lg text-gray-400 line-through">
+                          {new Intl.NumberFormat("pt-BR").format((vehicle as any).previousPrice)}
+                        </span>
+                      </div>
+                    ) : null}
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">R$</span>
+                      <p className="text-3xl font-extrabold text-green-600 dark:text-green-400 drop-shadow-sm">
+                        {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -333,11 +343,21 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
 
           {/* Price and Action */}
           <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700 gap-3">
-            <div className="flex items-baseline gap-1">
-              <span className="text-sm text-gray-500">R$</span>
-              <span className="text-xl font-bold text-green-600 dark:text-green-400">
-                {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
-              </span>
+            <div className="flex items-center gap-2">
+              {typeof (vehicle as any).previousPrice === "number" && (vehicle as any).previousPrice > vehicle.price ? (
+                <div className="flex items-baseline gap-1">
+                  <span className="text-xs text-gray-400">R$</span>
+                  <span className="text-base text-gray-400 line-through">
+                    {new Intl.NumberFormat("pt-BR").format((vehicle as any).previousPrice)}
+                  </span>
+                </div>
+              ) : null}
+              <div className="flex items-baseline gap-1">
+                <span className="text-sm text-gray-500">R$</span>
+                <span className="text-xl font-bold text-green-600 dark:text-green-400">
+                  {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
+                </span>
+              </div>
             </div>
 
             <Link

@@ -6,6 +6,7 @@ export interface Vehicle {
   title?: string;
   name: string;
   price: number;
+  previousPrice?: number;
   make: string;
   model: string;
   year: number;

@@ -376,11 +376,27 @@ const VehicleDetailPage: React.FC = () => {
               <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
                 {vehicle.name}
               </h1>
-              <div className="flex items-center gap-1 mt-2 mb-6 ">
-                <span className="text-sm text-gray-500">R$</span>
-                <p className="text-5xl font-bold text-main-red drop-shadow-sm">
-                  {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
-                </p>
+              <div className="flex items-center gap-3 mt-2 mb-2">
+                {typeof (vehicle as any).previousPrice === "number" && (vehicle as any).previousPrice > vehicle.price ? (
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xs text-gray-400">R$</span>
+                    <span className="text-2xl text-gray-400 line-through">
+                      {new Intl.NumberFormat("pt-BR").format((vehicle as any).previousPrice)}
+                    </span>
+                  </div>
+                ) : null}
+                <div className="flex items-baseline gap-1">
+                  <span className="text-sm text-gray-500">R$</span>
+                  <p className="text-5xl font-bold text-main-red drop-shadow-sm">
+                    {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
+                  </p>
+                </div>
+              </div>
+              {/* Oferta abaixo de Disponível */}
+              <div className="mb-6">
+                <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 border border-red-200 px-3 py-1 rounded-full text-sm font-semibold">
+                  🔥 Oferta especial válida por tempo limitado
+                </div>
               </div>
 
               {/* Selos de confiança + Compartilhar */}

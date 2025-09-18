@@ -23,6 +23,7 @@ const AdminVehicleFormPage: React.FC = () => {
   const { getVehicleById, addVehicle, updateVehicle, refreshVehicles } = useVehicleData();
   const { token } = useAuth();
   const isEditing = Boolean(id);
+  const [originalPrice, setOriginalPrice] = useState<number | null>(null);
 
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -66,6 +67,7 @@ const AdminVehicleFormPage: React.FC = () => {
             doors: existingVehicle.doors.toString(),
             cost: existingVehicle.cost?.toString() || "",
           });
+          setOriginalPrice(Number(existingVehicle.price) || null);
         }
       })();
     }
@@ -160,14 +162,20 @@ const AdminVehicleFormPage: React.FC = () => {
       console.warn("Validação: marca é obrigatória.");
       return;
     }
-    const vehicleDataToSubmit = {
+    const nextPriceNumber = Number(vehicle.price) || 0;
+    const vehicleDataToSubmit: any = {
       ...vehicle,
-      price: Number(vehicle.price) || 0,
+      price: nextPriceNumber,
       year: Number(vehicle.year) || 0,
       km: Number(vehicle.km) || 0,
       doors: Number(vehicle.doors) || 0,
       cost: Number(vehicle.cost) || 0,
     };
+
+    // Preserve previous price when editing and price changes
+    if (isEditing && originalPrice !== null && originalPrice !== nextPriceNumber) {
+      vehicleDataToSubmit.previousPrice = originalPrice;
+    }
 
     try {
       if (isEditing && id) {
