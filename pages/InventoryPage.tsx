@@ -487,10 +487,20 @@ const InventoryPage: React.FC = () => {
               ]
             })}
           </script>
-          <link
-            rel="canonical"
-            href={typeof window !== "undefined" ? `${window.location.origin}/inventory` : "/inventory"}
-          />
+          {(() => {
+            try {
+              const url = new URL(
+                typeof window !== "undefined" ? window.location.href : "https://jaautomoveisresende.com.br/inventory"
+              );
+              // Ensure canonical includes page when > 1
+              const canonical = url.searchParams.get("page") && parseInt(url.searchParams.get("page") || "1", 10) > 1
+                ? url.href
+                : `${url.origin}/inventory`;
+              return <link rel="canonical" href={canonical} />;
+            } catch {
+              return <link rel="canonical" href="/inventory" />;
+            }
+          })()}
           <script type="application/ld+json">
             {JSON.stringify({
               "@context": "https://schema.org",

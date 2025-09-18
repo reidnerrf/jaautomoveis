@@ -217,6 +217,27 @@ const HomePage: React.FC = () => {
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "AutoDealer",
+            name: "JA Automóveis",
+            url: typeof window !== "undefined" ? window.location.origin : "https://jaautomoveisresende.com.br",
+            telephone: "+55 24 99903-7716",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "Av. Brasília, n°35 - Vila Julieta",
+              addressLocality: "Resende",
+              addressRegion: "RJ",
+              postalCode: "27511-110",
+              addressCountry: "BR"
+            },
+            sameAs: [
+              "https://www.instagram.com/_jaautomoveis/",
+              "https://wa.me/5524999037716"
+            ]
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "Organization",
             name: "JA Automóveis",
             url: typeof window !== "undefined" ? window.location.origin : "https://jaautomoveisresende.com.br",
