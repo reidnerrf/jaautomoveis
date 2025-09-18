@@ -113,6 +113,38 @@ const AboutPage: React.FC = () => {
             ],
           })}
         </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "Os veículos têm garantia?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Sim. Todos os veículos passam por inspeção e são entregues com garantia de procedência.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Vocês fazem avaliação do meu carro na troca?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Sim. Avaliamos seu veículo com transparência e usamos como entrada na negociação.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Trabalham com financiamento?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Sim. Temos parceria com bancos e apresentamos as melhores condições conforme seu perfil.",
+                },
+              },
+            ],
+          })}
+        </script>
       </SEOHead>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Cabeçalho */}
@@ -254,6 +286,18 @@ const AboutPage: React.FC = () => {
               </motion.div>
             ))}
           </div>
+        </div>
+
+        {/* CTA WhatsApp */}
+        <div className="mt-16 text-center">
+          <a
+            href="https://wa.me/5524999037716?text=Olá,%20gostaria%20de%20saber%20mais%20sobre%20a%20JA%20Automóveis"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition-colors"
+          >
+            <span role="img" aria-label="whatsapp">💬</span> Falar com um especialista
+          </a>
         </div>
 
         {/* Localização */}
