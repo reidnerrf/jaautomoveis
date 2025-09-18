@@ -173,6 +173,7 @@ const AboutPage: React.FC = () => {
               src="/assets/sobrenos.jpg"
               alt="Equipe JA Automóveis"
               className="rounded-2xl shadow-xl border border-gray-200"
+              loading="lazy"
             />
           </motion.div>
 

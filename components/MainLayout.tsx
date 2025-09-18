@@ -5,6 +5,7 @@ import Footer from "./Footer.tsx";
 import { Outlet, useLocation } from "react-router-dom";
 import FloatingSocialButtons from "./FloatingSocialButtons.tsx";
 import { analytics } from "../utils/analytics.ts";
+import PromoBanner from "./PromoBanner.tsx";
 const CookieConsent = React.lazy(() => import("./CookieConsent.tsx"));
 const JivoSite = React.lazy(() => import("./JivoSite.tsx"));
 
@@ -56,6 +57,9 @@ const MainLayout: React.FC = () => {
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-red-500/20 blur-3xl rounded-full" />
         <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500/20 blur-3xl rounded-full" />
       </div>
+      {!location.pathname.startsWith("/admin") && (
+        <PromoBanner message="Semana de Ofertas: bônus na avaliação do seu usado!" ctaLabel="Ver Estoque" ctaHref="/inventory" />
+      )}
       <Header />
       {/* Sem padding no topo na Home para o vídeo encostar no header transparente */}
       <main className={`relative flex-grow ${isHome ? "pt-0" : "pt-20"}`}>
