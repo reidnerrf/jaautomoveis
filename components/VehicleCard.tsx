@@ -262,7 +262,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
 
                 <a
                   href={`https://wa.me/5524999037716?text=${encodeURIComponent(
-                    `Olá! Tenho interesse no ${vehicle.make} ${vehicle.model} ${vehicle.year}`
+                    `Olá! Tenho interesse no ${vehicle.make} ${vehicle.model} ${vehicle.year} — pode me enviar mais detalhes?`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -270,7 +270,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
                   className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 focus:ring-2 focus:ring-green-400"
                 >
                   <FaWhatsapp className="w-5 h-5" />
-                  WhatsApp
+                  Falar no WhatsApp
                 </a>
               </div>
             </div>

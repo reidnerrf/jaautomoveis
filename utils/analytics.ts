@@ -124,6 +124,18 @@ class AnalyticsService {
       const { onCLS, onLCP, onINP, onTTFB } = await import("web-vitals");
       const report = (name: string, value: number) => {
         this.trackUserAction("web_vital", "performance", `${name}:${Math.round(value)}`);
+        try {
+          const metric = name.toUpperCase();
+          const v = Math.round(value);
+          const thresholds: Record<string, number> = { LCP: 2500, CLS: 0.1, INP: 200, TTFB: 800 };
+          const exceed = (metric === "CLS" ? value : v) > thresholds[metric]!
+            ? "exceeded"
+            : "ok";
+          if (exceed === "exceeded") {
+            // Send simple alert event (could be routed to backend later)
+            this.trackBusinessEvent("performance", { metric, value: v, page: window.location.pathname });
+          }
+        } catch {}
       };
       onCLS((m) => report("CLS", m.value));
       onLCP((m) => report("LCP", m.value));

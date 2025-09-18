@@ -34,7 +34,7 @@ const PromoBanner: React.FC<PromoBannerProps> = ({
       return {
         label:
           (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_PROMO_CTA_LABEL_B) ||
-          "Ver Ofertas",
+          "Aproveitar Agora",
         href:
           (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_PROMO_CTA_HREF_B) ||
           "/inventory",
