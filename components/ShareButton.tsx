@@ -21,7 +21,18 @@ const ShareButton: React.FC<ShareButtonProps> = ({ vehicle, className = "" }) =>
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const shareUrl = window.location.href;
+  const shareUrl = (() => {
+    try {
+      const u = new URL(window.location.href);
+      u.searchParams.set("utm_source", "share");
+      u.searchParams.set("utm_medium", "social");
+      u.searchParams.set("utm_campaign", "share_vehicle");
+      if (vehicle?.id) u.searchParams.set("utm_content", `vehicle_${vehicle.id}`);
+      return u.toString();
+    } catch {
+      return window.location.href;
+    }
+  })();
   const title = `Confira este ${vehicle?.name || "veículo"} na JA Automóveis!`;
 
   const copyToClipboard = async () => {

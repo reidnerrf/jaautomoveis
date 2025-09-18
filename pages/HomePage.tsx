@@ -214,6 +214,7 @@ const HomePage: React.FC = () => {
         description="Compre carros seminovos e usados em Resende, Rio de Janeiro. Melhores ofertas, financiamento facilitado e atendimento premium na JA Automóveis."
         image="/assets/logo.png"
       >
+        <link rel="preload" as="image" href="/assets/homepageabout.webp" imagesrcset="/assets/homepageabout.webp 1x" imagesizes="100vw" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

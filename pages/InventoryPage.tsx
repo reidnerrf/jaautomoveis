@@ -424,6 +424,30 @@ const InventoryPage: React.FC = () => {
           keywords={`estoque de carros em Resende RJ, veículos usados Resende, seminovos Resende, comprar carro Resende, carros Rio de Janeiro, Sul Fluminense, JA Automóveis`}
           image={`/assets/logo.png`}
         >
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "Posso financiar um veículo?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Sim. Trabalhamos com diversos bancos parceiros e simulamos as melhores condições."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  name: "Vocês aceitam carro na troca?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Sim. Avaliamos seu usado como parte do pagamento."
+                  }
+                }
+              ]
+            })}
+          </script>
           <link
             rel="canonical"
             href={typeof window !== "undefined" ? `${window.location.origin}/inventory` : "/inventory"}

@@ -265,6 +265,30 @@ const VehicleDetailPage: React.FC = () => {
             ],
           })}
         </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "Como reservo este veículo?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Fale no WhatsApp e podemos reservar mediante sinal e documentação."
+                }
+              },
+              {
+                "@type": "Question",
+                name: "O veículo tem garantia?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Sim, entregamos com garantia de procedência e inspeção técnica."
+                }
+              }
+            ]
+          })}
+        </script>
         <script type="application/ld+json">{JSON.stringify(generateStructuredData())}</script>
         <script type="application/ld+json">
           {JSON.stringify({
@@ -328,12 +352,16 @@ const VehicleDetailPage: React.FC = () => {
             {/* Galeria de imagens */}
             <div className="lg:col-span-3">
               <div className="relative rounded-2xl overflow-hidden shadow-xl ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
-                <motion.img
-                  whileHover={{ scale: 1.02 }}
-                  src={`${vehicle.images?.[currentImageIndex] || "/assets/empreparacao.jpg"}${(vehicle.images?.[currentImageIndex] || "").includes("?") ? "&" : "?"}v=${encodeURIComponent(vehicle.updatedAt || "")}`}
+                <OptimizedImage
+                  src={`${vehicle.images?.[currentImageIndex] || "/assets/empreparacao.jpg"}`}
                   alt={`${vehicle.make} ${vehicle.model} ${vehicle.year} imagem ${currentImageIndex + 1}`}
                   className="w-full h-[26rem] object-cover cursor-pointer transition-all"
                   onClick={() => setIsLightboxOpen(true)}
+                  width={1280}
+                  height={624}
+                  sizes="(max-width: 1024px) 100vw, 960px"
+                  priority
+                  fetchPriority="high"
                 />
                 {(vehicle.images?.length || 0) > 1 && (
                   <>
@@ -361,6 +389,7 @@ const VehicleDetailPage: React.FC = () => {
                     width={96}
                     height={80}
                     loading="lazy"
+                    decoding="async"
                     className={`w-24 h-20 object-cover rounded-lg cursor-pointer border-2 ${index === currentImageIndex ? "border-main-red" : "border-transparent"} transition`}
                     onClick={() => setCurrentImageIndex(index)}
                   />
@@ -476,6 +505,10 @@ const VehicleDetailPage: React.FC = () => {
                   onClick={() => {
                     if ((window as any).trackBusinessEvent) {
                       (window as any).trackBusinessEvent("whatsapp_click", {
+                        vehicleId: vehicle.id,
+                        name: vehicle.name,
+                      });
+                      (window as any).trackBusinessEvent("add_to_whatsapp", {
                         vehicleId: vehicle.id,
                         name: vehicle.name,
                       });
