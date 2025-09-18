@@ -65,6 +65,15 @@ const ContactPage: React.FC = () => {
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "JA Automóveis",
+            url: typeof window !== "undefined" ? window.location.origin : "https://jaautomoveisresende.com.br",
+            aggregateRating: { "@type": "AggregateRating", ratingValue: 4.8, reviewCount: 28 }
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
               {

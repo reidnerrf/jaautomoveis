@@ -129,11 +129,20 @@ class AnalyticsService {
   trackUserAction(action: string, category: string, label?: string, page?: string) {
     const consent = getConsent();
     if (!consent.analytics) return;
+    const labelWithVariant = (() => {
+      try {
+        const variant = localStorage.getItem("ab_variant") || "";
+        const base = label ? (() => { try { return JSON.parse(label); } catch { return { raw: label }; } })() : {};
+        return JSON.stringify({ ...base, variant });
+      } catch {
+        return label;
+      }
+    })();
     const payload: AnalyticsEventPayload = {
       event: "user_action",
       category,
       action,
-      label,
+      label: labelWithVariant,
       page: page || window.location.pathname,
     };
     this.emitUserAction(payload);
@@ -154,11 +163,20 @@ class AnalyticsService {
   ) {
     const consent = getConsent();
     if (!consent.analytics) return;
+    const labelWithVariant = (() => {
+      try {
+        const variant = localStorage.getItem("ab_variant") || "";
+        const base = data ? data : {};
+        return JSON.stringify({ ...base, variant });
+      } catch {
+        return data ? JSON.stringify(data) : undefined;
+      }
+    })();
     const payload: AnalyticsEventPayload = {
       event: eventType,
       category: "business",
       action: eventType,
-      label: data ? JSON.stringify(data) : undefined,
+      label: labelWithVariant,
       page: page || window.location.pathname,
     };
     this.emitUserAction(payload);

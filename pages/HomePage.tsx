@@ -214,6 +214,19 @@ const HomePage: React.FC = () => {
         description="Compre carros seminovos e usados em Resende, Rio de Janeiro. Melhores ofertas, financiamento facilitado e atendimento premium na JA Automóveis."
         image="/assets/logo.png"
       >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "JA Automóveis",
+            url: typeof window !== "undefined" ? window.location.origin : "https://jaautomoveisresende.com.br",
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: 4.8,
+              reviewCount: 28
+            }
+          })}
+        </script>
         <link rel="preload" as="image" href="/assets/homepageabout.webp" imagesrcset="/assets/homepageabout.webp 1x" imagesizes="100vw" />
         <script type="application/ld+json">
           {JSON.stringify({

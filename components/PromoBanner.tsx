@@ -46,6 +46,10 @@ const PromoBanner: React.FC<PromoBannerProps> = ({
     try {
       const dismissed = localStorage.getItem(abKey) === "1";
       if (!dismissed) setVisible(true);
+      // Persist selected variant for analytics session attribution
+      try {
+        localStorage.setItem("ab_variant", variant);
+      } catch {}
     } catch {
       setVisible(true);
     }
