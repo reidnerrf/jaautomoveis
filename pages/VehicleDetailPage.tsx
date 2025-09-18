@@ -218,6 +218,47 @@ const VehicleDetailPage: React.FC = () => {
   const singleOwner = Boolean((vehicle as any)?.singleOwner);
   const reportApproved = Boolean((vehicle as any)?.inspectionApproved || (vehicle as any)?.laudoAprovado);
 
+  // Vehicle timeline (maintenance/visits/test-drives)
+  type TimelineEvent = { type: string; date?: string; label: string; note?: string };
+  const timelineEvents: TimelineEvent[] = React.useMemo(() => {
+    const events: TimelineEvent[] = [];
+    const v: any = vehicle || {};
+    const pushSafe = (e?: TimelineEvent) => { if (e && e.label) events.push(e); };
+    // Generic timeline array if provided
+    if (Array.isArray(v.timeline)) {
+      for (const it of v.timeline) {
+        if (it && (it.label || it.type)) {
+          pushSafe({ type: String(it.type || "evento"), date: it.date, label: String(it.label || it.type || "Evento"), note: it.note });
+        }
+      }
+    }
+    // Maintenance history
+    if (Array.isArray(v.maintenanceHistory)) {
+      for (const m of v.maintenanceHistory) {
+        pushSafe({ type: "manutencao", date: m?.date, label: m?.label || "Manutenção realizada", note: m?.note });
+      }
+    }
+    // Visits
+    if (Array.isArray(v.visits)) {
+      for (const vis of v.visits) {
+        pushSafe({ type: "visita", date: vis?.date, label: vis?.label || "Visita ao showroom", note: vis?.note });
+      }
+    }
+    // Test drives
+    if (Array.isArray(v.testDrives)) {
+      for (const td of v.testDrives) {
+        pushSafe({ type: "test-drive", date: td?.date, label: td?.label || "Test-drive realizado", note: td?.note });
+      }
+    }
+    // Sort descending by date when dates exist
+    events.sort((a, b) => {
+      const da = a.date ? Date.parse(a.date) : 0;
+      const db = b.date ? Date.parse(b.date) : 0;
+      return db - da;
+    });
+    return events.slice(0, 10);
+  }, [vehicle]);
+
   const toggleFavorite = () => {
     const newFavoriteState = !isFavorite;
     setIsFavorite(newFavoriteState);
@@ -656,6 +697,34 @@ const VehicleDetailPage: React.FC = () => {
               </p>
             </div>
           ) : null}
+
+          {/* Linha do tempo do veículo */}
+          <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg mt-8 ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+              Linha do Tempo
+            </h2>
+            {timelineEvents.length ? (
+              <ol className="relative border-l-2 border-gray-200 dark:border-gray-700 pl-6 space-y-5">
+                {timelineEvents.map((ev, idx) => (
+                  <li key={idx} className="ml-2">
+                    <div className="absolute -left-1.5 w-3 h-3 rounded-full bg-main-red"></div>
+                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                      {ev.date ? new Date(ev.date).toLocaleDateString("pt-BR") : ""}
+                      <span className="uppercase tracking-wide text-xs px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+                        {ev.type}
+                      </span>
+                    </div>
+                    <div className="font-semibold text-gray-800 dark:text-gray-200">{ev.label}</div>
+                    {ev.note ? (
+                      <div className="text-gray-600 dark:text-gray-300 text-sm">{ev.note}</div>
+                    ) : null}
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <div className="text-gray-600 dark:text-gray-300 text-sm">Sem eventos registrados ainda.</div>
+            )}
+          </div>
 
           {/* Recomendações (IA) */}
           <Recommendations title="Recomendados para você" limit={6} />
