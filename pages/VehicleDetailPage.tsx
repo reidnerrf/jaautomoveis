@@ -726,6 +726,48 @@ const VehicleDetailPage: React.FC = () => {
             )}
           </div>
 
+          {/* Custos de propriedade estimados */}
+          <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg mt-8 ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Custos de Propriedade (estimativa)</h2>
+            {(() => {
+              const price = Number(vehicle.price || 0);
+              const ipvaRate = 0.04; // 4% padrão RJ, pode variar
+              const ipva = Math.max(0, Math.round(price * ipvaRate));
+              const insuranceBase = 2000; // base simplificada
+              const insuranceByYear = Math.max(0.6, Math.min(1.2, (2025 - Number(vehicle.year || 2015)) * -0.03 + 1));
+              const insurance = Math.round(insuranceBase * insuranceByYear);
+              const monthlyKm = 1000; // suposição
+              const fuelPrice = (vehicle.fuel || "Flex") === "Diesel" ? 6.0 : 5.8; // média simplificada
+              const kmPerLiter = (vehicle.fuel || "Flex") === "Diesel" ? 12 : 10; // suposição
+              const monthlyFuel = Math.round((monthlyKm / kmPerLiter) * fuelPrice);
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="card">
+                    <div className="card-body">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">IPVA (anual)</div>
+                      <div className="text-2xl font-extrabold text-gray-800 dark:text-gray-100">R$ {new Intl.NumberFormat("pt-BR").format(ipva)}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Alíquota estimada de {Math.round(ipvaRate*100)}%</div>
+                    </div>
+                  </div>
+                  <div className="card">
+                    <div className="card-body">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">Seguro (anual)</div>
+                      <div className="text-2xl font-extrabold text-gray-800 dark:text-gray-100">R$ {new Intl.NumberFormat("pt-BR").format(insurance)}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Varia com perfil e ano/modelo</div>
+                    </div>
+                  </div>
+                  <div className="card">
+                    <div className="card-body">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">Combustível (mensal)</div>
+                      <div className="text-2xl font-extrabold text-gray-800 dark:text-gray-100">R$ {new Intl.NumberFormat("pt-BR").format(monthlyFuel)}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Base: {monthlyKm} km/mês · {kmPerLiter} km/l · R$ {fuelPrice.toFixed(2)}/l</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
           {/* Recomendações (IA) */}
           <Recommendations title="Recomendados para você" limit={6} />
 
