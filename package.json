@@ -34,6 +34,7 @@
     "dev:server:nodb": "cross-env NODE_ENV=development SKIP_DB=true nodemon --watch server.ts --watch backend --ext ts,tsx --exec ts-node --project tsconfig.server.json --transpile-only server.ts",
     "seed": "ts-node --project tsconfig.server.json seeder.ts",
     "analyze": "npm run build:client && npx vite-bundle-analyzer dist/assets",
+    "analyze:visualizer": "npm run build:client && npx rollup-plugin-visualizer dist/stats.html --sourcemap dist/assets/*.js",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "type-check": "tsc --noEmit",
