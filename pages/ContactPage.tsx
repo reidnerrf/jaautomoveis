@@ -82,6 +82,38 @@ const ContactPage: React.FC = () => {
             ],
           })}
         </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "Qual o horário de atendimento?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Segunda a sexta, das 8h às 18:30h, e sábado das 8h às 13h.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Posso ser atendido pelo WhatsApp?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Sim, nosso número oficial é (24) 99903-7716. Clique no botão do WhatsApp para iniciar a conversa.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Onde ficam localizados?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Av. Brasília, n°35 - Vila Julieta, Resende - RJ.",
+                },
+              },
+            ],
+          })}
+        </script>
       </SEOHead>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Título e subtítulo */}
@@ -242,7 +274,17 @@ const ContactPage: React.FC = () => {
                         {info.title}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300 font-medium break-words">
-                        {info.info}
+                        {info.title === "Telefone" ? (
+                          <a href="https://wa.me/5524999037716" className="underline decoration-dotted">
+                            {info.info}
+                          </a>
+                        ) : info.title === "Email" ? (
+                          <a href="mailto:contato@jaautomoveisresende.com.br" className="underline decoration-dotted">
+                            contato@jaautomoveisresende.com.br
+                          </a>
+                        ) : (
+                          info.info
+                        )}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{info.description}</p>
                     </div>
@@ -276,6 +318,17 @@ const ContactPage: React.FC = () => {
                   </motion.a>
                 ))}
               </div>
+            </div>
+            {/* CTA WhatsApp */}
+            <div className="mt-6">
+              <a
+                href="https://wa.me/5524999037716?text=Olá,%20tenho%20uma%20dúvida%20sobre%20os%20veículos"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-3 rounded-xl shadow-md transition-colors"
+              >
+                <FaWhatsapp /> Falar no WhatsApp agora
+              </a>
             </div>
             <div className="mt-8 h-80 rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
               <iframe

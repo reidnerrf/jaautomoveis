@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useDeferredValue } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useVehicleData } from "../hooks/useVehicleData";
 import VehicleCard from "../components/VehicleCard.tsx";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,6 +21,8 @@ import { analytics } from "../utils/analytics";
 
 const InventoryPage: React.FC = () => {
   const { vehicles, loading } = useVehicleData();
+  const location = useLocation();
+  const navigate = useNavigate();
   const safeVehicles = React.useMemo(() => (Array.isArray(vehicles) ? vehicles : []), [vehicles]);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,6 +32,29 @@ const InventoryPage: React.FC = () => {
   useEffect(() => {
     const id = window.setTimeout(() => setDebouncedSearchTerm(searchTerm), 250);
     return () => window.clearTimeout(id);
+  }, [searchTerm]);
+
+  // Sync search with query param ?q=
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(location.search);
+      const q = params.get("q") || "";
+      if (q && q !== searchTerm) setSearchTerm(q);
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(location.search);
+      if (searchTerm) {
+        params.set("q", searchTerm);
+      } else {
+        params.delete("q");
+      }
+      const next = `${location.pathname}?${params.toString()}`.replace(/\?$/, "");
+      if (next !== location.pathname + location.search) navigate(next, { replace: true });
+    } catch {}
   }, [searchTerm]);
   const [makeFilter, setMakeFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("Resende");

@@ -1,15 +1,60 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import Header from "./Header.tsx";
 import Footer from "./Footer.tsx";
 import { Outlet, useLocation } from "react-router-dom";
 import FloatingSocialButtons from "./FloatingSocialButtons.tsx";
 import { analytics } from "../utils/analytics.ts";
+import PromoBanner from "./PromoBanner.tsx";
 const CookieConsent = React.lazy(() => import("./CookieConsent.tsx"));
 const JivoSite = React.lazy(() => import("./JivoSite.tsx"));
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const promoEnabled =
+    typeof import.meta !== "undefined" && (import.meta as any).env
+      ? String((import.meta as any).env.VITE_PROMO_ENABLED || "1") !== "0"
+      : true;
+
+  const defaultPromo = {
+    message:
+      (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_PROMO_MESSAGE) ||
+      "Semana de Ofertas: bônus na avaliação do seu usado!",
+    ctaLabel:
+      (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_PROMO_CTA_LABEL) ||
+      "Ver Estoque",
+    ctaHref:
+      (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_PROMO_CTA_HREF) ||
+      "/inventory",
+  } as const;
+
+  const parseOverrides = () => {
+    try {
+      const raw = (import.meta as any).env?.VITE_PROMO_OVERRIDES || "";
+      if (!raw) return {} as Record<string, { message?: string; ctaLabel?: string; ctaHref?: string }>;
+      return JSON.parse(raw);
+    } catch {
+      return {} as Record<string, { message?: string; ctaLabel?: string; ctaHref?: string }>;
+    }
+  };
+
+  const overrides = parseOverrides();
+  const findOverrideForPath = (path: string) => {
+    // Try exact match first, then longest prefix match
+    if (overrides[path]) return overrides[path];
+    let best: any = null;
+    let bestLen = -1;
+    for (const key of Object.keys(overrides)) {
+      if (path.startsWith(key) && key.length > bestLen) {
+        best = overrides[key];
+        bestLen = key.length;
+      }
+    }
+    return best;
+  };
+
+  const pagePromo = findOverrideForPath(location.pathname) || {};
 
   React.useEffect(() => {
     analytics.trackPageView(location.pathname);
@@ -29,11 +74,40 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-comp-light-gray dark:bg-gray-900 font-sans antialiased overflow-x-hidden">
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "JA Automóveis",
+            url:
+              typeof window !== "undefined"
+                ? window.location.origin
+                : "https://jaautomoveisresende.com.br",
+            potentialAction: {
+              "@type": "SearchAction",
+              target:
+                typeof window !== "undefined"
+                  ? `${window.location.origin}/inventory?q={search_term_string}`
+                  : "https://jaautomoveisresende.com.br/inventory?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          })}
+        </script>
+      </Helmet>
       {/* Decorative gradient background */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-40 dark:opacity-30">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-red-500/20 blur-3xl rounded-full" />
         <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500/20 blur-3xl rounded-full" />
       </div>
+      {!location.pathname.startsWith("/admin") && promoEnabled && (
+        <PromoBanner
+          message={pagePromo.message || defaultPromo.message}
+          ctaLabel={pagePromo.ctaLabel || defaultPromo.ctaLabel}
+          ctaHref={pagePromo.ctaHref || defaultPromo.ctaHref}
+          storageKey={`promoBannerDismissed_${location.pathname}`}
+        />
+      )}
       <Header />
       {/* Sem padding no topo na Home para o vídeo encostar no header transparente */}
       <main className={`relative flex-grow ${isHome ? "pt-0" : "pt-20"}`}>

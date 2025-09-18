@@ -120,6 +120,13 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
     // removed unused helpers
 
     if (viewMode === "list") {
+      const hasPromo =
+        typeof (vehicle as any).previousPrice === "number" &&
+        (vehicle as any).previousPrice > vehicle.price;
+      const prev = hasPromo ? Number((vehicle as any).previousPrice) : 0;
+      const curr = Number(vehicle.price);
+      const pct = hasPromo ? Math.max(0, Math.round(((prev - curr) / prev) * 100)) : 0;
+      const savings = hasPromo ? prev - curr : 0;
       return (
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 cursor-pointer group ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20"
@@ -150,6 +157,15 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
                   <span className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center gap-1">
                     <FiStar className="w-3 h-3" />
                     Destaque
+                  </span>
+                </div>
+              ) : null}
+
+              {/* Promo Badge */}
+              {hasPromo ? (
+                <div className="absolute top-12 right-3 z-10">
+                  <span className="bg-red-600 text-white px-2.5 py-1 rounded-full text-xs font-bold shadow-md">
+                    -{pct}%
                   </span>
                 </div>
               ) : null}
@@ -188,12 +204,27 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">R$</span>
-                    <p className="text-3xl font-extrabold text-green-600 dark:text-green-400 drop-shadow-sm">
-                      {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
-                    </p>
+                  <div className="flex items-center gap-2 justify-end">
+                    {typeof (vehicle as any).previousPrice === "number" && (vehicle as any).previousPrice > vehicle.price ? (
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-xs text-gray-400">R$</span>
+                        <span className="text-lg text-gray-400 line-through">
+                          {new Intl.NumberFormat("pt-BR").format((vehicle as any).previousPrice)}
+                        </span>
+                      </div>
+                    ) : null}
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">R$</span>
+                      <p className="text-3xl font-extrabold text-green-600 dark:text-green-400 drop-shadow-sm">
+                        {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
+                      </p>
+                    </div>
                   </div>
+                  {hasPromo ? (
+                    <div className="mt-1 text-xs text-green-600 dark:text-green-400 font-semibold">
+                      -{pct}% | Você economiza R$ {new Intl.NumberFormat("pt-BR").format(savings)}
+                    </div>
+                  ) : null}
                 </div>
               </div>
 
@@ -248,6 +279,14 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
       );
     }
 
+    const hasPromo =
+      typeof (vehicle as any).previousPrice === "number" &&
+      (vehicle as any).previousPrice > vehicle.price;
+    const prev = hasPromo ? Number((vehicle as any).previousPrice) : 0;
+    const curr = Number(vehicle.price);
+    const pct = hasPromo ? Math.max(0, Math.round(((prev - curr) / prev) * 100)) : 0;
+    const savings = hasPromo ? prev - curr : 0;
+
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -271,6 +310,15 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
             Disponível
           </span>
         </div>
+
+        {/* Promo Badge */}
+        {hasPromo ? (
+          <div className="absolute top-3 right-16 z-10">
+            <span className="bg-red-600 text-white px-2.5 py-1 rounded-full text-xs font-bold shadow-md">
+              -{pct}%
+            </span>
+          </div>
+        ) : null}
 
         {/* Favorite + WhatsApp Buttons */}
         <div className="absolute top-4 right-4 z-10 flex gap-2">
@@ -333,11 +381,36 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
 
           {/* Price and Action */}
           <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700 gap-3">
-            <div className="flex items-baseline gap-1">
-              <span className="text-sm text-gray-500">R$</span>
-              <span className="text-xl font-bold text-green-600 dark:text-green-400">
-                {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
-              </span>
+            <div className="flex items-center gap-2">
+              {typeof (vehicle as any).previousPrice === "number" && (vehicle as any).previousPrice > vehicle.price ? (
+                <div className="flex items-baseline gap-1">
+                  <span className="text-xs text-gray-400">R$</span>
+                  <span className="text-base text-gray-400 line-through">
+                    {new Intl.NumberFormat("pt-BR").format((vehicle as any).previousPrice)}
+                  </span>
+                </div>
+              ) : null}
+            <div className="flex items-center gap-2">
+              {typeof (vehicle as any).previousPrice === "number" && (vehicle as any).previousPrice > vehicle.price ? (
+                <div className="flex items-baseline gap-1">
+                  <span className="text-xs text-gray-400">R$</span>
+                  <span className="text-base text-gray-400 line-through">
+                    {new Intl.NumberFormat("pt-BR").format((vehicle as any).previousPrice)}
+                  </span>
+                </div>
+              ) : null}
+              <div className="flex items-baseline gap-1">
+                <span className="text-sm text-gray-500">R$</span>
+                <span className="text-xl font-bold text-green-600 dark:text-green-400">
+                  {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
+                </span>
+              </div>
+            </div>
+            {hasPromo ? (
+              <div className="text-[11px] text-green-600 dark:text-green-400 font-semibold -mt-1">
+                -{pct}% | Você economiza R$ {new Intl.NumberFormat("pt-BR").format(savings)}
+              </div>
+            ) : null}
             </div>
 
             <Link

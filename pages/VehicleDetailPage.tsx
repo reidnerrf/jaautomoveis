@@ -97,6 +97,8 @@ const VehicleDetailPage: React.FC = () => {
 
   // Generate JSON-LD structured data
   const generateStructuredData = () => {
+    const hasPrev = typeof (vehicle as any).previousPrice === "number" && (vehicle as any).previousPrice > vehicle.price;
+    const priceValidUntil = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString().slice(0, 10); // +7 dias
     const structuredData = {
       "@context": "https://schema.org",
       "@type": "Car",
@@ -123,6 +125,8 @@ const VehicleDetailPage: React.FC = () => {
         price: vehicle.price,
         priceCurrency: "BRL",
         availability: "https://schema.org/InStock",
+        priceValidUntil: priceValidUntil,
+        url: typeof window !== "undefined" ? `${window.location.origin}/vehicle/${vehicle.id}` : undefined,
         seller: {
           "@type": "Organization",
           name: "JA Automóveis",
@@ -376,11 +380,42 @@ const VehicleDetailPage: React.FC = () => {
               <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
                 {vehicle.name}
               </h1>
-              <div className="flex items-center gap-1 mt-2 mb-6 ">
-                <span className="text-sm text-gray-500">R$</span>
-                <p className="text-5xl font-bold text-main-red drop-shadow-sm">
-                  {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
-                </p>
+              <div className="flex items-center gap-3 mt-2 mb-1">
+                {typeof (vehicle as any).previousPrice === "number" && (vehicle as any).previousPrice > vehicle.price ? (
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-xs text-gray-400">R$</span>
+                    <span className="text-2xl text-gray-400 line-through">
+                      {new Intl.NumberFormat("pt-BR").format((vehicle as any).previousPrice)}
+                    </span>
+                  </div>
+                ) : null}
+                <div className="flex items-baseline gap-1">
+                  <span className="text-sm text-gray-500">R$</span>
+                  <p className="text-5xl font-bold text-main-red drop-shadow-sm">
+                    {new Intl.NumberFormat("pt-BR").format(vehicle.price)}
+                  </p>
+                </div>
+              </div>
+              {typeof (vehicle as any).previousPrice === "number" && (vehicle as any).previousPrice > vehicle.price ? (
+                <div className="mb-4 flex items-center gap-3">
+                  {(() => {
+                    const prev = Number((vehicle as any).previousPrice);
+                    const curr = Number(vehicle.price);
+                    const pct = Math.max(0, Math.round(((prev - curr) / prev) * 100));
+                    return (
+                      <>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">-{pct}%</span>
+                        <span className="text-sm text-gray-600">Você economiza R$ {new Intl.NumberFormat("pt-BR").format(prev - curr)}</span>
+                      </>
+                    );
+                  })()}
+                </div>
+              ) : null}
+              {/* Oferta abaixo de Disponível */}
+              <div className="mb-6">
+                <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 border border-red-200 px-3 py-1 rounded-full text-sm font-semibold">
+                  🔥 Oferta especial válida por tempo limitado
+                </div>
               </div>
 
               {/* Selos de confiança + Compartilhar */}
@@ -440,6 +475,18 @@ const VehicleDetailPage: React.FC = () => {
                   <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors">
                     <FaWhatsapp size={20} />
                     Tenho Interesse
+                  </button>
+                </a>
+                <a
+                  href={`https://api.whatsapp.com/send?phone=5524999037716&text=${encodeURIComponent(
+                    `Quero agendar um test-drive do ${vehicle.name} ${vehicle.year}. Quando posso visitar?`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1"
+                >
+                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                    Agendar Test-Drive
                   </button>
                 </a>
               </div>

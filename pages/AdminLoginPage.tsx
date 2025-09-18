@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.tsx";
 import { motion, useMotionValue, useTransform } from "framer-motion";
@@ -60,6 +61,10 @@ const AdminLoginPage: React.FC = () => {
       bg-gradient-to-br from-blue-100 via-white to-blue-200 
       dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 p-6 transition-colors overflow-hidden"
     >
+      <Helmet>
+        <meta name="robots" content="noindex,nofollow" />
+        <title>Login Admin - JA Automóveis</title>
+      </Helmet>
       {/* Card de login com tilt 3D */}
       <motion.div
         style={{ rotateX, rotateY }}
