@@ -37,6 +37,13 @@ const VehicleDetailPage: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  // Lightbox zoom/pan state
+  const [zoom, setZoom] = useState(1);
+  const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const panStartRef = useRef<{ x: number; y: number } | null>(null);
+  const imgContainerRef = useRef<HTMLDivElement | null>(null);
+  const pinchRef = useRef<{ dist: number; zoom: number } | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const viewIncrementedRef = useRef<string | null>(null);
 
@@ -143,10 +150,14 @@ const VehicleDetailPage: React.FC = () => {
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % (vehicle.images?.length || 1));
+    setZoom(1);
+    setOffset({ x: 0, y: 0 });
   };
 
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + (vehicle.images?.length || 1)) % (vehicle.images?.length || 1));
+    setZoom(1);
+    setOffset({ x: 0, y: 0 });
   };
 
   const details = [
@@ -683,7 +694,7 @@ const VehicleDetailPage: React.FC = () => {
               onClick={() => setIsLightboxOpen(false)}
             >
               <div
-                className="relative w-full h-full flex items-center justify-center"
+                className="relative w-full h-full flex items-center justify-center select-none"
                 onClick={(e) => e.stopPropagation()}
                 role="dialog"
                 aria-modal="true"
@@ -715,16 +726,105 @@ const VehicleDetailPage: React.FC = () => {
                   </button>
                 )}
 
-                {/* Imagem */}
-                <motion.img
-                  key={currentImageIndex}
-                  initial={{ opacity: 0.5, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.2 }}
-                  src={vehicle.images?.[currentImageIndex] || "/assets/empreparacao.jpg"}
-                  alt={`${vehicle.name} - ${currentImageIndex + 1}`}
-                  className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
-                />
+                {/* Área da imagem com zoom/pan */}
+                <div
+                  ref={imgContainerRef}
+                  className="relative max-w-full max-h-[90vh] overflow-hidden rounded-lg shadow-2xl"
+                  onWheel={(e) => {
+                    e.preventDefault();
+                    const delta = -e.deltaY;
+                    const factor = delta > 0 ? 1.1 : 0.9;
+                    const newZoom = Math.min(5, Math.max(1, zoom * factor));
+                    setZoom(newZoom);
+                  }}
+                  onMouseDown={(e) => {
+                    if (zoom <= 1) return;
+                    setIsPanning(true);
+                    panStartRef.current = { x: e.clientX - offset.x, y: e.clientY - offset.y };
+                  }}
+                  onMouseMove={(e) => {
+                    if (!isPanning || !panStartRef.current) return;
+                    setOffset({ x: e.clientX - panStartRef.current.x, y: e.clientY - panStartRef.current.y });
+                  }}
+                  onMouseUp={() => {
+                    setIsPanning(false);
+                    panStartRef.current = null;
+                  }}
+                  onMouseLeave={() => {
+                    setIsPanning(false);
+                    panStartRef.current = null;
+                  }}
+                  onDoubleClick={() => {
+                    if (zoom > 1) { setZoom(1); setOffset({ x: 0, y: 0 }); }
+                    else setZoom(2);
+                  }}
+                  onTouchStart={(e) => {
+                    if (e.touches.length === 2) {
+                      const [a, b] = e.touches;
+                      const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+                      pinchRef.current = { dist, zoom };
+                    } else if (e.touches.length === 1 && zoom > 1) {
+                      const t = e.touches[0];
+                      setIsPanning(true);
+                      panStartRef.current = { x: t.clientX - offset.x, y: t.clientY - offset.y };
+                    }
+                  }}
+                  onTouchMove={(e) => {
+                    if (e.touches.length === 2 && pinchRef.current) {
+                      const [a, b] = e.touches;
+                      const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+                      const base = pinchRef.current;
+                      const newZoom = Math.min(5, Math.max(1, (dist / base.dist) * base.zoom));
+                      setZoom(newZoom);
+                    } else if (e.touches.length === 1 && isPanning && panStartRef.current) {
+                      const t = e.touches[0];
+                      setOffset({ x: t.clientX - panStartRef.current.x, y: t.clientY - panStartRef.current.y });
+                    }
+                  }}
+                  onTouchEnd={() => {
+                    pinchRef.current = null;
+                    setIsPanning(false);
+                    panStartRef.current = null;
+                  }}
+                >
+                  <motion.img
+                    key={currentImageIndex}
+                    initial={{ opacity: 0.5, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.2 }}
+                    src={vehicle.images?.[currentImageIndex] || "/assets/empreparacao.jpg"}
+                    alt={`${vehicle.name} - ${currentImageIndex + 1}`}
+                    className="max-w-full max-h-[90vh] object-contain"
+                    style={{ transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})` }}
+                    draggable={false}
+                  />
+                </div>
+
+                {/* Controles de zoom */}
+                <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2">
+                  <button
+                    onClick={() => setZoom((z) => Math.max(1, z - 0.25))}
+                    className="px-3 py-2 rounded-lg bg-white/90 text-gray-800 hover:bg-white shadow"
+                    aria-label="Reduzir zoom"
+                  >
+                    -
+                  </button>
+                  <span className="px-2 py-1 rounded bg-black/40 text-white text-sm min-w-[60px] text-center">{Math.round(zoom * 100)}%</span>
+                  <button
+                    onClick={() => setZoom((z) => Math.min(5, z + 0.25))}
+                    className="px-3 py-2 rounded-lg bg-white/90 text-gray-800 hover:bg-white shadow"
+                    aria-label="Aumentar zoom"
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={() => { setZoom(1); setOffset({ x: 0, y: 0 }); }}
+                    className="px-3 py-2 rounded-lg bg-white/90 text-gray-800 hover:bg-white shadow"
+                    aria-label="Resetar zoom"
+                  >
+                    Reset
+                  </button>
+                </div>
 
                 {/* Botão próximo */}
                 {(vehicle.images?.length || 0) > 1 && (
@@ -735,6 +835,28 @@ const VehicleDetailPage: React.FC = () => {
                   >
                     <FiChevronRight size={32} />
                   </button>
+                )}
+
+                {/* Mini-mapa de thumbnails dentro do lightbox */}
+                {(vehicle.images?.length || 0) > 1 && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/40 rounded-xl px-3 py-2 backdrop-blur-sm max-w-full overflow-x-auto">
+                    <div className="flex items-center gap-2">
+                      {(vehicle.images || []).map((img, idx) => (
+                        <button
+                          key={`${img}-${idx}`}
+                          onClick={() => {
+                            setCurrentImageIndex(idx);
+                            setZoom(1);
+                            setOffset({ x: 0, y: 0 });
+                          }}
+                          className={`rounded-md overflow-hidden border ${idx === currentImageIndex ? "border-main-red" : "border-white/30"}`}
+                          aria-label={`Ir para imagem ${idx + 1}`}
+                        >
+                          <img src={img} alt="thumb" className="w-14 h-12 object-cover" loading="lazy" decoding="async" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
             </motion.div>
