@@ -31,5 +31,3 @@ test-results
 *.njsproj
 *.sln
 *.sw?
-.env
-.env.*
