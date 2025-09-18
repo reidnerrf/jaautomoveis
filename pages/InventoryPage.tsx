@@ -260,6 +260,29 @@ const InventoryPage: React.FC = () => {
     currentPage * itemsPerPage
   );
 
+  // Comparison list state (sync with localStorage)
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const compareVehicles = useMemo(() => {
+    const idSet = new Set(compareIds);
+    return safeVehicles.filter((v: any) => v.id && idSet.has(v.id));
+  }, [compareIds, safeVehicles]);
+  useEffect(() => {
+    const read = () => {
+      try {
+        const next = JSON.parse(localStorage.getItem("compareIds") || "[]");
+        setCompareIds(Array.isArray(next) ? next.slice(0, 3) : []);
+      } catch {
+        setCompareIds([]);
+      }
+    };
+    read();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "compareIds") read();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   const resetFilters = () => {
     setSearchTerm("");
     setMakeFilter("");
@@ -952,6 +975,56 @@ const InventoryPage: React.FC = () => {
               </button>
             </div>
           </motion.div>
+        )}
+
+        {/* Comparison Table (compact) */}
+        {compareVehicles.length > 0 && (
+          <div className="mt-10 border-2 border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
+            <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
+              <div className="font-bold">Comparando ({compareVehicles.length}/3)</div>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("compareIds");
+                  setCompareIds([]);
+                }}
+                className="text-sm text-blue-600 hover:underline"
+                aria-label="Limpar comparação"
+              >
+                Limpar
+              </button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead className="bg-gray-100 dark:bg-gray-900">
+                  <tr>
+                    <th className="text-left p-3">Atributo</th>
+                    {compareVehicles.map((v: any) => (
+                      <th key={v.id} className="text-left p-3">{v.name}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { k: "price", label: "Preço", format: (x: any) => `R$ ${new Intl.NumberFormat("pt-BR").format(x)}` },
+                    { k: "year", label: "Ano" },
+                    { k: "km", label: "KM", format: (x: any) => new Intl.NumberFormat("pt-BR").format(x) },
+                    { k: "fuel", label: "Combustível" },
+                    { k: "gearbox", label: "Câmbio" },
+                    { k: "doors", label: "Portas" },
+                  ].map((row) => (
+                    <tr key={row.k} className="border-t border-gray-200 dark:border-gray-700">
+                      <th scope="row" className="p-3 font-semibold bg-gray-50 dark:bg-gray-800">{row.label}</th>
+                      {compareVehicles.map((v: any) => (
+                        <td key={`${v.id}-${row.k}`} className="p-3">
+                          {row.format ? row.format((v as any)[row.k]) : String((v as any)[row.k] ?? "-")}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         )}
       </div>
     </div>

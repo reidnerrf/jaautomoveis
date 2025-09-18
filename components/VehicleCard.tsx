@@ -22,6 +22,7 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
   ({ vehicle, onView, onFavorite, isFavorite = false, index = 0, viewMode = "grid" }) => {
     const navigate = useNavigate();
     const [localFavorite, setLocalFavorite] = useState<boolean>(isFavorite);
+    const [isCompared, setIsCompared] = useState<boolean>(false);
 
     // Load favorite state from localStorage on mount
     useEffect(() => {
@@ -34,6 +35,45 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
     }, [vehicle.id]);
 
     const favorite = useMemo(() => localFavorite || isFavorite, [localFavorite, isFavorite]);
+
+    // Compare helpers
+    const readCompare = (): string[] => {
+      try {
+        return JSON.parse(localStorage.getItem("compareIds") || "[]");
+      } catch {
+        return [];
+      }
+    };
+    const writeCompare = (ids: string[]) => {
+      localStorage.setItem("compareIds", JSON.stringify(ids.slice(0, 3)));
+      // Notify listeners (InventoryPage) to refresh comparison table
+      try {
+        window.dispatchEvent(new StorageEvent("storage", { key: "compareIds", newValue: JSON.stringify(ids.slice(0, 3)) } as any));
+      } catch {}
+    };
+
+    useEffect(() => {
+      const ids = readCompare();
+      setIsCompared(Boolean(vehicle.id && ids.includes(vehicle.id)));
+    }, [vehicle.id]);
+
+    const toggleCompare = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const ids = readCompare();
+      if (!vehicle.id) return;
+      if (ids.includes(vehicle.id)) {
+        const next = ids.filter((x) => x !== vehicle.id);
+        writeCompare(next);
+        setIsCompared(false);
+      } else {
+        if (ids.length >= 3) {
+          ids.shift();
+        }
+        const next = [...ids, vehicle.id];
+        writeCompare(next);
+        setIsCompared(true);
+      }
+    };
 
     // Build image src with cache-busting using updatedAt to avoid stale images
     const imageSrc = useMemo(() => {
@@ -332,6 +372,18 @@ const VehicleCard: React.FC<VehicleCardProps> = memo(
             }`}
           >
             <FiHeart className={`w-4 h-4 ${favorite ? "fill-current" : ""}`} />
+          </button>
+
+          {/* Toggle Comparar */}
+          <button
+            onClick={toggleCompare}
+            className={`px-2 py-1 rounded-full text-xs font-semibold transition-all duration-300 backdrop-blur-sm focus:ring-2 focus:ring-blue-400 ${
+              isCompared ? "bg-blue-600 text-white" : "bg-white/80 text-gray-700 hover:bg-blue-600 hover:text-white"
+            }`}
+            aria-pressed={isCompared}
+            aria-label={isCompared ? "Remover da comparação" : "Adicionar à comparação"}
+          >
+            {isCompared ? "Comparando" : "Comparar"}
           </button>
         </div>
 
