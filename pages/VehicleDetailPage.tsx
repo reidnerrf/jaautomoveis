@@ -614,7 +614,29 @@ const VehicleDetailPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Floating Real-time Viewers Button removed per request */}
+        {/* Sticky mobile CTA WhatsApp */}
+        <div className="fixed bottom-4 inset-x-0 z-40 px-4 sm:hidden">
+          <a
+            href={`https://wa.me/5524999037716?text=${encodeURIComponent(
+              `Tenho interesse no ${vehicle.name} ${vehicle.year}`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              try {
+                (window as any).trackBusinessEvent?.("whatsapp_click", {
+                  vehicleId: vehicle.id,
+                  name: vehicle.name,
+                  source: "sticky_cta",
+                });
+              } catch {}
+            }}
+            className="block w-full bg-green-600 hover:bg-green-700 text-white text-center font-bold py-3 rounded-xl shadow-xl"
+            aria-label="Falar no WhatsApp sobre este veículo"
+          >
+            💬 Falar no WhatsApp
+          </a>
+        </div>
 
         {/* Lightbox */}
         <AnimatePresence>
