@@ -636,6 +636,15 @@ const VehicleDetailPage: React.FC = () => {
               </h2>
               <VehicleCarousel vehicles={otherVehicles} />
             </div>
+
+            {/* Internal linking: tags por marca/modelo/ano */}
+            <div className="text-center">
+              <div className="inline-flex flex-wrap gap-2 items-center justify-center">
+                <a href={`/inventory?q=${encodeURIComponent(vehicle.make)}`} className="px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition">#{vehicle.make}</a>
+                <a href={`/inventory?q=${encodeURIComponent(vehicle.model)}`} className="px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition">#{vehicle.model}</a>
+                <a href={`/inventory?q=${encodeURIComponent(String(vehicle.year))}`} className="px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition">#{vehicle.year}</a>
+              </div>
+            </div>
           </div>
         </div>
 
