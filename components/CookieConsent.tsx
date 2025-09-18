@@ -12,6 +12,16 @@ const CookieConsent: React.FC = () => {
 
   const accept = () => {
     localStorage.setItem("cookieConsentV1", JSON.stringify({ personalization, analytics }));
+    try {
+      // GA Consent Mode v2 basic signaling
+      // @ts-ignore
+      window.gtag && window.gtag('consent', 'update', {
+        'ad_storage': personalization ? 'granted' : 'denied',
+        'ad_user_data': personalization ? 'granted' : 'denied',
+        'ad_personalization': personalization ? 'granted' : 'denied',
+        'analytics_storage': analytics ? 'granted' : 'denied'
+      });
+    } catch {}
     setVisible(false);
   };
 

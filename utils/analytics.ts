@@ -81,6 +81,18 @@ class AnalyticsService {
     try {
       // @ts-expect-error gtag may not be defined in non-browser environments
       if (typeof window !== "undefined" && typeof window.gtag === "function") {
+        try {
+          const raw = localStorage.getItem("cookieConsentV1");
+          const parsed = raw ? JSON.parse(raw) : { analytics: false, personalization: false };
+          // Initialize default consent (Consent Mode v2)
+          // @ts-ignore
+          window.gtag('consent', 'default', {
+            'ad_storage': parsed.personalization ? 'granted' : 'denied',
+            'ad_user_data': parsed.personalization ? 'granted' : 'denied',
+            'ad_personalization': parsed.personalization ? 'granted' : 'denied',
+            'analytics_storage': parsed.analytics ? 'granted' : 'denied'
+          });
+        } catch {}
         this.gaInitialized = true;
       }
     } catch {}
