@@ -17,6 +17,7 @@ import {
 } from "react-icons/fi";
 import { FaCarSide, FaGasPump, FaCog, FaCalendarAlt } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
+import MiniLeadForm from "../components/MiniLeadForm.tsx";
 import { analytics } from "../utils/analytics";
 
 const InventoryPage: React.FC = () => {
@@ -545,6 +546,16 @@ const InventoryPage: React.FC = () => {
               </button>
             </div>
           </div>
+        </motion.div>
+
+        {/* Mini Lead Form */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-8"
+        >
+          <MiniLeadForm context="inventory" />
         </motion.div>
 
         {/* Advanced Filters */}

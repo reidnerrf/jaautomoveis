@@ -26,6 +26,7 @@ import { Vehicle } from "../types.ts";
 import ShareButton from "../components/ShareButton.tsx";
 import RealTimeViewers from "../components/RealTimeViewers.tsx";
 import SEOHead from "../components/SEOHead.tsx";
+import MiniLeadForm from "../components/MiniLeadForm.tsx";
 
 const VehicleDetailPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -489,6 +490,11 @@ const VehicleDetailPage: React.FC = () => {
                     Agendar Test-Drive
                   </button>
                 </a>
+              </div>
+
+              {/* Mini Lead Form - Vehicle context */}
+              <div className="mt-6">
+                <MiniLeadForm context="vehicle" vehicleId={vehicle.id} vehicleName={vehicle.name} />
               </div>
             </div>
           </div>
