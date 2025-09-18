@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import Header from "./Header.tsx";
 import Footer from "./Footer.tsx";
 import { Outlet, useLocation } from "react-router-dom";
@@ -29,6 +30,27 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-comp-light-gray dark:bg-gray-900 font-sans antialiased overflow-x-hidden">
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "JA Automóveis",
+            url:
+              typeof window !== "undefined"
+                ? window.location.origin
+                : "https://jaautomoveisresende.com.br",
+            potentialAction: {
+              "@type": "SearchAction",
+              target:
+                typeof window !== "undefined"
+                  ? `${window.location.origin}/inventory?q={search_term_string}`
+                  : "https://jaautomoveisresende.com.br/inventory?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          })}
+        </script>
+      </Helmet>
       {/* Decorative gradient background */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-40 dark:opacity-30">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-red-500/20 blur-3xl rounded-full" />

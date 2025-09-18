@@ -31,26 +31,32 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     { hrefLang: "x-default", href: fullUrl },
   ];
 
+  const safeTitle = title || "JA Automóveis";
+  const safeDescription =
+    description ||
+    "JA Automóveis em Resende (RJ): carros seminovos e usados com garantia, financiamento facilitado e atendimento premium.";
+
   return (
     <Helmet prioritizeSeoTags>
       <html lang="pt-BR" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>{title}</title>
-      <meta name="description" content={description} />
+      <title>{safeTitle}</title>
+      <meta name="description" content={safeDescription} />
       {Boolean(keywords) && <meta name="keywords" content={keywords} />}
 
       {/* Open Graph */}
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
+      <meta property="og:title" content={safeTitle} />
+      <meta property="og:description" content={safeDescription} />
       <meta property="og:image" content={imageUrl} />
+      <meta property="og:image:alt" content={safeTitle} />
       <meta property="og:url" content={fullUrl} />
       <meta property="og:type" content={type} />
       <meta property="og:site_name" content="JA Automóveis" />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
+      <meta name="twitter:title" content={safeTitle} />
+      <meta name="twitter:description" content={safeDescription} />
       <meta name="twitter:image" content={imageUrl} />
 
       {/* Additional meta tags */}
