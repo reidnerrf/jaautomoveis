@@ -38,6 +38,7 @@ import { useAuth } from "../hooks/useAuth.tsx";
 import { motion } from "framer-motion";
 import { analytics } from "../utils/analytics";
 import { exportFullPageToPDF } from "../utils/exportUtils.ts";
+import SEOHead from "../components/SEOHead.tsx";
 
 const AdminDashboardPage: React.FC = () => {
   const { vehicles, loading, refreshVehicles } = useVehicleData();
@@ -348,6 +349,7 @@ const AdminDashboardPage: React.FC = () => {
       id="admin-dashboard-root"
       className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10 space-y-8"
     >
+      <SEOHead title="Admin - Dashboard" robots="noindex, nofollow" />
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
