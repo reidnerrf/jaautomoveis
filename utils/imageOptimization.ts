@@ -40,13 +40,13 @@ export const useImageOptimization = () => {
 
     const [clean, existingQuery] = src.split("?");
     const formatParam = isWebPSupported ? "webp" : "jpg";
-    const widths = [320, 640, 1024, 1280];
+    const widths = [320, 480, 640, 768, 1024, 1280];
 
     return widths
       .map((w) => {
         const sep = clean.includes("?") ? "&" : "?";
         const versionSuffix = existingQuery ? `&${existingQuery}` : "";
-        return `${clean}${sep}w=${w}&f=${formatParam}${versionSuffix} ${w}w`;
+        return `${clean}${sep}w=${w}&q=${w <= 480 ? 60 : 75}&f=${formatParam}${versionSuffix} ${w}w`;
       })
       .join(", ");
   };
