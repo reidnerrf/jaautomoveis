@@ -27,6 +27,7 @@ import ShareButton from "../components/ShareButton.tsx";
 import RealTimeViewers from "../components/RealTimeViewers.tsx";
 import SEOHead from "../components/SEOHead.tsx";
 import MiniLeadForm from "../components/MiniLeadForm.tsx";
+import OptimizedImage from "../components/OptimizedImage.tsx";
 
 const VehicleDetailPage: React.FC = () => {
   const params = useParams<{ id: string }>();
