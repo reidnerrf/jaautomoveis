@@ -159,18 +159,27 @@ const ContactPage: React.FC = () => {
                 if (honey) return; // honeypot filled -> likely bot
                 const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
                 const phoneOk = /\(\d{2}\) \d{5}-\d{4}/.test(phone);
+                const status = document.getElementById("contact-form-status");
                 if (!name || !emailOk || !phoneOk || !message) {
-                  alert("Por favor, preencha os campos corretamente.");
+                  status && (status.textContent = "Por favor, corrija os campos em destaque.");
                   return;
                 }
                 try {
                   (window as any).trackBusinessEvent?.("contact_form", { name, email });
                 } catch {}
+                status && (status.textContent = "Enviando sua mensagem...");
                 fetch("/api/contact", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ name, email, phone, message }),
-                }).then(() => alert("Mensagem enviada!"));
+                })
+                  .then(() => {
+                    status && (status.textContent = "Mensagem enviada com sucesso!");
+                    form.reset();
+                  })
+                  .catch(() => {
+                    status && (status.textContent = "Falha ao enviar. Tente pelo WhatsApp.");
+                  });
               }}
             >
               {[
@@ -244,6 +253,7 @@ const ContactPage: React.FC = () => {
               >
                 Enviar
               </motion.button>
+              <div id="contact-form-status" role="status" aria-live="polite" className="text-sm text-gray-600 dark:text-gray-300"></div>
             </form>
           </motion.div>
 

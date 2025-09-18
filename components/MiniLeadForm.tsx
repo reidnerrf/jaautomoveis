@@ -48,6 +48,10 @@ const MiniLeadForm: React.FC<MiniLeadFormProps> = ({ context = "inventory", vehi
       if (!res.ok) throw new Error("Failed to submit");
       setSent(true);
       try {
+        const statusEl = document.getElementById("mini-lead-status");
+        if (statusEl) statusEl.textContent = "Enviado com sucesso!";
+      } catch {}
+      try {
         analytics.trackBusinessEvent("contact_form", payload);
       } catch {}
     } catch (_err) {
@@ -110,6 +114,7 @@ const MiniLeadForm: React.FC<MiniLeadFormProps> = ({ context = "inventory", vehi
         </div>
       </div>
       <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">Ao enviar, concordo em ser contatado via WhatsApp.</p>
+      <div id="mini-lead-status" role="status" aria-live="polite" className="text-xs text-gray-600 dark:text-gray-300 mt-1"></div>
     </form>
   );
 };
