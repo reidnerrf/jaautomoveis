@@ -41,6 +41,8 @@ const InventoryPage: React.FC = () => {
       const params = new URLSearchParams(location.search);
       const q = params.get("q") || "";
       if (q && q !== searchTerm) setSearchTerm(q);
+      const p = parseInt(params.get("page") || "1", 10);
+      if (!Number.isNaN(p) && p > 0 && p !== currentPage) setCurrentPage(p);
     } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -57,6 +59,20 @@ const InventoryPage: React.FC = () => {
       if (next !== location.pathname + location.search) navigate(next, { replace: true });
     } catch {}
   }, [searchTerm]);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(location.search);
+      if (currentPage > 1) {
+        params.set("page", String(currentPage));
+      } else {
+        params.delete("page");
+      }
+      const next = `${location.pathname}?${params.toString()}`.replace(/\?$/, "");
+      if (next !== location.pathname + location.search) navigate(next, { replace: true });
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
   const [makeFilter, setMakeFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("Resende");
   const [stateFilter, setStateFilter] = useState("RJ");
@@ -424,6 +440,28 @@ const InventoryPage: React.FC = () => {
           keywords={`estoque de carros em Resende RJ, veículos usados Resende, seminovos Resende, comprar carro Resende, carros Rio de Janeiro, Sul Fluminense, JA Automóveis`}
           image={`/assets/logo.png`}
         >
+          {(() => {
+            const buildHref = (page: number) => {
+              try {
+                const url = new URL(
+                  typeof window !== "undefined"
+                    ? window.location.href
+                    : "https://jaautomoveisresende.com.br/inventory"
+                );
+                if (page > 1) url.searchParams.set("page", String(page));
+                else url.searchParams.delete("page");
+                return url.href;
+              } catch {
+                return `/inventory${page > 1 ? `?page=${page}` : ""}`;
+              }
+            };
+            return (
+              <>
+                {currentPage > 1 && <link rel="prev" href={buildHref(currentPage - 1)} />}
+                {currentPage < totalPages && <link rel="next" href={buildHref(currentPage + 1)} />}
+              </>
+            );
+          })()}
           <script type="application/ld+json">
             {JSON.stringify({
               "@context": "https://schema.org",
