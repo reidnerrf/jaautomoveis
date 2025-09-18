@@ -17,6 +17,26 @@
   html {
     scroll-behavior: smooth;
   }
+  :root {
+    --bg: #ffffff;
+    --bg-muted: #f8fafc;
+    --text: #0f172a;
+    --text-muted: #475569;
+    --card: #ffffff;
+    --card-border: #e5e7eb;
+    --primary: #2563eb;
+    --accent: #f43f5e;
+  }
+  .dark {
+    --bg: #0b0f19;
+    --bg-muted: #0f172a;
+    --text: #e5e7eb;
+    --text-muted: #94a3b8;
+    --card: #0f172a;
+    --card-border: #1f2937;
+    --primary: #3b82f6;
+    --accent: #fb7185;
+  }
 }
 
 @layer components {
@@ -27,9 +47,15 @@
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-blue-700 bg-white border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 transition;
   }
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition;
+    @apply rounded-2xl border shadow-sm hover:shadow-lg transition;
+    background-color: var(--card);
+    border-color: var(--card-border);
   }
   .card-body {
     @apply p-6;
   }
 }
+
+/* Body colors bound to CSS variables for refined palette */
+body { background-color: var(--bg); color: var(--text); }
+.bg-surface { background-color: var(--bg-muted); }
