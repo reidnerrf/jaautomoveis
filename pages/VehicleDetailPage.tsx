@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useVehicleData } from "../hooks/useVehicleData.tsx";
 import VehicleCarousel from "../components/VehicleCarousel.tsx";
 import PriceComparison from "../components/PriceComparison.tsx";
-import { FaWhatsapp } from "react-icons/fa";
+// Lightweight inline WhatsApp icon replacement
 import {
   FiChevronLeft,
   FiChevronRight,
@@ -449,6 +449,10 @@ const VehicleDetailPage: React.FC = () => {
           hrefLang="pt-BR"
           href={`${typeof window !== "undefined" ? window.location.href : ""}`}
         />
+        {/* Preload primeiras imagens do carrossel para LCP melhor */}
+        {vehicle.images?.slice(0, 2).map((img, i) => (
+          <link key={i} rel="preload" as="image" href={img} />
+        ))}
       </SEOHead>
 
       <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -674,7 +678,7 @@ const VehicleDetailPage: React.FC = () => {
                       }}
                     >
                       <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors">
-                        <FaWhatsapp size={20} />
+                        <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" focusable="false"><path d="M16.04 3C9.41 3 4 8.41 4 15.04c0 2.12.57 4.09 1.57 5.8L4 29l8.35-1.52c1.63.9 3.5 1.42 5.48 1.42 6.63 0 12.04-5.41 12.04-12.04S22.67 3 16.04 3zm6.97 17.26c-.29.82-1.7 1.61-2.36 1.72-.61.09-1.39.13-2.25-.14-.52-.17-1.18-.38-2.04-.74-3.58-1.54-5.9-5.14-6.08-5.38-.18-.24-1.45-1.93-1.45-3.68 0-1.75.92-2.61 1.25-2.97.33-.36.73-.45.97-.45.24 0 .49 0 .71.01.22.01.54-.09.84.64.29.7.98 2.41 1.07 2.58.09.18.14.39.03.63-.11.24-.16.39-.33.6-.17.21-.35.47-.5.63-.17.17-.35.36-.15.7.2.33.9 1.48 1.93 2.4 1.33 1.18 2.45 1.55 2.79 1.72.35.18.56.15.77-.09.21-.24.88-1.03 1.12-1.38.24-.35.47-.29.79-.17.33.12 2.06.97 2.42 1.15.36.18.6.27.69.42.09.15.09.86-.2 1.68z"/></svg>
                         {label}
                       </button>
                     </a>
