@@ -640,31 +640,46 @@ const VehicleDetailPage: React.FC = () => {
 
               {/* Botões de ação principais (sem compartilhar aqui) */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <a
-                  href={`https://api.whatsapp.com/send?phone=5524999037716&text=${encodeURIComponent(
-                    `Tenho interesse no ${vehicle.name} ${vehicle.year}`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1"
-                  onClick={() => {
-                    if ((window as any).trackBusinessEvent) {
-                      (window as any).trackBusinessEvent("whatsapp_click", {
-                        vehicleId: vehicle.id,
-                        name: vehicle.name,
-                      });
-                      (window as any).trackBusinessEvent("add_to_whatsapp", {
-                        vehicleId: vehicle.id,
-                        name: vehicle.name,
-                      });
-                    }
-                  }}
-                >
-                  <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors">
-                    <FaWhatsapp size={20} />
-                    Tenho Interesse
-                  </button>
-                </a>
+                {(() => {
+                  const now = new Date();
+                  const day = now.getDay(); // 0 dom - 6 sab
+                  const hour = now.getHours();
+                  const isOpenDay = day >= 1 && day <= 6; // seg-sab
+                  const isOpenHour = hour >= 9 && hour < 18; // 9-18h
+                  const isOpen = isOpenDay && isOpenHour;
+                  const label = isOpen ? "Falar agora no WhatsApp" : "Chamar no WhatsApp (responderemos em horário comercial)";
+                  const msg = isOpen
+                    ? `Tenho interesse no ${vehicle.name} ${vehicle.year}. Podemos falar agora?`
+                    : `Tenho interesse no ${vehicle.name} ${vehicle.year}. Pode me responder no próximo horário comercial?`;
+                  const wa = `https://api.whatsapp.com/send?phone=5524999037716&text=${encodeURIComponent(msg)}`;
+                  return (
+                    <a
+                      href={wa}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1"
+                      onClick={() => {
+                        if ((window as any).trackBusinessEvent) {
+                          (window as any).trackBusinessEvent("whatsapp_click", {
+                            vehicleId: vehicle.id,
+                            name: vehicle.name,
+                            businessOpen: isOpen,
+                          });
+                          (window as any).trackBusinessEvent("add_to_whatsapp", {
+                            vehicleId: vehicle.id,
+                            name: vehicle.name,
+                            businessOpen: isOpen,
+                          });
+                        }
+                      }}
+                    >
+                      <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                        <FaWhatsapp size={20} />
+                        {label}
+                      </button>
+                    </a>
+                  );
+                })()}
                 <a
                   href={`https://api.whatsapp.com/send?phone=5524999037716&text=${encodeURIComponent(
                     `Quero agendar um test-drive do ${vehicle.name} ${vehicle.year}. Quando posso visitar?`
