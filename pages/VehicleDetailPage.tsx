@@ -190,7 +190,15 @@ const VehicleDetailPage: React.FC = () => {
     },
   ];
 
-  const otherVehicles = (allVehicles || []).filter((v) => v.id !== id).slice(0, 5);
+  const othersSorted = React.useMemo(() => {
+    const list = (allVehicles || []).filter((v) => v.id !== id);
+    try {
+      list.sort((a: any, b: any) => (b?.views || 0) - (a?.views || 0));
+    } catch {}
+    return list;
+  }, [allVehicles, id]);
+  const alsoViewed = othersSorted.slice(0, 6);
+  const otherVehicles = othersSorted.slice(0, 5);
 
   const toggleFavorite = () => {
     const newFavoriteState = !isFavorite;
@@ -485,11 +493,36 @@ const VehicleDetailPage: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1"
+                  onClick={() => {
+                    try {
+                      (window as any).trackBusinessEvent?.("test_drive_request", {
+                        vehicleId: vehicle.id,
+                        name: vehicle.name,
+                      });
+                    } catch {}
+                  }}
                 >
                   <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors">
                     Agendar Test-Drive
                   </button>
                 </a>
+              </div>
+
+              {/* Badges de pagamento e bancos parceiros */}
+              <div className="mt-6">
+                <div className="bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                  <div className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                    Formas de pagamento e bancos parceiros
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200" aria-label="Pagamento via PIX">PIX</span>
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 border border-blue-200" aria-label="Cartão de crédito Visa">Visa</span>
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700 border border-purple-200" aria-label="Cartão de crédito Mastercard">Mastercard</span>
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 border border-yellow-200" aria-label="Transferência TED DOC">TED/DOC</span>
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200" aria-label="Boleto bancário">Boleto</span>
+                    <img src="/assets/logo-rodobens.png" alt="Consórcio Rodobens" className="h-6 object-contain ml-2" loading="lazy" />
+                  </div>
+                </div>
               </div>
 
               {/* Mini Lead Form - Vehicle context */}
@@ -530,11 +563,20 @@ const VehicleDetailPage: React.FC = () => {
           ) : null}
 
           {/* Outros veículos */}
-          <div className="mt-16">
-            <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">
-              Outros Veículos que Você Pode Gostar
-            </h2>
-            <VehicleCarousel vehicles={otherVehicles} />
+          <div className="mt-16 space-y-16">
+            <div>
+              <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">
+                Pessoas também viram
+              </h2>
+              <VehicleCarousel vehicles={alsoViewed} />
+            </div>
+
+            <div>
+              <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">
+                Outros Veículos que Você Pode Gostar
+              </h2>
+              <VehicleCarousel vehicles={otherVehicles} />
+            </div>
           </div>
         </div>
 
