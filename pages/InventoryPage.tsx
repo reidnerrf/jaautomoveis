@@ -17,6 +17,8 @@ import {
 } from "react-icons/fi";
 import { FaCarSide, FaGasPump, FaCog, FaCalendarAlt } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
+import MiniLeadForm from "../components/MiniLeadForm.tsx";
+import Recommendations from "../components/Recommendations.tsx";
 import { analytics } from "../utils/analytics";
 
 const InventoryPage: React.FC = () => {
@@ -40,6 +42,8 @@ const InventoryPage: React.FC = () => {
       const params = new URLSearchParams(location.search);
       const q = params.get("q") || "";
       if (q && q !== searchTerm) setSearchTerm(q);
+      const p = parseInt(params.get("page") || "1", 10);
+      if (!Number.isNaN(p) && p > 0 && p !== currentPage) setCurrentPage(p);
     } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -56,6 +60,20 @@ const InventoryPage: React.FC = () => {
       if (next !== location.pathname + location.search) navigate(next, { replace: true });
     } catch {}
   }, [searchTerm]);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(location.search);
+      if (currentPage > 1) {
+        params.set("page", String(currentPage));
+      } else {
+        params.delete("page");
+      }
+      const next = `${location.pathname}?${params.toString()}`.replace(/\?$/, "");
+      if (next !== location.pathname + location.search) navigate(next, { replace: true });
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
   const [makeFilter, setMakeFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("Resende");
   const [stateFilter, setStateFilter] = useState("RJ");
@@ -69,6 +87,9 @@ const InventoryPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+  const [savedSearches, setSavedSearches] = useState<
+    { id: string; label: string; payload: any; ts: number }[]
+  >([]);
 
   const itemsPerPage = 12;
 
@@ -104,6 +125,122 @@ const InventoryPage: React.FC = () => {
     () => [...new Set(safeVehicles.map((v) => v.gearbox || "Manual"))],
     [safeVehicles]
   );
+
+  // Saved searches helpers
+  const getCurrentSearchPayload = useMemo(() => {
+    return {
+      q: searchTerm || "",
+      make: makeFilter || "",
+      year: yearFilter || "",
+      price: priceFilter || "",
+      color: colorFilter || "",
+      fuel: fuelFilter || "",
+      transmission: transmissionFilter || "",
+      city: cityFilter || "",
+      state: stateFilter || "",
+      sort: sortBy || "recent",
+    };
+  }, [
+    searchTerm,
+    makeFilter,
+    yearFilter,
+    priceFilter,
+    colorFilter,
+    fuelFilter,
+    transmissionFilter,
+    cityFilter,
+    stateFilter,
+    sortBy,
+  ]);
+
+  const payloadKey = (p: any) =>
+    JSON.stringify([
+      p.q,
+      p.make,
+      p.year,
+      p.price,
+      p.color,
+      p.fuel,
+      p.transmission,
+      p.city,
+      p.state,
+      p.sort,
+    ]);
+
+  const labelFromPayload = (p: any) => {
+    const parts: string[] = [];
+    if (p.q) parts.push(`"${p.q}"`);
+    if (p.make) parts.push(p.make);
+    if (p.model) parts.push(p.model);
+    if (p.year) parts.push(p.year);
+    if (p.price) {
+      const priceMap: Record<string, string> = {
+        "30000": "Até 30k",
+        "30000-60000": "30-60k",
+        "60000-100000": "60-100k",
+        "100000": ">100k",
+      };
+      parts.push(priceMap[p.price] || p.price);
+    }
+    if (p.fuel) parts.push(p.fuel);
+    if (p.transmission) parts.push(p.transmission);
+    if (p.color) parts.push(p.color);
+    if (p.city || p.state) parts.push([p.city, p.state].filter(Boolean).join("/"));
+    return parts.join(" · ") || "Busca salva";
+  };
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("savedSearches");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setSavedSearches(parsed);
+      }
+    } catch {}
+  }, []);
+
+  const persistSavedSearches = (next: any[]) => {
+    setSavedSearches(next);
+    try {
+      localStorage.setItem("savedSearches", JSON.stringify(next));
+    } catch {}
+  };
+
+  const saveCurrentSearch = () => {
+    const payload = getCurrentSearchPayload;
+    const id = payloadKey(payload);
+    const label = labelFromPayload(payload);
+    const existingIdx = savedSearches.findIndex((s) => s.id === id);
+    let next = [...savedSearches];
+    if (existingIdx >= 0) {
+      next[existingIdx] = { ...next[existingIdx], label, payload, ts: Date.now() };
+    } else {
+      next.unshift({ id, label, payload, ts: Date.now() });
+    }
+    // limit to 8
+    next = next.slice(0, 8);
+    persistSavedSearches(next);
+  };
+
+  const applySavedSearch = (payload: any) => {
+    setSearchTerm(payload.q || "");
+    setMakeFilter(payload.make || "");
+    setYearFilter(payload.year || "");
+    setPriceFilter(payload.price || "");
+    setColorFilter(payload.color || "");
+    setFuelFilter(payload.fuel || "");
+    setTransmissionFilter(payload.transmission || "");
+    setCityFilter(payload.city || "Resende");
+    setStateFilter(payload.state || "RJ");
+    setSortBy(payload.sort || "recent");
+    setShowFilters(false);
+    setCurrentPage(1);
+  };
+
+  const deleteSavedSearch = (id: string) => {
+    const next = savedSearches.filter((s) => s.id !== id);
+    persistSavedSearches(next);
+  };
 
   // Load like counts to enable sorting by most liked
   useEffect(() => {
@@ -241,6 +378,29 @@ const InventoryPage: React.FC = () => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  // Comparison list state (sync with localStorage)
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const compareVehicles = useMemo(() => {
+    const idSet = new Set(compareIds);
+    return safeVehicles.filter((v: any) => v.id && idSet.has(v.id));
+  }, [compareIds, safeVehicles]);
+  useEffect(() => {
+    const read = () => {
+      try {
+        const next = JSON.parse(localStorage.getItem("compareIds") || "[]");
+        setCompareIds(Array.isArray(next) ? next.slice(0, 3) : []);
+      } catch {
+        setCompareIds([]);
+      }
+    };
+    read();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "compareIds") read();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   const resetFilters = () => {
     setSearchTerm("");
@@ -423,10 +583,66 @@ const InventoryPage: React.FC = () => {
           keywords={`estoque de carros em Resende RJ, veículos usados Resende, seminovos Resende, comprar carro Resende, carros Rio de Janeiro, Sul Fluminense, JA Automóveis`}
           image={`/assets/logo.png`}
         >
-          <link
-            rel="canonical"
-            href={typeof window !== "undefined" ? `${window.location.origin}/inventory` : "/inventory"}
-          />
+          {(() => {
+            const buildHref = (page: number) => {
+              try {
+                const url = new URL(
+                  typeof window !== "undefined"
+                    ? window.location.href
+                    : "https://jaautomoveisresende.com.br/inventory"
+                );
+                if (page > 1) url.searchParams.set("page", String(page));
+                else url.searchParams.delete("page");
+                return url.href;
+              } catch {
+                return `/inventory${page > 1 ? `?page=${page}` : ""}`;
+              }
+            };
+            return (
+              <>
+                {currentPage > 1 && <link rel="prev" href={buildHref(currentPage - 1)} />}
+                {currentPage < totalPages && <link rel="next" href={buildHref(currentPage + 1)} />}
+              </>
+            );
+          })()}
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "Posso financiar um veículo?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Sim. Trabalhamos com diversos bancos parceiros e simulamos as melhores condições."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  name: "Vocês aceitam carro na troca?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Sim. Avaliamos seu usado como parte do pagamento."
+                  }
+                }
+              ]
+            })}
+          </script>
+          {(() => {
+            try {
+              const url = new URL(
+                typeof window !== "undefined" ? window.location.href : "https://jaautomoveisresende.com.br/inventory"
+              );
+              // Ensure canonical includes page when > 1
+              const canonical = url.searchParams.get("page") && parseInt(url.searchParams.get("page") || "1", 10) > 1
+                ? url.href
+                : `${url.origin}/inventory`;
+              return <link rel="canonical" href={canonical} />;
+            } catch {
+              return <link rel="canonical" href="/inventory" />;
+            }
+          })()}
           <script type="application/ld+json">
             {JSON.stringify({
               "@context": "https://schema.org",
@@ -490,7 +706,8 @@ const InventoryPage: React.FC = () => {
           className="mb-8 flex flex-col lg:flex-row gap-4 items-center justify-between"
         >
           {/* Search Bar */}
-          <div className="relative flex-1 max-w-md">
+          <div className="relative flex-1 max-w-md" onClick={() => analytics.sendClickHeatmap('inventory_search_click')}
+          >
             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
             <input
               type="text"
@@ -546,6 +763,85 @@ const InventoryPage: React.FC = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* Mini Lead Form */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-8"
+        >
+          <MiniLeadForm context="inventory" />
+        </motion.div>
+
+        {/* Recomendações (IA) */}
+        <Recommendations title="Sugestões para você" limit={6} />
+
+        {/* Active filter chips + Saved searches */}
+        <div className="mb-6">
+          {/* Active filter chips */}
+          <div className="flex flex-wrap gap-2 items-center">
+            {[
+              searchTerm && { k: "q", label: `Busca: "${searchTerm}"`, clear: () => setSearchTerm("") },
+              makeFilter && { k: "make", label: `Marca: ${makeFilter}`, clear: () => setMakeFilter("") },
+              yearFilter && { k: "year", label: `Ano: ${yearFilter}`, clear: () => setYearFilter("") },
+              priceFilter && { k: "price", label: `Preço: ${priceFilter}` , clear: () => setPriceFilter("")},
+              colorFilter && { k: "color", label: `Cor: ${colorFilter}`, clear: () => setColorFilter("") },
+              fuelFilter && { k: "fuel", label: `Comb.: ${fuelFilter}`, clear: () => setFuelFilter("") },
+              transmissionFilter && { k: "tr", label: `Câmbio: ${transmissionFilter}`, clear: () => setTransmissionFilter("") },
+              (cityFilter || stateFilter) && { k: "geo", label: `${cityFilter || ""}${stateFilter ? `/${stateFilter}` : ""}`, clear: () => { setCityFilter("Resende"); setStateFilter("RJ"); } },
+            ].filter(Boolean).map((chip: any) => (
+              <span
+                key={chip.k}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-800 text-sm"
+              >
+                {chip.label}
+                <button
+                  onClick={chip.clear}
+                  className="ml-1 rounded-full p-1 hover:bg-blue-100 dark:hover:bg-blue-800"
+                  aria-label={`Remover ${chip.k}`}
+                >
+                  <FiX />
+                </button>
+              </span>
+            ))}
+
+            {/* Save search button */}
+            <button
+              onClick={saveCurrentSearch}
+              className="ml-2 px-3 py-1.5 rounded-full bg-green-600 text-white text-sm hover:bg-green-700 transition-colors"
+            >
+              Salvar busca
+            </button>
+          </div>
+
+          {/* Saved searches list */}
+          {savedSearches.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2 items-center">
+              {savedSearches.map((s) => (
+                <span
+                  key={s.id}
+                  className="group inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 text-sm"
+                >
+                  <button
+                    onClick={() => applySavedSearch(s.payload)}
+                    className="hover:underline"
+                    aria-label={`Aplicar busca ${s.label}`}
+                  >
+                    {s.label}
+                  </button>
+                  <button
+                    onClick={() => deleteSavedSearch(s.id)}
+                    className="opacity-70 hover:opacity-100"
+                    aria-label={`Excluir busca ${s.label}`}
+                  >
+                    <FiX />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Advanced Filters */}
         <AnimatePresence>
@@ -865,6 +1161,56 @@ const InventoryPage: React.FC = () => {
               </button>
             </div>
           </motion.div>
+        )}
+
+        {/* Comparison Table (compact) */}
+        {compareVehicles.length > 0 && (
+          <div className="mt-10 border-2 border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden" role="region" aria-labelledby="compare-heading">
+            <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
+              <div id="compare-heading" className="font-bold">Comparando ({compareVehicles.length}/3)</div>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("compareIds");
+                  setCompareIds([]);
+                }}
+                className="text-sm text-blue-600 hover:underline"
+                aria-label="Limpar comparação"
+              >
+                Limpar
+              </button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm" role="table" aria-describedby="compare-heading">
+                <thead className="bg-gray-100 dark:bg-gray-900" role="rowgroup">
+                  <tr role="row">
+                    <th scope="col" className="text-left p-3">Atributo</th>
+                    {compareVehicles.map((v: any) => (
+                      <th scope="col" key={v.id} className="text-left p-3">{v.name}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody role="rowgroup">
+                  {[
+                    { k: "price", label: "Preço", format: (x: any) => `R$ ${new Intl.NumberFormat("pt-BR").format(x)}` },
+                    { k: "year", label: "Ano" },
+                    { k: "km", label: "KM", format: (x: any) => new Intl.NumberFormat("pt-BR").format(x) },
+                    { k: "fuel", label: "Combustível" },
+                    { k: "gearbox", label: "Câmbio" },
+                    { k: "doors", label: "Portas" },
+                  ].map((row) => (
+                    <tr role="row" key={row.k} className="border-t border-gray-200 dark:border-gray-700">
+                      <th scope="row" className="p-3 font-semibold bg-gray-50 dark:bg-gray-800">{row.label}</th>
+                      {compareVehicles.map((v: any) => (
+                        <td role="cell" key={`${v.id}-${row.k}`} className="p-3">
+                          {row.format ? row.format((v as any)[row.k]) : String((v as any)[row.k] ?? "-")}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         )}
       </div>
     </div>

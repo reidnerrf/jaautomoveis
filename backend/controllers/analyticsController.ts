@@ -80,10 +80,16 @@ export const getDashboardStats = async (req: express.Request, res: express.Respo
       action: "whatsapp_click",
     });
 
+    // Add to WhatsApp (lead intent)
+    const addToWhatsapp = await Analytics.countDocuments({ action: "add_to_whatsapp" });
+
     // Instagram clicks
     const instagramClicks = await Analytics.countDocuments({
       action: "instagram_click",
     });
+
+    // Test-drive requests
+    const testDriveRequests = await Analytics.countDocuments({ action: "test_drive_request" });
 
     // Total likes
     const totalLikesAgg = await Analytics.countDocuments({ action: "like_vehicle" });
@@ -105,7 +111,9 @@ export const getDashboardStats = async (req: express.Request, res: express.Respo
       totalViews,
       todayViews,
       whatsappClicks,
+      addToWhatsapp,
       instagramClicks,
+      testDriveRequests,
       deviceStats: [],
       locationStats: [],
       browserStats: [],

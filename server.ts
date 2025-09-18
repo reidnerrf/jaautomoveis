@@ -451,6 +451,34 @@ app.use(
 const clientDistPath = path.join(process.cwd(), "dist");
 app.use(express.static(clientDistPath));
 
+// Simple prerender/cache for Home and Inventory (edge-like)
+const prerenderCache = new Map<string, { body: string; ts: number }>();
+const PRERENDER_TTL_MS = 5 * 60 * 1000; // 5 minutes
+async function servePrerendered(req: Request, res: Response, pathName: string) {
+  try {
+    const key = `${pathName}`;
+    const cached = prerenderCache.get(key);
+    const now = Date.now();
+    if (cached && now - cached.ts < PRERENDER_TTL_MS) {
+      res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=86400");
+      return res.status(200).send(cached.body);
+    }
+    const htmlPath = path.join(clientDistPath, "index.html");
+    const html = await fs.readFile(htmlPath, "utf-8");
+    prerenderCache.set(key, { body: html, ts: now });
+    res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=86400");
+    return res.status(200).send(html);
+  } catch (e) {
+    return res.sendFile(path.join(clientDistPath, "index.html"));
+  }
+}
+
+if (isProduction) {
+  app.get(["/", "/inventory"], async (req: Request, res: Response) => {
+    return servePrerendered(req, res, req.path);
+  });
+}
+
 app.get("/manifest.json", (req: Request, res: Response) => {
   res.sendFile(path.join(process.cwd(), "public", "manifest.json"));
 });

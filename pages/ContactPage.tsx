@@ -4,6 +4,7 @@ import { FiMapPin, FiPhone, FiMail, FiClock, FiMessageCircle, FiSend } from "rea
 import { FaWhatsapp, FaInstagram, FaFacebook } from "react-icons/fa";
 import SEOHead from "../components/SEOHead.tsx";
 import { generatePageSEO } from "../utils/seo";
+import GoogleReviewSummary from "../components/GoogleReviewSummary.tsx";
 
 const ContactPage: React.FC = () => {
   const contactInfo = [
@@ -61,6 +62,15 @@ const ContactPage: React.FC = () => {
         description={generatePageSEO("contact").description}
         keywords={generatePageSEO("contact").keywords}
       >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "JA Automóveis",
+            url: typeof window !== "undefined" ? window.location.origin : "https://jaautomoveisresende.com.br",
+            aggregateRating: { "@type": "AggregateRating", ratingValue: 4.8, reviewCount: 28 }
+          })}
+        </script>
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -158,18 +168,27 @@ const ContactPage: React.FC = () => {
                 if (honey) return; // honeypot filled -> likely bot
                 const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
                 const phoneOk = /\(\d{2}\) \d{5}-\d{4}/.test(phone);
+                const status = document.getElementById("contact-form-status");
                 if (!name || !emailOk || !phoneOk || !message) {
-                  alert("Por favor, preencha os campos corretamente.");
+                  status && (status.textContent = "Por favor, corrija os campos em destaque.");
                   return;
                 }
                 try {
                   (window as any).trackBusinessEvent?.("contact_form", { name, email });
                 } catch {}
+                status && (status.textContent = "Enviando sua mensagem...");
                 fetch("/api/contact", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ name, email, phone, message }),
-                }).then(() => alert("Mensagem enviada!"));
+                })
+                  .then(() => {
+                    status && (status.textContent = "Mensagem enviada com sucesso!");
+                    form.reset();
+                  })
+                  .catch(() => {
+                    status && (status.textContent = "Falha ao enviar. Tente pelo WhatsApp.");
+                  });
               }}
             >
               {[
@@ -243,6 +262,7 @@ const ContactPage: React.FC = () => {
               >
                 Enviar
               </motion.button>
+              <div id="contact-form-status" role="status" aria-live="polite" className="text-sm text-gray-600 dark:text-gray-300"></div>
             </form>
           </motion.div>
 
@@ -319,6 +339,24 @@ const ContactPage: React.FC = () => {
                 ))}
               </div>
             </div>
+          {/* Resumo de Avaliações do Google */}
+          <div className="mb-6">
+            <GoogleReviewSummary
+              rating={4.8}
+              reviewCount={28}
+              reviewsPageUrl="https://www.google.com/maps/place/JA+Autom%C3%B3veis/@-22.4514047,-44.4276196,15z/data=!4m8!3m7!1s0x9e7f64ea81fb05:0xda764a546db009b0!8m2!3d-22.471342!4d-44.464962!9m1!1b1!16s%2Fg%2F11h_4scynm?entry=ttu&g_ep=EgoyMDI1MDkwOC4wIKXMDSoASAFQAw%3D%3D"
+            />
+            <div className="mt-3">
+              <a
+                href="https://www.google.com/maps/place/JA+Autom%C3%B3veis/@-22.4514047,-44.4276196,15z/data=!4m8!3m7!1s0x9e7f64ea81fb05:0xda764a546db009b0!8m2!3d-22.471342!4d-44.464962!9m1!1b1!16s%2Fg%2F11h_4scynm?entry=ttu&g_ep=EgoyMDI1MDkwOC4wIKXMDSoASAFQAw%3D%3D"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block underline decoration-2 text-blue-700 dark:text-blue-300 font-semibold"
+              >
+                Ver todas as avaliações no Google ↗
+              </a>
+            </div>
+          </div>
             {/* CTA WhatsApp */}
             <div className="mt-6">
               <a

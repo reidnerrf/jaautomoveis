@@ -74,6 +74,12 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-comp-light-gray dark:bg-gray-900 font-sans antialiased overflow-x-hidden">
+      <a
+        href="#main-content"
+        className="absolute left-2 top-2 z-[10000] -translate-y-16 focus:translate-y-0 transition-transform bg-white text-black dark:bg-gray-800 dark:text-white px-3 py-2 rounded shadow"
+      >
+        Pular para o conteúdo
+      </a>
       <Helmet>
         <script type="application/ld+json">
           {JSON.stringify({
@@ -110,7 +116,7 @@ const MainLayout: React.FC = () => {
       )}
       <Header />
       {/* Sem padding no topo na Home para o vídeo encostar no header transparente */}
-      <main className={`relative flex-grow ${isHome ? "pt-0" : "pt-20"}`}>
+      <main id="main-content" className={`relative flex-grow ${isHome ? "pt-0" : "pt-20"}`}>
         <Outlet />
       </main>
       {/* CTA fixo mobile */}

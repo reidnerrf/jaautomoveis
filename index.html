@@ -1,6 +1,18 @@
 <!doctype html>
 <html lang="pt-BR">
   <head>
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
+    <link rel="dns-prefetch" href="https://maps.googleapis.com">
+    <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
+    <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/assets/favicon-32x32.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap&text=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%20-.,:/|()[]{}+%25R$áéíóúÁÉÍÓÚãõÃÕçÇ"
       rel="stylesheet"
     />
     <!-- Avoid preloading non-existent local fonts -->
@@ -38,6 +50,29 @@
     <!-- Google Analytics (GA4) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-P8BNCWX706"></script>
     <script src="/ga.js"></script>
+    <script>
+      // Apply a11y preferences from localStorage
+      try {
+        if (localStorage.getItem('pref_reduce_motion') === '1') {
+          document.documentElement.classList.add('reduce-motion');
+        }
+        if (localStorage.getItem('pref_text_spacing') === '1') {
+          document.documentElement.classList.add('text-spacing');
+        }
+      } catch (e) {}
+    </script>
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('theme');
+          var hour = new Date().getHours();
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var shouldDark = stored ? stored === 'dark' : (prefersDark || hour >= 19 || hour < 6);
+          if (shouldDark) document.documentElement.classList.add('dark');
+          else document.documentElement.classList.remove('dark');
+        } catch (e) { /* ignore */ }
+      })();
+    </script>
   </head>
   <body style="margin: 0">
     <div id="root"></div>

@@ -144,7 +144,7 @@ const VehicleCarousel: React.FC<VehicleCarouselProps> = React.memo(({ vehicles }
   return (
     <div className="relative w-full px-2 md:px-4 overflow-hidden" ref={containerRef}>
       {/* Lista de veículos */}
-      <div className="overflow-hidden">
+      <div className="overflow-hidden" style={{ minHeight: 0 }}>
         <motion.div
           className="flex"
           animate={

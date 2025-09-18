@@ -81,6 +81,18 @@ class AnalyticsService {
     try {
       // @ts-expect-error gtag may not be defined in non-browser environments
       if (typeof window !== "undefined" && typeof window.gtag === "function") {
+        try {
+          const raw = localStorage.getItem("cookieConsentV1");
+          const parsed = raw ? JSON.parse(raw) : { analytics: false, personalization: false };
+          // Initialize default consent (Consent Mode v2)
+          // @ts-ignore
+          window.gtag('consent', 'default', {
+            'ad_storage': parsed.personalization ? 'granted' : 'denied',
+            'ad_user_data': parsed.personalization ? 'granted' : 'denied',
+            'ad_personalization': parsed.personalization ? 'granted' : 'denied',
+            'analytics_storage': parsed.analytics ? 'granted' : 'denied'
+          });
+        } catch {}
         this.gaInitialized = true;
       }
     } catch {}
@@ -96,7 +108,12 @@ class AnalyticsService {
         dsn: (window as any).SENTRY_DSN || "",
         integrations: [Sentry.browserTracingIntegration()],
         tracesSampleRate: 0.1,
-        environment: (window as any).SENTRY_ENV || "production",
+        environment: (window as any).SENTRY_ENV || (import.meta as any)?.env?.MODE || "production",
+        release:
+          (window as any).SENTRY_RELEASE ||
+          ((import.meta as any)?.env?.VITE_APP_VERSION
+            ? `app@${(import.meta as any).env.VITE_APP_VERSION}`
+            : undefined),
       });
       this.sentryInitialized = true;
     } catch {
@@ -112,6 +129,18 @@ class AnalyticsService {
       const { onCLS, onLCP, onINP, onTTFB } = await import("web-vitals");
       const report = (name: string, value: number) => {
         this.trackUserAction("web_vital", "performance", `${name}:${Math.round(value)}`);
+        try {
+          const metric = name.toUpperCase();
+          const v = Math.round(value);
+          const thresholds: Record<string, number> = { LCP: 2500, CLS: 0.1, INP: 200, TTFB: 800 };
+          const exceed = (metric === "CLS" ? value : v) > thresholds[metric]!
+            ? "exceeded"
+            : "ok";
+          if (exceed === "exceeded") {
+            // Send simple alert event (could be routed to backend later)
+            this.trackBusinessEvent("performance", { metric, value: v, page: window.location.pathname });
+          }
+        } catch {}
       };
       onCLS((m) => report("CLS", m.value));
       onLCP((m) => report("LCP", m.value));
@@ -129,14 +158,46 @@ class AnalyticsService {
   trackUserAction(action: string, category: string, label?: string, page?: string) {
     const consent = getConsent();
     if (!consent.analytics) return;
+    const labelWithVariant = (() => {
+      try {
+        const variant = localStorage.getItem("ab_variant") || "";
+        const base = label ? (() => { try { return JSON.parse(label); } catch { return { raw: label }; } })() : {};
+        return JSON.stringify({ ...base, variant });
+      } catch {
+        return label;
+      }
+    })();
     const payload: AnalyticsEventPayload = {
       event: "user_action",
       category,
       action,
-      label,
+      label: labelWithVariant,
       page: page || window.location.pathname,
     };
+    try {
+      const Sentry: any = (window as any).Sentry || (await import("@sentry/react"));
+      Sentry?.addBreadcrumb?.({ category, message: action, data: { label: labelWithVariant } });
+    } catch {}
     this.emitUserAction(payload);
+  }
+
+  // Sampled client-side click heatmap sender
+  sendClickHeatmap(eventName: string, extra?: Record<string, any>) {
+    try {
+      const consent = getConsent();
+      if (!consent.analytics) return;
+      if (Math.random() > 0.1) return; // 10% sampling
+      const payload = {
+        action: "click_heatmap",
+        label: JSON.stringify({ eventName, path: location.pathname, ...extra }),
+        timestamp: Date.now(),
+      };
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon("/api/analytics", new Blob([JSON.stringify(payload)], { type: "application/json" }));
+      } else {
+        fetch("/api/analytics", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), keepalive: true as any });
+      }
+    } catch {}
   }
 
   // Track business events (respeita consentimento)
@@ -154,13 +215,26 @@ class AnalyticsService {
   ) {
     const consent = getConsent();
     if (!consent.analytics) return;
+    const labelWithVariant = (() => {
+      try {
+        const variant = localStorage.getItem("ab_variant") || "";
+        const base = data ? data : {};
+        return JSON.stringify({ ...base, variant });
+      } catch {
+        return data ? JSON.stringify(data) : undefined;
+      }
+    })();
     const payload: AnalyticsEventPayload = {
       event: eventType,
       category: "business",
       action: eventType,
-      label: data ? JSON.stringify(data) : undefined,
+      label: labelWithVariant,
       page: page || window.location.pathname,
     };
+    try {
+      const Sentry: any = (window as any).Sentry || (await import("@sentry/react"));
+      Sentry?.addBreadcrumb?.({ category: "business", message: eventType, data: { label: labelWithVariant } });
+    } catch {}
     this.emitUserAction(payload);
   }
 

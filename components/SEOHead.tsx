@@ -4,6 +4,7 @@ import { SEOData } from "../utils/seo";
 
 interface SEOHeadProps extends SEOData {
   children?: React.ReactNode;
+  robots?: string;
 }
 
 const SEOHead: React.FC<SEOHeadProps> = ({
@@ -14,6 +15,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   url,
   type = "website",
   children,
+  robots,
 }) => {
   const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
   const fullUrl =
@@ -60,7 +62,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       <meta name="twitter:image" content={imageUrl} />
 
       {/* Additional meta tags */}
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content={robots || "index, follow"} />
       <meta name="author" content="JA Automóveis" />
       <link rel="canonical" href={fullUrl} />
       {alternateLocales.map((alt, idx) => (
