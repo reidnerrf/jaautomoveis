@@ -728,7 +728,7 @@ const HomePage: React.FC = () => {
                 <p>
                   Somos uma{" "}
                   <strong className="text-gray-900 dark:text-white">
-                    concessinária de veículos em Resende RJ
+                    concessionária de veículos em Resende RJ
                   </strong>{" "}
                   que oferece uma experiência completa em serviços automotivos. Com mais de 15 anos
                   no mercado, nos especializamos na venda e troca de veículos novos, seminovos e

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar.tsx";
 import AdminHeader from "./AdminHeader.tsx";
@@ -11,6 +12,10 @@ const AdminLayout: React.FC = () => {
       className="bg-gray-100 dark:bg-main-dark text-body-color"
       onClick={() => sidebarOpen && setSidebarOpen(false)}
     >
+      <Helmet>
+        <meta name="robots" content="noindex,nofollow" />
+        <title>Admin - JA Automóveis</title>
+      </Helmet>
       <div className="flex h-screen overflow-hidden" onClick={(e) => e.stopPropagation()}>
         {/* Backdrop for mobile when sidebar is open */}
         {sidebarOpen ? (
