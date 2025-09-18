@@ -87,6 +87,9 @@ const InventoryPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+  const [savedSearches, setSavedSearches] = useState<
+    { id: string; label: string; payload: any; ts: number }[]
+  >([]);
 
   const itemsPerPage = 12;
 
@@ -122,6 +125,122 @@ const InventoryPage: React.FC = () => {
     () => [...new Set(safeVehicles.map((v) => v.gearbox || "Manual"))],
     [safeVehicles]
   );
+
+  // Saved searches helpers
+  const getCurrentSearchPayload = useMemo(() => {
+    return {
+      q: searchTerm || "",
+      make: makeFilter || "",
+      year: yearFilter || "",
+      price: priceFilter || "",
+      color: colorFilter || "",
+      fuel: fuelFilter || "",
+      transmission: transmissionFilter || "",
+      city: cityFilter || "",
+      state: stateFilter || "",
+      sort: sortBy || "recent",
+    };
+  }, [
+    searchTerm,
+    makeFilter,
+    yearFilter,
+    priceFilter,
+    colorFilter,
+    fuelFilter,
+    transmissionFilter,
+    cityFilter,
+    stateFilter,
+    sortBy,
+  ]);
+
+  const payloadKey = (p: any) =>
+    JSON.stringify([
+      p.q,
+      p.make,
+      p.year,
+      p.price,
+      p.color,
+      p.fuel,
+      p.transmission,
+      p.city,
+      p.state,
+      p.sort,
+    ]);
+
+  const labelFromPayload = (p: any) => {
+    const parts: string[] = [];
+    if (p.q) parts.push(`"${p.q}"`);
+    if (p.make) parts.push(p.make);
+    if (p.model) parts.push(p.model);
+    if (p.year) parts.push(p.year);
+    if (p.price) {
+      const priceMap: Record<string, string> = {
+        "30000": "Até 30k",
+        "30000-60000": "30-60k",
+        "60000-100000": "60-100k",
+        "100000": ">100k",
+      };
+      parts.push(priceMap[p.price] || p.price);
+    }
+    if (p.fuel) parts.push(p.fuel);
+    if (p.transmission) parts.push(p.transmission);
+    if (p.color) parts.push(p.color);
+    if (p.city || p.state) parts.push([p.city, p.state].filter(Boolean).join("/"));
+    return parts.join(" · ") || "Busca salva";
+  };
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("savedSearches");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setSavedSearches(parsed);
+      }
+    } catch {}
+  }, []);
+
+  const persistSavedSearches = (next: any[]) => {
+    setSavedSearches(next);
+    try {
+      localStorage.setItem("savedSearches", JSON.stringify(next));
+    } catch {}
+  };
+
+  const saveCurrentSearch = () => {
+    const payload = getCurrentSearchPayload;
+    const id = payloadKey(payload);
+    const label = labelFromPayload(payload);
+    const existingIdx = savedSearches.findIndex((s) => s.id === id);
+    let next = [...savedSearches];
+    if (existingIdx >= 0) {
+      next[existingIdx] = { ...next[existingIdx], label, payload, ts: Date.now() };
+    } else {
+      next.unshift({ id, label, payload, ts: Date.now() });
+    }
+    // limit to 8
+    next = next.slice(0, 8);
+    persistSavedSearches(next);
+  };
+
+  const applySavedSearch = (payload: any) => {
+    setSearchTerm(payload.q || "");
+    setMakeFilter(payload.make || "");
+    setYearFilter(payload.year || "");
+    setPriceFilter(payload.price || "");
+    setColorFilter(payload.color || "");
+    setFuelFilter(payload.fuel || "");
+    setTransmissionFilter(payload.transmission || "");
+    setCityFilter(payload.city || "Resende");
+    setStateFilter(payload.state || "RJ");
+    setSortBy(payload.sort || "recent");
+    setShowFilters(false);
+    setCurrentPage(1);
+  };
+
+  const deleteSavedSearch = (id: string) => {
+    const next = savedSearches.filter((s) => s.id !== id);
+    persistSavedSearches(next);
+  };
 
   // Load like counts to enable sorting by most liked
   useEffect(() => {
@@ -656,6 +775,72 @@ const InventoryPage: React.FC = () => {
 
         {/* Recomendações (IA) */}
         <Recommendations title="Sugestões para você" limit={6} />
+
+        {/* Active filter chips + Saved searches */}
+        <div className="mb-6">
+          {/* Active filter chips */}
+          <div className="flex flex-wrap gap-2 items-center">
+            {[
+              searchTerm && { k: "q", label: `Busca: "${searchTerm}"`, clear: () => setSearchTerm("") },
+              makeFilter && { k: "make", label: `Marca: ${makeFilter}`, clear: () => setMakeFilter("") },
+              yearFilter && { k: "year", label: `Ano: ${yearFilter}`, clear: () => setYearFilter("") },
+              priceFilter && { k: "price", label: `Preço: ${priceFilter}` , clear: () => setPriceFilter("")},
+              colorFilter && { k: "color", label: `Cor: ${colorFilter}`, clear: () => setColorFilter("") },
+              fuelFilter && { k: "fuel", label: `Comb.: ${fuelFilter}`, clear: () => setFuelFilter("") },
+              transmissionFilter && { k: "tr", label: `Câmbio: ${transmissionFilter}`, clear: () => setTransmissionFilter("") },
+              (cityFilter || stateFilter) && { k: "geo", label: `${cityFilter || ""}${stateFilter ? `/${stateFilter}` : ""}`, clear: () => { setCityFilter("Resende"); setStateFilter("RJ"); } },
+            ].filter(Boolean).map((chip: any) => (
+              <span
+                key={chip.k}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-800 text-sm"
+              >
+                {chip.label}
+                <button
+                  onClick={chip.clear}
+                  className="ml-1 rounded-full p-1 hover:bg-blue-100 dark:hover:bg-blue-800"
+                  aria-label={`Remover ${chip.k}`}
+                >
+                  <FiX />
+                </button>
+              </span>
+            ))}
+
+            {/* Save search button */}
+            <button
+              onClick={saveCurrentSearch}
+              className="ml-2 px-3 py-1.5 rounded-full bg-green-600 text-white text-sm hover:bg-green-700 transition-colors"
+            >
+              Salvar busca
+            </button>
+          </div>
+
+          {/* Saved searches list */}
+          {savedSearches.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2 items-center">
+              {savedSearches.map((s) => (
+                <span
+                  key={s.id}
+                  className="group inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 text-sm"
+                >
+                  <button
+                    onClick={() => applySavedSearch(s.payload)}
+                    className="hover:underline"
+                    aria-label={`Aplicar busca ${s.label}`}
+                  >
+                    {s.label}
+                  </button>
+                  <button
+                    onClick={() => deleteSavedSearch(s.id)}
+                    className="opacity-70 hover:opacity-100"
+                    aria-label={`Excluir busca ${s.label}`}
+                  >
+                    <FiX />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Advanced Filters */}
         <AnimatePresence>

@@ -420,7 +420,7 @@ const VehicleDetailPage: React.FC = () => {
             </div>
 
             {/* Informações do veículo */}
-            <div className="lg:col-span-2 bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition">
+            <div className="lg:col-span-2 bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col ring-1 ring-transparent hover:ring-red-200/60 dark:hover:ring-red-400/20 transition lg:sticky lg:top-24">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center text-sm text-gray-500">
                   <FiEye className="mr-2" />
