@@ -213,6 +213,11 @@ const VehicleDetailPage: React.FC = () => {
   const alsoViewed = othersSorted.slice(0, 6);
   const otherVehicles = othersSorted.slice(0, 5);
 
+  // Dynamic badges based on metadata
+  const reviewed = Boolean((vehicle as any)?.reviewed ?? true);
+  const singleOwner = Boolean((vehicle as any)?.singleOwner);
+  const reportApproved = Boolean((vehicle as any)?.inspectionApproved || (vehicle as any)?.laudoAprovado);
+
   const toggleFavorite = () => {
     const newFavoriteState = !isFavorite;
     setIsFavorite(newFavoriteState);
@@ -490,18 +495,41 @@ const VehicleDetailPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Selos de confiança + Compartilhar */}
+              {/* Selos de confiança dinâmicos + Compartilhar */}
               <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none]">
-                  {/* hide scrollbar in webkit */}
+                <div className="flex items-center gap-3 overflow-x-auto scrollbar-none [-ms-overflow-style:none] [scrollbar-width:none]">
                   <style>{`.scrollbar-none::-webkit-scrollbar{display:none;}`}</style>
-                  <div className="flex items-center text-gray-700 dark:text-gray-300">
-                    <FiAward className="mr-1 text-main-red" /> Revisado
-                  </div>
-                  <div className="flex items-center text-gray-700 dark:text-gray-300">
-                    <FiShield className="mr-1 text-main-red" /> Garantia
-                  </div>
-                  {/* Compartilhar simples, só texto + ícone, sem contorno */}
+                  {reviewed && (
+                    <div className="relative group">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">
+                        <FiAward className="text-green-700" /> Revisado
+                      </span>
+                      <span role="tooltip" className="pointer-events-none absolute left-0 top-full mt-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded shadow">
+                        Revisão de segurança e checklist mecânico realizados
+                      </span>
+                    </div>
+                  )}
+                  {singleOwner && (
+                    <div className="relative group">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 border border-blue-200">
+                        <FiShield className="text-blue-700" /> Único dono
+                      </span>
+                      <span role="tooltip" className="pointer-events-none absolute left-0 top-full mt-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded shadow">
+                        Histórico apontando apenas um proprietário anterior
+                      </span>
+                    </div>
+                  )}
+                  {reportApproved && (
+                    <div className="relative group">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700 border border-purple-200">
+                        <FiShield className="text-purple-700" /> Laudo aprovado
+                      </span>
+                      <span role="tooltip" className="pointer-events-none absolute left-0 top-full mt-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded shadow">
+                        Laudo cautelar sem restrições relevantes
+                      </span>
+                    </div>
+                  )}
+                  {/* Compartilhar */}
                   <ShareButton vehicle={vehicle} className="!p-0 !m-0" />
                 </div>
               </div>
