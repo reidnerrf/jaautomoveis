@@ -17,8 +17,10 @@ async function createIndexes() {
     await mongoose.connect(mongoURI);
     console.log("Connected to MongoDB");
 
-    // Get the ViewLog collection
+    // Get collections
     const ViewLog = mongoose.connection.collection("viewlogs");
+    const Vehicles = mongoose.connection.collection("vehicles");
+    const Analytics = mongoose.connection.collection("analytics");
 
     // Create indexes
     console.log("Creating indexes...");
@@ -34,6 +36,20 @@ async function createIndexes() {
     // Index on vehicle for faster lookups
     await ViewLog.createIndex({ vehicle: 1 });
     console.log("✓ Index created: vehicle_1");
+
+    // Vehicles: status, views, updatedAt
+    await Vehicles.createIndex({ status: 1 });
+    console.log("✓ Index created: vehicles.status_1");
+    await Vehicles.createIndex({ views: -1 });
+    console.log("✓ Index created: vehicles.views_-1");
+    await Vehicles.createIndex({ updatedAt: -1 });
+    console.log("✓ Index created: vehicles.updatedAt_-1");
+
+    // Analytics: action + timestamp
+    await Analytics.createIndex({ action: 1, timestamp: -1 });
+    console.log("✓ Index created: analytics.action_1_timestamp_-1");
+    await Analytics.createIndex({ timestamp: -1 });
+    console.log("✓ Index created: analytics.timestamp_-1");
 
     console.log("All indexes created successfully!");
   } catch (error) {

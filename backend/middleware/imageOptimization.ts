@@ -49,6 +49,9 @@ interface OptimizationOptions {
 
 // Cache de imagens otimizadas
 const imageCache = new Map<string, string>();
+const imageCacheOrder: string[] = [];
+const IMAGE_CACHE_MAX_BYTES = 200 * 1024 * 1024; // 200MB
+let imageCacheSizeBytes = 0;
 
 // Função para gerar hash da imagem
 function generateImageHash(buffer: Buffer, options: OptimizationOptions): string {
@@ -191,6 +194,21 @@ async function saveOptimizedImage(
 
   // Salvar imagem otimizada
   await fs.writeFile(cachePath, optimizedBuffer);
+
+  // Track cache size and enforce LRU
+  try {
+    imageCacheSizeBytes += optimizedBuffer.length;
+    imageCacheOrder.push(cachePath);
+    while (imageCacheSizeBytes > IMAGE_CACHE_MAX_BYTES && imageCacheOrder.length > 0) {
+      const oldest = imageCacheOrder.shift()!;
+      try {
+        const stats = await fs.stat(oldest).catch(() => ({ size: 0 } as any));
+        await fs.unlink(oldest).catch(() => {});
+        imageCache.delete(oldest);
+        imageCacheSizeBytes -= stats.size || 0;
+      } catch {}
+    }
+  } catch {}
 
   return cachePath;
 }
