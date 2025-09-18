@@ -1,3 +1,14 @@
+/* High-contrast focus outlines for accessibility */
+:focus-visible {
+  outline: 2px solid #f43f5e; /* red-500 */
+  outline-offset: 2px;
+}
+
+/* Ensure sufficient contrast on primary buttons hover */
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

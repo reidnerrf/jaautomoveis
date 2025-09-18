@@ -685,11 +685,21 @@ const VehicleDetailPage: React.FC = () => {
               <div
                 className="relative w-full h-full flex items-center justify-center"
                 onClick={(e) => e.stopPropagation()}
+                role="dialog"
+                aria-modal="true"
+                aria-label={`Visualizar imagem de ${vehicle.name}`}
+                tabIndex={-1}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") setIsLightboxOpen(false);
+                  if (e.key === "ArrowLeft") prevImage();
+                  if (e.key === "ArrowRight") nextImage();
+                }}
               >
                 {/* Botão fechar */}
                 <button
                   onClick={() => setIsLightboxOpen(false)}
-                  className="absolute top-4 right-4 text-white hover:text-main-red transition z-50"
+                  className="absolute top-4 right-4 text-white hover:text-main-red transition z-50 focus:outline-none focus:ring-2 focus:ring-red-400 rounded"
+                  aria-label="Fechar visualização"
                 >
                   <FiX size={40} />
                 </button>
@@ -698,7 +708,8 @@ const VehicleDetailPage: React.FC = () => {
                 {(vehicle.images?.length || 0) > 1 && (
                   <button
                     onClick={prevImage}
-                    className="absolute left-2 md:left-10 top-1/2 transform -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition z-50"
+                    className="absolute left-2 md:left-10 top-1/2 transform -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition z-50 focus:outline-none focus:ring-2 focus:ring-white/70"
+                    aria-label="Imagem anterior"
                   >
                     <FiChevronLeft size={32} />
                   </button>
@@ -719,7 +730,8 @@ const VehicleDetailPage: React.FC = () => {
                 {(vehicle.images?.length || 0) > 1 && (
                   <button
                     onClick={nextImage}
-                    className="absolute right-2 md:right-10 top-1/2 transform -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition z-50"
+                    className="absolute right-2 md:right-10 top-1/2 transform -translate-y-1/2 bg-black/30 text-white p-3 rounded-full hover:bg-black/50 transition z-50 focus:outline-none focus:ring-2 focus:ring-white/70"
+                    aria-label="Próxima imagem"
                   >
                     <FiChevronRight size={32} />
                   </button>
