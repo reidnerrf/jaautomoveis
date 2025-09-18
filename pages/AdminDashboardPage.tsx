@@ -51,7 +51,9 @@ const AdminDashboardPage: React.FC = () => {
     totalViews: 0,
     todayViews: 0,
     whatsappClicks: 0,
+    addToWhatsapp: 0,
     instagramClicks: 0,
+    testDriveRequests: 0,
     likedVehicles: 0,
     totalLikes: 0,
   });
@@ -122,7 +124,9 @@ const AdminDashboardPage: React.FC = () => {
             totalViews: Number(dashboardData?.totalViews ?? 0) || 0,
             todayViews: Number(dashboardData?.todayViews ?? 0) || 0,
             whatsappClicks: Number(dashboardData?.whatsappClicks ?? 0) || 0,
+            addToWhatsapp: Number(dashboardData?.addToWhatsapp ?? 0) || 0,
             instagramClicks: Number(dashboardData?.instagramClicks ?? 0) || 0,
+            testDriveRequests: Number(dashboardData?.testDriveRequests ?? 0) || 0,
             likedVehicles: Number(dashboardData?.likedVehicles ?? 0) || 0,
             totalLikes: Number(dashboardData?.totalLikes ?? 0) || 0,
           });
@@ -443,6 +447,16 @@ const AdminDashboardPage: React.FC = () => {
           </div>
         </StatCard>
         <StatCard
+          title="Add to WhatsApp (Leads)"
+          value={formatNumber(dashboardStats.addToWhatsapp)}
+          rate="3.2%"
+          levelUp
+        >
+          <div className="w-6 h-6 bg-emerald-500 rounded flex items-center justify-center text-white text-xs font-bold">
+            +W
+          </div>
+        </StatCard>
+        <StatCard
           title="Cliques no Instagram"
           value={formatNumber(dashboardStats.instagramClicks)}
           rate="7.8%"
@@ -450,6 +464,16 @@ const AdminDashboardPage: React.FC = () => {
         >
           <div className="w-6 h-6 bg-pink-500 rounded flex items-center justify-center text-white text-xs font-bold">
             I
+          </div>
+        </StatCard>
+        <StatCard
+          title="Pedidos de Test-Drive"
+          value={formatNumber(dashboardStats.testDriveRequests)}
+          rate="5.1%"
+          levelUp
+        >
+          <div className="w-6 h-6 bg-blue-500 rounded flex items-center justify-center text-white text-xs font-bold">
+            TD
           </div>
         </StatCard>
         <StatCard
